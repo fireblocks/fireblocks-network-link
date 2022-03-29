@@ -17,49 +17,95 @@ servers:
   - url: 'https://api.fireblocks.com/v1'
 tags:
   - name: accounts
-    description: Everything about your accounts
+    description: Account Interaction API
   
 paths:
-  
   /accounts:
     get:
       tags:
         - accounts
-      summary: Fetches the list of accounts a user ID has access to
-      description: Fetches the list of accounts a user ID has access to
-      operationId: accounts
+      summary: Fetches the list of accounts a user has access to
+      description: >-
+        Fetches the list of accounts a user has access to
+      operationId: getAccounts
       responses:
         '200':
-          description: successful operation
+          description: Success
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Account'
-        '400':
-          description: Invalid status value
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '429':
+          description: Rate limit was reached!
+        '500':
+          description: Exchange internal error, can't process this right now.
 
   /accounts/balances:
     get:
       tags:
         - accounts
-      summary: Fetches list of all coins and quantities for a given account
+      summary: Fetches list of all coins and quantities of all the accounts
       description: >-
-        Fetches list of all coins and quantities for a given account
-      operationId: findPetsByTags
+        Fetches list of all coins and quantities of all the accounts
+      operationId: getBalances
       responses:
         '200':
-          description: successful operation
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fundableAccountType:
+                    $ref: '#/components/schemas/EAccountType'
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Balance'
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '429':
+          description: Rate limit was reached!
+        '500':
+          description: Exchange internal error, can't process this right now.
+  /accounts/balances/{accountId}:
+    get:
+      tags:
+        - accounts
+      summary: Fetches list of all coins and quantities of a specific account id
+      description: >-
+        Fetches list of all coins and quantities of a specific account id
+      operationId: getBalanceByAccountId
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          description: The ID of the account to use
+          schema:
+            type: string
+            minimum: 1
+      responses:
+        '200':
+          description: Success
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Balance'
-        '400':
-          description: Invalid tag value
-  
+                  $ref: '#/components/schemas/AccountBalance'
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '404':
+          description: Account ID not found or missing.
+        '429':
+          description: Rate limit was reached!
+        '500':
+          description: Exchange internal error, can't process this right now.
+
   /internalTransfer:
     post:
       summary: Initiate a transfer from one internal account to another, eg. trading to margin
@@ -329,77 +375,66 @@ paths:
             - 'write:pets'
             - 'read:pets'
 
+definitions:
+
+
 components:
   schemas:
+    EAccountType:
+      type: string
+      description: "Enumeration on types of possible accounts"
+      enum:
+        - SPOT
+        - FUNDING
+        - FUTURES
+        - MARGIN
+      example:
+        MARGIN
+
     Account:
       type: object
-      required:
-        - name
-        - photoUrls
       properties:
         id:
-          type: integer
-          format: int64
-        name:
           type: string
-          example: doggie
-        photoUrls:
-          type: array
-          xml:
-            name: photoUrl
-            wrapped: true
-          items:
-            type: string
-        tags:
-          type: array
-          xml:
-            name: tag
-            wrapped: true
-          items:
-            $ref: '#/components/schemas/Tag'
-        status:
-          type: string
-          description: pet status in the store
-          enum:
-            - available
-            - pending
-            - sold
+          example: "23e4567-e89b-12d3-a456-426614174000"
+          description: "UUID representation of an account identifier"
+        type:
+          $ref : '#/components/schemas/EAccountType'
       xml:
         name: Account
   
+    AccountBalance:
+      type: object
+      properties:
+        currency:
+          type: string
+          example: USDT
+          description: "The symbol of the cryptocurrency"
+        pendingAmount:
+          type: number
+          example: 188.2315812
+          description: "The pending amount in usage, on mempool but not passed confirmations"
+        availableAmount:
+          type: number
+          example: 10.333
+          description: "The available amount for usage, the amount the account has with guarantee"
+        borrowedAmount:
+          type: number
+          example: 3.1
+          description: "The borrowed amount for usage, the amount the exchange borrowed to the user"
+      xml:
+        name: AccountBalance
+
     Balance:
       type: object
-      required:
-        - name
-        - photoUrls
       properties:
-        id:
-          type: integer
-          format: int64
-        name:
-          type: string
-          example: doggie
-        photoUrls:
+        type:
+          $ref : '#/components/schemas/EAccountType'
+        balances:
           type: array
-          xml:
-            name: photoUrl
-            wrapped: true
           items:
-            type: string
-        tags:
-          type: array
-          xml:
-            name: tag
-            wrapped: true
-          items:
-            $ref: '#/components/schemas/Tag'
-        status:
-          type: string
-          description: pet status in the store
-          enum:
-            - available
-            - pending
-            - sold
+            $ref: '#/components/schemas/AccountBalance'
+
       xml:
         name: Balance  
   
