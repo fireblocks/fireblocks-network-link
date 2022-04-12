@@ -29,18 +29,12 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  fundableAccountType:
-                    $ref: '#/components/schemas/EAccountType'
-                  items:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Balance'
+                type: array
+                items:
+                  oneOf:
+                  $ref: '#/components/schemas/Balance'
         '401':
           description: Unauthorized. Either API details are missing or invalid
-        '429':
-          description: Rate limit was reached!
         '500':
           description: Exchange internal error, can't process this right now.
 
@@ -51,28 +45,29 @@ paths:
       parameters:
         - name: fromAccountType
           in: header
-          description: foobar
+          description: "The sub-account type being transferred from."
           required: true
+          example: "MARGIN"
           schema:
-            type: string
+            $ref : '#/components/schemas/EAccountType'
         - name: toAccountType
           in: header
-          description: foobar
+          description: "The sub-account type being transferred to."
           required: true
+          example: "SPOT"
           schema:
-            type: string
+            $ref : '#/components/schemas/EAccountType'
         - name: coinSymbol
           in: header
-          description: foobar
+          example: "USDT"
           required: true
           schema:
             type: string
         - name: amount
           in: header
-          description: foobar
           required: true
           schema:
-            type: number
+            type: string
       responses:
         '200':
           description: successful operation
@@ -90,6 +85,8 @@ paths:
                     example: "3e8374383acce78d38be7fe9"
         '400':
           description: Invalid Operation
+        '429':
+          description: Rate limit reached
         
   /subaccountTransfer:
     post:
@@ -107,7 +104,7 @@ paths:
           description: "in: from another sub/main account, out: to another sub/main account"
           schema:
             type: string
-            enum: [in, out]
+            enum: [IN, OUT]
         - name: coinSymbol
           in: header
           required: true
@@ -118,7 +115,7 @@ paths:
           in: header
           required: true
           schema:
-            type: number
+            type: string
       responses:
         '200':
           description: successful operation
@@ -132,10 +129,11 @@ paths:
                     example: true
                   transactionID:
                     type: string
-                    description: "optional"
                     example: "3e8374383acce78d38be7fe9"
         '400':
           description: Invalid operation
+        '429':
+          description: Rate limit reached
 
   /withdraw:
     post:
@@ -146,7 +144,7 @@ paths:
           in: header
           required: true
           schema:
-            type: string
+            $ref : '#/components/schemas/EAccountType'
         - name: toAddress
           in: header
           required: true
@@ -154,8 +152,7 @@ paths:
             type: string
         - name: tag
           in: header
-          required: true
-          description: "a 'tag' or 'memo', if required by the network"
+          description: "(optional) A 'tag' or 'memo', if required by the network"
           schema:
             type: string
         - name: coinSymbol
@@ -172,7 +169,7 @@ paths:
           in: header
           required: true
           schema:
-            type: number
+            type: string
         - name: isGross
           in: header
           required: true
@@ -191,12 +188,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  status:
-                    type: string
-                    example: COMPLETE
                   transactionID:
                     type: string
-                    description: "optional"
                     example: "3e8374383acce78d38be7fe9"
         '400':
           description: Invalid operation
@@ -210,7 +203,7 @@ paths:
           in: header
           required: true
           schema:
-            type: number
+            type: string
         - name: coinSymbol
           in: header
           required: true
@@ -230,7 +223,7 @@ paths:
                 type: object
                 properties:
                   feeAmount:
-                    type: number
+                    type: string
                     example: 0.23823
         '400':
           description: Invalid operation
@@ -312,7 +305,8 @@ paths:
           required: true
           schema:
             type: string
-            format: date-time
+            format: UNIX-timestamp-epoch
+            example: "1649738389"
         - name: toDate
           in: header
           required: true
@@ -327,7 +321,7 @@ paths:
             type: number
         - name: pageCursor
           in: header
-          required: true
+          description: "(optional) If not specified, return the first page. Otherwise, return the page the cursor points to."
           schema:
             type: string
         - name: isSubTransfer
@@ -337,6 +331,17 @@ paths:
           description: "If this is a sub-account tranfer"
           schema:
             type: boolean
+        - name: coinSymbol
+          in: header
+          required: true
+          example: "USDT"
+          schema:
+            type: string
+        - name: network
+          in: header
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: successful operation
@@ -347,6 +352,9 @@ paths:
                 items:
                   type: object
                   properties:
+                    nextPageCursor:
+                        type: string
+                        example: "(optional)"
                     transactionID:
                       type: object
                       properties:
@@ -355,22 +363,21 @@ paths:
                         txHash:
                           type: string
                         amount:
-                          type: number
+                          type: string
                         serviceFee:
-                          type: number
-                        currency:
+                          type: string
+                        coinSymbol:
                           type: string
                         network:
                           type: string
                         direction:
                           type: string
-                          example: "one of 'deposit' or 'withdrawal'"
+                          example: "DEPOSIT"
+                          description: "one of 'DEPOSIT' or 'WITHDRAWAL'"
                         timestamp:
                           type: string
-                          format: date-time
-                        nextPageCursor:
-                          type: string
-                          example: "(optional)"
+                          format: UNIX-timestamp-epoch
+                          example: "1649738389"
         '400':
           description: Invalid operation
 
@@ -384,18 +391,21 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  coinSymbol:
-                    type: string
-                    example: "USDT"
-                  network:
-                    type: string
-                  type:
-                    type: string
-                  cointractAddress:
-                    type: string
-                    example: "(optional)"
+                type: array
+                items:
+                  oneOf:
+                    - type: object
+                      properties:
+                        coinSymbol:
+                          type: string
+                          example: "USDT"
+                        network:
+                          type: string
+                        type:
+                          type: string
+                        contractAddress:
+                          type: string
+                          example: "(optional)"
         '400':
           description: Invalid operation
 
@@ -429,9 +439,9 @@ components:
           example: USDT
           description: "The symbol of the cryptocurrency"
         totalAmount:
-          type: number
+          type: string
           example: 195.172612
-          description: "The total amount in the account"
+          description: "The total amount (as a string, for precision) in the account"
         pendingAmount:
           type: number
           example: 188.2315812
