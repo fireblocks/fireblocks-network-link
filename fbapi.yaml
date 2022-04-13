@@ -4,7 +4,7 @@ info:
     This is the [Fireblocks](https://fireblocks.com) Exchange API standard.
     Check out the [API documentation](https://docs.fireblocks.com) for more information.
   title: Fireblocks Exchange API
-  version: "0.2.0"
+  version: "0.3.0"
   contact:
     email: support@fireblocks.com
   license:
@@ -17,11 +17,9 @@ servers:
   - url: 'https://api.fireblocks.com/v1'
   
 paths:  
-  /accounts/balances:
+  /accounts:
     get:
-      summary: Fetches list of all coins and quantities of all the accounts
-      description: >-
-        Fetches list of all coins and quantities of all the accounts
+      summary: Fetches list of all account types, and the balances within them
       operationId: getBalances
       responses:
         '200':
@@ -44,27 +42,27 @@ paths:
       operationId: internalTransfer
       parameters:
         - name: fromAccountType
-          in: header
+          in: query
           description: "The sub-account type being transferred from."
           required: true
           example: "MARGIN"
           schema:
             $ref : '#/components/schemas/EAccountType'
         - name: toAccountType
-          in: header
+          in: query
           description: "The sub-account type being transferred to."
           required: true
           example: "SPOT"
           schema:
             $ref : '#/components/schemas/EAccountType'
         - name: coinSymbol
-          in: header
+          in: query
           example: "USDT"
           required: true
           schema:
             type: string
         - name: amount
-          in: header
+          in: query
           required: true
           schema:
             type: string
@@ -94,25 +92,25 @@ paths:
       operationId: subaccountTransfer
       parameters:
         - name: subAccountID
-          in: header
+          in: query
           required: true
           schema:
             type: string
         - name: direction
-          in: header
+          in: query
           required: true
           description: "in: from another sub/main account, out: to another sub/main account"
           schema:
             type: string
             enum: [IN, OUT]
         - name: coinSymbol
-          in: header
+          in: query
           required: true
           example: "USDT"
           schema:
             type: string
         - name: amount
-          in: header
+          in: query
           required: true
           schema:
             type: string
@@ -141,42 +139,43 @@ paths:
       operationId: withdraw
       parameters:
         - name: accountType
-          in: header
+          in: query
           required: true
           schema:
             $ref : '#/components/schemas/EAccountType'
         - name: toAddress
-          in: header
+          in: query
           required: true
           schema:
             type: string
         - name: tag
-          in: header
+          in: query
           description: "(optional) A 'tag' or 'memo', if required by the network"
           schema:
             type: string
         - name: coinSymbol
-          in: header
+          in: query
           required: true
           schema:
             type: string
         - name: network
-          in: header
+          example: "ETH"
+          in: query
           required: true
           schema:
             type: string
         - name: amount
-          in: header
+          in: query
           required: true
           schema:
             type: string
         - name: isGross
-          in: header
+          in: query
           required: true
           schema:
             type: boolean
         - name: maxFee
-          in: header
+          in: query
           description: (optional) The service fee charged for withdrawal 
           schema:
             type: number
@@ -193,6 +192,8 @@ paths:
                     example: "3e8374383acce78d38be7fe9"
         '400':
           description: Invalid operation
+        '429':
+          description: Rate limit reached
 
   /withdrawalFee:
     get:
@@ -200,17 +201,18 @@ paths:
       operationId: fetchWithdrawalFee
       parameters:
         - name: transferAmount
-          in: header
+          in: query
           required: true
           schema:
             type: string
         - name: coinSymbol
-          in: header
+          in: query
           required: true
           schema:
             type: string
         - name: network
-          in: header
+          example: "ETH"
+          in: query
           required: true
           schema:
             type: string
@@ -230,21 +232,27 @@ paths:
 
   /depositAddress:
     get:
-      summary: Fetch the estimated transaction fee required for an external withdrawal
+      summary: Fetch the deposit wallet address for a coinSymbol and network
+      description: > 
+        Fireblocks will first check if a deposit wallet address exists using this endpoint.
+        If one does not exist, then a new address will be created using the `POST /depositAddress` endpoint.
       operationId: fetchDepositAddress
       parameters:
         - name: accountType
-          in: header
+          in: query
           required: true
+          example: "SPOT"
           schema:
-            type: string
+            $ref : '#/components/schemas/EAccountType' 
         - name: coinSymbol
-          in: header
+          in: query
           required: true
+          example: "USDT"
           schema:
             type: string
         - name: network
-          in: header
+          example: "ETH"
+          in: query
           required: true
           schema:
             type: string
@@ -261,17 +269,28 @@ paths:
                     example: "0xb794f5ea0ba39494ce839613fffba74279579268"
                   depositAddressTag:
                     type: string
-                    example: "(optional - only include with supported coins)"
+                    description: "(optional) A destination tag/memo to include for supported coins eg. XLM, XRP etc.)"
+                    example: "63163621"
         '400':
           description: Invalid operation
-
-  /transactionStatus:
-    get:
-      summary: Fetch the status of a given transaction ID
-      operationId: transactionStatus
+    post:
+      summary: Create a new deposit wallet address for a given coinSymbol and network
+      operationId: createDepositAddress
       parameters:
-        - name: transactionID
-          in: header
+        - name: accountType
+          in: query
+          required: true
+          schema:
+            $ref : '#/components/schemas/EAccountType' 
+        - name: coinSymbol
+          in: query
+          example: "USDT"
+          required: true
+          schema:
+            type: string
+        - name: network
+          in: query
+          example: "ETH"
           required: true
           schema:
             type: string
@@ -283,15 +302,62 @@ paths:
               schema:
                 type: object
                 properties:
+                  depositAddress:
+                    type: string
+                    example: "0xb794f5ea0ba39494ce839613fffba74279579268"
+                  depositAddressTag:
+                    type: string
+                    description: "(optional) A destination tag/memo to include for supported coins eg. XLM, XRP etc.)"
+                    example: "63163621"
+        '400':
+          description: Invalid operation
+
+  /transactionStatus:
+    get:
+      summary: Fetch the status of a given transaction ID
+      operationId: transactionStatus
+      parameters:
+        - name: transactionID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactionID:
+                    type: string
+                    example: "46bas218d9h21uhib4i1u2h"
                   status:
-                    type: string
-                    example: "complete"
-                  message:
-                    type: string
-                    example: "message (from Exchange) to explain the status in more detail"
+                    $ref: '#/components/schemas/Status'
                   txHash:
                     type: string
-                    example: "(optional)"
+                    example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
+                  amount:
+                    type: string
+                    example: "1.1"
+                  serviceFee:
+                    type: string
+                    example: "0.000000031"
+                  coinSymbol:
+                    type: string
+                    example: "BTC"
+                  network:
+                    type: string
+                    example: "BTC"
+                  direction:
+                    type: string
+                    example: "DEPOSIT"
+                    enum: [DEPOSIT, WITHDRAWAL]
+                  timestamp:
+                    type: string
+                    format: UNIX-timestamp-epoch
+                    example: "1649738389"
         '400':
           description: Invalid operation
 
@@ -301,44 +367,45 @@ paths:
       operationId: transactionHistory
       parameters:
         - name: fromDate
-          in: header
+          in: query
           required: true
           schema:
             type: string
             format: UNIX-timestamp-epoch
             example: "1649738389"
         - name: toDate
-          in: header
+          in: query
           required: true
           schema:
             type: string
             format: date
         - name: pageSize
-          in: header
+          in: query
           description: "Number of entries per page size in response"
           required: true
           schema:
             type: number
         - name: pageCursor
-          in: header
+          in: query
           description: "(optional) If not specified, return the first page. Otherwise, return the page the cursor points to."
           schema:
             type: string
         - name: isSubTransfer
-          in: header
+          in: query
           required: true
           example: false
           description: "If this is a sub-account tranfer"
           schema:
             type: boolean
         - name: coinSymbol
-          in: header
+          in: query
           required: true
           example: "USDT"
           schema:
             type: string
         - name: network
-          in: header
+          example: "ETH"
+          in: query
           required: true
           schema:
             type: string
@@ -354,30 +421,40 @@ paths:
                   properties:
                     nextPageCursor:
                         type: string
-                        example: "(optional)"
-                    transactionID:
-                      type: object
-                      properties:
-                        status:
-                          type: string
-                        txHash:
-                          type: string
-                        amount:
-                          type: string
-                        serviceFee:
-                          type: string
-                        coinSymbol:
-                          type: string
-                        network:
-                          type: string
-                        direction:
-                          type: string
-                          example: "DEPOSIT"
-                          description: "one of 'DEPOSIT' or 'WITHDRAWAL'"
-                        timestamp:
-                          type: string
-                          format: UNIX-timestamp-epoch
-                          example: "1649738389"
+                        description: "(optional) If not present, refers to the last possible page. Otherwise refers to the next page."
+                    transactions:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          transactionID:
+                            type: string
+                            example: "46bas218d9h21uhib4i1u2h"
+                          status:
+                            $ref: '#/components/schemas/Status'
+                          txHash:
+                            type: string
+                            example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
+                          amount:
+                            type: string
+                            example: "1.1"
+                          serviceFee:
+                            type: string
+                            example: "0.000000031"
+                          coinSymbol:
+                            type: string
+                            example: "BTC"
+                          network:
+                            type: string
+                            example: "BTC"
+                          direction:
+                            type: string
+                            example: "DEPOSIT"
+                            enum: [DEPOSIT, WITHDRAWAL]
+                          timestamp:
+                            type: string
+                            format: UNIX-timestamp-epoch
+                            example: "1649738389"
         '400':
           description: Invalid operation
 
@@ -400,12 +477,13 @@ paths:
                           type: string
                           example: "USDT"
                         network:
+                          example: "ETH"
                           type: string
                         type:
                           type: string
                         contractAddress:
                           type: string
-                          example: "(optional)"
+                          description: "(optional)"
         '400':
           description: Invalid operation
 
@@ -430,7 +508,6 @@ components:
           description: "UUID representation of an account identifier"
         type:
           $ref : '#/components/schemas/EAccountType'
-  
     AccountBalance:
       type: object
       properties:
@@ -463,6 +540,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AccountBalance'
+    Status:
+      type: string
+      description: "Enumeration on types of possible statuses"
+      enum:
+        - NOT_FOUND
+        - PROCESSING
+        - CANCELLED
+        - FAILED
+        - PENDING_MANUAL_APPROVAL
+        - PENDING_SERVICE_MANUAL_APPROVAL
+        - REJECTED
+        - COMPLETED
+      example: "COMPLETED"
 
   securitySchemes:
     api_key:
