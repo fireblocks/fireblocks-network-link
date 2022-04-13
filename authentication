@@ -1,0 +1,31 @@
+*Authentication Fundamentals*
+The API-KEY and SECRET are generated and provided by the exchange.
+
+*Creating a Request*
+All REST requests will contain the following headers:
+
+X-FBAPI-KEY The API key as a string.
+X-FBAPI-SIGNATURE The encoded signature (see Signing a Message).
+X-FBAPI-TIMESTAMP A timestamp of the request (in milliseconds).
+
+*Signing a Message*
+For the header of X-FBAPI-SIGNATURE:
+
+Create a prehash string {timestamp+method+endpoint+body} and apply an encoding onto the string (Pre-encoding is configurable: NONE, BASE64, HEX).
+[The request body is a JSON string and need to be the same with the parameters passed by the API]
+Use SECRET to encrypt the string with HMAC (Internal hash function is configurable: SHA512, SHA3_256).
+After that, apply an additional encoding onto the result (Post-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32).
+
+**Notice**:
+The encrypted timestamp is consistent with the X-FBAPI-TIMESTAMP field in the request header.
+The body to be encrypted is consistent with the content of the Request Body.
+The Method is always UPPER CASE.
+
+For GET requests, the endpoint contains the query string. e.g. /v1/depositAddress?coinSymbol=ETH&...
+The body is "" if there is no request body (for GET requests).
+
+*Selecting a Timestamp*
+The X-FBAPI-TIMESTAMP header is the number of milliseconds since Unix Epoch in UTC. e.g. 1547015186532
+
+The difference between the timestamp and the exchange service time must be less than 5 seconds.
+It's expected that the request on the exchange's end will be considered expired and rejected otherwise.
