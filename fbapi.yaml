@@ -4,7 +4,7 @@ info:
     This is the [Fireblocks](https://fireblocks.com) Exchange API standard.
     Check out the [API documentation](https://docs.fireblocks.com) for more information.
   title: Fireblocks Exchange API
-  version: "0.3.1"
+  version: "0.3.2"
   contact:
     email: support@fireblocks.com
   license:
@@ -231,6 +231,12 @@ paths:
           required: true
           schema:
             type: boolean
+        - name: isFiat
+          in: query
+          required: true
+          description: "Is the currency type sent a fiat?"
+          schema:
+            type: boolean
         - name: maxFee
           in: query
           required: false
@@ -353,6 +359,7 @@ paths:
                 properties:
                   depositAddress:
                     type: string
+                    description: "The address of the deposit address. If not found, it will be empty."
                     example: "0xb794f5ea0ba39494ce839613fffba74279579268"
                   depositAddressTag:
                     type: string
@@ -441,11 +448,15 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
+          description: >
+            Successful operation.
+            If status is NOT_FOUND, all other fields are optional.
+            In the other cases, all fields are required.
           content:
             application/json:
               schema:
                 type: object
+                required: [status]
                 properties:
                   transactionID:
                     type: string
@@ -779,7 +790,7 @@ components:
       description: >
         Types of possible statuses for transactions:
 
-          * `NOT_FOUND` - The transaction doesn't exist.
+          * `NOT_FOUND` - The transaction doesn't exist. If returned in `/transactionStatus`, all other params are optional.
           * `PROCESSING` - The exchange is processing the transaction.
           * `CANCELLED` - The transaction was terminated by the account owner or the exchange.
           * `FAILED` - The transaction failed due to some error in the transaction.
