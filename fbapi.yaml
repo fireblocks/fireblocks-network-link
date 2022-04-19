@@ -444,7 +444,7 @@ paths:
         '200':
           description: >
             Successful operation.
-            If status is NOT_FOUND, all other fields are not required.
+            If status is NOT_FOUND, all other fields are optional.
             In the other cases, all fields are required.
           content:
             application/json:
