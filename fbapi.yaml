@@ -231,6 +231,12 @@ paths:
           required: true
           schema:
             type: boolean
+        - name: isFiat
+          in: query
+          required: true
+          description: "Is the currency type sent a fiat?"
+          schema:
+            type: boolean
         - name: maxFee
           in: query
           required: false
