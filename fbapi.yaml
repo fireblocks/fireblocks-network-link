@@ -784,7 +784,7 @@ components:
       description: >
         Types of possible statuses for transactions:
 
-          * `NOT_FOUND` - The transaction doesn't exist. If in /transactionStatus the tx isn't found, all other params aren't required.
+          * `NOT_FOUND` - The transaction doesn't exist. If returned in `/transactionStatus`, all other params are optional.
           * `PROCESSING` - The exchange is processing the transaction.
           * `CANCELLED` - The transaction was terminated by the account owner or the exchange.
           * `FAILED` - The transaction failed due to some error in the transaction.
