@@ -4,7 +4,7 @@ info:
     This is the [Fireblocks](https://fireblocks.com) Exchange API standard.
     Check out the [API documentation](https://docs.fireblocks.com) for more information.
   title: Fireblocks Exchange API
-  version: "0.3.2"
+  version: "0.3.3"
   contact:
     email: support@fireblocks.com
   license:
@@ -780,6 +780,10 @@ components:
     Balance:
       type: object
       properties:
+        displayName:
+          type: string
+          example: "Margin (Cross)"
+          description: "Text to discribe the account type"
         type:
           $ref : '#/components/schemas/EAccountType'
         balances:
