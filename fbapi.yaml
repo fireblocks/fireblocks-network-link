@@ -413,6 +413,7 @@ paths:
                 properties:
                   depositAddress:
                     type: string
+                    description: "The address of the deposit address. If not found, it will be empty."
                     example: "0xb794f5ea0ba39494ce839613fffba74279579268"
                   depositAddressTag:
                     type: string
