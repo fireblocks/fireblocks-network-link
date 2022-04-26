@@ -4,7 +4,7 @@ info:
     This is the [Fireblocks](https://fireblocks.com) Exchange API standard.
     Check out the [API documentation](https://docs.fireblocks.com) for more information.
   title: Fireblocks Exchange API
-  version: "0.3.3"
+  version: "0.3.4"
   contact:
     email: support@fireblocks.com
   license:
@@ -178,7 +178,7 @@ paths:
   /withdraw:
     post:
       summary: Initiate a withdrawal from Exchange wallet to external wallet address
-      operationId: withdraw
+      operationId: postWithdraw
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -258,6 +258,72 @@ paths:
           description: Invalid operation
         '429':
           description: Rate limit reached
+    get:
+      summary: Fetch the status of a given transaction ID
+      operationId: getWithdraw
+      parameters:
+        - name: X-FBAPI-KEY
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-KEY'
+        - name: X-FBAPI-TIMESTAMP
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
+        - name: X-FBAPI-SIGNATURE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: transactionID
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: >
+            Successful operation.
+            If status is NOT_FOUND, all other fields are optional.
+            In the other cases, all fields are required.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  transactionID:
+                    type: string
+                    example: "46bas218d9h21uhib4i1u2h"
+                  status:
+                    $ref: '#/components/schemas/Status'
+                  txHash:
+                    type: string
+                    example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
+                  amount:
+                    type: string
+                    description: "The net amount of the transaction"
+                    example: "1.1"
+                  serviceFee:
+                    type: string
+                    example: "0.000000031"
+                  coinSymbol:
+                    type: string
+                    example: "ETH"
+                  network:
+                    $ref: '#/components/schemas/ENetworkType'
+                  direction:
+                    $ref: '#/components/schemas/ETransferDirectionType'
+                    example: CRYPTO_WITHDRAWAL
+                  timestamp:
+                    type: number
+                    format: UNIX-timestamp-epoch
+                    description: "Milliseconds"
+                    example: 1546658861000
+        '400':
+          description: Invalid operation
 
   /withdrawalFee:
     get:
@@ -422,10 +488,10 @@ paths:
         '400':
           description: Invalid operation
 
-  /transactionStatus:
+  /deposit:
     get:
-      summary: Fetch the status of a given transaction ID
-      operationId: transactionStatus
+      summary: Fetch the status of a given <txHash, network> pair
+      operationId: getDeposit
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -442,11 +508,16 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: transactionID
+        - name: txHash
           in: query
           required: true
           schema:
             type: string
+        - name: network
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ENetworkType'
       responses:
         '200':
           description: >
@@ -673,7 +744,6 @@ components:
         - EXCHANGE
         - SPOT
         - FUNDING
-        - FUNDABLE
         - MARGIN
         - FUTURES
       example:
@@ -795,7 +865,7 @@ components:
       description: >
         Types of possible statuses for transactions:
 
-          * `NOT_FOUND` - The transaction doesn't exist. If returned in `/transactionStatus`, all other params are optional.
+          * `NOT_FOUND` - The transaction doesn't exist. If returned in `GET /deposit` or `GET /withdraw`, all other params are optional.
           * `PROCESSING` - The exchange is processing the transaction.
           * `CANCELLED` - The transaction was terminated by the account owner or the exchange.
           * `FAILED` - The transaction failed due to some error in the transaction.
