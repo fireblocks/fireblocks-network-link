@@ -552,6 +552,7 @@ paths:
                     $ref: '#/components/schemas/ENetworkType'
                   direction:
                     $ref: '#/components/schemas/ETransferDirectionType'
+                    example: CRYPTO_DEPOSIT
                   timestamp:
                     type: number
                     format: UNIX-timestamp-epoch
@@ -667,6 +668,7 @@ paths:
                             $ref: '#/components/schemas/ENetworkType'
                           direction:
                             $ref: '#/components/schemas/ETransferDirectionType'
+                            example: CRYPTO_DEPOSIT
                           timestamp:
                             type: number
                             format: UNIX-timestamp-epoch
@@ -822,8 +824,6 @@ components:
         - CRYPTO_WITHDRAWAL
         - FIAT_DEPOSIT
         - FIAT_WITHDRAWAL
-      example:
-        CRYPTO_DEPOSIT
     AccountBalance:
       type: object
       properties:
