@@ -4,7 +4,7 @@ info:
     This is the [Fireblocks](https://fireblocks.com) Exchange API standard.
     Check out the [API documentation](https://docs.fireblocks.com) for more information.
   title: Fireblocks Exchange API
-  version: "0.3.5"
+  version: "0.3.6"
   contact:
     email: support@fireblocks.com
   license:
@@ -315,8 +315,7 @@ paths:
                   network:
                     $ref: '#/components/schemas/ENetworkType'
                   direction:
-                    $ref: '#/components/schemas/ETransferDirectionType'
-                    example: CRYPTO_WITHDRAWAL
+                    $ref: '#/components/schemas/ETransferDirectionTypeWithdraw'
                   timestamp:
                     type: number
                     format: UNIX-timestamp-epoch
@@ -551,8 +550,7 @@ paths:
                   network:
                     $ref: '#/components/schemas/ENetworkType'
                   direction:
-                    $ref: '#/components/schemas/ETransferDirectionType'
-                    example: CRYPTO_DEPOSIT
+                    $ref: '#/components/schemas/ETransferDirectionTypeDeposit'
                   timestamp:
                     type: number
                     format: UNIX-timestamp-epoch
@@ -667,8 +665,7 @@ paths:
                           network:
                             $ref: '#/components/schemas/ENetworkType'
                           direction:
-                            $ref: '#/components/schemas/ETransferDirectionType'
-                            example: CRYPTO_DEPOSIT
+                            $ref: '#/components/schemas/ETransferDirectionTypeDeposit'
                           timestamp:
                             type: number
                             format: UNIX-timestamp-epoch
@@ -810,7 +807,7 @@ components:
         - OUT
       example:
         IN
-    ETransferDirectionType:
+    ETransferDirectionTypeDeposit:
       type: string
       description: >
         Direction of a transfer:
@@ -824,6 +821,24 @@ components:
         - CRYPTO_WITHDRAWAL
         - FIAT_DEPOSIT
         - FIAT_WITHDRAWAL
+      example:
+        CRYPTO_DEPOSIT
+    ETransferDirectionTypeWithdraw:
+      type: string
+      description: >
+        Direction of a transfer:
+
+          * `CRYPTO_DEPOSIT` - A crypto deposit operation
+          * `CRYPTO_WITHDRAWAL` - A crypto withdrawal operation
+          * `FIAT_DEPOSIT` - A fiat deposit operation, if supported
+          * `FIAT_WITHDRAWAL` - A fiat withdrawal operation, if supported
+      enum:
+        - CRYPTO_DEPOSIT
+        - CRYPTO_WITHDRAWAL
+        - FIAT_DEPOSIT
+        - FIAT_WITHDRAWAL
+      example:
+        CRYPTO_WITHDRAWAL
     AccountBalance:
       type: object
       properties:
