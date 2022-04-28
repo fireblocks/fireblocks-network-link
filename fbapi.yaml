@@ -3,8 +3,45 @@ info:
   description: |
     This is the [Fireblocks](https://fireblocks.com) Exchange API standard.
     Check out the [API documentation](https://docs.fireblocks.com) for more information.
+
+    <h1>Authentication Fundamentals</h1>
+
+    The API-KEY and SECRET are generated and provided by the exchange.
+    
+    <h2>Creating a Request</h2>
+
+    All REST requests will contain the following headers:
+
+    <p>*X-FBAPI-KEY* The API key as a string.</p>
+    <p>*X-FBAPI-SIGNATURE* The encoded signature (see Signing a Message).</p>
+    <p>*X-FBAPI-TIMESTAMP* A timestamp of the request (in milliseconds).</p>
+
+    <h2>Signing a Message</h2>
+
+    <p><i>For the header of X-FBAPI-SIGNATURE:</i></p>
+
+    <p>Create a prehash string {timestamp+method+endpoint+body} and apply an encoding onto the string (Pre-encoding is configurable: NONE, BASE64, HEX).</p>
+    <p>[The request body is a JSON string and need to be the same with the parameters passed by the API]</p>
+    <p>Use SECRET to encrypt the string with HMAC (Internal hash function is configurable: SHA512, SHA3_256).</p>
+    <p>After that, apply an additional encoding onto the result (Post-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32).</p>
+
+    <h2><i>Notice</i></h2>
+
+    <p>The encrypted timestamp is consistent with the X-FBAPI-TIMESTAMP field in the request header.</p>
+    <p>The body to be encrypted is consistent with the content of the Request Body.</p>
+    <p>The Method is always UPPER CASE.</p>
+
+    <p>For GET requests, the endpoint contains the query string. e.g. /v1/depositAddress?coinSymbol=ETH&...</p>
+    <p>The body is "" if there is no request body (for GET requests).</p>
+
+    <h2>Selecting a Timestamp</h2>
+
+    <p>The X-FBAPI-TIMESTAMP header is the number of milliseconds since Unix Epoch in UTC. e.g. 1547015186532</p>
+
+    <p>The difference between the timestamp and the exchange service time must be less than 5 seconds.</p>
+    <p>It's expected that the request on the exchange's end will be considered expired and rejected otherwise.</p>
   title: Fireblocks Exchange API
-  version: "0.3.6"
+  version: "0.3.7"
   contact:
     email: support@fireblocks.com
   license:
@@ -18,7 +55,11 @@ servers:
 paths:  
   /accounts:
     get:
-      summary: Fetches list of all account types, and the balances within them
+      summary: Fetches list of all account types, and the balances within them.
+      description: >
+              In case the exchange supports an account type but the account doesn't
+              contain any balance in that account type, it is expected the "balances"
+              field to be an empty array.
       operationId: getBalances
       parameters:
         - name: X-FBAPI-KEY
@@ -117,7 +158,7 @@ paths:
         
   /subaccountTransfer:
     post:
-      summary: Initiate a transfer from one internal sub-account to another sub-account
+      summary: Initiate a transfer between an internal sub-account and the main-account
       operationId: subaccountTransfer
       parameters:
         - name: X-FBAPI-KEY
