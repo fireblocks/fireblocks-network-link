@@ -41,7 +41,7 @@ info:
     <p>The difference between the timestamp and the exchange service time must be less than 5 seconds.</p>
     <p>It's expected that the request on the exchange's end will be considered expired and rejected otherwise.</p>
   title: Fireblocks Exchange API
-  version: "0.3.7"
+  version: "0.3.8"
   contact:
     email: support@fireblocks.com
   license:
@@ -753,9 +753,9 @@ paths:
                       $ref: '#/components/schemas/ENetworkType'
                     type:
                       $ref: '#/components/schemas/EAssetType'
-                    contractAddress:
+                    identifier:
                       type: string
-                      description: "The contract address for asset types that are created by a smart contract (ERC20, BEP20, etc')"
+                      description: "The identifier for asset types that are created by a smart contract (ERC20, BEP20, etc'), could be a contractAddress for example"
                       example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         '400':
           description: Invalid operation
