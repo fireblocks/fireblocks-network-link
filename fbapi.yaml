@@ -761,12 +761,15 @@ paths:
                       example: "USDT"
                     network:
                       $ref: '#/components/schemas/ENetworkType'
-                    type:
-                      $ref: '#/components/schemas/EAssetType'
+                    coinClass:
+                      $ref: '#/components/schemas/ECoinClass'
                     identifier:
                       type: string
                       description: "The identifier for asset types that are created by a smart contract (ERC20, BEP20, etc'), could be a contractAddress for example"
                       example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
+                    isFiat:
+                      type: boolean
+                      example: false
         '400':
           description: Invalid operation
 
@@ -820,32 +823,20 @@ components:
         - SOL
       example:
         ETH
-    EAssetType:
+    ECoinClass:
       type: string
       description: >
-        Asset type:
+        Coin classes:
 
-          * `BASE_ASSET` - A blockchain asset
-          * `SOL_ASSET` - An asset over Solana
-          * `FIAT` - A fiat currency asset
-          * `ERC20` - An asset that complies to ERC20
-          * `COMPOUND` - A compound asset
-          * `XLM_ASSET` - An asset over Stellar
-          * `BEP20` - An asset that complies to BEP20
-          * `ALGO_ASSET` - An asset over Algorand
-          * `TRC20` - An asset that complies to TRC20
+          * `BASE` - A base blockchain asset
+          * `TOKEN` - An asset over a blockchain (for example, ERC20)
+
+          Note: FIAT currencies are considered BASE class
       enum:
-        - BASE_ASSET
-        - SOL_ASSET
-        - FIAT
-        - ERC20
-        - COMPOUND
-        - XLM_ASSET
-        - BEP20
-        - ALGO_ASSET
-        - TRC20
+        - BASE
+        - TOKEN
       example:
-        ERC20
+        BASE
     ESubTransferDirectionType:
       type: string
       description: >
