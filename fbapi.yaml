@@ -400,6 +400,11 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/ENetworkType'
+        - name: isFiat
+          in: query
+          required: true
+          schema:
+            type: boolean
       responses:
         '200':
           description: successful operation
@@ -666,6 +671,11 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/ENetworkType'
+        - name: isFiat
+          in: query
+          required: true
+          schema:
+            type: boolean
       responses:
         '200':
           description: successful operation
