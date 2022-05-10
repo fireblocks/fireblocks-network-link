@@ -41,7 +41,7 @@ info:
     <p>The difference between the timestamp and the exchange service time must be less than 5 seconds.</p>
     <p>It's expected that the request on the exchange's end will be considered expired and rejected otherwise.</p>
   title: Fireblocks Exchange API
-  version: "0.3.8"
+  version: "0.3.9"
   contact:
     email: support@fireblocks.com
   license:
@@ -754,7 +754,7 @@ paths:
                 type: array
                 items:
                   type: object
-                  required: [coinSymbol, network, type]
+                  required: [coinSymbol, network, type, isFiat]
                   properties:
                     coinSymbol:
                       type: string
