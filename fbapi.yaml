@@ -41,7 +41,7 @@ info:
     <p>The difference between the timestamp and the exchange service time must be less than 5 seconds.</p>
     <p>It's expected that the request on the exchange's end will be considered expired and rejected otherwise.</p>
   title: Fireblocks Exchange API
-  version: "0.3.9"
+  version: "0.4.0"
   contact:
     email: support@fireblocks.com
   license:
@@ -156,10 +156,10 @@ paths:
         '429':
           description: Rate limit reached
         
-  /subaccountTransfer:
+  /subMainTransfer:
     post:
       summary: Initiate a transfer between an internal sub-account and the main-account
-      operationId: subaccountTransfer
+      operationId: subMainTransfer
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -186,6 +186,65 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/ESubTransferDirectionType'
+        - name: coinSymbol
+          in: query
+          required: true
+          example: "USDT"
+          schema:
+            type: string
+        - name: amount
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  completed:
+                    type: boolean
+                    example: true
+                  transactionID:
+                    type: string
+                    example: "3e8374383acce78d38be7fe9"
+        '400':
+          description: Invalid operation
+        '429':
+          description: Rate limit reached
+  /subaccountsTransfer:
+    post:
+      summary: Initiate a transfer between an two sub-accounts
+      operationId: subaccountsTransfer
+      parameters:
+        - name: X-FBAPI-KEY
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-KEY'
+        - name: X-FBAPI-TIMESTAMP
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
+        - name: X-FBAPI-SIGNATURE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: srcSubAccountID
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: dstSubAccountID
+          in: query
+          required: true
+          schema:
+            type: string
         - name: coinSymbol
           in: query
           required: true
@@ -270,12 +329,6 @@ paths:
         - name: isGross
           in: query
           required: true
-          schema:
-            type: boolean
-        - name: isFiat
-          in: query
-          required: true
-          description: "Is the currency type sent a fiat?"
           schema:
             type: boolean
         - name: maxFee
@@ -400,11 +453,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/ENetworkType'
-        - name: isFiat
-          in: query
-          required: true
-          schema:
-            type: boolean
       responses:
         '200':
           description: successful operation
@@ -671,11 +719,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/ENetworkType'
-        - name: isFiat
-          in: query
-          required: true
-          schema:
-            type: boolean
       responses:
         '200':
           description: successful operation
@@ -754,7 +797,7 @@ paths:
                 type: array
                 items:
                   type: object
-                  required: [coinSymbol, network, type, isFiat]
+                  required: [coinSymbol, network, type]
                   properties:
                     coinSymbol:
                       type: string
@@ -763,13 +806,15 @@ paths:
                       $ref: '#/components/schemas/ENetworkType'
                     coinClass:
                       $ref: '#/components/schemas/ECoinClass'
-                    identifier:
-                      type: string
-                      description: "The identifier for asset types that are created by a smart contract (ERC20, BEP20, etc'), could be a contractAddress for example"
-                      example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
-                    isFiat:
-                      type: boolean
-                      example: false
+                    identifiers:
+                      type: array
+                      items:
+                        type: string
+                        description: >
+                          The identifier(s) for asset types that are created by a smart contract (ERC20, BEP20, etc'), could be a contractAddress for example
+                          Some tokens require multiple identifiers (for example, XLM).
+                          The order of the identifiers is via heirarchy (for example, XLM has on it's first identifier the contractAddress and the second the contractAddressSpecifier)
+                        example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         '400':
           description: Invalid operation
 
@@ -799,6 +844,7 @@ components:
         - FUNDING
         - MARGIN
         - FUTURES
+        - OPTIONS
       example:
         MARGIN
     ENetworkType:
@@ -817,7 +863,6 @@ components:
         - ETC
         - EOS
         - HBAR
-        - BANK
         - TERRA
         - XTZ
         - SOL
@@ -830,13 +875,11 @@ components:
 
           * `BASE` - A base blockchain asset
           * `TOKEN` - An asset over a blockchain (for example, ERC20)
-
-          Note: FIAT currencies are considered BASE class
       enum:
         - BASE
         - TOKEN
       example:
-        BASE
+        TOKEN
     ESubTransferDirectionType:
       type: string
       description: >
@@ -856,13 +899,9 @@ components:
 
           * `CRYPTO_DEPOSIT` - A crypto deposit operation
           * `CRYPTO_WITHDRAWAL` - A crypto withdrawal operation
-          * `FIAT_DEPOSIT` - A fiat deposit operation, if supported
-          * `FIAT_WITHDRAWAL` - A fiat withdrawal operation, if supported
       enum:
         - CRYPTO_DEPOSIT
         - CRYPTO_WITHDRAWAL
-        - FIAT_DEPOSIT
-        - FIAT_WITHDRAWAL
       example:
         CRYPTO_DEPOSIT
     ETransferDirectionTypeWithdraw:
@@ -872,13 +911,9 @@ components:
 
           * `CRYPTO_DEPOSIT` - A crypto deposit operation
           * `CRYPTO_WITHDRAWAL` - A crypto withdrawal operation
-          * `FIAT_DEPOSIT` - A fiat deposit operation, if supported
-          * `FIAT_WITHDRAWAL` - A fiat withdrawal operation, if supported
       enum:
         - CRYPTO_DEPOSIT
         - CRYPTO_WITHDRAWAL
-        - FIAT_DEPOSIT
-        - FIAT_WITHDRAWAL
       example:
         CRYPTO_WITHDRAWAL
     AccountBalance:
