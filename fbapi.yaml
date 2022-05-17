@@ -41,7 +41,7 @@ info:
     <p>The difference between the timestamp and the exchange service time must be less than 5 seconds.</p>
     <p>It's expected that the request on the exchange's end will be considered expired and rejected otherwise.</p>
   title: Fireblocks Exchange API
-  version: "0.4.0"
+  version: "0.4.1"
   contact:
     email: support@fireblocks.com
   license:
@@ -725,46 +725,44 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  required: [transactions]
-                  properties:
-                    nextPageCursor:
-                        type: string
-                        description: "If not present, refers to the last possible page. Otherwise refers to the next page."
-                    transactions:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          transactionID:
-                            type: string
-                            example: "46bas218d9h21uhib4i1u2h"
-                          status:
-                            $ref: '#/components/schemas/Status'
-                          txHash:
-                            type: string
-                            example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
-                          amount:
-                            type: string
-                            description: "The net amount of the transaction"
-                            example: "1.1"
-                          serviceFee:
-                            type: string
-                            example: "0.000000031"
-                          coinSymbol:
-                            type: string
-                            example: "ETH"
-                          network:
-                            $ref: '#/components/schemas/ENetworkType'
-                          direction:
-                            $ref: '#/components/schemas/ETransferDirectionTypeDeposit'
-                          timestamp:
-                            type: number
-                            format: UNIX-timestamp-epoch
-                            description: "In Milliseconds. The timestamp on the creation of the transaction."
-                            example: 1546658861000
+                type: object
+                required: [transactions]
+                properties:
+                  nextPageCursor:
+                      type: string
+                      description: "If not present, refers to the last possible page. Otherwise refers to the next page."
+                  transactions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        transactionID:
+                          type: string
+                          example: "46bas218d9h21uhib4i1u2h"
+                        status:
+                          $ref: '#/components/schemas/Status'
+                        txHash:
+                          type: string
+                          example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
+                        amount:
+                          type: string
+                          description: "The net amount of the transaction"
+                          example: "1.1"
+                        serviceFee:
+                          type: string
+                          example: "0.000000031"
+                        coinSymbol:
+                          type: string
+                          example: "ETH"
+                        network:
+                          $ref: '#/components/schemas/ENetworkType'
+                        direction:
+                          $ref: '#/components/schemas/ETransferDirectionTypeDeposit'
+                        timestamp:
+                          type: number
+                          format: UNIX-timestamp-epoch
+                          description: "In Milliseconds. The timestamp on the creation of the transaction."
+                          example: 1546658861000
         '400':
           description: Invalid operation
 
