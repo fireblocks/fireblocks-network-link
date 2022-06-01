@@ -53,7 +53,7 @@ servers:
     url: https://virtserver.swaggerhub.com/fb-api/Exchanges-API/1.0.0
   - url: 'https://api.fireblocks.com/v1'
 paths:  
-  /accounts:
+  /v1/accounts:
     get:
       summary: Fetches list of all account types, and the balances within them.
       description: >
@@ -91,7 +91,7 @@ paths:
         '500':
           description: Exchange internal error, can't process this right now.
 
-  /internalTransfer:
+  /v1/internalTransfer:
     post:
       summary: Initiate a transfer from one internal account to another, eg. TRADING to MARGIN
       operationId: internalTransfer
@@ -156,7 +156,7 @@ paths:
         '429':
           description: Rate limit reached
         
-  /subMainTransfer:
+  /v1/subMainTransfer:
     post:
       summary: Initiate a transfer between an internal sub-account and the main-account
       operationId: subMainTransfer
@@ -215,7 +215,8 @@ paths:
           description: Invalid operation
         '429':
           description: Rate limit reached
-  /subaccountsTransfer:
+ 
+  /v1/subaccountsTransfer:
     post:
       summary: Initiate a transfer between an two sub-accounts
       operationId: subaccountsTransfer
@@ -275,7 +276,7 @@ paths:
         '429':
           description: Rate limit reached
 
-  /withdraw:
+  /v1/withdraw:
     post:
       summary: Initiate a withdrawal from Exchange wallet to external wallet address
       operationId: postWithdraw
@@ -418,7 +419,7 @@ paths:
         '400':
           description: Invalid operation
 
-  /withdrawalFee:
+  /v1/withdrawalFee:
     get:
       summary: Fetch the estimated transaction fee required for an external withdrawal
       operationId: fetchWithdrawalFee
@@ -467,7 +468,7 @@ paths:
         '400':
           description: Invalid operation
 
-  /depositAddress:
+  /v1/depositAddress:
     get:
       summary: Fetch the deposit wallet address for a coinSymbol and network
       description: > 
@@ -581,7 +582,7 @@ paths:
         '400':
           description: Invalid operation
 
-  /deposit:
+  /v1/deposit:
     get:
       summary: Fetch the status of a given <txHash, network> pair
       operationId: getDeposit
@@ -653,7 +654,7 @@ paths:
         '400':
           description: Invalid operation
 
-  /transactionHistory:
+  /v1/transactionHistory:
     get:
       summary: Fetch the history of all transactions
       operationId: transactionHistory
@@ -766,7 +767,7 @@ paths:
         '400':
           description: Invalid operation
 
-  /supportedAssets:
+  /v1/supportedAssets:
     get:
       summary: Fetch the assets supported by the exchanges
       operationId: supportedAssets
