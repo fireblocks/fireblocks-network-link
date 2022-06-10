@@ -136,379 +136,6 @@ paths:
         '500':
           description: Exchange internal error.
 
-  /v1/internalTransfer:
-    post:
-      summary: Initiate a transfer from one internal account to another, eg. TRADING to MARGIN
-      operationId: internalTransfer
-      parameters:
-        - name: X-FBAPI-KEY
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-KEY'
-        - name: X-FBAPI-TIMESTAMP
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
-        - name: X-FBAPI-SIGNATURE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: X-FBAPI-NONCE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-NONCE'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                fromAccountType:
-                  description: "The sub-account type being transferred from."
-                  example: "MARGIN"
-                  $ref : '#/components/schemas/EAccountType'
-                toAccountType:
-                  description: "The sub-account type being transferred to."
-                  $ref : '#/components/schemas/EAccountTypeSpot'
-                coinSymbol:
-                  example: "USDT"
-                  type: string
-                amount:
-                  example: "1.4"
-                  type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [completed]
-                properties:
-                  completed:
-                    type: boolean
-                    example: true
-                  transactionID:
-                    type: string
-                    nullable: true
-                    example: "3e8374383acce78d38be7fe9"
-        '400':
-          description: Return custom error and error code here.
-        '401':
-          description: Unauthorized. Either API details are missing or invalid
-        '403':
-          description: Forbidden- You do not have access to the requested resource.
-        '404':
-          description: Account ID or Account Type not found or supported.
-        '415':
-          description: Unsupported media type. You need to use application/json.
-        '429':
-          description: Rate limit reached
-        '500':
-          description: Exchange internal error.
-        
-  /v1/subMainTransfer:
-    post:
-      summary: Initiate a transfer between an internal sub-account and the main-account
-      operationId: subMainTransfer
-      parameters:
-        - name: X-FBAPI-KEY
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-KEY'
-        - name: X-FBAPI-TIMESTAMP
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
-        - name: X-FBAPI-SIGNATURE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: X-FBAPI-NONCE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-NONCE'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                subAccountID:
-                  example: "1164fbab-1968-441d-848c-4cbe5ced4328"
-                  type: string
-                direction:
-                  example: "IN"
-                  $ref: '#/components/schemas/ESubTransferDirectionType'
-                coinSymbol:
-                  example: "USDT"
-                  type: string
-                amount:
-                  example: "7.3"
-                  type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  completed:
-                    type: boolean
-                    example: true
-                  transactionID:
-                    type: string
-                    nullable: true
-                    example: "3e8374383acce78d38be7fe9"
-        '400':
-          description: Return custom error and error code here.
-        '401':
-          description: Unauthorized. Either API details are missing or invalid
-        '403':
-          description: Forbidden- You do not have access to the requested resource.
-        '404':
-          description: Account ID or Account Type not found or supported.
-        '415':
-          description: Unsupported media type. You need to use application/json.
-        '429':
-          description: Rate limit reached
-        '500':
-          description: Exchange internal error.
- 
-  /v1/subaccountsTransfer:
-    post:
-      summary: Initiate a transfer between an two sub-accounts
-      operationId: subaccountsTransfer
-      parameters:
-        - name: X-FBAPI-KEY
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-KEY'
-        - name: X-FBAPI-TIMESTAMP
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
-        - name: X-FBAPI-SIGNATURE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: X-FBAPI-NONCE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-NONCE'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                srcSubAccountID:
-                  example: "81690809-5eb9-48be-8eb5-6af17131d7dc"
-                  type: string
-                dstSubAccountID:
-                  example: "d6eba9e6-b867-4f9b-9353-ceb7a2db9311"
-                  type: string
-                coinSymbol:
-                  example: "BTC"
-                  type: string
-                amount:
-                  example: "0.03"
-                  type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  completed:
-                    type: boolean
-                    example: true
-                  transactionID:
-                    type: string
-                    nullable: true
-                    example: "3e8374383acce78d38be7fe9"
-        '400':
-          description: Return custom error and error code here.
-        '401':
-          description: Unauthorized. Either API details are missing or invalid
-        '403':
-          description: Forbidden- You do not have access to the requested resource.
-        '404':
-          description: Account ID or Account Type not found or supported.
-        '415':
-          description: Unsupported media type. You need to use application/json.
-        '429':
-          description: Rate limit reached
-        '500':
-          description: Exchange internal error.
-
-  /v1/withdraw:
-    post:
-      summary: Initiate a withdrawal from Exchange wallet to external wallet address
-      operationId: postWithdraw
-      parameters:
-        - name: X-FBAPI-KEY
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-KEY'
-        - name: X-FBAPI-TIMESTAMP
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
-        - name: X-FBAPI-SIGNATURE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: X-FBAPI-NONCE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-NONCE'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                accountType:
-                  $ref : '#/components/schemas/EAccountTypeSpot'
-                toAddress:
-                  example: "bc1qs95ej87htkfy5786anzwh8sz3gmzvqh2d2uey2"
-                  type: string
-                tag:
-                  description: "A 'tag' or 'memo', if required by the network"
-                  type: string
-                  nullable: true
-                  example: null
-                coinSymbol:
-                  example: "ETH"
-                  type: string
-                network:
-                  example: "ETH"
-                  $ref: '#/components/schemas/ENetworkType'
-                amount:
-                  example: "0.0010597"
-                  type: string
-                isGross:
-                  example: true
-                  type: boolean
-                maxFee:
-                  example: "0.00001616"
-                  description: The service fee charged for withdrawal
-                  type: string
-                  nullable: true
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [transactionID]
-                properties:
-                  transactionID:
-                    type: string
-                    example: "3e8374383acce78d38be7fe9"
-        '400':
-          description: Return custom error and error code here.
-        '401':
-          description: Unauthorized. Either API details are missing or invalid
-        '403':
-          description: Forbidden- You do not have access to the requested resource.
-        '404':
-          description: Account ID or Account Type not found or supported.
-        '415':
-          description: Unsupported media type. You need to use application/json.
-        '429':
-          description: Rate limit reached
-        '500':
-          description: Exchange internal error.
-
-  /v1/withdrawalFee:
-    get:
-      summary: Fetch the estimated transaction fee required for an external withdrawal
-      operationId: fetchWithdrawalFee
-      parameters:
-        - name: X-FBAPI-KEY
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-KEY'
-        - name: X-FBAPI-TIMESTAMP
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
-        - name: X-FBAPI-SIGNATURE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: X-FBAPI-NONCE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-NONCE'
-        - name: transferAmount
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: coinSymbol
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: network
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/ENetworkType'
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [feeAmount]
-                properties:
-                  feeAmount:
-                    type: string
-                    example: "0.23823"
-        '400':
-          description: Return custom error and error code here.
-        '401':
-          description: Unauthorized. Either API details are missing or invalid
-        '403':
-          description: Forbidden- You do not have access to the requested resource.
-        '415':
-          description: Unsupported media type. You need to use application/json.
-        '500':
-          description: Exchange internal error.
-
   /v1/depositAddress:
     get:
       summary: Fetch the deposit wallet address for a coinSymbol and network
@@ -650,6 +277,155 @@ paths:
           description: Account ID or Account Type not found or supported.
         '415':
           description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+
+  /v1/withdrawalFee:
+    get:
+      summary: Fetch the estimated transaction fee required for an external withdrawal
+      operationId: fetchWithdrawalFee
+      parameters:
+        - name: X-FBAPI-KEY
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-KEY'
+        - name: X-FBAPI-TIMESTAMP
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
+        - name: X-FBAPI-SIGNATURE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+        - name: transferAmount
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: coinSymbol
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: network
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ENetworkType'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [feeAmount]
+                properties:
+                  feeAmount:
+                    type: string
+                    example: "0.23823"
+        '400':
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+
+  /v1/withdraw:
+    post:
+      summary: Initiate a withdrawal from Exchange wallet to external wallet address
+      operationId: postWithdraw
+      parameters:
+        - name: X-FBAPI-KEY
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-KEY'
+        - name: X-FBAPI-TIMESTAMP
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
+        - name: X-FBAPI-SIGNATURE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountType:
+                  $ref : '#/components/schemas/EAccountTypeSpot'
+                toAddress:
+                  example: "bc1qs95ej87htkfy5786anzwh8sz3gmzvqh2d2uey2"
+                  type: string
+                tag:
+                  description: "A 'tag' or 'memo', if required by the network"
+                  type: string
+                  nullable: true
+                  example: null
+                coinSymbol:
+                  example: "ETH"
+                  type: string
+                network:
+                  example: "ETH"
+                  $ref: '#/components/schemas/ENetworkType'
+                amount:
+                  example: "0.0010597"
+                  type: string
+                isGross:
+                  example: true
+                  type: boolean
+                maxFee:
+                  example: "0.00001616"
+                  description: The service fee charged for withdrawal
+                  type: string
+                  nullable: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [transactionID]
+                properties:
+                  transactionID:
+                    type: string
+                    example: "3e8374383acce78d38be7fe9"
+        '400':
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '404':
+          description: Account ID or Account Type not found or supported.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '429':
+          description: Rate limit reached
         '500':
           description: Exchange internal error.
 
@@ -1012,6 +788,230 @@ paths:
           description: Forbidden- You do not have access to the requested resource.
         '415':
           description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+
+  /v1/subMainTransfer:
+    post:
+      summary: Initiate a transfer between an internal sub-account and the main-account
+      operationId: subMainTransfer
+      parameters:
+        - name: X-FBAPI-KEY
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-KEY'
+        - name: X-FBAPI-TIMESTAMP
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
+        - name: X-FBAPI-SIGNATURE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subAccountID:
+                  example: "1164fbab-1968-441d-848c-4cbe5ced4328"
+                  type: string
+                direction:
+                  example: "IN"
+                  $ref: '#/components/schemas/ESubTransferDirectionType'
+                coinSymbol:
+                  example: "USDT"
+                  type: string
+                amount:
+                  example: "7.3"
+                  type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  completed:
+                    type: boolean
+                    example: true
+                  transactionID:
+                    type: string
+                    nullable: true
+                    example: "3e8374383acce78d38be7fe9"
+        '400':
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '404':
+          description: Account ID or Account Type not found or supported.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '429':
+          description: Rate limit reached
+        '500':
+          description: Exchange internal error.
+ 
+  /v1/subaccountsTransfer:
+    post:
+      summary: Initiate a transfer between an two sub-accounts
+      operationId: subaccountsTransfer
+      parameters:
+        - name: X-FBAPI-KEY
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-KEY'
+        - name: X-FBAPI-TIMESTAMP
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
+        - name: X-FBAPI-SIGNATURE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                srcSubAccountID:
+                  example: "81690809-5eb9-48be-8eb5-6af17131d7dc"
+                  type: string
+                dstSubAccountID:
+                  example: "d6eba9e6-b867-4f9b-9353-ceb7a2db9311"
+                  type: string
+                coinSymbol:
+                  example: "BTC"
+                  type: string
+                amount:
+                  example: "0.03"
+                  type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  completed:
+                    type: boolean
+                    example: true
+                  transactionID:
+                    type: string
+                    nullable: true
+                    example: "3e8374383acce78d38be7fe9"
+        '400':
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '404':
+          description: Account ID or Account Type not found or supported.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '429':
+          description: Rate limit reached
+        '500':
+          description: Exchange internal error.
+
+  /v1/internalTransfer:
+    post:
+      summary: Initiate a transfer from one internal account to another, eg. TRADING to MARGIN
+      operationId: internalTransfer
+      parameters:
+        - name: X-FBAPI-KEY
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-KEY'
+        - name: X-FBAPI-TIMESTAMP
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
+        - name: X-FBAPI-SIGNATURE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fromAccountType:
+                  description: "The sub-account type being transferred from."
+                  example: "MARGIN"
+                  $ref : '#/components/schemas/EAccountType'
+                toAccountType:
+                  description: "The sub-account type being transferred to."
+                  $ref : '#/components/schemas/EAccountTypeSpot'
+                coinSymbol:
+                  example: "USDT"
+                  type: string
+                amount:
+                  example: "1.4"
+                  type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [completed]
+                properties:
+                  completed:
+                    type: boolean
+                    example: true
+                  transactionID:
+                    type: string
+                    nullable: true
+                    example: "3e8374383acce78d38be7fe9"
+        '400':
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '404':
+          description: Account ID or Account Type not found or supported.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '429':
+          description: Rate limit reached
         '500':
           description: Exchange internal error.
 
