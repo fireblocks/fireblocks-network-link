@@ -15,12 +15,13 @@ info:
     <p>*X-FBAPI-KEY* The API key as a string.</p>
     <p>*X-FBAPI-SIGNATURE* The encoded signature (see Signing a Message).</p>
     <p>*X-FBAPI-TIMESTAMP* A timestamp of the request (in milliseconds).</p>
+    <p>*X-FBAPI-NONCE* An increasing number on the request.</p>
 
     <h2>Signing a Message</h2>
 
     <p><i>For the header of X-FBAPI-SIGNATURE:</i></p>
 
-    <p>Create a prehash string {timestamp+method+endpoint+body} and apply an encoding onto the string (Pre-encoding is configurable: NONE, BASE64, HEX).</p>
+    <p>Create a prehash string {timestamp+nonce+method+endpoint+body} and apply an encoding onto the string (Pre-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32).</p>
     <p>[The request body is a JSON string and need to be the same with the parameters passed by the API]</p>
     <p>Use SECRET to encrypt the string with HMAC (Internal hash function is configurable: SHA512, SHA3_256).</p>
     <p>After that, apply an additional encoding onto the result (Post-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32).</p>
@@ -31,6 +32,8 @@ info:
     <p>The body to be encrypted is consistent with the content of the Request Body.</p>
     <p>The Method is always UPPER CASE.</p>
 
+    <p>Nonce in the request is strictly bigger than the last nonce sent.</p>
+
     <p>For GET requests, the endpoint contains the query string. e.g. /v1/depositAddress?coinSymbol=ETH&...</p>
     <p>The body is "" if there is no request body (for GET requests).</p>
 
@@ -40,18 +43,49 @@ info:
 
     <p>The difference between the timestamp and the exchange service time must be less than 5 seconds.</p>
     <p>It's expected that the request on the exchange's end will be considered expired and rejected otherwise.</p>
+
+    <h1>Error responses</h1>
+
+    <p>Upon failures, the expected format of the error is as follows: </p>
+    <pre id="json"><div class="redoc-json"><code><span class="ellipsis"></span><span class="token punctuation">{</span><ul style="list-style: none;"><li><div class="hoverable "><span class="property token string">"error"</span>: <span class="token string">"Missing request header params"</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"errorCode"</span>: <span class="token string">400000</span></div></li></ul><span class="token punctuation">}</span><span class="ellipsis"></span></code></div></pre>
+    <p>"error" must be a string and is required.</p>
+    <p>"errorCode" must either be a number or null.</p>
+    <p>
+    <h2>Predefined error codes on HTTP response 400:</h2>
+    <table>
+    <tr><p><td>Missing request header params</td><td>400000</td></p></tr>
+    <tr><p><td>Nonce sent was invalid</td><td>400001</td></p></tr>
+    <tr><p><td>Timestamp sent was invalid</td><td>400002</td></p></tr>
+    <tr><p><td>Signature sent was invalid</td><td>400003</td></p></tr>
+    <tr><p><td>Insufficient permissions for this API key</td><td>400004</td></p></tr>
+    <tr><p><td>Insufficient funds to carry out this operation</td><td>400005</td></p></tr>
+    <tr><p><td>Insufficient fee to carry out this operation</td><td>400006</td></p></tr>
+    <tr><p><td>Unsupported account type for this exchange</td><td>400007</td></p></tr>
+    <tr><p><td>Unsupported operation for this exchange</td><td>400008</td></p></tr>
+    <tr><p><td>Asset not supported on this exchange</td><td>400009</td></p></tr>
+    <tr><p><td>One of the parameters sent in the body or query is invalid</td><td>400010</td></p></tr>
+    <tr><p><td>Bad address format sent</td><td>400011</td></p></tr>
+    <tr><p><td>Balance amount is too small</td><td>400012</td></p></tr>
+    <tr><p><td>This exchange needs manual deposit address generation</td><td>400013</td></p></tr>
+    <tr><p><td>The exchange rejected this operation</td><td>400014</td></p></tr>
+    <tr><p><td>Withdraw was cancelled or failed on the exchange</td><td>400015</td></p></tr>
+    <tr><p><td>Address wasn't whitelisted</td><td>400016</td></p></tr>
+    <tr><p><td>IP wasn't whitelisted</td><td>400017</td></p></tr>
+    <tr><p><td>Account not found</td><td>400018</td></p></tr>
+    </table>
+    <p><p><i>Note</i> that not all error codes need to be in use!</p></p>
+
   title: Fireblocks Exchange API
-  version: "0.4.2"
+  version: "0.5.0"
   contact:
     email: support@fireblocks.com
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/fb-api/Exchanges-API/1.0.0
-  - url: 'https://api.fireblocks.com/v1'
+  - url: 'https://api.example.com/v1/'
+x-readme:
+  explorer-enabled: false
 paths:  
   /v1/accounts:
     get:
@@ -77,6 +111,11 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
       responses:
         '200':
           description: Success
@@ -86,10 +125,16 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Balance'
+        '400':
+          description: Return custom error and error code here.
         '401':
           description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
         '500':
-          description: Exchange internal error, can't process this right now.
+          description: Exchange internal error.
 
   /v1/internalTransfer:
     post:
@@ -111,31 +156,31 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: fromAccountType
-          in: query
-          description: "The sub-account type being transferred from."
-          required: true
-          example: "MARGIN"
-          schema:
-            $ref : '#/components/schemas/EAccountType'
-        - name: toAccountType
-          in: query
-          description: "The sub-account type being transferred to."
-          required: true
-          example: "SPOT"
-          schema:
-            $ref : '#/components/schemas/EAccountType'
-        - name: coinSymbol
-          in: query
-          example: "USDT"
+        - name: X-FBAPI-NONCE
+          in: header
           required: true
           schema:
-            type: string
-        - name: amount
-          in: query
-          required: true
-          schema:
-            type: string
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fromAccountType:
+                  description: "The sub-account type being transferred from."
+                  example: "MARGIN"
+                  $ref : '#/components/schemas/EAccountType'
+                toAccountType:
+                  description: "The sub-account type being transferred to."
+                  $ref : '#/components/schemas/EAccountTypeSpot'
+                coinSymbol:
+                  example: "USDT"
+                  type: string
+                amount:
+                  example: "1.4"
+                  type: string
       responses:
         '200':
           description: successful operation
@@ -150,11 +195,22 @@ paths:
                     example: true
                   transactionID:
                     type: string
+                    nullable: true
                     example: "3e8374383acce78d38be7fe9"
         '400':
-          description: Invalid Operation
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '404':
+          description: Account ID or Account Type not found or supported.
+        '415':
+          description: Unsupported media type. You need to use application/json.
         '429':
           description: Rate limit reached
+        '500':
+          description: Exchange internal error.
         
   /v1/subMainTransfer:
     post:
@@ -176,27 +232,30 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: subAccountID
-          in: query
+        - name: X-FBAPI-NONCE
+          in: header
           required: true
           schema:
-            type: string
-        - name: direction
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/ESubTransferDirectionType'
-        - name: coinSymbol
-          in: query
-          required: true
-          example: "USDT"
-          schema:
-            type: string
-        - name: amount
-          in: query
-          required: true
-          schema:
-            type: string
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subAccountID:
+                  example: "1164fbab-1968-441d-848c-4cbe5ced4328"
+                  type: string
+                direction:
+                  example: "IN"
+                  $ref: '#/components/schemas/ESubTransferDirectionType'
+                coinSymbol:
+                  example: "USDT"
+                  type: string
+                amount:
+                  example: "7.3"
+                  type: string
       responses:
         '200':
           description: successful operation
@@ -210,11 +269,22 @@ paths:
                     example: true
                   transactionID:
                     type: string
+                    nullable: true
                     example: "3e8374383acce78d38be7fe9"
         '400':
-          description: Invalid operation
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '404':
+          description: Account ID or Account Type not found or supported.
+        '415':
+          description: Unsupported media type. You need to use application/json.
         '429':
           description: Rate limit reached
+        '500':
+          description: Exchange internal error.
  
   /v1/subaccountsTransfer:
     post:
@@ -236,27 +306,30 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: srcSubAccountID
-          in: query
+        - name: X-FBAPI-NONCE
+          in: header
           required: true
           schema:
-            type: string
-        - name: dstSubAccountID
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: coinSymbol
-          in: query
-          required: true
-          example: "USDT"
-          schema:
-            type: string
-        - name: amount
-          in: query
-          required: true
-          schema:
-            type: string
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                srcSubAccountID:
+                  example: "81690809-5eb9-48be-8eb5-6af17131d7dc"
+                  type: string
+                dstSubAccountID:
+                  example: "d6eba9e6-b867-4f9b-9353-ceb7a2db9311"
+                  type: string
+                coinSymbol:
+                  example: "BTC"
+                  type: string
+                amount:
+                  example: "0.03"
+                  type: string
       responses:
         '200':
           description: successful operation
@@ -270,11 +343,22 @@ paths:
                     example: true
                   transactionID:
                     type: string
+                    nullable: true
                     example: "3e8374383acce78d38be7fe9"
         '400':
-          description: Invalid operation
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '404':
+          description: Account ID or Account Type not found or supported.
+        '415':
+          description: Unsupported media type. You need to use application/json.
         '429':
           description: Rate limit reached
+        '500':
+          description: Exchange internal error.
 
   /v1/withdraw:
     post:
@@ -296,20 +380,100 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: accountType
-          in: query
+        - name: X-FBAPI-NONCE
+          in: header
           required: true
           schema:
-            $ref : '#/components/schemas/EAccountType'
-        - name: toAddress
-          in: query
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountType:
+                  $ref : '#/components/schemas/EAccountTypeSpot'
+                toAddress:
+                  example: "bc1qs95ej87htkfy5786anzwh8sz3gmzvqh2d2uey2"
+                  type: string
+                tag:
+                  description: "A 'tag' or 'memo', if required by the network"
+                  type: string
+                  nullable: true
+                  example: null
+                coinSymbol:
+                  example: "ETH"
+                  type: string
+                network:
+                  example: "ETH"
+                  $ref: '#/components/schemas/ENetworkType'
+                amount:
+                  example: "0.0010597"
+                  type: string
+                isGross:
+                  example: true
+                  type: boolean
+                maxFee:
+                  example: "0.00001616"
+                  description: The service fee charged for withdrawal
+                  type: string
+                  nullable: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [transactionID]
+                properties:
+                  transactionID:
+                    type: string
+                    example: "3e8374383acce78d38be7fe9"
+        '400':
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '404':
+          description: Account ID or Account Type not found or supported.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '429':
+          description: Rate limit reached
+        '500':
+          description: Exchange internal error.
+
+  /v1/withdrawalFee:
+    get:
+      summary: Fetch the estimated transaction fee required for an external withdrawal
+      operationId: fetchWithdrawalFee
+      parameters:
+        - name: X-FBAPI-KEY
+          in: header
           required: true
           schema:
-            type: string
-        - name: tag
+            $ref: '#/components/schemas/X-FBAPI-KEY'
+        - name: X-FBAPI-TIMESTAMP
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
+        - name: X-FBAPI-SIGNATURE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+        - name: transferAmount
           in: query
-          required: false
-          description: "A 'tag' or 'memo', if required by the network"
+          required: true
           schema:
             type: string
         - name: coinSymbol
@@ -322,22 +486,6 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/ENetworkType'
-        - name: amount
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: isGross
-          in: query
-          required: true
-          schema:
-            type: boolean
-        - name: maxFee
-          in: query
-          required: false
-          description: The service fee charged for withdrawal 
-          schema:
-            type: string
       responses:
         '200':
           description: successful operation
@@ -345,14 +493,167 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [feeAmount]
                 properties:
-                  transactionID:
+                  feeAmount:
                     type: string
-                    example: "3e8374383acce78d38be7fe9"
+                    example: "0.23823"
         '400':
-          description: Invalid operation
-        '429':
-          description: Rate limit reached
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+
+  /v1/depositAddress:
+    get:
+      summary: Fetch the deposit wallet address for a coinSymbol and network
+      description: > 
+        Fireblocks will first check if a deposit wallet address exists using this endpoint.
+        If one does not exist, then a new address will be created using the `POST /depositAddress` endpoint.
+      operationId: fetchDepositAddress
+      parameters:
+        - name: X-FBAPI-KEY
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-KEY'
+        - name: X-FBAPI-TIMESTAMP
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
+        - name: X-FBAPI-SIGNATURE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+        - name: accountType
+          in: query
+          required: true
+          schema:
+            $ref : '#/components/schemas/EAccountTypeSpot' 
+        - name: coinSymbol
+          in: query
+          required: true
+          example: "USDT"
+          schema:
+            type: string
+        - name: network
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/ENetworkType'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [depositAddress]
+                properties:
+                  depositAddress:
+                    type: string
+                    description: "The address of the deposit address. If not found, it will be empty."
+                    example: "0xb794f5ea0ba39494ce839613fffba74279579268"
+                  depositAddressTag:
+                    type: string
+                    description: "A destination tag/memo to include for supported coins (eg. XLM, XRP etc')"
+                    example: "63163621"
+                    nullable: true
+        '400':
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '404':
+          description: Account ID or Account Type not found or supported.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+    post:
+      summary: Create a new deposit wallet address for a given coinSymbol and network
+      operationId: createDepositAddress
+      parameters:
+        - name: X-FBAPI-KEY
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-KEY'
+        - name: X-FBAPI-TIMESTAMP
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
+        - name: X-FBAPI-SIGNATURE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                accountType:
+                  $ref : '#/components/schemas/EAccountTypeSpot' 
+                coinSymbol:
+                  example: "USDT"
+                  type: string
+                network:
+                  example: "ETH"
+                  $ref: '#/components/schemas/ENetworkType'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [depositAddress]
+                properties:
+                  depositAddress:
+                    type: string
+                    description: "The address of the deposit address. If not found, it will be empty."
+                    example: "0xb794f5ea0ba39494ce839613fffba74279579268"
+                  depositAddressTag:
+                    type: string
+                    description: "A destination tag/memo to include for supported coins (eg. XLM, XRP etc')"
+                    example: "63163621"
+                    nullable: true
+        '400':
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '404':
+          description: Account ID or Account Type not found or supported.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+
+  /v1/transactionByID:
     get:
       summary: Fetch the status of a given transaction ID
       operationId: getWithdraw
@@ -372,6 +673,11 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
         - name: transactionID
           in: query
           required: true
@@ -417,172 +723,17 @@ paths:
                     description: "Milliseconds"
                     example: 1546658861000
         '400':
-          description: Invalid operation
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
 
-  /v1/withdrawalFee:
-    get:
-      summary: Fetch the estimated transaction fee required for an external withdrawal
-      operationId: fetchWithdrawalFee
-      parameters:
-        - name: X-FBAPI-KEY
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-KEY'
-        - name: X-FBAPI-TIMESTAMP
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
-        - name: X-FBAPI-SIGNATURE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: transferAmount
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: coinSymbol
-          in: query
-          required: true
-          schema:
-            type: string
-        - name: network
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/ENetworkType'
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  feeAmount:
-                    type: string
-                    example: "0.23823"
-        '400':
-          description: Invalid operation
-
-  /v1/depositAddress:
-    get:
-      summary: Fetch the deposit wallet address for a coinSymbol and network
-      description: > 
-        Fireblocks will first check if a deposit wallet address exists using this endpoint.
-        If one does not exist, then a new address will be created using the `POST /depositAddress` endpoint.
-      operationId: fetchDepositAddress
-      parameters:
-        - name: X-FBAPI-KEY
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-KEY'
-        - name: X-FBAPI-TIMESTAMP
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
-        - name: X-FBAPI-SIGNATURE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: accountType
-          in: query
-          required: true
-          example: "SPOT"
-          schema:
-            $ref : '#/components/schemas/EAccountType' 
-        - name: coinSymbol
-          in: query
-          required: true
-          example: "USDT"
-          schema:
-            type: string
-        - name: network
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/ENetworkType'
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [depositAddress]
-                properties:
-                  depositAddress:
-                    type: string
-                    description: "The address of the deposit address. If not found, it will be empty."
-                    example: "0xb794f5ea0ba39494ce839613fffba74279579268"
-                  depositAddressTag:
-                    type: string
-                    description: "A destination tag/memo to include for supported coins (eg. XLM, XRP etc')"
-                    example: "63163621"
-        '400':
-          description: Invalid operation
-    post:
-      summary: Create a new deposit wallet address for a given coinSymbol and network
-      operationId: createDepositAddress
-      parameters:
-        - name: X-FBAPI-KEY
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-KEY'
-        - name: X-FBAPI-TIMESTAMP
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
-        - name: X-FBAPI-SIGNATURE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: accountType
-          in: query
-          required: true
-          schema:
-            $ref : '#/components/schemas/EAccountType' 
-        - name: coinSymbol
-          in: query
-          example: "USDT"
-          required: true
-          schema:
-            type: string
-        - name: network
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/ENetworkType'
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [depositAddress]
-                properties:
-                  depositAddress:
-                    type: string
-                    description: "The address of the deposit address. If not found, it will be empty."
-                    example: "0xb794f5ea0ba39494ce839613fffba74279579268"
-                  depositAddressTag:
-                    type: string
-                    description: "A destination tag/memo to include for supported coins (eg. XLM, XRP etc')"
-                    example: "63163621"
-        '400':
-          description: Invalid operation
-
-  /v1/deposit:
+  /v1/transactionByHash:
     get:
       summary: Fetch the status of a given <txHash, network> pair
       operationId: getDeposit
@@ -602,6 +753,11 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
         - name: txHash
           in: query
           required: true
@@ -652,7 +808,15 @@ paths:
                     description: "Milliseconds"
                     example: 1546658861000
         '400':
-          description: Invalid operation
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
 
   /v1/transactionHistory:
     get:
@@ -674,6 +838,11 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
         - name: fromDate
           in: query
           required: true
@@ -696,19 +865,23 @@ paths:
           required: true
           schema:
             type: number
+            minimum: 1
+            example: 500
         - name: pageCursor
           in: query
           required: false
           description: "If not specified, return the first page. Otherwise, return the page the cursor points to."
           schema:
             type: string
+            nullable: true
+            example: null
         - name: isSubTransfer
           in: query
           required: true
-          example: false
           description: "If this is a sub-account tranfer"
           schema:
             type: boolean
+            example: false
         - name: coinSymbol
           in: query
           required: true
@@ -731,11 +904,14 @@ paths:
                 properties:
                   nextPageCursor:
                       type: string
+                      nullable: true
+                      example: null
                       description: "If not present, refers to the last possible page. Otherwise refers to the next page."
                   transactions:
                     type: array
                     items:
                       type: object
+                      required: [status]
                       properties:
                         transactionID:
                           type: string
@@ -765,7 +941,15 @@ paths:
                           description: "In Milliseconds. The timestamp on the creation of the transaction."
                           example: 1546658861000
         '400':
-          description: Invalid operation
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
 
   /v1/supportedAssets:
     get:
@@ -787,6 +971,11 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
       responses:
         '200':
           description: successful operation
@@ -796,7 +985,7 @@ paths:
                 type: array
                 items:
                   type: object
-                  required: [coinSymbol, network, type]
+                  required: [coinSymbol, network, coinClass]
                   properties:
                     coinSymbol:
                       type: string
@@ -809,13 +998,22 @@ paths:
                       type: array
                       items:
                         type: string
+                        nullable: true
                         description: >
                           The identifier(s) for asset types that are created by a smart contract (ERC20, BEP20, etc'), could be a contractAddress for example
                           Some tokens require multiple identifiers (for example, XLM).
                           The order of the identifiers is via heirarchy (for example, XLM has on it's first identifier the contractAddress and the second the contractAddressSpecifier)
                         example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         '400':
-          description: Invalid operation
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
 
 components:
   schemas:
@@ -828,6 +1026,13 @@ components:
       format: UNIX-timestamp-epoch
       description: >
         All requests must include the X-FBAPI-TIMESTAMP header containing the timestamp (in milliseconds).
+      example:
+        1546658861000
+    X-FBAPI-NONCE:
+      type: number
+      format: number
+      description: >
+        All requests must include the X-FBAPI-NONCE header being an increasing number. Usually equals the timestamp.
       example:
         1546658861000
     X-FBAPI-SIGNATURE:
@@ -846,6 +1051,18 @@ components:
         - OPTIONS
       example:
         MARGIN
+    EAccountTypeSpot:
+      type: string
+      description: "Enumeration on types of possible accounts"
+      enum:
+        - EXCHANGE
+        - SPOT
+        - FUNDING
+        - MARGIN
+        - FUTURES
+        - OPTIONS
+      example:
+        SPOT
     ENetworkType:
       type: string
       description: "Enumeration on types of possible networks"
@@ -944,19 +1161,22 @@ components:
         displayName:
           type: string
           example: "Margin (Cross)"
-          description: "Text to discribe the account type"
+          description: "Text to describe the account type"
+          nullable: true
         type:
+          required: true
           $ref : '#/components/schemas/EAccountType'
         balances:
           type: array
           items:
+            required: true
             $ref: '#/components/schemas/AccountBalance'
     Status:
       type: string
       description: >
         Types of possible statuses for transactions:
 
-          * `NOT_FOUND` - The transaction doesn't exist. If returned in `GET /deposit` or `GET /withdraw`, all other params are optional.
+          * `NOT_FOUND` - The transaction doesn't exist. If returned in `GET /transactionByHash` or `GET /transactionByID`, all other params are optional.
           * `PROCESSING` - The exchange is processing the transaction.
           * `CANCELLED` - The transaction was terminated by the account owner or the exchange.
           * `FAILED` - The transaction failed due to some error in the transaction.
