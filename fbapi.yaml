@@ -76,7 +76,7 @@ info:
     <p><p><i>Note</i> that not all error codes need to be in use!</p></p>
 
   title: Fireblocks Exchange API
-  version: "0.5.0"
+  version: "0.5.1"
   contact:
     email: support@fireblocks.com
   license:
@@ -1067,21 +1067,41 @@ components:
       type: string
       description: "Enumeration on types of possible networks"
       enum:
-        - XRP
-        - XLM
-        - XEM
-        - BTC
-        - ALGO
-        - ADA
-        - DIEM
-        - ETH
+        - BNB_BSC
+        - BSV
+        - XDC
+        - SGB
+        - KSM
+        - RBTC
+        - AVAX
         - DOT
-        - ETC
+        - XRP
+        - ETH
+        - ETH-AETH
+        - BCH
+        - ADA
+        - ECS
+        - XEC
+        - FTM_FANTOM
         - EOS
+        - BCHA
         - HBAR
-        - TERRA
         - XTZ
+        - ALGO
+        - WND
+        - BTC
+        - ZEC
+        - DASH
+        - TRX
+        - LTC
+        - LUNC
+        - MATIC_POLYGON
+        - XEM
+        - DOGE
+        - XLM
         - SOL
+        - CELO
+        - ETC
       example:
         ETH
     ECoinClass:
