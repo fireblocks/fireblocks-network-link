@@ -72,6 +72,7 @@ info:
     <tr><p><td>Address wasn't whitelisted</td><td>400016</td></p></tr>
     <tr><p><td>IP wasn't whitelisted</td><td>400017</td></p></tr>
     <tr><p><td>Account not found</td><td>400018</td></p></tr>
+    <tr><p><td>Withdrawals are limited by the exchange. Please try again in a bit.</td><td>400019</td></p></tr>
     </table>
     <p><p><i>Note</i> that not all error codes need to be in use!</p></p>
 
