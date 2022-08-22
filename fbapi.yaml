@@ -77,7 +77,7 @@ info:
     <p><p><i>Note</i> that not all error codes need to be in use!</p></p>
 
   title: Fireblocks Exchange API
-  version: "0.5.1"
+  version: "0.5.2"
   contact:
     email: support@fireblocks.com
   license:
