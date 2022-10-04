@@ -15,7 +15,7 @@ info:
     <p>*X-FBAPI-KEY* The API key as a string.</p>
     <p>*X-FBAPI-SIGNATURE* The encoded signature (see Signing a Message).</p>
     <p>*X-FBAPI-TIMESTAMP* A timestamp of the request (in milliseconds).</p>
-    <p>*X-FBAPI-NONCE* An increasing number on the request.</p>
+    <p>*X-FBAPI-NONCE* A unique reference to the request (Could be random).</p>
 
     <h2>Signing a Message</h2>
 
@@ -31,8 +31,6 @@ info:
     <p>The encrypted timestamp is consistent with the X-FBAPI-TIMESTAMP field in the request header.</p>
     <p>The body to be encrypted is consistent with the content of the Request Body.</p>
     <p>The Method is always UPPER CASE.</p>
-
-    <p>Nonce in the request is strictly bigger than the last nonce sent.</p>
 
     <p>For GET requests, the endpoint contains the query string. e.g. /v1/depositAddress?coinSymbol=ETH&...</p>
     <p>The body is "" if there is no request body (for GET requests).</p>
@@ -77,7 +75,7 @@ info:
     <p><p><i>Note</i> that not all error codes need to be in use!</p></p>
 
   title: Fireblocks Exchange API
-  version: "0.5.2"
+  version: "0.6.0"
   contact:
     email: support@fireblocks.com
   license:
@@ -1030,12 +1028,11 @@ components:
       example:
         1546658861000
     X-FBAPI-NONCE:
-      type: number
-      format: number
+      type: string
       description: >
-        All requests must include the X-FBAPI-NONCE header being an increasing number. Usually equals the timestamp.
+        All requests must include the X-FBAPI-NONCE header, a unique string to the request being a reference for that request.
       example:
-        1546658861000
+        "8853b277-d5f5-4363-bf5f-633b735e1413"
     X-FBAPI-SIGNATURE:
       type: string
       description: >
