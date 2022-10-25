@@ -4,46 +4,49 @@ info:
     This is the [Fireblocks](https://fireblocks.com) Exchange API standard.
     Check out the [API documentation](https://docs.fireblocks.com) for more information.
 
-    <h1>Authentication Fundamentals</h1>
-
-    The API-KEY and SECRET are generated and provided by the exchange.
-    
-    <h2>Creating a Request</h2>
+    <h1>Creating a Request</h3>
 
     All REST requests will contain the following headers:
 
     <p>*X-FBAPI-KEY* The API key as a string.</p>
-    <p>*X-FBAPI-SIGNATURE* The encoded signature (see Signing a Message).</p>
-    <p>*X-FBAPI-TIMESTAMP* A timestamp of the request (in milliseconds).</p>
-    <p>*X-FBAPI-NONCE* A unique reference to the request (Could be random).</p>
+    <p>*X-FBAPI-SIGNATURE* The payload signature output.</p>
+    <p>*X-FBAPI-TIMESTAMP* A timestamp of the request (in milliseconds)</p>
+    <p>*X-FBAPI-NONCE* A unique reference to the request (Random)</p>
 
-    <h2>Signing a Message</h2>
-
-    <p><i>For the header of X-FBAPI-SIGNATURE:</i></p>
-
-    <p>Create a prehash string {timestamp+nonce+method+endpoint+body} and apply an encoding onto the string (Pre-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32).</p>
-    <p>[The request body is a JSON string and need to be the same with the parameters passed by the API]</p>
-    <p>Use SECRET to encrypt the string with HMAC (Internal hash function is configurable: SHA512, SHA3_256).</p>
-    <p>After that, apply an additional encoding onto the result (Post-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32).</p>
-
-    <h2><i>Notice</i></h2>
-
-    <p>The encrypted timestamp is consistent with the X-FBAPI-TIMESTAMP field in the request header.</p>
-    <p>The body to be encrypted is consistent with the content of the Request Body.</p>
-    <p>The Method is always UPPER CASE.</p>
-
-    <p>For GET requests, the endpoint contains the query string. e.g. /v1/depositAddress?coinSymbol=ETH&...</p>
-    <p>The body is "" if there is no request body (for GET requests).</p>
-
-    <h2>Selecting a Timestamp</h2>
+    <h1>Selecting a Timestamp</h1>
 
     <p>The X-FBAPI-TIMESTAMP header is the number of milliseconds since Unix Epoch in UTC. e.g. 1547015186532</p>
 
-    <p>The difference between the timestamp and the exchange service time must be less than 5 seconds.</p>
+    <p>The difference between the timestamp and the exchange service time must be less than X seconds.</p>
+    <p>The amount of seconds (=X) is up to the exchange to decide - recommended to be a reasonable amount.</p>
     <p>It's expected that the request on the exchange's end will be considered expired and rejected otherwise.</p>
 
-    <h1>Error responses</h1>
+    <h1>Authentication Fundamentals</h1>
 
+    <p>[Authentication scheme is configurable: HMAC]</p>
+
+    <h2>Using HMAC</h2>
+
+    <p>The API-KEY and SECRET are <b>necessary</b>, and are generated and provided by the exchange.</p>
+
+    <h3>X-FBAPI-SIGNATURE for HMAC:</h3>
+
+    <p>1) Create a prehash string {timestamp+nonce+method+endpoint+body}.</p>
+    <p>2) Apply an encoding onto the prehash string (Pre-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32)</p>
+    <p>[The request body is a JSON string and need to be the same with the parameters passed by the API]</p>
+    <p>3) Use SECRET to sign the string with HMAC (Internal hash function is configurable: SHA512, SHA3_256, SHA256)</p>
+    <p>4) Apply an additional encoding onto the signature result (Post-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32)</p>
+
+    <h3><i>Notes</i></h3>
+
+    <p>- The timestamp in the signature payload is consistent with the X-FBAPI-TIMESTAMP field in the request header.</p>
+    <p>- The body to be signed is consistent with the content of the request body.</p>
+    <p>- The method is always UPPER CASE.</p>
+    <p>- For GET requests, the endpoint in the signature payload contains the query string. e.g. /v1/depositAddress<b>?coinSymbol=ETH&...</b></p>
+    <p>- The endpoint in the signature payload don't have to contain the entire path, or could contain more paths, it's configurable.</p>
+    <p>- The body is "" if there is no request body (for GET requests).</p>
+
+    <h1>Error responses</h1>
     <p>Upon failures, the expected format of the error is as follows: </p>
     <pre id="json"><div class="redoc-json"><code><span class="ellipsis"></span><span class="token punctuation">{</span><ul style="list-style: none;"><li><div class="hoverable "><span class="property token string">"error"</span>: <span class="token string">"Missing request header params"</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"errorCode"</span>: <span class="token string">400000</span></div></li></ul><span class="token punctuation">}</span><span class="ellipsis"></span></code></div></pre>
     <p>"error" must be a string and is required.</p>
@@ -73,16 +76,15 @@ info:
     <tr><p><td>Withdrawals are limited by the exchange. Please try again in a bit.</td><td>400019</td></p></tr>
     </table>
     <p><p><i>Note</i> that not all error codes need to be in use!</p></p>
-
   title: Fireblocks Exchange API
-  version: "0.6.0"
+  version: "0.7.0"
   contact:
     email: support@fireblocks.com
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 servers:
-  - url: 'https://api.example.com/v1/'
+  - url: 'https://api.fireblocks.com/'
 x-readme:
   explorer-enabled: false
 paths:  
@@ -93,7 +95,7 @@ paths:
               In case the exchange supports an account type but the account doesn't
               contain any balance in that account type, it is expected the "balances"
               field to be an empty array.
-      operationId: getBalances
+      operationId: GET /accounts
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -140,8 +142,8 @@ paths:
       summary: Fetch the deposit wallet address for a coinSymbol and network
       description: > 
         Fireblocks will first check if a deposit wallet address exists using this endpoint.
-        If one does not exist, then a new address will be created using the `POST /depositAddress` endpoint.
-      operationId: fetchDepositAddress
+        If one does not exist, then a new address will be created using the `POST /v1/depositAddress` endpoint.
+      operationId: GET /depositAddress
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -166,8 +168,11 @@ paths:
         - name: accountType
           in: query
           required: true
+          description: >
+            The account type to return the deposit address from.
+            The API will fill the fundableAccountType here.
           schema:
-            $ref : '#/components/schemas/EAccountTypeSpot' 
+            $ref : '#/components/schemas/Account_Type' 
         - name: coinSymbol
           in: query
           required: true
@@ -178,7 +183,9 @@ paths:
           in: query
           required: true
           schema:
-            $ref: '#/components/schemas/ENetworkType'
+            oneOf:
+              - $ref: '#/components/schemas/Mainnet_Networks'
+              - $ref: '#/components/schemas/Testnet_Networks'
       responses:
         '200':
           description: successful operation
@@ -194,7 +201,7 @@ paths:
                     example: "0xb794f5ea0ba39494ce839613fffba74279579268"
                   depositAddressTag:
                     type: string
-                    description: "A destination tag/memo to include for supported coins (eg. XLM, XRP etc')"
+                    description: "A destination tag/memo to include for supported coins (e.g. XLM, XRP etc')"
                     example: "63163621"
                     nullable: true
         '400':
@@ -211,7 +218,7 @@ paths:
           description: Exchange internal error.
     post:
       summary: Create a new deposit wallet address for a given coinSymbol and network
-      operationId: createDepositAddress
+      operationId: POST /depositAddress
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -238,16 +245,25 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                accountType:
-                  $ref : '#/components/schemas/EAccountTypeSpot' 
-                coinSymbol:
-                  example: "USDT"
-                  type: string
-                network:
-                  example: "ETH"
-                  $ref: '#/components/schemas/ENetworkType'
+                type: object
+                description: "Deposit address details to be created."
+                required:
+                  - accountType
+                  - coinSymbol
+                  - network
+                properties:
+                  accountType:
+                    description: >
+                      The account type to create the deposit address for.
+                      The API will fill the fundableAccountType here.
+                    $ref : '#/components/schemas/Account_Type' 
+                  coinSymbol:
+                    example: "USDT"
+                    type: string
+                  network:
+                    oneOf:
+                    - $ref: '#/components/schemas/Mainnet_Networks'
+                    - $ref: '#/components/schemas/Testnet_Networks'
       responses:
         '200':
           description: successful operation
@@ -263,7 +279,7 @@ paths:
                     example: "0xb794f5ea0ba39494ce839613fffba74279579268"
                   depositAddressTag:
                     type: string
-                    description: "A destination tag/memo to include for supported coins (eg. XLM, XRP etc')"
+                    description: "A destination tag/memo to include for supported coins (e.g. XLM, XRP etc')"
                     example: "63163621"
                     nullable: true
         '400':
@@ -282,7 +298,7 @@ paths:
   /v1/withdrawalFee:
     get:
       summary: Fetch the estimated transaction fee required for an external withdrawal
-      operationId: fetchWithdrawalFee
+      operationId: GET /withdrawalFee
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -318,7 +334,9 @@ paths:
           in: query
           required: true
           schema:
-            $ref: '#/components/schemas/ENetworkType'
+            oneOf:
+              - $ref: '#/components/schemas/Mainnet_Networks'
+              - $ref: '#/components/schemas/Testnet_Networks'
       responses:
         '200':
           description: successful operation
@@ -345,7 +363,7 @@ paths:
   /v1/withdraw:
     post:
       summary: Initiate a withdrawal from Exchange wallet to external wallet address
-      operationId: postWithdraw
+      operationId: POST /withdraw
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -373,9 +391,17 @@ paths:
           application/json:
             schema:
               type: object
+              description: Withdrawal request to be submitted.
+              required:
+                - accountType
+                - toAddress
+                - coinSymbol
+                - network
+                - amount
+                - isGross
               properties:
                 accountType:
-                  $ref : '#/components/schemas/EAccountTypeSpot'
+                  $ref : '#/components/schemas/Account_Type'
                 toAddress:
                   example: "bc1qs95ej87htkfy5786anzwh8sz3gmzvqh2d2uey2"
                   type: string
@@ -388,13 +414,15 @@ paths:
                   example: "ETH"
                   type: string
                 network:
-                  example: "ETH"
-                  $ref: '#/components/schemas/ENetworkType'
+                  oneOf:
+                    - $ref: '#/components/schemas/Mainnet_Networks'
+                    - $ref: '#/components/schemas/Testnet_Networks'
                 amount:
                   example: "0.0010597"
                   type: string
                 isGross:
                   example: true
+                  description: "Is the amount sent a gross amount?"
                   type: boolean
                 maxFee:
                   example: "0.00001616"
@@ -412,6 +440,7 @@ paths:
                 properties:
                   transactionID:
                     type: string
+                    description: "The requested transaction ID to process."
                     example: "3e8374383acce78d38be7fe9"
         '400':
           description: Return custom error and error code here.
@@ -431,7 +460,7 @@ paths:
   /v1/transactionByID:
     get:
       summary: Fetch the status of a given transaction ID
-      operationId: getWithdraw
+      operationId: GET /transactionByID
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -462,41 +491,52 @@ paths:
         '200':
           description: >
             Successful operation.
-            If status is NOT_FOUND, all other fields are optional.
-            In the other cases, all fields are required.
           content:
             application/json:
               schema:
-                type: object
-                required: [status]
-                properties:
-                  transactionID:
-                    type: string
-                    example: "46bas218d9h21uhib4i1u2h"
-                  status:
-                    $ref: '#/components/schemas/Status'
-                  txHash:
-                    type: string
-                    example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
-                  amount:
-                    type: string
-                    description: "The net amount of the transaction"
-                    example: "1.1"
-                  serviceFee:
-                    type: string
-                    example: "0.000000031"
-                  coinSymbol:
-                    type: string
-                    example: "ETH"
-                  network:
-                    $ref: '#/components/schemas/ENetworkType'
-                  direction:
-                    $ref: '#/components/schemas/ETransferDirectionTypeWithdraw'
-                  timestamp:
-                    type: number
-                    format: UNIX-timestamp-epoch
-                    description: "Milliseconds"
-                    example: 1546658861000
+                oneOf:
+                  - type: object
+                    title: "Transaction found"
+                    description: Transaction details result from the exchange.
+                    required: [transactionID, status, txHash, amount, serviceFee, coinSymbol, network, direction, timestamp]
+                    properties:
+                      transactionID:
+                        type: string
+                        example: "46bas218d9h21uhib4i1u2h"
+                      status:
+                        $ref: '#/components/schemas/Status_Found'
+                      txHash:
+                        type: string
+                        example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
+                      amount:
+                        type: string
+                        description: "The net amount of the transaction"
+                        example: "1.1"
+                      serviceFee:
+                        type: string
+                        example: "0.000000031"
+                      coinSymbol:
+                        type: string
+                        example: "ETH"
+                      network:
+                        oneOf:
+                          - $ref: '#/components/schemas/Mainnet_Networks'
+                          - $ref: '#/components/schemas/Testnet_Networks'
+                      direction:
+                        $ref: '#/components/schemas/Direction_for_Withdraw'
+                      timestamp:
+                        type: number
+                        format: UNIX-timestamp-epoch
+                        description: "Milliseconds"
+                        example: 1546658861000
+                  - type: object
+                    title: "Transaction not found"
+                    description: Transaction details not found.
+                    required:
+                      - status
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/Status_Not_Found'
         '400':
           description: Return custom error and error code here.
         '401':
@@ -511,7 +551,7 @@ paths:
   /v1/transactionByHash:
     get:
       summary: Fetch the status of a given <txHash, network> pair
-      operationId: getDeposit
+      operationId: GET /transationByHash
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -535,6 +575,7 @@ paths:
             $ref: '#/components/schemas/X-FBAPI-NONCE'
         - name: txHash
           in: query
+          description: "The requested TxHash to query. Could be intrinsic but could also not be."
           required: true
           schema:
             type: string
@@ -542,46 +583,59 @@ paths:
           in: query
           required: true
           schema:
-            $ref: '#/components/schemas/ENetworkType'
+            oneOf:
+              - $ref: '#/components/schemas/Mainnet_Networks'
+              - $ref: '#/components/schemas/Testnet_Networks'
       responses:
         '200':
           description: >
             Successful operation.
-            If status is NOT_FOUND, all other fields are optional.
-            In the other cases, all fields are required.
           content:
             application/json:
               schema:
-                type: object
-                required: [status]
-                properties:
-                  transactionID:
-                    type: string
-                    example: "46bas218d9h21uhib4i1u2h"
-                  status:
-                    $ref: '#/components/schemas/Status'
-                  txHash:
-                    type: string
-                    example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
-                  amount:
-                    type: string
-                    description: "The net amount of the transaction"
-                    example: "1.1"
-                  serviceFee:
-                    type: string
-                    example: "0.000000031"
-                  coinSymbol:
-                    type: string
-                    example: "ETH"
-                  network:
-                    $ref: '#/components/schemas/ENetworkType'
-                  direction:
-                    $ref: '#/components/schemas/ETransferDirectionTypeDeposit'
-                  timestamp:
-                    type: number
-                    format: UNIX-timestamp-epoch
-                    description: "Milliseconds"
-                    example: 1546658861000
+                oneOf:
+                  - type: object
+                    title: "Transaction found"
+                    description: Transaction details result from the exchange.
+                    required: [transactionID, status, txHash, amount, serviceFee, coinSymbol, network, direction, timestamp]
+                    properties:
+                      transactionID:
+                        type: string
+                        example: "46bas218d9h21uhib4i1u2h"
+                      status:
+                        $ref: '#/components/schemas/Status_Found'
+                      txHash:
+                        type: string
+                        example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
+                      amount:
+                        type: string
+                        description: "The net amount of the transaction"
+                        example: "1.1"
+                      serviceFee:
+                        type: string
+                        example: "0.000000031"
+                      coinSymbol:
+                        type: string
+                        example: "ETH"
+                      network:
+                        oneOf:
+                        - $ref: '#/components/schemas/Mainnet_Networks'
+                        - $ref: '#/components/schemas/Testnet_Networks'
+                      direction:
+                        $ref: '#/components/schemas/Direction_for_Deposit'
+                      timestamp:
+                        type: number
+                        format: UNIX-timestamp-epoch
+                        description: "Milliseconds"
+                        example: 1546658861000
+                  - type: object
+                    title: "Transaction not found"
+                    description: Transaction details not found.
+                    required:
+                      - status
+                    properties:
+                      status:
+                        $ref: '#/components/schemas/Status_Not_Found'
         '400':
           description: Return custom error and error code here.
         '401':
@@ -596,7 +650,7 @@ paths:
   /v1/transactionHistory:
     get:
       summary: Fetch the history of all transactions
-      operationId: transactionHistory
+      operationId: GET /transactionHistory
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -653,7 +707,7 @@ paths:
         - name: isSubTransfer
           in: query
           required: true
-          description: "If this is a sub-account tranfer"
+          description: "If this is a sub-account tranfer, either subMainTransfer or subaccountTransfer."
           schema:
             type: boolean
             example: false
@@ -666,8 +720,12 @@ paths:
         - name: network
           in: query
           required: true
+          description: "If isSubTransfer is true, this value could be null. Otherwise, it will be specified."
           schema:
-            $ref: '#/components/schemas/ENetworkType'
+            oneOf:
+              - nullable: true
+              - $ref: '#/components/schemas/Mainnet_Networks'
+              - $ref: '#/components/schemas/Testnet_Networks'
       responses:
         '200':
           description: successful operation
@@ -686,13 +744,14 @@ paths:
                     type: array
                     items:
                       type: object
-                      required: [status]
+                      description: "Transaction details result from the exchange."
+                      required: [transactionID, status, txHash, amount, serviceFee, coinSymbol, network, direction, timestamp]
                       properties:
                         transactionID:
                           type: string
                           example: "46bas218d9h21uhib4i1u2h"
                         status:
-                          $ref: '#/components/schemas/Status'
+                          $ref: '#/components/schemas/Status_Found'
                         txHash:
                           type: string
                           example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
@@ -707,9 +766,13 @@ paths:
                           type: string
                           example: "ETH"
                         network:
-                          $ref: '#/components/schemas/ENetworkType'
+                          description: "If isSubTransfer was true, this value could be null. Otherwise it's required."
+                          oneOf:
+                          - nullable: true
+                          - $ref: '#/components/schemas/Mainnet_Networks'
+                          - $ref: '#/components/schemas/Testnet_Networks'
                         direction:
-                          $ref: '#/components/schemas/ETransferDirectionTypeDeposit'
+                          $ref: '#/components/schemas/Direction_for_Deposit'
                         timestamp:
                           type: number
                           format: UNIX-timestamp-epoch
@@ -729,7 +792,7 @@ paths:
   /v1/supportedAssets:
     get:
       summary: Fetch the assets supported by the exchanges
-      operationId: supportedAssets
+      operationId: GET /supportedAssets
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -766,18 +829,22 @@ paths:
                       type: string
                       example: "USDT"
                     network:
-                      $ref: '#/components/schemas/ENetworkType'
+                      oneOf:
+                        - $ref: '#/components/schemas/Mainnet_Networks'
+                        - $ref: '#/components/schemas/Testnet_Networks'
                     coinClass:
-                      $ref: '#/components/schemas/ECoinClass'
+                      $ref: '#/components/schemas/Coin_Class'
                     identifiers:
                       type: array
+                      nullable: true
+                      description: >
+                        The identifier(s) for asset types that are created by a smart contract (ERC20, BEP20, etc'), could be a contractAddress for example.
+
+                        Some tokens require multiple identifiers (for example, XLM).
+
+                        The order of the identifiers is via heirarchy (for example, XLM has on it's first identifier the contractAddress and the second the contractAddressSpecifier)
                       items:
                         type: string
-                        nullable: true
-                        description: >
-                          The identifier(s) for asset types that are created by a smart contract (ERC20, BEP20, etc'), could be a contractAddress for example
-                          Some tokens require multiple identifiers (for example, XLM).
-                          The order of the identifiers is via heirarchy (for example, XLM has on it's first identifier the contractAddress and the second the contractAddressSpecifier)
                         example: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
         '400':
           description: Return custom error and error code here.
@@ -793,7 +860,7 @@ paths:
   /v1/subMainTransfer:
     post:
       summary: Initiate a transfer between an internal sub-account and the main-account
-      operationId: subMainTransfer
+      operationId: GET /subMainTransfer
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -821,13 +888,17 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - subAccountID
+                - direction
+                - coinSymbol
+                - amount
               properties:
                 subAccountID:
                   example: "1164fbab-1968-441d-848c-4cbe5ced4328"
                   type: string
                 direction:
-                  example: "IN"
-                  $ref: '#/components/schemas/ESubTransferDirectionType'
+                  $ref: '#/components/schemas/Direction_for_Sub_Main_transfer'
                 coinSymbol:
                   example: "USDT"
                   type: string
@@ -841,10 +912,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - completed
                 properties:
                   completed:
                     type: boolean
                     example: true
+                    description: "If true, the transaction will be completed instantly, else /transactionHistory will be invoked until completion."
                   transactionID:
                     type: string
                     nullable: true
@@ -867,7 +941,7 @@ paths:
   /v1/subaccountsTransfer:
     post:
       summary: Initiate a transfer between an two sub-accounts
-      operationId: subaccountsTransfer
+      operationId: GET /subaccountsTransfer
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -895,6 +969,11 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - srcSubAccountID
+                - dstSubAccountID
+                - coinSymbol
+                - amount
               properties:
                 srcSubAccountID:
                   example: "81690809-5eb9-48be-8eb5-6af17131d7dc"
@@ -915,10 +994,13 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - completed
                 properties:
                   completed:
                     type: boolean
                     example: true
+                    description: "If true, the transaction will be completed instantly, else /transactionHistory will be invoked until completion."
                   transactionID:
                     type: string
                     nullable: true
@@ -941,7 +1023,7 @@ paths:
   /v1/internalTransfer:
     post:
       summary: Initiate a transfer from one internal account to another, eg. TRADING to MARGIN
-      operationId: internalTransfer
+      operationId: GET /internalTransfer
       parameters:
         - name: X-FBAPI-KEY
           in: header
@@ -969,14 +1051,16 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - fromAccountType
+                - toAccountType
+                - coinSymbol
+                - amount
               properties:
                 fromAccountType:
-                  description: "The sub-account type being transferred from."
-                  example: "MARGIN"
-                  $ref : '#/components/schemas/EAccountType'
+                  $ref : '#/components/schemas/Account_Type'
                 toAccountType:
-                  description: "The sub-account type being transferred to."
-                  $ref : '#/components/schemas/EAccountTypeSpot'
+                  $ref : '#/components/schemas/Account_Type_2'
                 coinSymbol:
                   example: "USDT"
                   type: string
@@ -990,11 +1074,13 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [completed]
+                required:
+                  - completed
                 properties:
                   completed:
                     type: boolean
                     example: true
+                    description: "If true, the operation is regarded as a success, else the operation is regarded as a failure."
                   transactionID:
                     type: string
                     nullable: true
@@ -1037,7 +1123,7 @@ components:
       type: string
       description: >
         All requests must include the X-FBAPI-SIGNATURE header containing the signature of the request.
-    EAccountType:
+    Account_Type:
       type: string
       description: "Enumeration on types of possible accounts"
       enum:
@@ -1049,7 +1135,7 @@ components:
         - OPTIONS
       example:
         MARGIN
-    EAccountTypeSpot:
+    Account_Type_2:
       type: string
       description: "Enumeration on types of possible accounts"
       enum:
@@ -1061,60 +1147,120 @@ components:
         - OPTIONS
       example:
         SPOT
-    ENetworkType:
+    Mainnet_Networks:
       type: string
-      description: "Enumeration on types of possible networks"
+      description: "Enumeration on types of possible networks for a mainnet exchange."
       enum:
-        - BNB_BSC
-        - BSV
-        - XDC
-        - SGB
-        - KSM
-        - RBTC
-        - AVAX
-        - DOT
-        - XRP
-        - ETH
-        - ETH-AETH
-        - BCH
-        - ADA
-        - ECS
-        - XEC
-        - FTM_FANTOM
-        - EOS
-        - BCHA
-        - HBAR
-        - XTZ
-        - ALGO
-        - WND
-        - BTC
-        - ZEC
-        - DASH
-        - TRX
-        - LTC
-        - LUNC
-        - MATIC_POLYGON
-        - XEM
-        - DOGE
-        - XLM
-        - SOL
-        - CELO
-        - ETC
+      - Ethereum
+      - Chiliz
+      - BNB Chain
+      - Polygon
+      - Arbitrum
+      - Fantom
+      - Avalanche
+      - ANZ Bank
+      - Solana
+      - Cardano
+      - Algorand
+      - Optimism
+      - Tron
+      - Stellar
+      - Cosmos
+      - Ronin
+      - Bitcoin Cash
+      - RSK
+      - Bitcoin SV
+      - Bitcoin
+      - Celo
+      - Cortex
+      - Dash
+      - Dogecoin
+      - Polkadot
+      - Eco Smart
+      - EOS.IO
+      - Ethereum Classic
+      - Evmos
+      - Songbird
+      - Smart Bitcoin Cash
+      - Moonbeam
+      - Moonriver
+      - Hedera
+      - Bitkub Chain
+      - Kusama
+      - Litecoin
+      - Luna 2.0
+      - NEAR Protocol
+      - Songbird Legacy
+      - XDC Network
+      - Velas
+      - DigitalBits
+      - eCash
+      - NEM
+      - Ripple
+      - Tezos
+      - Zcash
+      - Aurora.dev
       example:
-        ETH
-    ECoinClass:
+        Ethereum
+    Testnet_Networks:
+      type: string
+      description: "Enumeration on types of possible networks for a testnet exchange"
+      enum:
+        - Ethereum
+        - BNB Chain
+        - Arbitrum
+        - Polygon
+        - Avalanche
+        - ANZ Bank
+        - Solana
+        - Cardano
+        - Algorand
+        - Optimism
+        - Tron
+        - Arbitrum Rinkeby
+        - Stellar
+        - Cosmos
+        - Bitcoin Cash
+        - RSK
+        - Bitcoin SV
+        - Bitcoin
+        - Celo Alfajores
+        - Celo Baklava
+        - Dash
+        - Dogecoin
+        - Eco Smart
+        - EOS.IO
+        - Ethereum Classic
+        - Smart Bitcoin Cash
+        - Hedera
+        - Bitkub Chain
+        - Litecoin
+        - Luna 2.0
+        - NEAR Protocol
+        - Velas
+        - Westend
+        - DigitalBits
+        - eCash
+        - NEM
+        - Ripple
+        - Tezos
+        - Zcash
+      example:
+        Westend
+    Coin_Class:
       type: string
       description: >
-        Coin classes:
+        Coin Classes:
 
           * `BASE` - A base blockchain asset
-          * `TOKEN` - An asset over a blockchain (for example, ERC20)
+          * `TOKEN` - An asset over a blockchain (for example, ERC20).
+                      In case of a token class, the "identifiers" field must be specified, to reduce loss-of-funds for clients.
       enum:
         - BASE
         - TOKEN
       example:
         TOKEN
-    ESubTransferDirectionType:
+    Direction_for_Sub_Main_transfer:
       type: string
       description: >
         Direction of a sub transfer:
@@ -1126,7 +1272,7 @@ components:
         - OUT
       example:
         IN
-    ETransferDirectionTypeDeposit:
+    Direction_for_Deposit:
       type: string
       description: >
         Direction of a transfer:
@@ -1138,7 +1284,7 @@ components:
         - CRYPTO_WITHDRAWAL
       example:
         CRYPTO_DEPOSIT
-    ETransferDirectionTypeWithdraw:
+    Direction_for_Withdraw:
       type: string
       description: >
         Direction of a transfer:
@@ -1150,8 +1296,13 @@ components:
         - CRYPTO_WITHDRAWAL
       example:
         CRYPTO_WITHDRAWAL
-    AccountBalance:
+    Balance_Information:
       type: object
+      required:
+        - coinSymbol
+        - totalAmount
+        - pendingAmount
+        - availableAmount
       properties:
         coinSymbol:
           type: string
@@ -1175,26 +1326,26 @@ components:
           description: "The borrowed amount for usage, the amount the exchange borrowed to the user"
     Balance:
       type: object
+      required:
+        - type
+        - balances
       properties:
         displayName:
           type: string
           example: "Margin (Cross)"
-          description: "Text to describe the account type"
+          description: "Text to describe the Account_Type. This will be visual on the console balance page."
           nullable: true
         type:
-          required: true
-          $ref : '#/components/schemas/EAccountType'
+          $ref : '#/components/schemas/Account_Type'
         balances:
           type: array
           items:
-            required: true
-            $ref: '#/components/schemas/AccountBalance'
-    Status:
+            $ref: '#/components/schemas/Balance_Information'
+    Status_Found:
       type: string
       description: >
         Types of possible statuses for transactions:
 
-          * `NOT_FOUND` - The transaction doesn't exist. If returned in `GET /transactionByHash` or `GET /transactionByID`, all other params are optional.
           * `PROCESSING` - The exchange is processing the transaction.
           * `CANCELLED` - The transaction was terminated by the account owner or the exchange.
           * `FAILED` - The transaction failed due to some error in the transaction.
@@ -1203,7 +1354,6 @@ components:
           * `REJECTED` - The exchange rejected the transaction.
           * `COMPLETED` - The transaction is successfully on the blockchain (and passed enough confirmations).
       enum:
-        - NOT_FOUND
         - PROCESSING
         - CANCELLED
         - FAILED
@@ -1212,3 +1362,10 @@ components:
         - REJECTED
         - COMPLETED
       example: "COMPLETED"
+    Status_Not_Found:
+      type: string
+      description: >
+        Failed to find the transaction.
+      enum:
+        - NOT_FOUND
+      example: "NOT_FOUND"
