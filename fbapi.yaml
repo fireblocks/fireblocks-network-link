@@ -1,12 +1,9 @@
 openapi: 3.0.0
 info:
   description: |
-    This is the [Fireblocks](https://fireblocks.com) Exchange API standard.
-    Check out the [API documentation](https://docs.fireblocks.com) for more information.
-
     <h1>Overview</h1>
 
-    Fireblocks is the digital asset infrastructure for 1,000s of the leading trading desks, hedge funds, brokerages, custodians, and banks. Through the Fireblocks Console, users connect and trade on over 30 exchanges. To meet the demand of exchanges who want to access the liquidity of institutional investors and traders, Fireblocks is opening our platform so exchanges can quickly integrate.
+    [Fireblocks](https://fireblocks.com) is the digital asset infrastructure for 1,000s of the leading trading desks, hedge funds, brokerages, custodians, and banks. Through the Fireblocks Console, users connect and trade on over 30 exchanges. To meet the demand of exchanges who want to access the liquidity of institutional investors and traders, Fireblocks is opening our platform so exchanges can quickly integrate.
 
     <h2>Benefits</h2>
     <ul><li>Enhance the visibility and liquidity of your exchange.
