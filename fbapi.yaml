@@ -132,7 +132,7 @@ info:
     </table>
     <p><p><i>Note</i> that not all error codes need to be in use!</p></p>
   title: Fireblocks Exchange API
-  version: "0.7.0"
+  version: "0.7.1"
   contact:
     email: support@fireblocks.com
   license:
