@@ -4,7 +4,65 @@ info:
     This is the [Fireblocks](https://fireblocks.com) Exchange API standard.
     Check out the [API documentation](https://docs.fireblocks.com) for more information.
 
-    <h1>Creating a Request</h3>
+    <h1>Overview</h1>
+
+    Fireblocks is the digital asset infrastructure for 1,000s of the leading trading desks, hedge funds, brokerages, custodians, and banks. Through the Fireblocks Console, users connect and trade on over 30 exchanges. To meet the demand of exchanges who want to access the liquidity of institutional investors and traders, Fireblocks is opening our platform so exchanges can quickly integrate.
+
+    <h2>Benefits</h2>
+    <ul><li>Enhance the visibility and liquidity of your exchange.
+    <ul><li>Fireblocks customers transact 20x more with exchanges supported on Fireblocks vs. unsupported exchanges</li></ul></li>
+
+    <li>Deliver a better experience to your customers who use Fireblocks with greater control of how the Fireblocks platform interacts with your exchange.
+    <ul><li>Control rate limits and response codes</li>
+    <li>Manage the supported assets</li>
+    <li>Optimize the platform load for requests from Fireblocks</li></ul>
+    </li></ul>
+    
+    <h2>How Fireblocks customers access exchanges</h2>
+
+    <p>Fireblocks customers use the Fireblocks web-based console to connect their third-party accounts such as crypto exchanges. This requires generating an API Key and an API Secret from their exchange portals, logging into their Fireblocks Console, adding an exchange account, selecting the exchange by a name and a logo, and then entering their account API Key, API Secret, and login details.</p>
+    
+    <p>Once the third-party account is connected, Fireblocks customers can use the Fireblocks Console and API to:</p>
+    
+    <ul><li>View their exchange account balances for their main, sub, and various trading accounts</li>
+    <li>Withdraw and deposit funds between their connected exchange accounts, their Fireblocks Vault, and counterparties</li>
+    <li>Track the status of their withdrawals and deposits</li>
+    <li>View and audit their transaction history</li></ul>
+    
+    <h2>Getting Started to Official Launch</h2>
+
+    <p>Fireblocks Connector for Exchanges is currently limited to select exchanges.
+
+    <p> Contact your Fireblocks Sales Rep to list your exchange in the Fireblocks ecosystem. You will need to sign a licensing agreement for listing your exchange. Please note that an exchange listing license agreement is separate from a self-custody license agreement, and neither agreement is required to sign the other. Once signed, you will receive a test environment to connect and begin integrating your pending exchange integration.</p>
+
+    <p>Begin configuring inbound connections for the API endpoints described below. Fireblocks initiates calls to each of these endpoints under your base URL whenever a Fireblocks customer accesses your exchange using the Fireblocks integration.
+    Once your contract is signed, the Fireblocks technical team will reach out to you to gather your exchange registration settings (see below).</p>
+
+    <p>Fireblocks starts each exchange integration with a short beta program. At a minimum, the beta participant will be yourself. Optionally, you may engage with your clients who already use Fireblocks for trading and self-custody to provide feedback on the beta program. Once the Fireblocks team determines the beta is successful, your exchange is made available to all Fireblocks customers, alongside mutual marketing activities to promote the launch.</p>
+    
+    <h3>Register your exchange with Fireblocks</h3>
+    <p>Once your license agreement for listing your exchange with Fireblocks is signed, the Fireblocks technical team will request the following exchange registration settings:</p>
+    <ol>
+    <li>Display name: i.e. “My Exchange” or “My Exchange Sandbox”</li>
+    <li>Icon: a 32x32 .svg file</li>
+    <li>Step-by-step guide for generating an API Key from your exchange platform. A public link to your knowledge base is preferred. A sharable document or PDF is also acceptable.</li>
+    <li>Base URL for your API endpoints: i.e. https://my-exchange.com/fireblocks</li>
+    <li>Version: The Fireblocks Exchange Connector major version number. Our current and only major version is 1.</li>
+    <li>Is sandbox exchange: true or false</li>
+    <li>Connection supports withdrawals from the exchange: true or false</li>
+    <li>Connection supports deposits to the exchange: true or false</li>
+    <li>Connection supports tracking for transaction status: true or false</li>
+    <li>Connection supports sub-accounts: true or false</li>
+    <li>Connection supports sub-account to sub-account transfers: true or false</li>
+    <li>Does transferring assets to the exchange account require manually generating a deposit address?: true or false</li>
+    <li>Select your authentication preferences:
+    <ol><li>Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
+    <li>Request signing format: valid values are HMAC_SHA512, HMAC_SHA3_256, HMAC_SHA256
+    <li>Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
+    <li>Supports nonce numbers for accurate request identification: true or false, default is true</li></ol>
+    </li></ol>
+
+    <h1>Creating a Request</h1>
 
     All REST requests will contain the following headers:
 
