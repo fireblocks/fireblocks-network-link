@@ -1,6 +1,6 @@
-# Fireblocks Exchange API Standard
+# Fireblocks Connector for Exchanges
 
-This repository contains the OpenAPI specification for the Fireblocks Exchange API Standard.
+This repository contains the OpenAPI specification for the Fireblocks Connector for Exchanges.
 
 ## Getting started
 
