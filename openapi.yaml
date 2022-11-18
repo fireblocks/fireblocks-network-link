@@ -8,7 +8,7 @@ info:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
   x-logo:
-    url: 'https://github.com/dsahni/fireblocks-connector/raw/main/assets/fireblocks-logo.png'
+    url: 'https://github.com/fireblocks/fireblocks-connector/raw/main/assets/fireblocks-logo.png'
     altText: 'Fireblocks logo'
   description: |
     <h1>Overview</h1>
