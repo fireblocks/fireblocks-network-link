@@ -2,9 +2,4 @@
 
 This repository contains the OpenAPI specification for the Fireblocks Connector for Exchanges.
 
-## Getting started
-
-To interact with the OpenAPI specification, copy/paste the YAML file into [Swagger Editor](https://editor.swagger.io/), or your SwaggerHub account (if you prefer).
-
-More information/documentation about the OpenAPI specification can be found here:
-https://swagger.io/docs/specification/about/
+https://fireblocks.github.io/fireblocks-connector

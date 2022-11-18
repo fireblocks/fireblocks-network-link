@@ -1,5 +1,15 @@
 openapi: 3.0.0
 info:
+  title: Fireblocks Connector for Exchanges
+  version: "0.7.4"
+  contact:
+    email: support@fireblocks.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  x-logo:
+    url: 'https://github.com/dsahni/fireblocks-connector/raw/main/assets/fireblocks-logo.png'
+    altText: 'Fireblocks logo'
   description: |
     <h1>Overview</h1>
 
@@ -131,17 +141,8 @@ info:
     <tr><p><td>Withdrawals are limited by the exchange. Please try again in a bit.</td><td>400019</td></p></tr>
     </table>
     <p><p><i>Note</i> that not all error codes need to be in use!</p></p>
-  title: Fireblocks Exchange API
-  version: "0.7.1"
-  contact:
-    email: support@fireblocks.com
-  license:
-    name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 servers:
   - url: 'https://api.fireblocks.com/'
-x-readme:
-  explorer-enabled: false
 paths:  
   /v1/accounts:
     get:
