@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Fireblocks Connector for Exchanges
+  title: Fireblocks Network Link for Exchanges
   version: "0.7.4"
   contact:
     email: support@fireblocks.com
@@ -38,8 +38,6 @@ info:
     
     <h2>Getting Started to Official Launch</h2>
 
-    <p>Fireblocks Connector for Exchanges is currently limited to select exchanges.
-
     <p> Contact your Fireblocks Sales Rep to list your exchange in the Fireblocks ecosystem. You will need to sign a licensing agreement for listing your exchange. Please note that an exchange listing license agreement is separate from a self-custody license agreement, and neither agreement is required to sign the other. Once signed, you will receive a test environment to connect and begin integrating your pending exchange integration.</p>
 
     <p>Begin configuring inbound connections for the API endpoints described below. Fireblocks initiates calls to each of these endpoints under your base URL whenever a Fireblocks customer accesses your exchange using the Fireblocks integration.
@@ -54,7 +52,7 @@ info:
     <li>Icon: a 32x32 .svg file</li>
     <li>Step-by-step guide for generating an API Key from your exchange platform. A public link to your knowledge base is preferred. A sharable document or PDF is also acceptable.</li>
     <li>Base URL for your API endpoints: i.e. https://my-exchange.com/fireblocks</li>
-    <li>Version: The Fireblocks Exchange Connector major version number. Our current and only major version is 1.</li>
+    <li>Version: The Fireblocks Network Link major version number. Our current and only major version is 1.</li>
     <li>Is sandbox exchange: true or false</li>
     <li>Connection supports withdrawals from the exchange: true or false</li>
     <li>Connection supports deposits to the exchange: true or false</li>
