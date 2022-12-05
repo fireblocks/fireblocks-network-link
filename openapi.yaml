@@ -16,12 +16,17 @@ info:
     [Fireblocks](https://fireblocks.com) connects businesses across the crypto world as the digital asset infrastructure for over 1,600 of the leading trading desks, hedge funds, brokerages, custodians, exchanges, and banks. To meet the demand of third-party services that want to access the liquidity of institutional investors and traders, Fireblocks is opening our platform for third-party solutions to quickly integrate into the Fireblocks platform. [Reach out to us for a partnership agreement](https://www.fireblocks.com/partners/#form-anchor) and add a Connector to have your product integrated.
 
     <h2>Benefits</h2>
-    <ul><li>Enhance your service’s visibility by immediately gaining access to 1000s of workspaces.
-    <ul><li>Build and maintain your Fireblocks Network Link to provide greater control of how Fireblocks users interact with your solution.
-    <ul><li>Control rate limits and response codes</li>
-    <li>Manage asset support</li>
-    <li>Optimize the platform load for requests from Fireblocks</li></ul></li></ul></li>
-
+    <ul>
+      <li>Enhance your service’s visibility by immediately gaining access to 1000s of workspaces.</li>
+      <li>Build and maintain your Fireblocks Network Link to provide greater control of how Fireblocks users interact with your solution.
+        <ul>
+          <li>Control rate limits and response codes</li>
+          <li>Manage asset support</li>
+          <li>Optimize the platform load for requests from Fireblocks</li>
+        </ul>
+      </li>
+    </ul>
+   
     <h2>Benefits for Exchanges</h2>
     <ul><li>Enhance the visibility and liquidity of your exchange.
     <ul><li>Fireblocks customers transact 20x more with exchanges supported on Fireblocks vs. unsupported exchanges</li></ul></li>
