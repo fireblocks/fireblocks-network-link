@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Exchanges
-  version: "0.7.4"
+  version: "0.7.5"
   contact:
     email: support@fireblocks.com
   license:
@@ -17,7 +17,7 @@ info:
 
     <h2>Benefits</h2>
     <ul>
-      <li>Enhance your service’s visibility by immediately gaining access to 1000s of workspaces.</li>
+      <li>Enhance your service's visibility by immediately gaining access to 1000s of workspaces.</li>
       <li>Build and maintain your Fireblocks Network Link to provide greater control of how Fireblocks users interact with your solution.
         <ul>
           <li>Control rate limits and response codes</li>
@@ -149,6 +149,7 @@ info:
     <tr><p><td>IP wasn't whitelisted</td><td>400017</td></p></tr>
     <tr><p><td>Account not found</td><td>400018</td></p></tr>
     <tr><p><td>Withdrawals are limited by the exchange. Please try again in a bit.</td><td>400019</td></p></tr>
+    <tr><p><td>Exchange has denied the request - a settlement is required!</td><td>400020</td></p></tr>
     </table>
     <p><p><i>Note</i> that not all error codes need to be in use!</p></p>
 servers:
@@ -1369,6 +1370,7 @@ components:
         - totalAmount
         - pendingAmount
         - availableAmount
+        - creditAmount
       properties:
         coinSymbol:
           type: string
@@ -1386,10 +1388,10 @@ components:
           type: string
           example: "10.333"
           description: "The available amount for usage, the amount the account has with guarantee"
-        borrowedAmount:
+        creditAmount:
           type: string
           example: "3.1"
-          description: "The borrowed amount for usage, the amount the exchange borrowed to the user"
+          description: "The credit amount, that the exchange has borrowed to the user"
     Balance:
       type: object
       required:
