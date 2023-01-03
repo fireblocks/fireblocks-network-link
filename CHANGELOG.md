@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file. Dates are d
 * Added credit balance instead of the borrow balance on /accounts endpoint
 * Added new settlement error
 * Can configure a different fundable account type for sub accounts
+* Gas fees description added for isGross
 
 #### v0.7.4
 
