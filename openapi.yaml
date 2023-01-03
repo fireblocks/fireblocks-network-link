@@ -489,7 +489,7 @@ paths:
                   type: string
                 isGross:
                   example: true
-                  description: "Is the amount sent a gross amount?"
+                  description: "Is the amount sent a gross amount? (Includes gas fees if necessary, and service fees)"
                   type: boolean
                 maxFee:
                   example: "0.00001616"
