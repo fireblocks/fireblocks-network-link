@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Exchanges
-  version: "0.7.5"
+  version: "0.8.0"
   contact:
     email: support@fireblocks.com
   license:
@@ -10,156 +10,16 @@ info:
   x-logo:
     url: 'https://drive.google.com/uc?id=1sseKokeIoh7hnUpV8skWYF_VzncF3slT'
     altText: 'Fireblocks logo'
-  description: |
-    <h1>Overview</h1>
-
-    [Fireblocks](https://fireblocks.com) connects businesses across the crypto world as the digital asset infrastructure for over 1,600 of the leading trading desks, hedge funds, brokerages, custodians, exchanges, and banks. To meet the demand of third-party services that want to access the liquidity of institutional investors and traders, Fireblocks is opening our platform for third-party solutions to quickly integrate into the Fireblocks platform. [Reach out to us for a partnership agreement](https://www.fireblocks.com/partners/#form-anchor) and add a Connector to have your product integrated.
-
-    <h2>Benefits</h2>
-    <ul>
-      <li>Enhance your service's visibility by immediately gaining access to 1000s of workspaces.</li>
-      <li>Build and maintain your Fireblocks Network Link to provide greater control of how Fireblocks users interact with your solution.
-        <ul>
-          <li>Control rate limits and response codes</li>
-          <li>Manage asset support</li>
-          <li>Optimize the platform load for requests from Fireblocks</li>
-        </ul>
-      </li>
-    </ul>
-   
-    <h2>Benefits for Exchanges</h2>
-    <ul><li>Enhance the visibility and liquidity of your exchange.
-    <ul><li>Fireblocks customers transact 20x more with exchanges supported on Fireblocks vs. unsupported exchanges</li></ul></li>
-
-    <li>Deliver a better experience to your customers who use Fireblocks with greater control of how the Fireblocks platform interacts with your exchange.
-    <ul><li>Control rate limits and response codes</li>
-    <li>Manage the supported assets</li>
-    <li>Optimize the platform load for requests from Fireblocks</li></ul>
-    </li></ul>
-    
-    <h2>How Fireblocks customers access exchanges</h2>
-
-    <p>Fireblocks customers use the Fireblocks web-based console to connect their third-party accounts such as crypto exchanges. This requires generating an API Key and an API Secret from their exchange portals, logging into their Fireblocks Console, adding an exchange account, selecting the exchange by a name and a logo, and then entering their account API Key, API Secret, and login details.</p>
-    
-    <p>Once the third-party account is connected, Fireblocks customers can use the Fireblocks Console and API to:</p>
-    
-    <ul><li>View their exchange account balances for their main, sub, and various trading accounts</li>
-    <li>Withdraw and deposit funds between their connected exchange accounts, their Fireblocks Vault, and counterparties</li>
-    <li>Track the status of their withdrawals and deposits</li>
-    <li>View and audit their transaction history</li></ul>
-    
-    <h2>Getting Started to Official Launch</h2>
-
-    <p> Contact your Fireblocks Sales Rep to list your exchange in the Fireblocks ecosystem. You will need to sign a licensing agreement for listing your exchange. Please note that an exchange listing license agreement is separate from a self-custody license agreement, and neither agreement is required to sign the other. Once signed, you will receive a test environment to connect and begin integrating your pending exchange integration.</p>
-
-    <p>Begin configuring inbound connections for the API endpoints described below. Fireblocks initiates calls to each of these endpoints under your base URL whenever a Fireblocks customer accesses your exchange using the Fireblocks integration.
-    Once your contract is signed, the Fireblocks technical team will reach out to you to gather your exchange registration settings (see below).</p>
-
-    <p>Fireblocks starts each exchange integration with a short beta program. At a minimum, the beta participant will be yourself. Optionally, you may engage with your clients who already use Fireblocks for trading and self-custody to provide feedback on the beta program. Once the Fireblocks team determines the beta is successful, your exchange is made available to all Fireblocks customers, alongside mutual marketing activities to promote the launch.</p>
-    
-    <h3>Register your exchange with Fireblocks</h3>
-    <p>Once your license agreement for listing your exchange with Fireblocks is signed, the Fireblocks technical team will request the following exchange registration settings:</p>
-    <ol>
-    <li>Display name: i.e. “My Exchange” or “My Exchange Sandbox”</li>
-    <li>Icon: a 32x32 .svg file</li>
-    <li>Step-by-step guide for generating an API Key from your exchange platform. A public link to your knowledge base is preferred. A sharable document or PDF is also acceptable.</li>
-    <li>Base URL for your API endpoints: i.e. https://my-exchange.com/fireblocks</li>
-    <li>Version: The Fireblocks Network Link major version number. Our current and only major version is 1.</li>
-    <li>Is sandbox exchange: true or false</li>
-    <li>Connection supports withdrawals from the exchange: true or false</li>
-    <li>Connection supports deposits to the exchange: true or false</li>
-    <li>Connection supports tracking for transaction status: true or false</li>
-    <li>Connection supports sub-accounts: true or false</li>
-    <li>Connection supports sub-account to sub-account transfers: true or false</li>
-    <li>Does transferring assets to the exchange account require manually generating a deposit address?: true or false</li>
-    <li>Select your authentication preferences:
-    <ol><li>Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
-    <li>Request signing format: valid values are HMAC_SHA512, HMAC_SHA3_256, HMAC_SHA256
-    <li>Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
-    <li>Supports nonce numbers for accurate request identification: true or false, default is true</li></ol>
-    </li></ol>
-
-    <h1>Creating a Request</h1>
-
-    All REST requests will contain the following headers:
-
-    <p>*X-FBAPI-KEY* The API key as a string.</p>
-    <p>*X-FBAPI-SIGNATURE* The payload signature output.</p>
-    <p>*X-FBAPI-TIMESTAMP* A timestamp of the request (in milliseconds)</p>
-    <p>*X-FBAPI-NONCE* A unique reference to the request (Random)</p>
-
-    <h1>Selecting a Timestamp</h1>
-
-    <p>The X-FBAPI-TIMESTAMP header is the number of milliseconds since Unix Epoch in UTC. e.g. 1547015186532</p>
-
-    <p>The difference between the timestamp and the exchange service time must be less than X seconds.</p>
-    <p>The amount of seconds (=X) is up to the exchange to decide - recommended to be a reasonable amount.</p>
-    <p>It's expected that the request on the exchange's end will be considered expired and rejected otherwise.</p>
-
-    <h1>Authentication Fundamentals</h1>
-
-    <p>[Authentication scheme is configurable: HMAC]</p>
-
-    <h2>Using HMAC</h2>
-
-    <p>The API-KEY and SECRET are <b>necessary</b>, and are generated and provided by the exchange.</p>
-
-    <h3>X-FBAPI-SIGNATURE for HMAC:</h3>
-
-    <p>1) Create a prehash string {timestamp+nonce+method+endpoint+body}.</p>
-    <p>2) Apply an encoding onto the prehash string (Pre-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32)</p>
-    <p>[The request body is a JSON string and need to be the same with the parameters passed by the API]</p>
-    <p>3) Use SECRET to sign the string with HMAC (Internal hash function is configurable: SHA512, SHA3_256, SHA256)</p>
-    <p>4) Apply an additional encoding onto the signature result (Post-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32)</p>
-
-    <h3><i>Notes</i></h3>
-
-    <p>- The timestamp in the signature payload is consistent with the X-FBAPI-TIMESTAMP field in the request header.</p>
-    <p>- The body to be signed is consistent with the content of the request body.</p>
-    <p>- The method is always UPPER CASE.</p>
-    <p>- For GET requests, the endpoint in the signature payload contains the query string. e.g. /v1/depositAddress<b>?coinSymbol=ETH&...</b></p>
-    <p>- The endpoint in the signature payload don't have to contain the entire path, or could contain more paths, it's configurable.</p>
-    <p>- The body is "" if there is no request body (for GET requests).</p>
-
-    <h1>Error responses</h1>
-    <p>Upon failures, the expected format of the error is as follows: </p>
-    <pre id="json"><div class="redoc-json"><code><span class="ellipsis"></span><span class="token punctuation">{</span><ul style="list-style: none;"><li><div class="hoverable "><span class="property token string">"error"</span>: <span class="token string">"Missing request header params"</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"errorCode"</span>: <span class="token string">400000</span></div></li></ul><span class="token punctuation">}</span><span class="ellipsis"></span></code></div></pre>
-    <p>"error" must be a string and is required.</p>
-    <p>"errorCode" must either be a number or null.</p>
-    <p>
-    <h2>Predefined error codes on HTTP response 400:</h2>
-    <table>
-    <tr><p><td>Missing request header params</td><td>400000</td></p></tr>
-    <tr><p><td>Nonce sent was invalid</td><td>400001</td></p></tr>
-    <tr><p><td>Timestamp sent was invalid</td><td>400002</td></p></tr>
-    <tr><p><td>Signature sent was invalid</td><td>400003</td></p></tr>
-    <tr><p><td>Insufficient permissions for this API key</td><td>400004</td></p></tr>
-    <tr><p><td>Insufficient funds to carry out this operation</td><td>400005</td></p></tr>
-    <tr><p><td>Insufficient fee to carry out this operation</td><td>400006</td></p></tr>
-    <tr><p><td>Unsupported account type for this exchange</td><td>400007</td></p></tr>
-    <tr><p><td>Unsupported operation for this exchange</td><td>400008</td></p></tr>
-    <tr><p><td>Asset not supported on this exchange</td><td>400009</td></p></tr>
-    <tr><p><td>One of the parameters sent in the body or query is invalid</td><td>400010</td></p></tr>
-    <tr><p><td>Bad address format sent</td><td>400011</td></p></tr>
-    <tr><p><td>Balance amount is too small</td><td>400012</td></p></tr>
-    <tr><p><td>This exchange needs manual deposit address generation</td><td>400013</td></p></tr>
-    <tr><p><td>The exchange rejected this operation</td><td>400014</td></p></tr>
-    <tr><p><td>Withdraw was cancelled or failed on the exchange</td><td>400015</td></p></tr>
-    <tr><p><td>Address wasn't whitelisted</td><td>400016</td></p></tr>
-    <tr><p><td>IP wasn't whitelisted</td><td>400017</td></p></tr>
-    <tr><p><td>Account not found</td><td>400018</td></p></tr>
-    <tr><p><td>Withdrawals are limited by the exchange. Please try again in a bit.</td><td>400019</td></p></tr>
-    <tr><p><td>Exchange has denied the request - a settlement is required!</td><td>400020</td></p></tr>
-    </table>
-    <p><p><i>Note</i> that not all error codes need to be in use!</p></p>
+  description:
+    $ref: "./DESCRIPTION.md"
 servers:
-  - url: 'https://api.fireblocks.com/'
+  - url: 'https://fireblocks.your-3rd-party-domain.com/'
 paths:  
   /v1/accounts:
     get:
       summary: Fetches list of all account types, and the balances within them.
       description: >
-              In case the exchange supports an account type but the account doesn't
+              In case the 3rd party supports an account type but the account doesn't
               contain any balance in that account type, it is expected the "balances"
               field to be an empty array.
       operationId: GET /accounts
@@ -429,7 +289,7 @@ paths:
 
   /v1/withdraw:
     post:
-      summary: Initiate a withdrawal from Exchange wallet to external wallet address
+      summary: Initiate a withdrawal from the 3rd party wallet to an external wallet address
       operationId: POST /withdraw
       parameters:
         - name: X-FBAPI-KEY
@@ -472,6 +332,10 @@ paths:
                 toAddress:
                   example: "bc1qs95ej87htkfy5786anzwh8sz3gmzvqh2d2uey2"
                   type: string
+                  description: >
+                    The destination address of the withdraw.
+                    Will be masked if configured on the registration, by default it's not masked.
+                    Masking options: `NONE`, `SHA256`, `SHA3\_256`, `SHA512`
                 tag:
                   description: "A 'tag' or 'memo', if required by the network"
                   type: string
@@ -564,7 +428,7 @@ paths:
                 oneOf:
                   - type: object
                     title: "Transaction found"
-                    description: Transaction details result from the exchange.
+                    description: Transaction details result from the 3rd party.
                     required: [transactionID, status, txHash, amount, serviceFee, coinSymbol, network, direction, timestamp]
                     properties:
                       transactionID:
@@ -663,7 +527,7 @@ paths:
                 oneOf:
                   - type: object
                     title: "Transaction found"
-                    description: Transaction details result from the exchange.
+                    description: Transaction details result from the 3rd party.
                     required: [transactionID, status, txHash, amount, serviceFee, coinSymbol, network, direction, timestamp]
                     properties:
                       transactionID:
@@ -811,7 +675,7 @@ paths:
                     type: array
                     items:
                       type: object
-                      description: "Transaction details result from the exchange."
+                      description: "Transaction details result from the 3rd party."
                       required: [transactionID, status, txHash, amount, serviceFee, coinSymbol, network, direction, timestamp]
                       properties:
                         transactionID:
@@ -838,6 +702,7 @@ paths:
                           - nullable: true
                           - $ref: '#/components/schemas/Mainnet_Networks'
                           - $ref: '#/components/schemas/Testnet_Networks'
+                          example: "Ethereum"
                         direction:
                           $ref: '#/components/schemas/Direction_for_Deposit'
                         timestamp:
@@ -1216,7 +1081,7 @@ components:
         SPOT
     Mainnet_Networks:
       type: string
-      description: "Enumeration on types of possible networks for a mainnet exchange."
+      description: "Enumeration on types of possible networks for a mainnet 3rd party."
       enum:
       - Ethereum
       - Chiliz
@@ -1271,7 +1136,7 @@ components:
         Ethereum
     Testnet_Networks:
       type: string
-      description: "Enumeration on types of possible networks for a testnet exchange"
+      description: "Enumeration on types of possible networks for a testnet 3rd party"
       enum:
         - Ethereum
         - BNB Chain
@@ -1390,7 +1255,7 @@ components:
         creditAmount:
           type: string
           example: "3.1"
-          description: "The credit amount, that the exchange has borrowed to the user"
+          description: "The credit amount, that the 3rd party has borrowed to the user"
     Balance:
       type: object
       required:
@@ -1413,12 +1278,12 @@ components:
       description: >
         Types of possible statuses for transactions:
 
-          * `PROCESSING` - The exchange is processing the transaction.
-          * `CANCELLED` - The transaction was terminated by the account owner or the exchange.
+          * `PROCESSING` - The 3rd party is processing the transaction.
+          * `CANCELLED` - The transaction was terminated by the account owner or the 3rd party.
           * `FAILED` - The transaction failed due to some error in the transaction.
           * `PENDING_MANUAL_APPROVAL` - The transaction requires some manual approval by the account owner.
-          * `PENDING_SERVICE_MANUAL_APPROVAL` - The transaction is being reviewed manually by the exchange and hasn't been accepted yet.
-          * `REJECTED` - The exchange rejected the transaction.
+          * `PENDING_SERVICE_MANUAL_APPROVAL` - The transaction is being reviewed manually by the 3rd party and hasn't been accepted yet.
+          * `REJECTED` - The 3rd party rejected the transaction.
           * `COMPLETED` - The transaction is successfully on the blockchain (and passed enough confirmations).
       enum:
         - PROCESSING
