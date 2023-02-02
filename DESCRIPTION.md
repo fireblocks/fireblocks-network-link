@@ -93,6 +93,8 @@ Signature procedure:
 4) Apply an additional encoding onto the signature result (Post-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32)
 
 ### Using RSA
+Supported RSA Parameters [PKCS1v15]
+
 The API-KEY and SECRET are **necessary**, and are generated and provided by the 3rd party.
 
 SECRET is defined to be the Private RSA PEM.
@@ -118,7 +120,9 @@ Signature procedure on Fireblocks's end:
 
 \- For GET requests, the endpoint in the signature payload contains the query string. e.g. /v1/depositAddress<b>?coinSymbol=ETH&...</b>
 
-\- The endpoint in the signature payload don't have to contain the entire path, or could contain more paths, it's configurable.
+\- The endpoint in the signature payload is always in a path-relative format.
+
+\- The endpoint in the signature payload could contain more paths, it's configurable. e.g. (DEFAULT) /v1/depositAddress, /fireblocks/v1/depositAddress...
 
 \- The body is "" if there is no request body (for GET requests).
 
@@ -163,6 +167,11 @@ _Note_ that not all error codes need to be in use!
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
 ## v0.8.0
+> 2 Feb 2023
+* Added more details the RSA support.
+* Added more details on the signature payload.
+* Renamed to "Fireblocks Connector for Third Party Services"
+
 > 29 Jan 2023
 * Added RSA support in addition to HMAC support
 * Withdrawal destination address can now become masked with a hash value, if configured.
