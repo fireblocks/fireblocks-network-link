@@ -1,16 +1,16 @@
 # Overview
-[Fireblocks](https://fireblocks.com) connects businesses across the crypto world as the digital asset infrastructure for over 1,600 of the leading trading desks, hedge funds, brokerages, custodians, 3rd partys, and banks. To meet the demand of third-party services that want to access the liquidity of institutional investors and traders, Fireblocks is opening our platform for third-party solutions to quickly integrate into the Fireblocks platform. [Reach out to us for a partnership agreement](https://www.fireblocks.com/partners/#form-anchor) and add a Connector to have your product integrated.
+[Fireblocks](https://fireblocks.com) connects businesses across the crypto world as the digital asset infrastructure for over 1,600 of the leading trading desks, hedge funds, brokerages, custodians, 3rd parties, and banks. To meet the demand of third-party services that want to access the liquidity of institutional investors and traders, Fireblocks is opening our platform for third-party solutions to quickly integrate into the Fireblocks platform. [Reach out to us for a partnership agreement](https://www.fireblocks.com/partners/#form-anchor) and add a Connector to have your product integrated.
 
 ## Benefits
 *   Enhance your service's visibility and liquidity by immediately gaining access to 1000s of workspaces.
-*   Fireblocks customers transact 20x more with 3rd partys supported on Fireblocks vs. unsupported 3rd partys
+*   Fireblocks customers transact 20x more with 3rd parties supported on Fireblocks vs. unsupported 3rd parties
 *   Deliver a better experience to your customers who use Fireblocks with greater control of how the Fireblocks platform interacts with your 3rd party.
 *   Control rate limits and response codes
 *   Manage the supported assets
 *   Optimize the platform load for requests from Fireblocks
 
-## How Fireblocks customers access 3rd partys
-Fireblocks customers use the Fireblocks web-based console to connect their third-party accounts such as crypto 3rd partys. This requires generating an API Key and an API Secret from their 3rd party portals, logging into their Fireblocks Console, adding an 3rd party account, selecting the 3rd party by a name and a logo, and then entering their account API Key, API Secret, and login details.
+## How Fireblocks customers access 3rd parties
+Fireblocks customers use the Fireblocks web-based console to connect their third-party accounts such as crypto 3rd partyie. This requires generating an API Key and an API Secret from their 3rd party portals, logging into their Fireblocks Console, adding an 3rd party account, selecting the 3rd party by a name and a logo, and then entering their account API Key, API Secret, and login details.
 
 Once the third-party account is connected, Fireblocks customers can use the Fireblocks Console and API to:
 
