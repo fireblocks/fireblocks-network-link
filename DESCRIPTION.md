@@ -166,6 +166,10 @@ _Note_ that not all error codes need to be in use!
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+## v0.8.1
+> 26 Feb 2023
+* Supporting EthereumPoW and Luna Classic networks on Mainnet
+
 ## v0.8.0
 > 2 Feb 2023
 * Added more details the RSA support.

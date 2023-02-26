@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Third Party Services 
-  version: "0.8.0"
+  version: "0.8.1"
   contact:
     email: support@fireblocks.com
   license:
@@ -1084,6 +1084,7 @@ components:
       description: "Enumeration on types of possible networks for a mainnet 3rd party."
       enum:
       - Ethereum
+      - EthereumPoW
       - Chiliz
       - BNB Chain
       - Polygon
@@ -1120,6 +1121,7 @@ components:
       - Bitkub Chain
       - Kusama
       - Litecoin
+      - Luna Classic
       - Luna 2.0
       - NEAR Protocol
       - Songbird Legacy
