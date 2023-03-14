@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Fireblocks Network Link for Account Linking Partners 
-  version: "0.8.1""
+  title: Fireblocks Network Link for Account Linking Partners
+  version: "0.9"
   contact:
     email: support@fireblocks.com
   license:
