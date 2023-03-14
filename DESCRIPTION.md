@@ -1,5 +1,8 @@
 # Overview
-[Fireblocks](https://fireblocks.com) connects businesses across the crypto world as the digital asset infrastructure for over 1,600 of the leading trading desks, hedge funds, brokerages, custodians, 3rd parties, and banks. To meet the demand of third-party services that want to access the liquidity of institutional investors and traders, Fireblocks is opening our platform for third-party solutions to quickly integrate into the Fireblocks platform. [Reach out to us for a partnership agreement](https://www.fireblocks.com/partners/#form-anchor) and add a Connector to have your product integrated.
+[Fireblocks](https://fireblocks.com) connects businesses across the crypto world as the digital asset infrastructure for over 1,700 of the leading trading desks, hedge funds, brokerages, custodians and banks. To meet the demand of third-party services that want to access the liquidity of institutional investors and traders, Fireblocks is opening our platform for third-party solutions to quickly integrate into the Fireblocks platform. [Reach out to us to become a partner](https://www.fireblocks.com/partners/#form-anchor).
+
+This documentation is for any Fireblocks account linking partner. A recommended reading order for banks is to review the Overview and Guide for Banks sections as a start. A Guide for Exchanges will be added soon.
+
 
 ## Benefits
 *   Enhance your service's visibility and liquidity by immediately gaining access to 1000s of workspaces.
@@ -9,13 +12,13 @@
 *   Manage the supported assets
 *   Optimize the platform load for requests from Fireblocks
 
-## How Fireblocks customers access 3rd parties
-Fireblocks customers use the Fireblocks web-based console to connect their third-party accounts such as crypto 3rd partyie. This requires generating an API Key and an API Secret from their 3rd party portals, logging into their Fireblocks Console, adding an 3rd party account, selecting the 3rd party by a name and a logo, and then entering their account API Key, API Secret, and login details.
+## How Fireblocks Customers Access Linked Accounts
+Fireblocks customers use the Fireblocks web-based console to connect their third-party accounts such as exchange accounts or bank accounts. This requires generating an API Key and an API Secret from the 3rd party portal, logging into their Fireblocks Console, adding a linked account, selecting the relevant 3rd party by a name and a logo, and then entering their account API Key, API Secret, and login details.
 
 Once the third-party account is connected, Fireblocks customers can use the Fireblocks Console and API to:
 
-*   View their 3rd party account balances for their main, sub, and various trading accounts
-*   Withdraw and deposit funds between their connected 3rd party accounts, their Fireblocks Vault, and counterparties
+*   View their linked account balances for their main, sub, and various trading accounts
+*   Withdraw and deposit funds between their connected linked accounts, their Fireblocks Vault, and counterparties
 *   Track the status of their withdrawals and deposits
 *   View and audit their transaction history
 
@@ -26,33 +29,98 @@ Begin configuring inbound connections for the API endpoints described below. Fir
 
 Fireblocks starts each 3rd party integration with a short beta program. At a minimum, the beta participant will be yourself. Optionally, you may engage with your clients who already use Fireblocks for trading and self-custody to provide feedback on the beta program. Once the Fireblocks team determines the beta is successful, your 3rd party is made available to all Fireblocks customers, alongside mutual marketing activities to promote the launch.
 
-## Register your 3rd party with Fireblocks
-Once your license agreement for listing your 3rd party with Fireblocks is signed, the Fireblocks technical team will request the following 3rd party registration settings:
+# Guide for Banks
 
-1.  Display name: i.e. “My Exchange” or “My Exchange Sandbox”
-2.  Icon: a 32x32 .svg file
-3.  Step-by-step guide for generating an API Key from your 3rd party platform. 
-    -   A public link to your knowledge base is preferred (A sharable document or PDF is also acceptable).
-4.  Base URL for your API endpoints: i.e. https://my-service.com/fireblocks
-5.  Version: The Fireblocks Network Link major version number. Our current and only major version is 1.
-6.  What is your main account's fundable type? (The account type where Fireblocks users can deposit and withdraw funds)
-7.  Is 3rd party a sandbox environment: true or false
-8.  Connection supports withdrawals from the 3rd party: true or false
-9.  Connection supports deposits to the 3rd party: true or false
-10.  Connection supports sub-accounts: true or false
-11.  Connection supports sub-account to sub-account transfers: true or false
-12.  What is your sub account's main fundable type? By default it is equal to the main account's fundable type.
-13.  Does transferring assets to the 3rd party account require manually generating a deposit address on the 3rd party's portal?: true or false
-14. Upon withdrawals, does your 3rd party require the "address" field to be masked?: valid values are NONE, SHA512, SHA3\_256, SHA256. NONE is the default.
-15.  Select your authentication preferences:
-* HMAC:
-    - Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
-    - Request signing format: valid values are: SHA512, SHA3\_256, SHA256
-    - Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
-* RSA:
-    - Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
-    - Request signing format: valid values are: SHA512, SHA3\_256, SHA256
-    - Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
+## Introduction
+Starting from version 1.0.0, Fireblocks is supporting banks to integrate and allow mutual customers to link their bank accounts to the Fireblocks system. 
+
+Fireblocks users would be able to:
+
+1. View their bank accounts balance (required).
+2. Initiate in-bank transfers (required).
+3. Initiate inter-bank transfers (optional).
+4. FX conversions (optional).
+5. Convert between DDA held assets and blockchain based assets (optional).
+
+## Endpoints that banks need to implement
+
+<table>  
+<tr><p><td><b>Endpoint Name</td><td><b>Required</td><td><b>Optional</td><td><b>Comment</td></p></tr>  
+<tr><p><td>GET accounts</td><td>V</td><td></td><td>Fireblocks will query balances via this endpoint</td></p></tr>  
+<tr><p><td>POST withdraw</td><td>V</td><td></td><td>Fireblocks will send in-bank and inter-bank transaction initiation requests via this endpoint. Implementing Inter-bank networks (ACH, Wire etc.) is optional.</td></p></tr>  
+<tr><p><td>GET depositAddress</td><td>V</td><td></td><td>Fireblocks will use this endpoint to query for deposit details to a specific account on a specific network e.g ABA related details or a blockchain address for a bank owned blockchain based settlement network. Please respond with an empty tag for unsupporteds networks</td></p></tr>  
+<tr><p><td>GET transactionByID</td><td>V</td><td></td><td>Fireblocks will use this endpoint to gather a specific transaction details</td></p></tr>  
+<tr><p><td>POST transactionHistory</td><td>V</td><td></td><td>Fireblocks will use this endpoint to gather account's transactions details for a defined period</td></p></tr>
+<tr><p><td>GET supportedAssets</td><td>V</td><td></td><td>This endpoint response should contain a list of the bank's supported currencies</td></p></tr>
+<tr><p><td>POST internalTransfer</td><td></td><td>V</td><td>Fireblocks will use this endpoint for transfers/conversions to occur between balances which are controlled by the same API key. Main use-case is for DDA redeem for banks implementing blockchain settlement networks.</td></p></tr>  
+<tr><p><td>POST convert</td><td></td><td>V</td><td>Fireblocks will use this endpoint for FX conversions</td></p></tr> 
+<tr><p><td>POST subMainTransfer</td><td></td><td>V</td><td>Needed if supportSubAccounts flag is configured to True</td></p></tr>  
+<tr><p><td>POST subaccountsTransfer</td><td></td><td>V</td><td>Needed if supportSubAccounts and supportSubToSubTransfers flags are configured to True</td></p></tr>  
+</table>
+
+## Currencies
+
+Fireblocks supports multi-currency accounts out of the box. You do not need to define if your accounts are single-currency or multi-currency, this will be determined by Fireblocks according to the balances array you return in the GET accounts endpoint. 
+
+## Inter-bank Transfers
+
+When posting inter-bank transfer request, Fireblocks will use the POST withdraw endpoint.  
+
+ - The inter-bank rails type will appear in the `network` field. Currently supporting ABA, IBAN, SEPI.
+ - The destination account-details will appear as a JSON in the `TBD` field.
+
+Fireblocks will use the following structure:
+
+Account-details structure for ABA transfers -
+```
+{
+    "holderGivenName": string,
+    "holderSurname": string,
+    "accountHolderName": string,
+    "accountHolderCity": string,
+    "accountHolderCountry": string,
+    "accountHolderAddress1": string,
+    "accountHolderAddress2": string,
+    "accountHolderDistrict": string,
+    "accountHolderPostalCode": string,
+    "abaRoutingNumber": string,
+    "abaAccountNumber": string,
+    "abaCountry": string
+ }
+```
+Account-details structure for IBAN transfers -
+```
+ {
+    "holderGivenName": string,
+    "holderSurname": string,
+    "accountHolderName": string,
+    "accountHolderCity": string,
+    "accountHolderCountry": string,
+    "accountHolderAddress1": string,
+    "accountHolderAddress2": string,
+    "accountHolderDistrict": string,
+    "accountHolderPostalCode": string,
+    "iban": string,
+    "ibanCity": string,
+    "ibanCountry": string
+ }
+```
+Account-details structure for SPEI transfers -
+```
+{
+    "holderGivenName": string,
+    "holderSurname": string,
+    "accountHolderName": string,
+    "accountHolderCity": string,
+    "accountHolderCountry": string,
+    "accountHolderAddress1": string,
+    "accountHolderAddress2": string,
+    "accountHolderDistrict": string,
+    "accountHolderPostalCode": string,
+    "speiClabe": "",
+    "speiName": ""
+}
+```
 
 # Creating a Request
 All REST requests will contain the following headers:
@@ -163,8 +231,60 @@ Upon failures, the expected format of the error is as follows:
 
 _Note_ that not all error codes need to be in use!
 
+# Registration Form
+Once your license agreement for listing your 3rd party at Fireblocks is signed, Fireblocks will request the following registration info:
+
+1.  Display name: i.e. “My Exchange” or “My Exchange Sandbox”
+2.  Icon: a 32x32 .svg file
+3.  Step-by-step guide for generating an API Key from your 3rd party platform. 
+    -   A public link to your knowledge base is preferred (A sharable document or PDF is also acceptable).
+4.  Base URL for your API endpoints: i.e. https://my-service.com/fireblocks
+5.  Version: The Fireblocks Network Link major version number. Our current and only major version is 1.
+6.  What is your main account's fundable type? (The account type where Fireblocks users can deposit and withdraw funds)
+7.  Is 3rd party a sandbox environment: true or false
+8.  Connection supports withdrawals from the 3rd party: true or false
+9.  Connection supports deposits to the 3rd party: true or false
+10.  Connection supports sub-accounts: true or false
+11.  Connection supports sub-account to sub-account transfers: true or false
+12.  What is your sub account's main fundable type? By default it is equal to the main account's fundable type.
+13.  Does transferring assets to the 3rd party account require manually generating a deposit address on the 3rd party's portal?: true or false
+14. Upon withdrawals, does your 3rd party require the "address" field to be masked?: valid values are NONE, SHA512, SHA3\_256, SHA256. NONE is the default.
+15.  Select your authentication preferences:
+* HMAC:
+    - Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
+    - Request signing format: valid values are: SHA512, SHA3\_256, SHA256
+    - Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
+* RSA:
+    - Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
+    - Request signing format: valid values are: SHA512, SHA3\_256, SHA256
+    - Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
+
+### Additions for banks:
+Deposits - Account IDs or blockchain addresses.
+
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
+
+## v1.0.0
+> 16 Mar 2023
+* Added a guide for banks.
+* Added the POST convert endpoint.
+	* This endpoint is available to banks only.
+* Added a Coin Class: 
+		- 'FIAT' - Includes both government issued currencies and bank-issued tokens which are pegged to government issued currencies.
+* Added Account Types : 	
+		- DDA
+        - CHECKING
+        - SAVINGS
+        - CREDIT
+        - MERCHANT
+        - MMA
+* Added support for the following Bank networks
+		- ABA
+        - IBAN
+        - SPEI
+* Added examples for banks network and account details in the guide for banks.
+
 
 ## v0.8.1
 > 26 Feb 2023
