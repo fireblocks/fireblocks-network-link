@@ -121,7 +121,6 @@ Account-details structure for SPEI transfers -
     "speiName": ""
 }
 ```
-
 # Creating a Request
 All REST requests will contain the following headers:
 
@@ -143,7 +142,7 @@ The amount of seconds (=X) is up to the 3rd party to decide - recommended to be 
 It's expected that the request on the 3rd party's end will be considered expired and rejected otherwise.
 
 ## Authentication Fundamentals
-\[Authentication scheme is configurable: **HMAC**, **RSA**\]
+\[Authentication scheme is configurable: **HMAC**, **RSA**, **ECDSA**\]
 
 ### Using HMAC
 The API-KEY and SECRET are **necessary**, and are generated and provided by the 3rd party.
@@ -179,6 +178,24 @@ Signature procedure on Fireblocks's end:
 
 4) Apply an additional encoding onto the signature result (Post-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32)
 
+### Using ECDSA
+Supported ECDSA Parameters [prime256v1/secp256k1]
+
+The API-KEY and SECRET are **necessary**, and are generated and provided by the 3rd party.
+
+SECRET is defined to be the Private ECDSA PEM. ECDSA result signature has an ASN1.DER format.
+
+Signature procedure on Fireblocks's end:
+
+1) Create a prehash string {timestamp+nonce+method+endpoint+body}.
+
+2) Apply an encoding onto the prehash string (Pre-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32)
+
+\[The request body is a JSON string and need to be the same with the parameters passed by the API\]
+
+3) Use SECRET to sign the string with ECDSA (Internal hash function is not configurable and is set to: SHA256)
+
+4) Apply an additional encoding onto the signature result (Post-encoding is configurable: PLAIN, BASE64, HEXSTR, BASE58, BASE32)
 ## Request attributes
 \- The timestamp in the signature payload is consistent with the X-FBAPI-TIMESTAMP field in the request header.
 
@@ -258,6 +275,10 @@ Once your license agreement for listing your 3rd party at Fireblocks is signed, 
     - Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
     - Request signing format: valid values are: SHA512, SHA3\_256, SHA256
     - Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
+* ECDSA:
+    - Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
+    - Request signing format: valid values are: SHA256
+    - Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
 
 ### Additions for banks:
 Deposits - Account IDs or blockchain addresses.
@@ -285,6 +306,9 @@ All notable changes to this project will be documented in this file. Dates are d
         - SPEI
 * Added examples for banks network and account details in the guide for banks.
 
+## v0.9
+> 13 March 2023
+* Added ECDSA support in addition to HMAC/RSA support
 
 ## v0.8.1
 > 26 Feb 2023
