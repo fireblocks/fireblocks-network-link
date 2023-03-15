@@ -181,22 +181,20 @@ You do not need to define if your accounts are single-currency or multi-currency
 
 If your bank uses blockchain addresses, Fireblocks will use the GET depositAddress EP. If your bank uses account IDs, there's no need to implement the GET depositAddress EP. This should be determined during your bank onboarding to the Fireblocks systems, [see above in the registration section](https://fireblocks.github.io/fireblocks-network-link/#section/Overview/Register-your-3rd-party-with-Fireblocks).
 
-## EPs that banks do not need to implement
-1. GET supportedAssets
-2. GET depositAddress- no need to implement, if your bank uses account IDs and not blockchain addresses. 
-3. POST depositAddress
-4. GET withdrawalFee
-5. 
- ### Predefined error codes for HTTP response 400
-<table>
-<tr><p><td><b>EP Name</td><td><b>Required</td><td><b>Optional</td></p></tr>
-<tr><p><td>GET accounts</td><td>V</td><td></td></p></tr>
-<tr><p><td>POST withdraw</td><td>V</td><td></td></p></tr>
-<tr><p><td>GET transactionByID</td><td>V</td><td></td></p></tr>
-<tr><p><td>POST transactionHistory</td><td>V</td><td></td></p></tr>
-<tr><p><td>POST withdraw</td><td>V</td><td></td></p></tr>
+## EPs that banks need to implement
 
-
+<table>  
+<tr><p><td><b>EP Name</td><td><b>Required</td><td><b>Optional</td><td><b>Comment</td></p></tr>  
+<tr><p><td>GET accounts</td><td>V</td><td></td><td></td></p></tr>  
+<tr><p><td>POST withdraw</td><td>V</td><td></td><td></td></p></tr>  
+<tr><p><td>GET depositAddress</td><td>V</td><td></td><td></td></p></tr>  
+<tr><p><td>GET transactionByID</td><td>V</td><td></td><td></td></p></tr>  
+<tr><p><td>POST transactionHistory</td><td>V</td><td></td><td></td></p></tr>  
+<tr><p><td>POST internalTransfer</td><td></td><td>V</td><td>same-api-key transfers, used for DDA redeem</td></p></tr>  
+<tr><p><td>POST convert</td><td></td><td>V</td><td>can be used for FX conversions</td></p></tr> 
+<tr><p><td>POST subMainTransfer</td><td></td><td>V</td><td>Needed if supportSubAccounts flag is configured to True</td></p></tr>  
+<tr><p><td>POST subaccountsTransfer</td><td></td><td>V</td><td>Needed if supportSubAccounts and supportSubToSubTransfers flags are configured to True</td></p></tr>  
+</table>
 
 
 # Changelog
