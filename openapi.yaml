@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Fireblocks Network Link for Account Linking 
-  version: "0.8.1"
+  title: Fireblocks Network Link for Account Linking Partners 
+  version: "1.0.0"
   contact:
     email: support@fireblocks.com
   license:
@@ -144,7 +144,7 @@ paths:
         '500':
           description: Exchange internal error.
     post:
-      summary: Create a new deposit wallet address for a given coinSymbol and network
+      summary: Create a new deposit address for a given coinSymbol and network
       operationId: POST /depositAddress
       parameters:
         - name: X-FBAPI-KEY
@@ -637,20 +637,20 @@ paths:
             example: null
         - name: isSubTransfer
           in: query
-          required: true
+          required: false
           description: "If this is a sub-account tranfer, either subMainTransfer or subaccountTransfer."
           schema:
             type: boolean
             example: false
         - name: coinSymbol
           in: query
-          required: true
+          required: false
           example: "USDT"
           schema:
             type: string
         - name: network
           in: query
-          required: true
+          required: false
           description: "If isSubTransfer is true, this value could be null. Otherwise, it will be specified."
           schema:
             oneOf:
