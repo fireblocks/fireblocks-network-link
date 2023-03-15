@@ -170,7 +170,7 @@ Starting version 1.0.0, Fireblocks is supporting banks to integrate with the Fir
 
 ## Currencies
 
-Fireblocks supports multi-currency accounts out of the box. To define which currencies your bank is supporting, please supply us during your onboarding a list of your supported symbols, as 'USD' or 'EUR'.
+Fireblocks supports multi-currency accounts out of the box. To define which currencies your bank is supporting, please supply us during your onboarding a list of your supported symbols, as 'USD', 'EUR' etc.
 
 You do not need to define if your accounts are single-currency or multi-currency, this will be determined by Fireblocks according to the balances array you return in the GET accounts EP. 
 
@@ -181,6 +181,10 @@ Fireblocks will use the GET depositAddress EP to request account IDs. Wether you
 
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
+
+## v1.0.0
+> Date TBC
+* Added support for bank accounts and a guide for banks.
 
 ## v0.8.1
 > 26 Feb 2023
