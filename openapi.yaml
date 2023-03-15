@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Fireblocks Network Link for Third Party Services 
-  version: "0.8.1"
+  title: Fireblocks Network Link for Account Linking Partners 
+  version: "1.0.0"
   contact:
     email: support@fireblocks.com
   license:
@@ -17,10 +17,10 @@ servers:
 paths:  
   /v1/accounts:
     get:
-      summary: Fetches list of all account types, and the balances within them.
+      summary: Fetches list of all accounts, and the balances within them.
       description: >
               In case the 3rd party supports an account type but the account doesn't
-              contain any balance in that account type, it is expected the "balances"
+              contain any balance, it is expected the "balances"
               field to be an empty array.
       operationId: GET /accounts
       parameters:
@@ -66,7 +66,7 @@ paths:
 
   /v1/depositAddress:
     get:
-      summary: Fetch the deposit wallet address for a coinSymbol and network
+      summary: Fetch the deposit address for a coinSymbol and network
       description: > 
         Fireblocks will first check if a deposit wallet address exists using this endpoint.
         If one does not exist, then a new address will be created using the `POST /v1/depositAddress` endpoint.
@@ -144,7 +144,7 @@ paths:
         '500':
           description: Exchange internal error.
     post:
-      summary: Create a new deposit wallet address for a given coinSymbol and network
+      summary: Create a new deposit address for a given coinSymbol and network
       operationId: POST /depositAddress
       parameters:
         - name: X-FBAPI-KEY
