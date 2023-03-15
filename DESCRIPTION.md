@@ -54,6 +54,9 @@ Once your license agreement for listing your 3rd party with Fireblocks is signed
     - Request signing format: valid values are: SHA512, SHA3\_256, SHA256
     - Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
 
+### Additions for banks:
+Deposits - Account IDs or blockchain addresses.
+
 # Creating a Request
 All REST requests will contain the following headers:
 
@@ -176,7 +179,24 @@ You do not need to define if your accounts are single-currency or multi-currency
 
 ## Account IDs
 
-Fireblocks will use the GET depositAddress EP to request account IDs. Wether your bank use account IDs or blockchain addresses, use the depositAddress field (string) to supply **[internal] - how would we (FB) present accountIDs? We currently do not present accountIDs for Blinc in the Console.** 
+If your bank uses blockchain addresses, Fireblocks will use the GET depositAddress EP. If your bank uses account IDs, there's no need to implement the GET depositAddress EP. This should be determined during your bank onboarding to the Fireblocks systems, [see above in the registration section](https://fireblocks.github.io/fireblocks-network-link/#section/Overview/Register-your-3rd-party-with-Fireblocks).
+
+## EPs that banks do not need to implement
+1. GET supportedAssets
+2. GET depositAddress- no need to implement, if your bank uses account IDs and not blockchain addresses. 
+3. POST depositAddress
+4. GET withdrawalFee
+5. 
+ ### Predefined error codes for HTTP response 400
+<table>
+<tr><p><td><b>EP Name</td><td><b>Required</td><td><b>Optional</td></p></tr>
+<tr><p><td>GET accounts</td><td>V</td><td></td></p></tr>
+<tr><p><td>POST withdraw</td><td>V</td><td></td></p></tr>
+<tr><p><td>GET transactionByID</td><td>V</td><td></td></p></tr>
+<tr><p><td>POST transactionHistory</td><td>V</td><td></td></p></tr>
+<tr><p><td>POST withdraw</td><td>V</td><td></td></p></tr>
+
+
 
 
 # Changelog
