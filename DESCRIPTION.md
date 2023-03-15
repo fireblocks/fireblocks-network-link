@@ -168,11 +168,16 @@ _Note_ that not all error codes need to be in use!
 ## Introduction
 Starting version 1.0.0, Fireblocks is supporting banks to integrate with the Fireblocks systems. The outcome of the integration, is that mutual customers can connect their bank account to their Fireblocks workspace using bank supplied credentials to their account. Customers would be able to view the account balance, to initiate internal and inter-bank transfers, and also to convert between DDA assets and bank-owned blockchain based assets for banks who support these operations.
 
-## Account Structure
-
 ## Currencies
 
- 
+Fireblocks supports multi-currency accounts out of the box. To define which currencies your bank is supporting, please supply us during your onboarding a list of your supported symbols, as 'USD' or 'EUR'.
+
+You do not need to define if your accounts are single-currency or multi-currency, this will be determined by Fireblocks according to the balances array you return in the GET accounts EP. 
+
+## Account IDs
+
+Fireblocks will use the GET depositAddress EP to request account IDs. Wether your bank use account IDs or blockchain addresses, use the depositAddress field (string) to supply **[internal] - how would we (FB) present accountIDs? We currently do not present accountIDs for Blinc in the Console.** 
+
 
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
