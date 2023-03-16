@@ -390,7 +390,7 @@ paths:
 
   /v1/transactionByID:
     get:
-      summary: Fetch the status of a given transaction ID
+      summary: Fetch the details of a specific transaction, including status.
       operationId: GET /transactionByID
       parameters:
         - name: X-FBAPI-KEY
@@ -1148,6 +1148,12 @@ components:
         - MARGIN
         - FUTURES
         - OPTIONS
+        - DDA
+        - Checking
+        - Savings
+        - Credit
+        - Merchant
+        - MMA
       example:
         MARGIN
     Account_Type_2:
@@ -1160,6 +1166,12 @@ components:
         - MARGIN
         - FUTURES
         - OPTIONS
+        - DDA
+        - Checking
+        - Savings
+        - Credit
+        - Merchant
+        - MMA
       example:
         SPOT
     Mainnet_Networks:
@@ -1217,6 +1229,9 @@ components:
       - Tezos
       - Zcash
       - Aurora.dev
+      - ABA
+      - IBAN
+      - SPEI
       example:
         Ethereum
     Testnet_Networks:
@@ -1272,10 +1287,12 @@ components:
           * `BASE` - A base blockchain asset
           * `TOKEN` - An asset over a blockchain (for example, ERC20).
                       In case of a token class, the "identifiers" field must be specified, to reduce loss-of-funds for clients.
+          * `FIAT` - A government issued currency
           
       enum:
         - BASE
         - TOKEN
+        - FIAT
       example:
         TOKEN
     Direction_for_Sub_Main_transfer:
