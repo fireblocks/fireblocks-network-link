@@ -1085,6 +1085,8 @@ paths:
                 type: object
                 required:
                   - completed
+                  - amountOfFromAsset
+                  - amountOfToAsset
                 properties:
                   completed:
                     type: boolean
@@ -1270,6 +1272,7 @@ components:
           * `BASE` - A base blockchain asset
           * `TOKEN` - An asset over a blockchain (for example, ERC20).
                       In case of a token class, the "identifiers" field must be specified, to reduce loss-of-funds for clients.
+          
       enum:
         - BASE
         - TOKEN
