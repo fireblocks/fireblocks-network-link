@@ -212,9 +212,21 @@ All notable changes to this project will be documented in this file. Dates are d
 > 16 Mar 2023
 * Added a guide for banks.
 * Added the Post convert EP.
-* Added a Coin_Class.
-* Added Account_Type.
-* Added examples for Bank network and account details.
+* Added a Coin Class: 
+		- 'FIAT' - A government issued currency
+* Added Account Types : 	
+		- DDA
+        - Checking
+        - Savings
+        - Credit
+        - Merchant
+        - MMA
+* Added support for the following Bank networks
+		- ABA
+        - IBAN
+        - SPEI
+ * Added account details structure examples for the supported Bank networks in 
+
 
 ## v0.8.1
 > 26 Feb 2023
