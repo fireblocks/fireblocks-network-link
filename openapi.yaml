@@ -1033,7 +1033,7 @@ paths:
           description: Exchange internal error.
   /v1/convert:
     post:
-      summary: Convert one asset to another, currently supporting same value only
+      summary: Convert one asset to another
       operationId: POST /convert
       parameters:
         - name: X-FBAPI-KEY
