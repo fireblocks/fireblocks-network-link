@@ -1031,6 +1031,87 @@ paths:
           description: Rate limit reached
         '500':
           description: Exchange internal error.
+  /v1/convert:
+    post:
+      summary: Convert one asset to another, currently supporting same value only
+      operationId: POST /convert
+      parameters:
+        - name: X-FBAPI-KEY
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-KEY'
+        - name: X-FBAPI-TIMESTAMP
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
+        - name: X-FBAPI-SIGNATURE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
+        - name: X-FBAPI-NONCE
+          in: header
+          required: true
+          schema:
+            $ref: '#/components/schemas/X-FBAPI-NONCE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - fromAsset
+                - toAsset
+              properties:
+                fromAsset:
+                  example: "USD"
+                toAsset:
+                  example: "EUR"
+                amountOfFromAsset:
+                  example: "1.000"
+                  type: string
+                amountOfToAsset:
+                  example: "1.124"
+                  type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - completed
+                properties:
+                  completed:
+                    type: boolean
+                    example: true
+                    description: "If true, the operation is regarded as a success, else the operation is regarded as a failure."
+                  amountOfFromAsset:
+                    type: string
+                    nullable: true
+                    example: "1.000"
+                  amountOfToAsset:
+                    type: string
+                    nullable: true
+                    example: "1.125"
+        '400':
+          description: Return custom error and error code here.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '404':
+          description: Account ID or Account Type not found or supported.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '429':
+          description: Rate limit reached
+        '500':
+          description: Exchange internal error.
 
 components:
   schemas:
