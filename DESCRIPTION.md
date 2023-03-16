@@ -169,17 +169,15 @@ _Note_ that not all error codes need to be in use!
 # Guide for Banks
 
 ## Introduction
-Starting version 1.0.0, Fireblocks is supporting banks to integrate with the Fireblocks systems. The outcome of the integration, is that mutual customers can connect their bank account to their Fireblocks workspace using bank supplied credentials to their account. Customers would be able to view the account balance, to initiate internal and inter-bank transfers, and also to convert between DDA assets and bank-owned blockchain based assets for banks who support these operations.
+Starting from version 1.0.0, Fireblocks is supporting banks to integrate and allow mutual customers to link their bank accounts to the Fireblocks system. 
 
-## Currencies
+Fireblocks users would be able to:
 
-Fireblocks supports multi-currency accounts out of the box. To define which currencies your bank is supporting, please supply us during your onboarding a list of your supported symbols, as 'USD', 'EUR' etc.
-
-You do not need to define if your accounts are single-currency or multi-currency, this will be determined by Fireblocks according to the balances array you return in the GET accounts EP. 
-
-## Account IDs
-
-If your bank uses blockchain addresses, Fireblocks will use the GET depositAddress EP. If your bank uses account IDs, there's no need to implement the GET depositAddress EP. This should be determined during your bank onboarding to the Fireblocks systems, [see above in the registration section](https://fireblocks.github.io/fireblocks-network-link/#section/Overview/Register-your-3rd-party-with-Fireblocks).
+1. View their bank accounts balance (required).
+2. Initiate in-bank transfers (required).
+3. Initiate inter-bank transfers (optional).
+4. FX conversions (optional).
+5. Convert between DDA held assets and blockchain based assets (optional).
 
 ## EPs that banks need to implement
 
@@ -196,6 +194,15 @@ If your bank uses blockchain addresses, Fireblocks will use the GET depositAddre
 <tr><p><td>POST subaccountsTransfer</td><td></td><td>V</td><td>Needed if supportSubAccounts and supportSubToSubTransfers flags are configured to True</td></p></tr>  
 </table>
 
+## Currencies
+
+To define which currencies your bank is supporting, please supply us during your registration a list of your supported symbols, as 'USD', 'EUR' etc.
+
+Fireblocks supports multi-currency accounts out of the box. You do not need to define if your accounts are single-currency or multi-currency, this will be determined by Fireblocks according to the balances array you return in the GET accounts EP. 
+
+## Account IDs
+
+If your bank uses blockchain addresses, Fireblocks will use the GET depositAddress EP. If your bank uses account IDs, there's no need to implement the GET depositAddress EP. This should be determined during your bank onboarding to the Fireblocks systems, [see above in the registration section](https://fireblocks.github.io/fireblocks-network-link/#section/Overview/Register-your-3rd-party-with-Fireblocks).
 
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
