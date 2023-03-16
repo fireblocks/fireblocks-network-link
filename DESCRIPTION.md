@@ -183,13 +183,14 @@ Fireblocks users would be able to:
 
 <table>  
 <tr><p><td><b>EP Name</td><td><b>Required</td><td><b>Optional</td><td><b>Comment</td></p></tr>  
-<tr><p><td>GET accounts</td><td>V</td><td></td><td></td></p></tr>  
-<tr><p><td>POST withdraw</td><td>V</td><td></td><td></td></p></tr>  
-<tr><p><td>GET depositAddress</td><td>V</td><td></td><td></td></p></tr>  
-<tr><p><td>GET transactionByID</td><td>V</td><td></td><td></td></p></tr>  
-<tr><p><td>POST transactionHistory</td><td>V</td><td></td><td></td></p></tr>  
-<tr><p><td>POST internalTransfer</td><td></td><td>V</td><td>same-api-key transfers, used for DDA redeem</td></p></tr>  
-<tr><p><td>POST convert</td><td></td><td>V</td><td>can be used for FX conversions</td></p></tr> 
+<tr><p><td>GET accounts</td><td>V</td><td></td><td>Fireblocks will query balances via this EP</td></p></tr>  
+<tr><p><td>POST withdraw</td><td>V</td><td></td><td>Fireblocks will send in-bank and inter-bank transaction initiation requests via this EP. Implementing Inter-bank networks (ACH, Wire etc.) is optional.</td></p></tr>  
+<tr><p><td>GET depositAddress</td><td>V</td><td></td><td>Fireblocks will use this EP to query for deposit details to a specific account on a specific network e.g ABA related details or a blockchain address for a bank owned blockchain based settlement network. Please respond with an empty tag for unsupporteds networks</td></p></tr>  
+<tr><p><td>GET transactionByID</td><td>V</td><td></td><td>Fireblocks will use this EP to gather a specific transaction details</td></p></tr>  
+<tr><p><td>POST transactionHistory</td><td>V</td><td></td><td>Fireblocks will use this EP to gather account's transactions details for a defined period</td></p></tr>
+<tr><p><td>GET supportedAssets</td><td>V</td><td></td><td>This EP response should contain a list of the bank's supported currencies</td></p></tr>
+<tr><p><td>POST internalTransfer</td><td></td><td>V</td><td>Fireblocks will use this EP for transfers/conversions to occur between balances which are controlled by the same API key. Main use-case is for DDA redeem for banks implementing blockchain settlement networks.</td></p></tr>  
+<tr><p><td>POST convert</td><td></td><td>V</td><td>Fireblocks will use this EP for FX conversions</td></p></tr> 
 <tr><p><td>POST subMainTransfer</td><td></td><td>V</td><td>Needed if supportSubAccounts flag is configured to True</td></p></tr>  
 <tr><p><td>POST subaccountsTransfer</td><td></td><td>V</td><td>Needed if supportSubAccounts and supportSubToSubTransfers flags are configured to True</td></p></tr>  
 </table>
@@ -208,8 +209,12 @@ If your bank uses blockchain addresses, Fireblocks will use the GET depositAddre
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
 ## v1.0.0
-> Date TBC
-* Added support for bank accounts and a guide for banks.
+> 16 Mar 2023
+* Added a guide for banks.
+* Added the Post convert EP.
+* Added a Coin_Class.
+* Added Account_Type.
+* Added examples for Bank network and account details.
 
 ## v0.8.1
 > 26 Feb 2023
