@@ -1284,10 +1284,10 @@ components:
       description: >
         Coin Classes:
 
-          * `BASE` - A base blockchain asset
+          * `BASE` - A base blockchain asset.
           * `TOKEN` - An asset over a blockchain (for example, ERC20).
                       In case of a token class, the "identifiers" field must be specified, to reduce loss-of-funds for clients.
-          * `FIAT` - A government issued currency
+          * `FIAT` - A class that includes both government issued currencies and bank-issued tokens which are pegged to government issued currencies.
           
       enum:
         - BASE
