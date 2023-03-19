@@ -3,6 +3,7 @@
 
 This documentation is for any Fireblocks account linking partner. A recommended reading order for banks is to review the Overview and Guide for Banks sections as a start. A Guide for Exchanges will be added soon.
 
+
 ## Benefits
 *   Enhance your service's visibility and liquidity by immediately gaining access to 1000s of workspaces.
 *   Fireblocks customers transact 20x more with 3rd parties supported on Fireblocks vs. unsupported 3rd parties
@@ -67,6 +68,65 @@ Fireblocks supports multi-currency accounts out of the box. You do not need to d
 
 If your bank uses blockchain addresses, Fireblocks will use the GET depositAddress endpoint. If your bank uses account IDs, there's no need to implement the GET depositAddress endpoint. This should be determined during your bank onboarding to the Fireblocks systems, [see above in the registration section](https://fireblocks.github.io/fireblocks-network-link/#section/Overview/Register-your-3rd-party-with-Fireblocks).
 
+## Inter-bank Transfers
+
+When posting inter-bank transfer request, Fireblocks will use the POST withdraw endpoint.  
+
+ - The inter-bank rails type will appear in the `network` field. Currently supporting ABA, IBAN, SEPI.
+ - The destination account-details will appear as a JSON in the `tag` field.
+
+Fireblocks will use the following structure:
+
+Account-details structure for ABA transfers -
+```
+{
+    "holderGivenName": string,
+    "holderSurname": string,
+    "accountHolderName": string,
+    "accountHolderCity": string,
+    "accountHolderCountry": string,
+    "accountHolderAddress1": string,
+    "accountHolderAddress2": string,
+    "accountHolderDistrict": string,
+    "accountHolderPostalCode": string,
+    "abaRoutingNumber": string,
+    "abaAccountNumber": string,
+    "abaCountry": string
+ }
+```
+Account-details structure for IBAN transfers -
+```
+ {
+    "holderGivenName": string,
+    "holderSurname": string,
+    "accountHolderName": string,
+    "accountHolderCity": string,
+    "accountHolderCountry": string,
+    "accountHolderAddress1": string,
+    "accountHolderAddress2": string,
+    "accountHolderDistrict": string,
+    "accountHolderPostalCode": string,
+    "iban": string,
+    "ibanCity": string,
+    "ibanCountry": string
+ }
+```
+Account-details structure for SPEI transfers -
+```
+{
+    "holderGivenName": string,
+    "holderSurname": string,
+    "accountHolderName": string,
+    "accountHolderCity": string,
+    "accountHolderCountry": string,
+    "accountHolderAddress1": string,
+    "accountHolderAddress2": string,
+    "accountHolderDistrict": string,
+    "accountHolderPostalCode": string,
+    "speiClabe": "",
+    "speiName": ""
+}
+```
 
 # Creating a Request
 All REST requests will contain the following headers:
@@ -217,7 +277,7 @@ All notable changes to this project will be documented in this file. Dates are d
 * Added the POST convert endpoint.
 	* This endpoint is available to banks only.
 * Added a Coin Class: 
-		- 'FIAT' - A government issued currency
+		- 'FIAT' - Includes both government issued currencies and bank-issued tokens which are pegged to government issued currencies.
 * Added Account Types : 	
 		- DDA
         - Checking
@@ -229,7 +289,7 @@ All notable changes to this project will be documented in this file. Dates are d
 		- ABA
         - IBAN
         - SPEI
- * Added account details structure examples for the supported Bank networks in 
+* Added examples for banks network and account details in the guide for banks.
 
 
 ## v0.8.1
