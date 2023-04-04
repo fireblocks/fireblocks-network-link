@@ -60,20 +60,14 @@ Fireblocks users would be able to:
 
 ## Currencies
 
-To define which currencies your bank is supporting, please supply us during your registration a list of your supported symbols, as 'USD', 'EUR' etc.
-
 Fireblocks supports multi-currency accounts out of the box. You do not need to define if your accounts are single-currency or multi-currency, this will be determined by Fireblocks according to the balances array you return in the GET accounts endpoint. 
-
-## Account IDs
-
-If your bank uses blockchain addresses, Fireblocks will use the GET depositAddress endpoint. If your bank uses account IDs, there's no need to implement the GET depositAddress endpoint. This should be determined during your bank onboarding to the Fireblocks systems, [see above in the registration section](https://fireblocks.github.io/fireblocks-network-link/#section/Overview/Register-your-3rd-party-with-Fireblocks).
 
 ## Inter-bank Transfers
 
 When posting inter-bank transfer request, Fireblocks will use the POST withdraw endpoint.  
 
  - The inter-bank rails type will appear in the `network` field. Currently supporting ABA, IBAN, SEPI.
- - The destination account-details will appear as a JSON in the `tag` field.
+ - The destination account-details will appear as a JSON in the `TBD` field.
 
 Fireblocks will use the following structure:
 
@@ -280,10 +274,10 @@ All notable changes to this project will be documented in this file. Dates are d
 		- 'FIAT' - Includes both government issued currencies and bank-issued tokens which are pegged to government issued currencies.
 * Added Account Types : 	
 		- DDA
-        - Checking
-        - Savings
-        - Credit
-        - Merchant
+        - CHECKING
+        - SAVINGS
+        - CREDIT
+        - MERCHANT
         - MMA
 * Added support for the following Bank networks
 		- ABA

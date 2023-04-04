@@ -69,7 +69,7 @@ paths:
       summary: Fetch the deposit address for a coinSymbol and network
       description: > 
         Fireblocks will first check if a deposit wallet address exists using this endpoint.
-        If one does not exist, then a new address will be created using the `POST /v1/depositAddress` endpoint.
+        Not relevant for banks: If one does not exist, then a new address will be created using the `POST /v1/depositAddress` endpoint.
       operationId: GET /depositAddress
       parameters:
         - name: X-FBAPI-KEY
@@ -427,8 +427,8 @@ paths:
               schema:
                 oneOf:
                   - type: object
-                    title: "Transaction found"
-                    description: Transaction details result from the 3rd party.
+                    title: "Crypto Transaction found"
+                    description: Crypto Transaction details result from the 3rd party.
                     required: [transactionID, status, txHash, amount, serviceFee, coinSymbol, network, direction, timestamp]
                     properties:
                       transactionID:
@@ -446,6 +446,34 @@ paths:
                       serviceFee:
                         type: string
                         example: "0.000000031"
+                      coinSymbol:
+                        type: string
+                        example: "ETH"
+                      network:
+                        oneOf:
+                          - $ref: '#/components/schemas/Mainnet_Networks'
+                          - $ref: '#/components/schemas/Testnet_Networks'
+                      direction:
+                        $ref: '#/components/schemas/Direction_for_Withdraw'
+                      timestamp:
+                        type: number
+                        format: UNIX-timestamp-epoch
+                        description: "Milliseconds"
+                        example: 1546658861000
+                  - type: object
+                    title: "Fiat Transaction found"
+                    description: Fiat Transaction details result from the 3rd party.
+                    required: [transactionID, status, amount, coinSymbol, network, direction, timestamp]
+                    properties:
+                      transactionID:
+                        type: string
+                        example: "46bas218d9h21uhib4i1u2h"
+                      status:
+                        $ref: '#/components/schemas/Status_Found'
+                      amount:
+                        type: string
+                        description: "The net amount of the transaction"
+                        example: "1.1"
                       coinSymbol:
                         type: string
                         example: "ETH"
@@ -613,7 +641,7 @@ paths:
             example: "1546658861000"
         - name: toDate
           in: query
-          required: true
+          required: false
           schema:
             type: string
             format: UNIX-timestamp-epoch
@@ -663,53 +691,105 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required: [transactions]
-                properties:
-                  nextPageCursor:
-                      type: string
-                      nullable: true
-                      example: null
-                      description: "If not present, refers to the last possible page. Otherwise refers to the next page."
-                  transactions:
-                    type: array
-                    items:
-                      type: object
-                      description: "Transaction details result from the 3rd party."
-                      required: [transactionID, status, txHash, amount, serviceFee, coinSymbol, network, direction, timestamp]
-                      properties:
-                        transactionID:
+                oneOf:
+                  - type: object
+                    title: "Crypto Transaction History"
+                    description: Crypto Transaction details result from the 3rd party.
+                    required: [transactions]
+                    properties:
+                      nextPageCursor:
                           type: string
-                          example: "46bas218d9h21uhib4i1u2h"
-                        status:
-                          $ref: '#/components/schemas/Status_Found'
-                        txHash:
+                          nullable: true
+                          example: null
+                          description: "If not present, refers to the last possible page. Otherwise refers to the next page."
+                      transactions:
+                        type: array
+                        items:
+                          type: object
+                          description: "Transaction details result from the 3rd party."
+                          required: [transactionID, status, txHash, amount, serviceFee, coinSymbol, network, direction, timestamp]
+                          properties:
+                            transactionID:
+                              type: string
+                              example: "46bas218d9h21uhib4i1u2h"
+                            status:
+                              $ref: '#/components/schemas/Status_Found'
+                            txHash:
+                              type: string
+                              example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
+                            amount:
+                              type: string
+                              description: "The net amount of the transaction"
+                              example: "1.1"
+                            serviceFee:
+                              type: string
+                              example: "0.000000031"
+                            coinSymbol:
+                              type: string
+                              example: "ETH"
+                            network:
+                              description: "If isSubTransfer was true, this value could be null. Otherwise it's required."
+                              oneOf:
+                              - nullable: true
+                              - $ref: '#/components/schemas/Mainnet_Networks'
+                              - $ref: '#/components/schemas/Testnet_Networks'
+                              example: "Ethereum"
+                            direction:
+                              $ref: '#/components/schemas/Direction'
+                            timestamp:
+                              type: number
+                              format: UNIX-timestamp-epoch
+                              description: "In Milliseconds. The timestamp on the creation of the transaction."
+                              example: 1546658861000
+                  - type: object
+                    title: "Fiat Transaction History"
+                    description: Fiat Transaction details result from the 3rd party.
+                    required: [transactions]
+                    properties:
+                      nextPageCursor:
                           type: string
-                          example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
-                        amount:
-                          type: string
-                          description: "The net amount of the transaction"
-                          example: "1.1"
-                        serviceFee:
-                          type: string
-                          example: "0.000000031"
-                        coinSymbol:
-                          type: string
-                          example: "ETH"
-                        network:
-                          description: "If isSubTransfer was true, this value could be null. Otherwise it's required."
-                          oneOf:
-                          - nullable: true
-                          - $ref: '#/components/schemas/Mainnet_Networks'
-                          - $ref: '#/components/schemas/Testnet_Networks'
-                          example: "Ethereum"
-                        direction:
-                          $ref: '#/components/schemas/Direction_for_Deposit'
-                        timestamp:
-                          type: number
-                          format: UNIX-timestamp-epoch
-                          description: "In Milliseconds. The timestamp on the creation of the transaction."
-                          example: 1546658861000
+                          nullable: true
+                          example: null
+                          description: "If not present, refers to the last possible page. Otherwise refers to the next page."
+                      transactions:
+                        type: array
+                        items:
+                          type: object
+                          description: "Transaction details result from the 3rd party."
+                          required: [transactionID, status, amount,  coinSymbol, network, direction, timestamp, srcAddress, destAddress]
+                          properties:
+                            transactionID:
+                              type: string
+                              example: "46bas218d9h21uhib4i1u2h"
+                            status:
+                              $ref: '#/components/schemas/Status_Found'
+                            amount:
+                              type: string
+                              description: "The net amount of the transaction"
+                              example: "1.1"
+                            coinSymbol:
+                              type: string
+                              example: "ETH"
+                            network:
+                              description: "If isSubTransfer was true, this value could be null. Otherwise it's required."
+                              oneOf:
+                              - nullable: true
+                              - $ref: '#/components/schemas/Mainnet_Networks'
+                              - $ref: '#/components/schemas/Testnet_Networks'
+                              example: "Ethereum"
+                            direction:
+                              $ref: '#/components/schemas/Direction'
+                            timestamp:
+                              type: number
+                              format: UNIX-timestamp-epoch
+                              description: "In Milliseconds. The timestamp on the creation of the transaction."
+                              example: 1546658861000
+                            srcAddress:
+                              type: string
+                              example: "0xb794f5ea0ba39494ce839613fffba74279579268"
+                            destAddress:
+                              type: string
+                              example: "0xb794f5ea0ba39494ce839613fffba74279579268"
         '400':
           description: Return custom error and error code here.
         '401':
@@ -1065,6 +1145,7 @@ paths:
               required:
                 - fromAsset
                 - toAsset
+                - amountOfFromAsset
               properties:
                 fromAsset:
                   example: "USD"
@@ -1072,9 +1153,6 @@ paths:
                   example: "EUR"
                 amountOfFromAsset:
                   example: "1.000"
-                  type: string
-                amountOfToAsset:
-                  example: "1.124"
                   type: string
       responses:
         '200':
@@ -1149,10 +1227,10 @@ components:
         - FUTURES
         - OPTIONS
         - DDA
-        - Checking
-        - Savings
-        - Credit
-        - Merchant
+        - CHECKING
+        - SAVINGS
+        - CREDIT
+        - MERCHANT
         - MMA
       example:
         MARGIN
@@ -1167,10 +1245,10 @@ components:
         - FUTURES
         - OPTIONS
         - DDA
-        - Checking
-        - Savings
-        - Credit
-        - Merchant
+        - CHECKING
+        - SAVINGS
+        - CREDIT
+        - MERCHANT
         - MMA
       example:
         SPOT
@@ -1310,25 +1388,41 @@ components:
     Direction_for_Deposit:
       type: string
       description: >
-        Direction of a transfer:
+          Direction for deposit operation:
 
           * `CRYPTO_DEPOSIT` - A crypto deposit operation
-          * `CRYPTO_WITHDRAWAL` - A crypto withdrawal operation
+          * `FIAT_DEPOSIT`   - A fiat deposit operation
       enum:
         - CRYPTO_DEPOSIT
-        - CRYPTO_WITHDRAWAL
+        - FIAT_DEPOSIT
       example:
         CRYPTO_DEPOSIT
     Direction_for_Withdraw:
       type: string
       description: >
+        Direction for withdraw operation:
+
+          * `CRYPTO_WITHDRAWAL` - A crypto withdrawal operation
+          * `FIAT_WITHDRAWAL`   - A fiat withdrawal operation
+      enum:
+        - CRYPTO_WITHDRAWAL
+        - FIAT_WITHDRAWAL
+      example:
+        CRYPTO_WITHDRAWAL
+    Direction:
+      type: string
+      description: >
         Direction of a transfer:
 
-          * `CRYPTO_DEPOSIT` - A crypto deposit operation
           * `CRYPTO_WITHDRAWAL` - A crypto withdrawal operation
+          * `FIAT_WITHDRAWAL`   - A fiat withdrawal operation
+          * `CRYPTO_DEPOSIT` - A crypto deposit operation
+          * `FIAT_DEPOSIT`   - A fiat deposit operation
       enum:
-        - CRYPTO_DEPOSIT
         - CRYPTO_WITHDRAWAL
+        - FIAT_WITHDRAWAL
+        - CRYPTO_DEPOSIT
+        - FIAT_DEPOSIT
       example:
         CRYPTO_WITHDRAWAL
     Balance_Information:
