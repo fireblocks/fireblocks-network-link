@@ -48,7 +48,7 @@ Fireblocks users would be able to:
 <tr><p><td><b>Endpoint Name</td><td><b>Required</td><td><b>Optional</td><td><b>Comment</td></p></tr>  
 <tr><p><td>GET accounts</td><td>V</td><td></td><td>Fireblocks will query balances via this endpoint</td></p></tr>  
 <tr><p><td>POST withdraw</td><td>V</td><td></td><td>Fireblocks will send in-bank and inter-bank transaction initiation requests via this endpoint. Implementing Inter-bank networks (ACH, Wire etc.) is optional.</td></p></tr>  
-<tr><p><td>GET depositAddress</td><td>V</td><td></td><td>Fireblocks will use this endpoint to query for deposit details to a specific account on a specific network e.g ABA related details or a blockchain address for a bank owned blockchain based settlement network. Please respond with an empty tag for unsupporteds networks</td></p></tr>  
+<tr><p><td>GET depositAddress</td><td>V</td><td></td><td>Fireblocks will use this endpoint to query for deposit details to a specific account on a specific network e.g ABA related details or a blockchain address for a bank owned blockchain based settlement network. Please respond with an empty tag for unsupported networks</td></p></tr>  
 <tr><p><td>GET transactionByID</td><td>V</td><td></td><td>Fireblocks will use this endpoint to gather a specific transaction details</td></p></tr>  
 <tr><p><td>POST transactionHistory</td><td>V</td><td></td><td>Fireblocks will use this endpoint to gather account's transactions details for a defined period</td></p></tr>
 <tr><p><td>GET supportedAssets</td><td>V</td><td></td><td>This endpoint response should contain a list of the bank's supported currencies</td></p></tr>
@@ -117,8 +117,8 @@ Account-details structure for SPEI transfers -
     "accountHolderAddress2": string,
     "accountHolderDistrict": string,
     "accountHolderPostalCode": string,
-    "speiClabe": "",
-    "speiName": ""
+    "speiClabe": string,
+    "speiName": string
 }
 ```
 # Creating a Request
@@ -290,7 +290,13 @@ All notable changes to this project will be documented in this file. Dates are d
 > 16 Mar 2023
 * Added a guide for banks.
 * Added the POST convert endpoint.
-	* This endpoint is available to banks only.
+    * This endpoint is available to banks only.
+* Updated endpoints:
+    - GET /v1/depositAddress
+    - POST /v1/withdraw
+    - GET /v1/transactionByID
+    - GET v1/transactionHistory
+    - GET v1/supportedAssets
 * Added a Coin Class: 
 		- 'FIAT' - Includes both government issued currencies and bank-issued tokens which are pegged to government issued currencies.
 * Added Account Types : 	
