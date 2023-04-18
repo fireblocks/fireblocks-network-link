@@ -40,20 +40,18 @@ Fireblocks users would be able to:
 2. Initiate in-bank transfers (required).
 3. Initiate inter-bank transfers (optional).
 4. FX conversions (optional).
-5. Convert between DDA held assets and blockchain based assets (optional).
 
 ## Endpoints that banks need to implement
 
 <table>  
 <tr><p><td><b>Endpoint Name</td><td><b>Required</td><td><b>Optional</td><td><b>Comment</td></p></tr>  
 <tr><p><td>GET accounts</td><td>V</td><td></td><td>Fireblocks will query balances via this endpoint</td></p></tr>  
-<tr><p><td>POST withdraw</td><td>V</td><td></td><td>Fireblocks will send in-bank and inter-bank transaction initiation requests via this endpoint. Implementing Inter-bank networks (ACH, Wire etc.) is optional.</td></p></tr>  
+<tr><p><td>GET withdraw</td><td>V</td><td></td><td>Fireblocks will send in-bank and inter-bank transaction initiation requests via this endpoint. Implementing Inter-bank networks (ACH, Wire etc.) is optional.</td></p></tr>  
 <tr><p><td>GET depositAddress</td><td>V</td><td></td><td>Fireblocks will use this endpoint to query for deposit details to a specific account on a specific network e.g ABA related details or a blockchain address for a bank owned blockchain based settlement network. Please respond with an empty tag for unsupported networks</td></p></tr>  
 <tr><p><td>GET transactionByID</td><td>V</td><td></td><td>Fireblocks will use this endpoint to gather a specific transaction details</td></p></tr>  
 <tr><p><td>POST transactionHistory</td><td>V</td><td></td><td>Fireblocks will use this endpoint to gather account's transactions details for a defined period</td></p></tr>
 <tr><p><td>GET supportedAssets</td><td>V</td><td></td><td>This endpoint response should contain a list of the bank's supported currencies</td></p></tr>
 <tr><p><td>POST internalTransfer</td><td></td><td>V</td><td>Fireblocks will use this endpoint for transfers/conversions to occur between balances which are controlled by the same API key. Main use-case is for DDA redeem for banks implementing blockchain settlement networks.</td></p></tr>  
-<tr><p><td>POST convert</td><td></td><td>V</td><td>Fireblocks will use this endpoint for FX conversions</td></p></tr> 
 <tr><p><td>POST subMainTransfer</td><td></td><td>V</td><td>Needed if supportSubAccounts flag is configured to True</td></p></tr>  
 <tr><p><td>POST subaccountsTransfer</td><td></td><td>V</td><td>Needed if supportSubAccounts and supportSubToSubTransfers flags are configured to True</td></p></tr>  
 </table>
@@ -67,7 +65,7 @@ Fireblocks supports multi-currency accounts out of the box. You do not need to d
 When posting inter-bank transfer request, Fireblocks will use the POST withdraw endpoint.  
 
  - The inter-bank rails type will appear in the `network` field. Currently supporting ABA, IBAN, SEPI.
- - The destination account-details will appear as a JSON in the `TBD` field.
+ - The destination account-details will appear in the `accountHolderDetails` and `accountNetworkDetails` fields.
 
 Fireblocks will use the following structure:
 
@@ -289,9 +287,8 @@ All notable changes to this project will be documented in this file. Dates are d
 ## v1.0.0
 > 16 Mar 2023
 * Added a guide for banks.
-* Added the POST convert endpoint.
-    * This endpoint is available to banks only.
 * Updated endpoints:
+    - GET /v1/accounts
     - GET /v1/depositAddress
     - POST /v1/withdraw
     - GET /v1/transactionByID
@@ -299,7 +296,7 @@ All notable changes to this project will be documented in this file. Dates are d
     - GET v1/supportedAssets
 * Added a Coin Class: 
 		- 'FIAT' - Includes both government issued currencies and bank-issued tokens which are pegged to government issued currencies.
-* Added Account Types : 	
+* Added Account Types:
 		- DDA
         - CHECKING
         - SAVINGS

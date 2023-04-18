@@ -52,7 +52,9 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Balance'
+                  oneOf:
+                  - $ref: '#/components/schemas/Exchange_Balance'
+                  - $ref: '#/components/schemas/Fiat_Balance' 
         '400':
           description: Return custom error and error code here.
         '401':
@@ -69,7 +71,7 @@ paths:
       summary: Fetch the deposit address for a coinSymbol and network
       description: > 
         Fireblocks will first check if a deposit wallet address exists using this endpoint.
-        Not relevant for banks: If one does not exist, then a new address will be created using the `POST /v1/depositAddress` endpoint.
+        Not relevant for FIAT providers: If one does not exist, then a new address will be created using the `POST /v1/depositAddress` endpoint.
       operationId: GET /depositAddress
       parameters:
         - name: X-FBAPI-KEY
@@ -99,7 +101,9 @@ paths:
             The account type to return the deposit address from.
             The API will fill the fundableAccountType here.
           schema:
-            $ref : '#/components/schemas/Account_Type' 
+            oneOf:
+              - $ref: '#/components/schemas/Crypto_Account_Type'
+              - $ref: '#/components/schemas/Fiat_Account_Type' 
         - name: coinSymbol
           in: query
           required: true
@@ -111,9 +115,10 @@ paths:
           required: true
           schema:
             oneOf:
-              - $ref: '#/components/schemas/Mainnet_Networks'
-              - $ref: '#/components/schemas/Testnet_Networks'
-              - $ref: '#/components/schemas/Fiat_Networks'
+              - $ref: '#/components/schemas/Crypto_Mainnet'
+              - $ref: '#/components/schemas/Crypto_Testnet'
+              - $ref: '#/components/schemas/Payment_Systems'
+              - $ref: '#/components/schemas/Fiat_Provider'
       responses:
         '200':
           description: successful operation
@@ -122,7 +127,7 @@ paths:
               schema:
                  oneOf:
                   - type: object
-                    title: "Blockchain Address found"
+                    title: "Crypto Network"
                     description: "Address details that are defined by depositAddress(and depositAddressTag - optional)"
                     required: [depositAddress]
                     properties:
@@ -136,23 +141,26 @@ paths:
                         example: "63163621"
                         nullable: true
                   - type: object
-                    title: "Bank Account found"
-                    description: "Address details for Inter Bank Network like ABA, IBAN, SEPI and etc"
-                    required: [accountDetails]
+                    title: "Fiat Provider Network"
+                    description: "Destination details for a requested Fiat Provider network (Closed Loop Provider Network) that are defined by destination field."
+                    required: [destination]
                     properties:
-                      accountDetails:
-                        type: object
-                        required:
-                          - accountHolderDetails
-                          - accountNetworkDetails
-                        properties:
-                          accountHolderDetails:
-                            $ref : '#/components/schemas/Account_Holder_Details' 
-                          accountNetworkDetails:
-                            oneOf:
-                              - $ref: '#/components/schemas/Account_Details_ABA'
-                              - $ref: '#/components/schemas/Account_Details_IBAN'
-                              - $ref: '#/components/schemas/Account_Details_SPEI'
+                      destination:
+                        type: string
+                        description: "Field value can be a blockchain address/account ID. If not found, it will be empty."
+                        example: "12345678"
+                  - type: object
+                    title: "Payment Systems Network"
+                    description: "Address details for Payment Systems Network like ABA, IBAN, SEPI and etc"
+                    required: [accountHolderDetails, accountNetworkDetails]
+                    properties:
+                      accountHolderDetails:
+                        $ref : '#/components/schemas/Account_Holder_Details' 
+                      accountNetworkDetails:
+                        oneOf:
+                          - $ref: '#/components/schemas/Account_Details_ABA'
+                          - $ref: '#/components/schemas/Account_Details_IBAN'
+                          - $ref: '#/components/schemas/Account_Details_SPEI'
     
         '400':
           description: Return custom error and error code here.
@@ -206,14 +214,16 @@ paths:
                     description: >
                       The account type to create the deposit address for.
                       The API will fill the fundableAccountType here.
-                    $ref : '#/components/schemas/Account_Type' 
+                    oneOf:
+                      - $ref: '#/components/schemas/Crypto_Account_Type'
+                      - $ref: '#/components/schemas/Fiat_Account_Type' 
                   coinSymbol:
                     example: "USDT"
                     type: string
                   network:
                     oneOf:
-                    - $ref: '#/components/schemas/Mainnet_Networks'
-                    - $ref: '#/components/schemas/Testnet_Networks'
+                    - $ref: '#/components/schemas/Crypto_Mainnet'
+                    - $ref: '#/components/schemas/Crypto_Testnet'
       responses:
         '200':
           description: successful operation
@@ -285,8 +295,8 @@ paths:
           required: true
           schema:
             oneOf:
-              - $ref: '#/components/schemas/Mainnet_Networks'
-              - $ref: '#/components/schemas/Testnet_Networks'
+              - $ref: '#/components/schemas/Crypto_Mainnet'
+              - $ref: '#/components/schemas/Crypto_Testnet'
       responses:
         '200':
           description: successful operation
@@ -340,57 +350,109 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              description: Withdrawal request to be submitted.
-              required:
-                - accountType
-                - toAddress
-                - coinSymbol
-                - network
-                - amount
-                - isGross
-              properties:
-                accountType:
-                  $ref : '#/components/schemas/Account_Type'
-                toAddress:
-                  example: "bc1qs95ej87htkfy5786anzwh8sz3gmzvqh2d2uey2"
-                  type: string
-                  description: >
-                    The destination address of the withdraw.
-                    Will be masked if configured on the registration, by default it's not masked.
-                    Masking options: `NONE`, `SHA256`, `SHA3\_256`, `SHA512`
-                tag:
-                  description: "A 'tag' or 'memo', if required by the network"
-                  type: string
-                  nullable: true
-                  example: null
-                coinSymbol:
-                  example: "ETH"
-                  type: string
-                network:
-                  oneOf:
-                    - $ref: '#/components/schemas/Mainnet_Networks'
-                    - $ref: '#/components/schemas/Testnet_Networks'
-                    - $ref: '#/components/schemas/Fiat_Networks'
-                amount:
-                  example: "0.0010597"
-                  type: string
-                isGross:
-                  example: true
-                  description: "Is the amount sent a gross amount? (Includes gas fees if necessary, and service fees)"
-                  type: boolean
-                maxFee:
-                  example: "0.00001616"
-                  description: The service fee charged for withdrawal
-                  type: string
-                  nullable: true
-                accountDetails:
-                  nullable: true
-                  type: object
+              oneOf:
+                - type: object
+                  title: "Crypto Withdrawal"
+                  description: Crypto Withdrawal request to be submitted.
                   required:
+                    - accountType
+                    - toAddress
+                    - coinSymbol
+                    - network
+                    - amount
+                    - isGross
+                  properties:
+                    accountType:
+                      $ref: '#/components/schemas/Crypto_Account_Type'
+                    toAddress:
+                      example: "bc1qs95ej87htkfy5786anzwh8sz3gmzvqh2d2uey2"
+                      type: string
+                      description: >
+                        The destination address of the withdraw.
+                        Will be masked if configured on the registration, by default it's not masked.
+                        Masking options: `NONE`, `SHA256`, `SHA3\_256`, `SHA512`
+                    tag:
+                      description: "A 'tag' or 'memo', if required by the network"
+                      type: string
+                      nullable: true
+                      example: null
+                    coinSymbol:
+                      example: "ETH"
+                      type: string
+                    network:
+                      oneOf:
+                        - $ref: '#/components/schemas/Crypto_Mainnet'
+                        - $ref: '#/components/schemas/Crypto_Testnet'
+                    amount:
+                      example: "0.0010597"
+                      type: string
+                    isGross:
+                      example: true
+                      description: "Is the amount sent a gross amount? (Includes gas fees if necessary, and service fees)"
+                      type: boolean
+                    maxFee:
+                      example: "0.00001616"
+                      description: The service fee charged for withdrawal
+                      type: string
+                      nullable: true
+                - type: object
+                  title: "Fiat Provider Network Withdrawal"
+                  description: Fiat Provider Network Withdrawal request to be submitted.
+                  required:
+                    - accountType
+                    - destination
+                    - coinSymbol
+                    - network
+                    - amount
+                    - isGross
+                  properties:
+                    accountType:
+                      $ref: '#/components/schemas/Fiat_Account_Type'
+                    destination:
+                      example: "12345678"
+                      type: string
+                      description: >
+                        The destination of the withdraw. Can be a blockchain address/account ID.
+                        Will be masked if configured on the registration, by default it's not masked.
+                        Masking options: `NONE`, `SHA256`, `SHA3\_256`, `SHA512`
+                    coinSymbol:
+                      example: "ETH"
+                      type: string
+                    network:
+                      $ref: '#/components/schemas/Fiat_Provider'
+                    amount:
+                      example: "0.0010597"
+                      type: string
+                    isGross:
+                      example: true
+                      description: "Is the amount sent a gross amount?"
+                      type: boolean
+                - type: object
+                  title: "Payment Systems Withdrawal"
+                  description: Crypto Withdrawal request to be submitted.
+                  required:
+                    - accountType
+                    - coinSymbol
+                    - network
+                    - amount
+                    - isGross
                     - accountHolderDetails
                     - accountNetworkDetails
                   properties:
+                    accountType:
+                      $ref: '#/components/schemas/Fiat_Account_Type'
+                    coinSymbol:
+                      example: "ETH"
+                      type: string
+                    network:
+                      $ref: '#/components/schemas/Payment_Systems'
+                    amount:
+                      example: "0.0010597"
+                      type: string
+                    isGross:
+                      example: true
+                      description: "Is the amount sent a gross amount?"
+                      type: boolean
                     accountHolderDetails:
                       $ref : '#/components/schemas/Account_Holder_Details' 
                     accountNetworkDetails:
@@ -489,8 +551,8 @@ paths:
                         example: "ETH"
                       network:
                         oneOf:
-                          - $ref: '#/components/schemas/Mainnet_Networks'
-                          - $ref: '#/components/schemas/Testnet_Networks'
+                          - $ref: '#/components/schemas/Crypto_Mainnet'
+                          - $ref: '#/components/schemas/Crypto_Testnet'
                       direction:
                         $ref: '#/components/schemas/Crypto_Withdrawal'
                       timestamp:
@@ -516,7 +578,9 @@ paths:
                         type: string
                         example: "ETH"
                       network:
-                          $ref: '#/components/schemas/Fiat_Networks'
+                        oneOf:
+                          - $ref: '#/components/schemas/Payment_Systems'
+                          - $ref: '#/components/schemas/Fiat_Provider'
                       direction:
                         $ref: '#/components/schemas/Fiat_Withdrawal'
                       timestamp:
@@ -579,8 +643,8 @@ paths:
           required: true
           schema:
             oneOf:
-              - $ref: '#/components/schemas/Mainnet_Networks'
-              - $ref: '#/components/schemas/Testnet_Networks'
+              - $ref: '#/components/schemas/Crypto_Mainnet'
+              - $ref: '#/components/schemas/Crypto_Testnet'
       responses:
         '200':
           description: >
@@ -614,8 +678,8 @@ paths:
                         example: "ETH"
                       network:
                         oneOf:
-                        - $ref: '#/components/schemas/Mainnet_Networks'
-                        - $ref: '#/components/schemas/Testnet_Networks'
+                        - $ref: '#/components/schemas/Crypto_Mainnet'
+                        - $ref: '#/components/schemas/Crypto_Testnet'
                       direction:
                         $ref: '#/components/schemas/Crypto_Deposit'
                       timestamp:
@@ -681,7 +745,7 @@ paths:
           schema:
             type: string
             format: UNIX-timestamp-epoch
-            description: "Milliseconds"
+            description: "Not used when is called for monitoring external transactions. Value is in Milliseconds"
             example: "1546658865000"
         - name: pageSize
           in: query
@@ -702,7 +766,7 @@ paths:
         - name: isSubTransfer
           in: query
           required: false
-          description: "For monitoring external transaction this field will not be specified. If this is a sub-account tranfer, either subMainTransfer or subaccountTransfer."
+          description: "For monitoring external transactions this field will not be specified since we polling for all transactions. If this is a sub-account tranfer, either subMainTransfer or subaccountTransfer."
           schema:
             type: boolean
             example: false
@@ -710,122 +774,134 @@ paths:
           in: query
           required: false
           example: "USDT"
-          description: "For monitoring external transaction this field will not be specified."
+          description: "For monitoring external transactions this field will not be specified since we polling for all transactions"
           schema:
             type: string
         - name: network
           in: query
           required: false
-          description: "For monitoring external transaction this field will not be specified. If isSubTransfer is true, this value could be null. Otherwise, it will be specified."
+          description: >
+            For monitoring external transactions this field will not be specified. 
+            If this is a sub-account tranfer, either subMainTransfer or subaccountTransfer, this value could be null.
+            Otherwise, it will be specified.
           schema:
             oneOf:
               - nullable: true
-              - $ref: '#/components/schemas/Mainnet_Networks'
-              - $ref: '#/components/schemas/Testnet_Networks'
-              - $ref: '#/components/schemas/Fiat_Networks'
+              - $ref: '#/components/schemas/Crypto_Mainnet'
+              - $ref: '#/components/schemas/Crypto_Testnet'
+              - $ref: '#/components/schemas/Payment_Systems'
+              - $ref: '#/components/schemas/Fiat_Provider'
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                oneOf:
-                  - type: object
-                    title: "Crypto Transaction History"
-                    description: Crypto Transaction details result from the 3rd party.
-                    required: [transactions]
-                    properties:
-                      nextPageCursor:
-                          type: string
-                          nullable: true
-                          example: null
-                          description: "If not present, refers to the last possible page. Otherwise refers to the next page."
-                      transactions:
-                        type: array
-                        items:
-                          type: object
-                          description: "Transaction details result from the 3rd party."
-                          required: [transactionID, status, txHash, amount, serviceFee, coinSymbol, network, direction, timestamp]
-                          properties:
-                            transactionID:
-                              type: string
-                              example: "46bas218d9h21uhib4i1u2h"
-                            status:
-                              $ref: '#/components/schemas/Status_Found'
-                            txHash:
-                              type: string
-                              example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
-                            amount:
-                              type: string
-                              description: "The net amount of the transaction"
-                              example: "1.1"
-                            serviceFee:
-                              type: string
-                              example: "0.000000031"
-                            coinSymbol:
-                              type: string
-                              example: "ETH"
-                            network:
-                              description: "If isSubTransfer was true, this value could be null. Otherwise it's required."
-                              oneOf:
-                              - $ref: '#/components/schemas/Mainnet_Networks'
-                              - $ref: '#/components/schemas/Testnet_Networks'
-                              example: "Ethereum"
-                            direction:
-                              $ref: '#/components/schemas/Crypto_Direction'
-                            timestamp:
-                              type: number
-                              format: UNIX-timestamp-epoch
-                              description: "In Milliseconds. The timestamp on the creation of the transaction."
-                              example: 1546658861000
-                  - type: object
-                    title: "Fiat Transaction History"
-                    description: Fiat Transaction details result from the 3rd party.
-                    required: [transactions]
-                    properties:
-                      nextPageCursor:
-                          type: string
-                          nullable: true
-                          example: null
-                          description: "If not present, refers to the last possible page. Otherwise refers to the next page."
-                      transactions:
-                        type: array
-                        items:
-                          type: object
-                          description: "Transaction details result from the 3rd party."
-                          required: [transactionID, status, amount, coinSymbol, network, direction, timestamp, srcAddress, destAddress]
-                          properties:
-                            transactionID:
-                              type: string
-                              example: "46bas218d9h21uhib4i1u2h"
-                            status:
-                              $ref: '#/components/schemas/Status_Found'
-                            amount:
-                              type: string
-                              description: "The net amount of the transaction"
-                              example: "1.1"
-                            coinSymbol:
-                              type: string
-                              example: "ETH"
-                            network:
-                              description: "Fiat network"
-                              $ref: '#/components/schemas/Fiat_Networks'
-                              example: "Ethereum"
-                            direction:
-                              $ref: '#/components/schemas/Fiat_Direction'
-                            timestamp:
-                              type: number
-                              format: UNIX-timestamp-epoch
-                              description: "In Milliseconds. The timestamp on the creation of the transaction."
-                              example: 1546658861000
-                            srcAddress:
-                              type: string
-                              description: "Source address"
-                              example: "0xb794f5ea0ba39494ce839613fffba74279579268"
-                            destAddress:
-                              type: string
-                              description: "Destination address"
-                              example: "0xb794f5ea0ba39494ce839613fffba74279579268"
+                type: object
+                required: [nextPageCursor, transactions]
+                properties:
+                  nextPageCursor:
+                    type: string
+                    nullable: true
+                    example: null
+                    description: "If not present, refers to the last possible page. Otherwise refers to the next page." 
+                  transactions:  
+                     type: array
+                     items:       
+                      oneOf:
+                      - type: object
+                        title: "Crypto Transaction History"
+                        description: Crypto Transaction details result from the 3rd party.
+                        required: [transactionID, status, txHash, amount, serviceFee, coinSymbol, network, direction, timestamp]
+                        properties:
+                          transactionID:
+                            type: string
+                            example: "46bas218d9h21uhib4i1u2h"
+                          status:
+                            $ref: '#/components/schemas/Status_Found'
+                          txHash:
+                            type: string
+                            example: "44e25bc0ed840f9bf0e58d6227db15192d5b89e79ba4304da16b09703f68ceaf"
+                          amount:
+                            type: string
+                            description: "The net amount of the transaction"
+                            example: "1.1"
+                          serviceFee:
+                            type: string
+                            example: "0.000000031"
+                          coinSymbol:
+                            type: string
+                            example: "ETH"
+                          network:
+                            description: >
+                              For monitoring external transaction this field will not be specified. 
+                              If this is a sub-account tranfer, either subMainTransfer or subaccountTransfer, this value could be null.
+                              Otherwise, it will be specified.
+                            oneOf:
+                            - $ref: '#/components/schemas/Crypto_Mainnet'
+                            - $ref: '#/components/schemas/Crypto_Testnet'
+                            example: "Ethereum"
+                          direction:
+                            $ref: '#/components/schemas/Crypto_Direction'
+                          timestamp:
+                            type: number
+                            format: UNIX-timestamp-epoch
+                            description: "In Milliseconds. The timestamp on the creation of the transaction."
+                            example: 1546658861000
+                      - type: object
+                        title: "Fiat Transaction History"
+                        description: Fiat Transaction details result from the 3rd party.
+                        required: [transactionID, status, amount, coinSymbol, network, direction, timestamp, src, dest]
+                        properties:
+                          transactionID:
+                            type: string
+                            example: "46bas218d9h21uhib4i1u2h"
+                          status:
+                            $ref: '#/components/schemas/Status_Found'
+                          amount:
+                            type: string
+                            description: "The net amount of the transaction"
+                            example: "1.1"
+                          coinSymbol:
+                            type: string
+                            example: "ETH"
+                          network:
+                            description: "Fiat network (Fiat Provider and Payment Systems)"
+                            oneOf:
+                            - $ref: '#/components/schemas/Payment_Systems'
+                            - $ref: '#/components/schemas/Fiat_Provider'
+                            example: "SPEI"
+                          direction:
+                            $ref: '#/components/schemas/Fiat_Direction'
+                          timestamp:
+                            type: number
+                            format: UNIX-timestamp-epoch
+                            description: "In Milliseconds. The timestamp on the creation of the transaction."
+                            example: 1546658861000
+                          src:
+                            type: string
+                            description: > 
+                              Source details. <br />
+                                * For Fiat Provider network transactions a source/destination details:
+                                  * blockchain address/account ID
+
+                                * For Payment Systems transactions:
+                                  * `ABA` : abaAccountNumber value
+                                  * `IBAN`: iban value
+                                  * `SPEI`: speiclabe value
+                            example: "032180000118359719"
+                          dest:
+                            type: string
+                            description: > 
+                              Destination details. <br />
+                                * For Fiat Provider network transactions a source/destination details:
+                                  * blockchain address/account ID
+
+                                * For Payment Systems transactions:
+                                  * `ABA` : abaAccountNumber value
+                                  * `IBAN`: iban value
+                                  * `SPEI`: speiclabe value
+                            example: "032180000118359713"
         '400':
           description: Return custom error and error code here.
         '401':
@@ -878,9 +954,10 @@ paths:
                       example: "USDT"
                     network:
                       oneOf:
-                        - $ref: '#/components/schemas/Mainnet_Networks'
-                        - $ref: '#/components/schemas/Testnet_Networks'
-                        - $ref: '#/components/schemas/Fiat_Networks'
+                        - $ref: '#/components/schemas/Crypto_Mainnet'
+                        - $ref: '#/components/schemas/Crypto_Testnet'
+                        - $ref: '#/components/schemas/Payment_Systems'
+                        - $ref: '#/components/schemas/Fiat_Provider'
                     coinClass:
                       $ref: '#/components/schemas/Coin_Class'
                     identifiers:
@@ -1099,23 +1176,44 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - fromAccountType
-                - toAccountType
-                - coinSymbol
-                - amount
-              properties:
-                fromAccountType:
-                  $ref : '#/components/schemas/Account_Type'
-                toAccountType:
-                  $ref : '#/components/schemas/Account_Type_2'
-                coinSymbol:
-                  example: "USDT"
-                  type: string
-                amount:
-                  example: "1.4"
-                  type: string
+              oneOf:
+                - type: object
+                  title: "Crypto Inter Transfer"
+                  required:
+                    - fromAccountType
+                    - toAccountType
+                    - coinSymbol
+                    - amount
+                  properties:
+                    fromAccountType:
+                      $ref: '#/components/schemas/Crypto_Account_Type'
+                    toAccountType:
+                      $ref: '#/components/schemas/Crypto_Account_Type2'
+                    coinSymbol:
+                      example: "USDT"
+                      type: string
+                    amount:
+                      example: "1.4"
+                      type: string
+                - type: object
+                  title: "Fiat Inter Transfer"
+                  required:
+                    - fromAccountType
+                    - toAccountType
+                    - coinSymbol
+                    - amount
+                  properties:
+                    fromAccountType:
+                      $ref: '#/components/schemas/Fiat_Account_Type'
+                    toAccountType:
+                      oneOf:
+                      $ref: '#/components/schemas/Fiat_Account_Type2'
+                    coinSymbol:
+                      example: "USDT"
+                      type: string
+                    amount:
+                      example: "1.4"
+                      type: string
       responses:
         '200':
           description: successful operation
@@ -1134,90 +1232,6 @@ paths:
                     type: string
                     nullable: true
                     example: "3e8374383acce78d38be7fe9"
-        '400':
-          description: Return custom error and error code here.
-        '401':
-          description: Unauthorized. Either API details are missing or invalid
-        '403':
-          description: Forbidden- You do not have access to the requested resource.
-        '404':
-          description: Account ID or Account Type not found or supported.
-        '415':
-          description: Unsupported media type. You need to use application/json.
-        '429':
-          description: Rate limit reached
-        '500':
-          description: Exchange internal error.
-  /v1/convert:
-    post:
-      summary: Convert one asset to another
-      operationId: POST /convert
-      parameters:
-        - name: X-FBAPI-KEY
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-KEY'
-        - name: X-FBAPI-TIMESTAMP
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-TIMESTAMP'
-        - name: X-FBAPI-SIGNATURE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-SIGNATURE'
-        - name: X-FBAPI-NONCE
-          in: header
-          required: true
-          schema:
-            $ref: '#/components/schemas/X-FBAPI-NONCE'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - fromAsset
-                - toAsset
-                - amountOfFromAsset
-              properties:
-                fromAsset:
-                  description: "Source asset that we want to convert to another asset"
-                  example: "USD"
-                toAsset:
-                  description: "Destination asset that we want to have in the end of a convert"
-                  example: "EUR"
-                amountOfFromAsset:
-                  description: "Amount of source asset we want to convert"
-                  example: "1.000"
-                  type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - completed
-                  - amountOfFromAsset
-                  - amountOfToAsset
-                properties:
-                  completed:
-                    type: boolean
-                    example: true
-                    description: "If true, the operation is regarded as a success, else the operation is regarded as a failure."
-                  amountOfFromAsset:
-                    type: string
-                    nullable: true
-                    example: "1.000"
-                  amountOfToAsset:
-                    type: string
-                    nullable: true
-                    example: "1.125"
         '400':
           description: Return custom error and error code here.
         '401':
@@ -1292,7 +1306,55 @@ components:
         - MMA
       example:
         SPOT
-    Mainnet_Networks:
+    Crypto_Account_Type:
+      type: string
+      description: "Enumeration on types of possible exchange accounts"
+      enum:
+        - EXCHANGE
+        - SPOT
+        - FUNDING
+        - MARGIN
+        - FUTURES
+        - OPTIONS
+      example:
+        MARGIN
+    Crypto_Account_Type2:
+      type: string
+      description: "Enumeration on types of possible exchange accounts"
+      enum:
+        - EXCHANGE
+        - SPOT
+        - FUNDING
+        - MARGIN
+        - FUTURES
+        - OPTIONS
+      example:
+        SPOT
+    Fiat_Account_Type:
+      type: string
+      description: "Enumeration on types of possible fiat accounts"
+      enum:
+        - DDA
+        - CHECKING
+        - SAVINGS
+        - CREDIT
+        - MERCHANT
+        - MMA
+      example:
+        DDA
+    Fiat_Account_Type2:
+      type: string
+      description: "Enumeration on types of possible fiat accounts"
+      enum:
+        - DDA
+        - CHECKING
+        - SAVINGS
+        - CREDIT
+        - MERCHANT
+        - MMA
+      example:
+        MERCHANT
+    Crypto_Mainnet:
       type: string
       description: "Enumeration on types of possible networks for a mainnet 3rd party."
       enum:
@@ -1349,7 +1411,7 @@ components:
       - Aurora.dev
       example:
         Ethereum
-    Testnet_Networks:
+    Crypto_Testnet:
       type: string
       description: "Enumeration on types of possible networks for a testnet 3rd party"
       enum:
@@ -1402,7 +1464,7 @@ components:
           * `BASE` - A base blockchain asset.
           * `TOKEN` - An asset over a blockchain (for example, ERC20).
                       In case of a token class, the "identifiers" field must be specified, to reduce loss-of-funds for clients.
-          * `FIAT` - A class that includes both government issued currencies and bank-issued tokens which are pegged to government issued currencies.
+          * `FIAT` - A class that includes both government issued currencies and FIAT provider-issued tokens which are pegged to government issued currencies.
           
       enum:
         - BASE
@@ -1422,7 +1484,31 @@ components:
         - OUT
       example:
         IN
-    Balance_Information:
+    Fiat_Balance_Information:
+      type: object
+      required:
+        - coinSymbol
+        - totalAmount
+        - pendingAmount
+        - availableAmount
+      properties:
+        coinSymbol:
+          type: string
+          example: USDT
+          description: "The symbol of the asset"
+        totalAmount:
+          type: string
+          example: "195.172612"
+          description: "The total amount (as a string, for precision) in the account"
+        pendingAmount:
+          type: string
+          example: "188.2315812"
+          description: "The pending amount in usage"
+        availableAmount:
+          type: string
+          example: "10.333"
+          description: "The available amount for usage, the amount the account has with guarantee"
+    Exchange_Balance_Information:
       type: object
       required:
         - coinSymbol
@@ -1449,8 +1535,25 @@ components:
         creditAmount:
           type: string
           example: "3.1"
-          description: "The credit amount, that the 3rd party has borrowed to the user"
-    Balance:
+          description: "The credit amount, that the 3rd party has borrowed to the user, used for off-exchange"
+    Fiat_Balance:
+      type: object
+      required:
+        - type
+        - balances
+      properties:
+        displayName:
+          type: string
+          example: "Merchant"
+          description: "Text to describe the Fiat_Account_Type. This will be visual on the console balance page."
+          nullable: true
+        type:
+          $ref: '#/components/schemas/Fiat_Account_Type'
+        balances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Fiat_Balance_Information'
+    Exchange_Balance:
       type: object
       required:
         - type
@@ -1459,14 +1562,14 @@ components:
         displayName:
           type: string
           example: "Margin (Cross)"
-          description: "Text to describe the Account_Type. This will be visual on the console balance page."
+          description: "Text to describe the Crypto_Account_Type. This will be visual on the console balance page."
           nullable: true
         type:
-          $ref : '#/components/schemas/Account_Type'
+          $ref: '#/components/schemas/Crypto_Account_Type'
         balances:
           type: array
           items:
-            $ref: '#/components/schemas/Balance_Information'
+            $ref: '#/components/schemas/Exchange_Balance_Information'
     Status_Found:
       type: string
       description: >
@@ -1562,31 +1665,31 @@ components:
         holderGivenName:
           type: string
           example: "Mark"
-          description: "Holder given name"
+          description: "Holder Given Name"
         holderSurname:
           type: string
           example: "Twein"
-          description: "Holder given surname"
+          description: "Holder Given Surname"
         accountHolderName:
           type: string
           example: "PrimeAccount"
-          description: "Account holder name"
+          description: "Account Holder Name"
         accountHolderCity:
           type: string
           example: "New York"
-          description: "Account holder city"
+          description: "Account Holder City"
         accountHolderCountry:
           type: string
           example: "USA"
-          description: "Account holder country"
+          description: "Account Holder Country"
         accountHolderAddress1:
           type: string
           example: "3232 Hanover Street"
-          description: "Account holder address line 1"
+          description: "Account Holder Address line 1"
         accountHolderAddress2:
           type: string
           example: "Apt 202"
-          description: "Account holder address line 2"
+          description: "Account Holder Address line 2"
         accountHolderDistrict:
           type: string
           example: "10"
@@ -1595,15 +1698,24 @@ components:
           type: string
           example: "33132"
           description: "Account Holder Postal Code"
-    Fiat_Networks:
+    Payment_Systems:
       type: string
-      description: "Enumeration on types of possible Fiat networks for a 3rd party."
+      description: "Enumeration on types of possible Payment Systems networks for a 3rd party."
       enum:
-      - ABA
-      - IBAN
-      - SPEI
+        - ABA
+        - IBAN
+        - SPEI
       example:
         ABA
+    Fiat_Provider:
+      type: string
+      description: > 
+        Enumeration on types of possible Fiat Provider networks for a 3rd party.Fiat_Provider_Network is a placeholder for a new Fiat Provider network that will be added on demand (during an onboarding process)
+        to support a specific network. It can be used as example for testings.
+      enum:
+        - <Fiat_Provider_Network>
+      example:
+        <Fiat_Provider_Network>
     Crypto_Withdrawal:
       type: string
       description: Crypto withdrawal action.
