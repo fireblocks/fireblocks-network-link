@@ -354,7 +354,7 @@ paths:
                 isGross:
                   example: true
                   description: "Is the amount sent a gross amount? (Includes gas fees if necessary, and service fees)"
-                  type: boolean
+                  type: string
                 maxFee:
                   example: "0.00001616"
                   description: The service fee charged for withdrawal
@@ -640,7 +640,7 @@ paths:
           required: true
           description: "If this is a sub-account tranfer, either subMainTransfer or subaccountTransfer."
           schema:
-            type: boolean
+            type: string
             example: false
         - name: coinSymbol
           in: query
