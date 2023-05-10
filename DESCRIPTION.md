@@ -189,7 +189,7 @@ All notable changes to this project will be documented in this file. Dates are d
 
 ## v0.9.1
 > 10 May 2023
-* Changed the isGross and isSubTransfer documented type, from boolean to string
+> * Changed the isGross and isSubTransfer documented type, from boolean to string
 
 ## v0.9
 > 13 March 2023
