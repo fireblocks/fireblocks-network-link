@@ -188,7 +188,7 @@ _Note_ that not all error codes need to be in use!
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
 ## v0.9.1
-> 10 Mary 2023
+> 10 May 2023
 * Changed the isGross and isSubTransfer documented type, from boolean to string
 
 ## v0.9
