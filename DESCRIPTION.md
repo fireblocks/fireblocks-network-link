@@ -189,16 +189,16 @@ All notable changes to this project will be documented in this file. Dates are d
 
 ## v0.9.1
 > 10 May 2023
-* Changed the isGross and isSubTransfer documented type, from boolean to string
+* Changed the isGross and isSubTransfer documented type, from boolean to string.
 
 
 ## v0.9
 > 13 March 2023
-* Added ECDSA support in addition to HMAC/RSA support
+* Added ECDSA support in addition to HMAC/RSA support.
 
 ## v0.8.1
 > 26 Feb 2023
-* Supporting EthereumPoW and Luna Classic networks on Mainnet
+* Supporting EthereumPoW and Luna Classic networks on Mainnet.
 
 ## v0.8.0
 > 2 Feb 2023
