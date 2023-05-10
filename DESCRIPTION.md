@@ -187,20 +187,19 @@ _Note_ that not all error codes need to be in use!
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-## v0.9.1
+### v0.9.1
 > 10 May 2023
 * Changed the isGross and isSubTransfer documented type, from boolean to string.
 
-
-## v0.9
+### v0.9
 > 13 March 2023
 * Added ECDSA support in addition to HMAC/RSA support.
 
-## v0.8.1
+### v0.8.1
 > 26 Feb 2023
 * Supporting EthereumPoW and Luna Classic networks on Mainnet.
 
-## v0.8.0
+### v0.8.0
 > 2 Feb 2023
 * Added more details the RSA support.
 * Added more details on the signature payload.
@@ -210,14 +209,14 @@ All notable changes to this project will be documented in this file. Dates are d
 * Added RSA support in addition to HMAC support
 * Withdrawal destination address can now become masked with a hash value, if configured.
 
-## v0.7.5
+### v0.7.5
 > 29 Dec 2022
 * Added credit balance instead of the borrow balance on /accounts endpoint
 * Added new settlement error
 * Can configure a different fundable account type for sub accounts
 * Gas fees description added for isGross
 
-## v0.7.4
+### v0.7.4
 
 > 18 Nov 2022
 * Moved to Fireblocks Github repo
