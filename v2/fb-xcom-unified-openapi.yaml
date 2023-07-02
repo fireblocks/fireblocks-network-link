@@ -9,16 +9,12 @@ info:
     Fireblocks Provider Connectivity API defines the interface for integration of third-party
     providers into Fireblocks platform.
 
-
-    Intro
-    ------------
+    # Intro    
 
     Fireblocks connects businesses across the crypto world as the digital asset infrastructure for over 1,800 leading trading desks, hedge funds, brokerages, custodians, 3rd parties, and banks. To meet the demand for third-party services that want to access the liquidity of institutional investors and traders, Fireblocks is opening its platform for fast third-party integration.
     Reach out to us for a partnership agreement and add a Connector to have your product integrated.
 
-
-    How Fireblocks customers access third-party accounts
-    ------------
+    # How Fireblocks customers access third-party accounts
 
     Fireblocks customers use the Fireblocks web-based console to connect their Fireblocks account to third-party solution providers. Fireblocks supports the integration of various solution providers such as banks, cryptocurrency exchanges, and cryptocurrency on-ramp and off-ramp services.
 
@@ -30,21 +26,15 @@ info:
       * Track the status of their withdrawals and deposits.
       * View and audit their transaction history.
 
-
-    Multiple ways of integration
-    ------------
+    # Multiple ways of integration
 
     Fireblocks gives you as a partner the ability to integrate your services and be listed on Fireblocks platform as a bank or an exchange (including registering as an on/off-ramp provider). Using Fireblocks Connectivity API, Fireblocks partners get the needed flexibility to choose the right type of integration for their services.
 
-
-    How does it work?
-    ------------
+    # How does it work?
 
     To be listed as a partner on Fireblocks platform, you must implement the Fireblocks Connectivity API. Fireblocks platform will then be able to query the API and present the Fireblocks users with the operations and capabilities offered by your service.
 
-
-    Register your 3rd party with Fireblocks.
-    ------------
+    # Register your 3rd party with Fireblocks.
 
     Once your license agreement for listing your 3rd party with Fireblocks is signed, the Fireblocks technical team will request the following 3rd party registration settings:
       1. Display name: i.e., “My Exchange” or “My Exchange Sandbox”
@@ -54,22 +44,21 @@ info:
       4. Base URL for your API endpoints: i.e., https://my-service.com/fireblocks
           * sandbox environment endpoint: https://my-service.com/fireblocks_sandbox
       5. Select your authentication preferences:
-          * HMAC:
+          * #### HMAC:
             * Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
             * Request signing format: valid values are: SHA512, SHA3_256, SHA256
             * Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
-          * RSA:
+          * #### RSA:
             * Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
             * Request signing format: valid values are: SHA512, SHA3_256, SHA256
             * Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
-          * ECDSA:
+          * #### ECDSA:
             * Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
             * Request signing format: valid values are: SHA256
             * Signature encoding result: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
 
 
-    Requests signing
-    ------------
+    # Requests signing
 
     All the requests from Fireblocks platform will be signed. And will have the following properties:
       * Required headers
@@ -109,34 +98,33 @@ info:
           * The body is `""` if there is no request body (for GET requests).
 
 
-    Signing
-    -------
+    # Signing
 
     In order to sign the requests, Fireblocks platform will use an `API-KEY` and `SECRET` provided by you.
 
     Based on the Authentication scheme provided when registered, the request signature procedure is as follows:
 
-      * **Using HMAC**
+      * #### Using HMAC
         1. Create a prehash string `{timestamp+nonce+method+endpoint+body}`
         2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
-           
-           [The request body is a JSON string and needs to be the same with the parameters passed by the API]
+            
+            [The request body is a JSON string and needs to be the same with the parameters passed by the API]
         3. Use `SECRET` to sign the string with HMAC (Internal hash function is configurable: `SHA512`, `SHA3_256`, `SHA256`)
         4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
 
-      * **Using RSA**
+      * #### Using RSA
 
         Supported RSA Parameters [`PKCS1v15`]
         
         `SECRET` is defined to be the Private RSA PEM.
         1. Create a prehash string `{timestamp+nonce+method+endpoint+body}`
         2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
-           
-           [The request body is a JSON string and needs to be the same with the parameters passed by the API]
+            
+            [The request body is a JSON string and needs to be the same with the parameters passed by the API]
         3. Use `SECRET` to sign the string with RSA (Internal hash function is configurable: `SHA512`, `SHA3_256`, `SHA256`)
         4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
 
-      * **Using ECDSA**
+      * #### Using ECDSA
 
         Supported ECDSA Parameters [`prime256v1`/`secp256k1`]
         
@@ -145,13 +133,11 @@ info:
         1. Create a prehash string `{timestamp+nonce+method+endpoint+body}`
         2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
 
-           [The request body is a JSON string and needs to be the same as the parameters passed by the API]
+            [The request body is a JSON string and needs to be the same as the parameters passed by the API]
         3. Use `SECRET` to sign the string with ECDSA (The internal hash function is not configurable and is set to `SHA256`)
         4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`).
 
-
-    Capabilities
-    ------------
+    # Capabilities
 
     The API consists of separate optional components with flexible capabilities. Fireblocks
     platform uses `/capabilities/*` endpoints to discovery dynamically the supported components
@@ -182,7 +168,7 @@ info:
 
     - `GET /capabilities/trading/books` lists supported order books.
 
-    **Note:** 
+    ### Note:
 
     When declaring implementation of a specific capabilities, 
     Fireblocks platform will assume that all the endpoints with that capabilities are implemented. 
@@ -192,8 +178,7 @@ info:
     <img src="https://fireblocks.github.io/fireblocks-network-link/v2/fireblocks-connectivity-api-capabilities-flow.png"/>
 
 
-    Pagination
-    ------------
+    # Pagination
 
     Some endpoints return collections. However, the entire collection is typically not returned in a single call. 
 
@@ -206,8 +191,7 @@ info:
       /accounts?limit=100&startingAfter=7885a47b-0719-4448-b59e-3b8497cd1685
     ```
 
-    Assets and transfer methods
-    ---------------------------
+    # Assets and transfer methods
 
     An asset in Fireblocks Connectivity API is either a national currency (per [ISO-4217](https://en.wikipedia.org/wiki/ISO_4217)), one
     of the blockchain native cryptocurrencies, explicitly listed in the API specification, or an 
