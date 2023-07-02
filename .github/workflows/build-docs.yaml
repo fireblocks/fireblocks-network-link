@@ -12,9 +12,11 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build redoc
       run: npx redoc-cli bundle openapi.yaml && mv redoc-static.html index.html
+    - name: Build redoc for v2
+      run:  mkdir -p v2 && npx redoc-cli bundle fb-xcom-unified-openapi.yaml && mv redoc-static.html v2/index.html
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: .
-        exclude_assets: '.github,openapi.yaml,assets,README.md'
+        exclude_assets: '.github,openapi.yaml,fb-xcom-unified-openapi.yaml,assets,README.md'
