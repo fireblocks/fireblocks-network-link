@@ -11,9 +11,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build redoc
-      run: npx redoc-cli bundle openapi.yaml && mv redoc-static.html index.html
+      run: npx @redocly/cli build-docs openapi.yaml --output index.html
     - name: Build redoc for v2
-      run:  npx redoc-cli bundle v2/fb-xcom-unified-openapi.yaml --output v2/docs.html
+      run:  npx @redocly/cli build-docs v2/fb-xcom-unified-openapi.yaml --output v2/docs.html
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
