@@ -1,0 +1,2444 @@
+openapi: 3.0.0
+info:
+  title: '[Draft] Fireblocks Provider Connectivity API'
+  version: 0.0.1
+  contact:
+    name: Fireblocks
+    url: https://fireblocks.com
+  description: |
+    Fireblocks Provider Connectivity API defines the interface for integration of third-party
+    providers into Fireblocks platform.
+
+
+    Capabilities
+    ------------
+
+    The API consists of separate optional components with flexible capabilities. Fireblocks
+    platform uses `/capabilities/*` endpoints to discovery dynamically the supported components
+    and capabilities.
+
+    The discovery process starts with calling 'GET /capabilities'. The response specifies
+    the implemented API version and an array of the supported API capabilities; for example:
+
+    ```javascript
+      {
+        "version": "1.0.0",
+        "components": ["balances," "transfers," "trading", "liquidity"]
+      }
+    ```
+
+    Based on the response, Fireblocks platform uses the endpoints specific to each component
+    to discover the specific capabilities for each component:
+
+    - `GET /capabilities/assets` defines token assets.
+    - `GET /capabilities/balances` lists supported balance assets.
+    - `GET /capabilities/transfers/withdrawals` lists supported withdrawal methods.
+    - `GET /capabilities/transfers/deposits` lists supported deposit methods.
+    - `GET /capabilities/liquidity/quotes` lists supported currency conversions.
+    - `GET /capabilities/trading/books` lists supported order books.
+
+
+    Assets and transfer methods
+    ---------------------------
+
+    An asset in Fireblocks Connectivity API is either a national currency (per ISO-4217), one
+    of the blockchain native cryptocurrencies, explicitly listed in the API specification, or an 
+    arbitrary blockchain token.
+
+    Any token used anywhere in the API must be listed in the response to `GET /capabilities/assets`.
+    The returned object assigns a unique ID to each token. When an asset is used in a request or
+    a response it is identified by its code/symbol, if it is an asset predefined by the API
+    specification; otherwise, it is identified by the aforementioned unique ID.
+
+    A provider declares which balance assets it supports by listing the currencies in the reply to 
+    `GET /capabilities/balances` request. A provider can choose to support test versions of assets
+    by setting `testAsset` flag in the capabilities response.
+
+    Transfer methods define how assets are withdrawn and deposited. Each transfer method starts
+    as a capability. Given a capability, it can be used to define transfer addresses. Finally,
+    an address is used to make an actual transfer.
+
+    For example, calling `GET /capabilities/transfers/withdrawals` could return the following
+    object:
+
+    ```javascript
+    [
+      {
+        balanceAsset: {
+          coinType: 'NationalCurrency',
+          currencyCode: 'USD'
+        },
+        capability: {
+          transferMethod: 'PublicBlockchain',
+          blockchain: 'Ethereum',
+          asset: {
+            assetId: 'a36c6daa-8ce9-4fd5-9b1d-5c33901a08e9'
+          }
+        }
+      }
+    ]
+    ```
+
+    And calling `GET /capabilities/assets` returns
+
+    ```javascript
+    [
+      {
+        id: 'a36c6daa-8ce9-4fd5-9b1d-5c33901a08e9',
+        name: 'Tether USD',
+        symbol: 'USDT',
+        type: 'Erc20Token',
+        decimalPlaces: 6,
+        blockchain: 'Ethereum',
+        decimalPlaces: 6,
+        contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+      }
+    ]
+    ```
+
+    These capabilities means USD balance could be withdrawn as USDT over Ethereum. In the next step,
+    this capability could be used to define a specific withdrawal destination:
+
+    ```javascript
+    {
+      transferMethod: 'PublicBlockchain',
+      blockchain: 'Ethereum',
+      asset: {
+        assetId: 'a36c6daa-8ce9-4fd5-9b1d-5c33901a08e9'
+      },
+      amount: '10',
+      address: '0xEC52EC04b660a15B6C7A7C8C85f102B2C6cb2697'
+    }
+    ```
+
+    When used for an actual withdrawal it becomes a transfer — an Ethereum transaction with an actual
+    transaction hash, in this example:
+
+    ```javascript
+    {
+      transferMethod: 'PublicBlockchain',
+      blockchain: 'Ethereum',
+      asset: {
+        assetId: 'a36c6daa-8ce9-4fd5-9b1d-5c33901a08e9'
+      },
+      amount: '10',
+      address: '0xEC52EC04b660a15B6C7A7C8C85f102B2C6cb2697',
+      blockchainTxId: '0xb3b773aaf5929b2f94db973da8bb6f31b334cc57eaef872bd927119946067843',
+    }
+    ```
+
+    Notice, that in a deposit or a withdrawal operation the operation asset and the balance asset
+    are specified separately, thus enabling scenarios when assets appear as different currencies
+    when they "move". Moreover it is possible to define balances as arbitrary buckets, as long as
+    there is a clear definition which assets can be deposited and withdrawn from the bucket.
+    The same principles apply to fiat transfers. In general, asset transitions could be described
+    as follows:
+
+    ```  
+        ┌───────────┐    ┌───────────┐    ┌──────────────┐    ┌───────────┐    ┌──────────────┐
+        │  Deposit  │    │  Balance  │    │              │    │  Balance  │    │  Withdrawal  │
+        │           ├───►│           ├───►│  Conversion  ├───►│           ├───►│              │
+        │  Asset 1  │    │  Asset 2  │    │              │    │  Asset 3  │    │   Asset 4    │
+        └───────────┘    └───────────┘    └──────────────┘    └───────────┘    └──────────────┘
+    Example: MXN              MXN                                  USD               USDC
+    ```
+tags:
+  - name: Capabilities
+  - name: Accounts
+  - name: Balances
+  - name: Historic Balances
+  - name: Liquidity
+  - name: Trading
+  - name: Transfers
+  - name: Transfers (Blockchain)
+  - name: Transfers (Fiat)
+  - name: Transfers (Peer Accounts)
+paths:
+  /capabilities:
+    get:
+      summary: Describe server capabilities
+      description: |-
+        Returns the API version and all the capabilities that the server supports.  
+          
+        The capabilities are specified as a map. The map keys are the capability names and the values are lists of account IDs. If all the accounts support a capability, an asterisk could be used, instead of listing all the accounts.
+      tags:
+        - Capabilities
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+      responses:
+        '200':
+          description: Server capability details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Capabilities'
+              examples:
+                allAccountsSupportAllCapabilities:
+                  summary: All accounts support all capabilities
+                  value:
+                    version: 1.0.37
+                    components:
+                      accounts: '*'
+                      balances: '*'
+                      transfers: '*'
+                      transfersBlockchain: '*'
+                      transfersFiat: '*'
+                      transfersPeerAccounts: '*'
+                      trading: '*'
+                      liquidity: '*'
+                      subscriptions: '*'
+                allAccountsSupportSomeCapabilities:
+                  summary: All accounts support only balances and accounts capabilities
+                  value:
+                    version: 1.2.0
+                    components:
+                      accounts: '*'
+                      balances: '*'
+                twoAccountsSupportTransfers:
+                  summary: Only two accounts support fiat transfers
+                  value:
+                    version: 1.2.0
+                    components:
+                      accounts: '*'
+                      balances: '*'
+                      transfers:
+                        - 6cd2fe1e-d0bc-4fad-a9ba-9384e0fdfdc0
+                        - 7885a47b-0719-4448-b59e-3b8497cd1685
+                      transfersFiat:
+                        - 6cd2fe1e-d0bc-4fad-a9ba-9384e0fdfdc0
+                        - 7885a47b-0719-4448-b59e-3b8497cd1685
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /capabilities/assets:
+    get:
+      operationId: get-additional-assets
+      summary: Get list of supported additional assets
+      description: Returns assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
+      tags:
+        - Capabilities
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/AssetsQueryParam'
+      responses:
+        '200':
+          description: List of additional assets.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - assets
+                properties:
+                  assets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AssetDefinition'
+              examples:
+                usdcTokens:
+                  summary: USDC tokens on various blockchains
+                  value:
+                    assets:
+                      - id: 360de0ad-9ba1-45d5-8074-22453f193d65
+                        type: Erc20Token
+                        blockchain: Ethereum
+                        contractAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+                        name: USDC
+                        symbol: USDC
+                        description: USDC is a fully collateralized US Dollar stablecoin developed by CENTRE, the open source project with Circle being the first of several forthcoming issuers.
+                        decimalPlaces: 6
+                      - id: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                        type: Erc20Token
+                        blockchain: Polygon PoS
+                        contractAddress: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174'
+                        name: USDC
+                        symbol: USDC
+                        description: USD Coin is an ERC-20 stablecoin brought to you by Circle and Coinbase. It is issued by regulated and licensed financial institutions that maintain full reserves of the equivalent fiat currency.
+                        decimalPlaces: 6
+                      - id: 4386cf4d-83b2-4410-96da-0d3919a45506
+                        type: StellarToken
+                        blockchain: Stellar
+                        issuerAddress: GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN
+                        stellarCurrencyCode: USDC
+                        name: USDC
+                        symbol: USDC
+                        description: USDC is a fully collateralized US Dollar stablecoin, based on the open source fiat stablecoin framework developed by Centre.
+                        decimalPlaces: 2
+                usdcBucket:
+                  summary: USDC bucket
+                  description: Buckets are used to aggregate various currencies in one balance entry.
+                  value:
+                    assets:
+                      - id: f0844d82-7097-4521-95bc-d843724a893e
+                        type: BucketAsset
+                        name: USDC
+                        symbol: USDC
+                        description: Aggregation of all USDC token over the different blockchains.
+                        decimalPlaces: 6
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /capabilities/assets/{id}:
+    get:
+      summary: Get details of a supported additional asset.
+      description: Returns the details of an assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
+      tags:
+        - Capabilities
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/AssetsQueryParam'
+      responses:
+        '200':
+          description: List of additional assets.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetDefinition'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /capabilities/balances:
+    get:
+      summary: Get list of supported balance assets
+      tags:
+        - Capabilities
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+      responses:
+        '200':
+          description: List of balance assets
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  capabilities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AssetReference'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts:
+    get:
+      summary: Get list of sub-accounts
+      tags:
+        - Accounts
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/AccountPropertiesQueryParam'
+      responses:
+        '200':
+          description: List of sub-accounts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Account'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}:
+    get:
+      summary: Get sub-account details
+      tags:
+        - Accounts
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/AccountPropertiesQueryParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of sub-accounts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/balances:
+    get:
+      summary: Get current balances
+      tags:
+        - Balances
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/AssetsQueryParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of asset balances.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - balances
+                properties:
+                  balances:
+                    $ref: '#/components/schemas/Balances'
+              examples:
+                nationalCurrency:
+                  summary: National currency balance
+                  value:
+                    balances:
+                      - asset:
+                          nationalCurrencyCode: USD
+                        availableAmount: '1743.43'
+                        lockedAmount: '0'
+                blockchainNativeCurrency:
+                  summary: Blockchain native currency balance
+                  value:
+                    balances:
+                      - asset:
+                          blockchain: Bitcoin
+                          cryptocurrencySymbol: BTC
+                        availableAmount: '7.00008214'
+                        lockedAmount: '0'
+                bucketCurrency:
+                  summary: Usage of tokens and buckets in balance
+                  description: '`assetId` must be one of the IDs returned by `GET /capabilities/assets`. The ID in this example is the ID of the USDC bucket defined in the example responses of `GET /capabilities/assets`.'
+                  value:
+                    balances:
+                      - asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                        availableAmount: '95.03'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/historic-balances:
+    get:
+      summary: Get balances at specific time in the past
+      tags:
+        - Historic Balances
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/AssetsQueryParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - name: time
+          description: Time of the requested balances.
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: List of asset balances.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - balances
+                properties:
+                  balances:
+                    $ref: '#/components/schemas/Balances'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /capabilities/liquidity/quotes:
+    get:
+      summary: List possible asset conversions
+      tags:
+        - Capabilities
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+      responses:
+        '200':
+          description: List of possible asset conversions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteCapabilities'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/liquidity/quotes:
+    post:
+      summary: Quote creation request
+      description: Either `fromAmount` or `toAmount` must be specified, while the unspecified amount will be populated by the server and returned in the response.
+      tags:
+        - Liquidity
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteRequest'
+      responses:
+        '200':
+          description: Quote details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    get:
+      summary: Get list of quotes sorted by creation time
+      tags:
+        - Liquidity
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/ListOrderQueryParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Quotes details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Quote'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/liquidity/quotes/{id}:
+    get:
+      summary: Get quote details
+      tags:
+        - Liquidity
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Quote details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/liquidity/quotes/{id}/execute:
+    post:
+      summary: Execute quote
+      tags:
+        - Liquidity
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Quote details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /capabilities/trading/books:
+    get:
+      summary: List order books
+      tags:
+        - Capabilities
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+      responses:
+        '200':
+          description: List of order books
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderBook'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /trading/books:
+    get:
+      summary: List order books
+      tags:
+        - Trading
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+      responses:
+        '200':
+          description: List of order books
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - books
+                properties:
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderBook'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /trading/books/{id}:
+    get:
+      summary: Get details of an order book
+      tags:
+        - Trading
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+      responses:
+        '200':
+          description: The specified trading book if it exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderBook'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /trading/books/{id}/asks:
+    get:
+      summary: Get active sell orders in an order book
+      description: List active sell orders in an order book, sorted ascending by the sell price.
+      tags:
+        - Trading
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+      responses:
+        '200':
+          description: Active sell orders.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - asks
+                properties:
+                  asks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MarketEntry'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /trading/books/{id}/bids:
+    get:
+      summary: Get active buy orders in an order book
+      description: List active buy orders in an order book, sorted descending by the buy price.
+      tags:
+        - Trading
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+      responses:
+        '200':
+          description: Active buy orders.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - bids
+                properties:
+                  bids:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MarketEntry'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /trading/books/{id}/history:
+    get:
+      summary: List fulfilled orders in an order book
+      description: List fulfilled orders in an order book, sorted descending by the fulfillment time.
+      tags:
+        - Trading
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+      responses:
+        '200':
+          description: List of fulfilled trades.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - trades
+                properties:
+                  trades:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MarketTrade'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/trading/orders:
+    get:
+      summary: List trading orders
+      description: List trading orders sorted descending by the creation time.
+      tags:
+        - Trading
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - orders
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      summary: Create a new trading order
+      tags:
+        - Trading
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+            example:
+              idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
+              base: BTC
+              quote: ETH
+              side: BUY
+              orderType: LIMIT
+              timeInForce: GTC
+              baseQuantity: 10
+              price: '0.0003'
+      responses:
+        '200':
+          description: Newly created book order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              example:
+                id: 3eede-eqefk3-ff34dk-34ddex
+                status: PENDING
+                base: BTC
+                quote: ETH
+                side: BUY
+                orderType: LIMIT
+                timeInForce: GTC
+                baseQuantity: 10
+                price: '0.0003'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/trading/orders/{id}:
+    get:
+      summary: Get trading order details
+      tags:
+        - Trading
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+      responses:
+        '200':
+          description: Book order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      summary: Cancel an active trading order
+      tags:
+        - Trading
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+      responses:
+        '200':
+          description: Order canceled.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /capabilities/transfers/withdrawals:
+    get:
+      summary: Get list of supported withdrawal methods
+      tags:
+        - Capabilities
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+      responses:
+        '200':
+          description: List of withdrawal methods for account.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  capabilities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WithdrawalCapability'
+              examples:
+                allUsdcToBucket:
+                  summary: USDCs withdrawals
+                  description: |-
+                    This response indicates that all USD and USDC bucket balances could be withdrawn using the USDC tokens on the various blockchains. The USD balance  can be specified directly while token and bucket balances must be defined  in `GET /capabilities/assets` and referenced using their IDs.
+                    The asset IDs in this example are the same IDs used in the examples of `GET /capabilities/assets`.
+                  value:
+                    capabilities:
+                      - withdrawal:
+                          asset:
+                            assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - withdrawal:
+                          asset:
+                            assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - withdrawal:
+                          asset:
+                            assetId: 4386cf4d-83b2-4410-96da-0d3919a45506
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - withdrawal:
+                          asset:
+                            assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - withdrawal:
+                          asset:
+                            assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - withdrawal:
+                          asset:
+                            assetId: 4386cf4d-83b2-4410-96da-0d3919a45506
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /capabilities/transfers/deposits:
+    get:
+      summary: Get list of supported deposit methods
+      tags:
+        - Capabilities
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+      responses:
+        '200':
+          description: List of deposit methods for account.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  capabilities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DepositCapability'
+              examples:
+                allUsdcToBucket:
+                  summary: USDCs deposit into a bucket or USD
+                  description: |-
+                    This response indicates that all USDC token on the various blockchains could be deposited either into the USDC bucket balance or into the USD balance. The USD balance can be specified directly while token and bucket balances must be defined in `GET /capabilities/assets` and referenced using their IDs.
+                    The asset IDs in this example are the same IDs used in the examples of `GET /capabilities/assets`.
+                  value:
+                    capabilities:
+                      - deposit:
+                          asset:
+                            assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - deposit:
+                          asset:
+                            assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - deposit:
+                          asset:
+                            assetId: 4386cf4d-83b2-4410-96da-0d3919a45506
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - deposit:
+                          asset:
+                            assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - deposit:
+                          asset:
+                            assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - deposit:
+                          asset:
+                            assetId: 4386cf4d-83b2-4410-96da-0d3919a45506
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/transfers/withdrawals:
+    get:
+      summary: Get list of withdrawals sorted by creation time
+      tags:
+        - Transfers
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/ListOrderQueryParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/WithdrawalsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/transfers/withdrawals/{id}:
+    get:
+      summary: Get withdrawal details
+      tags:
+        - Transfers
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Withdrawals details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Withdrawal'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/transfers/withdrawals/blockchain:
+    get:
+      summary: Get list of withdrawals over public blockchains sorted by creation time
+      tags:
+        - Transfers (Blockchain)
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/ListOrderQueryParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/WithdrawalsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      summary: Create new withdrawal over public blockchain
+      description: Should reject any non blockchain withdrawal request.
+      tags:
+        - Transfers (Blockchain)
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Withdrawal'
+      responses:
+        '201':
+          $ref: '#/components/responses/WithdrawalResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/transfers/withdrawals/fiat:
+    get:
+      summary: Get list of fiat withdrawals sorted by creation time
+      tags:
+        - Transfers (Fiat)
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/ListOrderQueryParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/WithdrawalsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      summary: Create new fiat withdrawal
+      description: Should reject any non fiat withdrawal request.
+      tags:
+        - Transfers (Fiat)
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Withdrawal'
+      responses:
+        '201':
+          $ref: '#/components/responses/WithdrawalResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/transfers/withdrawals/peeraccount:
+    get:
+      summary: Get list of withdrawals to peer accounts, sorted by creation time
+      tags:
+        - Transfers (Peer Accounts)
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/ListOrderQueryParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/WithdrawalsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      summary: Create new withdrawal to a peer account
+      description: Should reject any non peer acount withdrawal request.
+      tags:
+        - Transfers (Peer Accounts)
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Withdrawal'
+      responses:
+        '201':
+          $ref: '#/components/responses/WithdrawalResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/transfers/withdrawals/subaccount:
+    get:
+      summary: Get list of withdrawals to sub-accounts, sorted by creation time
+      tags:
+        - Accounts
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/ListOrderQueryParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/WithdrawalsResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      summary: Create new transfer to another sub-account
+      description: Transfers assets between different sub-accounts of the same user. Should reject any withdrawals that are not sub-account transfers.
+      tags:
+        - Transfers
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Withdrawal'
+      responses:
+        '201':
+          $ref: '#/components/responses/WithdrawalResponse'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/transfers/deposits:
+    get:
+      summary: Get list of deposits sorted by creation time
+      tags:
+        - Transfers
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Deposits details.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Deposit'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/transfers/deposits/{id}:
+    get:
+      summary: Get deposit details
+      tags:
+        - Transfers
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of deposits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deposit'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/transfers/deposits/addresses:
+    post:
+      summary: Create new deposit address
+      tags:
+        - Transfers
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepositAddressCreationRequest'
+      responses:
+        '200':
+          description: New deposit address created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepositAddress'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    get:
+      summary: Get list of existing deposit addresses
+      tags:
+        - Transfers
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of existing deposit addresses.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DepositAddress'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/transfers/deposits/addresses/{id}:
+    get:
+      summary: Get details of a deposit address
+      tags:
+        - Transfers
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: New deposit address created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepositAddress'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      summary: Disable a deposit address
+      tags:
+        - Transfers
+      parameters:
+        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Deposit address disabled.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+components:
+  parameters:
+    SecurityHeaderParams:
+      name: security
+      in: header
+      explode: true
+      required: true
+      description: Mandatory security parameters.
+      schema:
+        type: object
+        properties:
+          X-FBAPI-KEY:
+            type: string
+          X-FBAPI-TIMESTAMP:
+            type: number
+            description: Milliseconds since Unix epoch.
+          X-FBAPI-NONCE:
+            type: string
+            description: Unique identifier of the request.
+          X-FBAPI-SIGNATURE:
+            type: string
+            description: |-
+              Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+              - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+    EntityIdPathParam:
+      name: id
+      in: path
+      required: true
+      description: Entity unique identifier.
+      schema:
+        type: string
+        format: uuid
+    SubAccountIdPathParam:
+      name: accountId
+      in: path
+      required: true
+      description: Sub-account identifier.
+      schema:
+        type: string
+        pattern: ^[A-Za-z0-9_-]+$
+    ListOrderQueryParam:
+      name: order
+      in: query
+      description: Controls the order of the items in the returned list.
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: desc
+    PaginationQueryParams:
+      name: pagination
+      in: query
+      description: Parameters controlling list pagination.
+      style: form
+      explode: true
+      schema:
+        type: object
+        properties:
+          limit:
+            description: Maximum number of returned items.
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 10
+          startingAfter:
+            description: Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
+            type: string
+          endingBefore:
+            description: Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
+            type: string
+    AssetsQueryParam:
+      name: asset
+      in: query
+      description: Limits the response to one asset.
+      style: form
+      explode: true
+      schema:
+        $ref: '#/components/schemas/AssetReference'
+    AccountPropertiesQueryParam:
+      name: assets
+      in: query
+      description: Array of account property names. Indicates which account properties should be returned. All properties by default. Account ID is always returned.
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+      examples:
+        two-assets:
+          summary: Request to return the ID, the title, and the balances.
+          value:
+            - title
+            - balances
+  responses:
+    ErrorResponse:
+      description: Failed to process request.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errorCode:
+                $ref: '#/components/schemas/ErrorCode'
+              description:
+                type: string
+    WithdrawalResponse:
+      description: New withdrawal has been successfully created.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Withdrawal'
+    WithdrawalsResponse:
+      description: List of withdrawals.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              withdrawals:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Withdrawal'
+  schemas:
+    ErrorCode:
+      type: string
+      enum:
+        - unexpected-error
+        - bad-amount-format
+        - unknown-asset
+    Capabilities:
+      type: object
+      required:
+        - version
+        - components
+      properties:
+        version:
+          description: Version number of the API specification that this server implements
+          type: string
+          pattern: ^(\d)+\.(\d)+\.(\d)+$
+          example: 1.0.37
+        components:
+          $ref: '#/components/schemas/ApiComponents'
+    ApiComponents:
+      description: Lists supported API components and which sub-accounts support the component.
+      type: object
+      properties:
+        accounts:
+          $ref: '#/components/schemas/AccountsSet'
+        balances:
+          $ref: '#/components/schemas/AccountsSet'
+        historicBalances:
+          $ref: '#/components/schemas/AccountsSet'
+        transfers:
+          $ref: '#/components/schemas/AccountsSet'
+        transfersBlockchain:
+          $ref: '#/components/schemas/AccountsSet'
+        transfersFiat:
+          $ref: '#/components/schemas/AccountsSet'
+        transfersPeerAccounts:
+          $ref: '#/components/schemas/AccountsSet'
+        trading:
+          $ref: '#/components/schemas/AccountsSet'
+        liquidity:
+          $ref: '#/components/schemas/AccountsSet'
+        subscriptions:
+          $ref: '#/components/schemas/AccountsSet'
+    AccountsSet:
+      description: Indicates to which sub-accounts an operation applies. The value could be either a list of sub-account IDs or "*". The value "*" indicates all the sub-accounts.
+      oneOf:
+        - type: string
+          pattern: ^\*$
+        - type: array
+          items:
+            type: string
+    PositiveAmount:
+      type: string
+      pattern: ^\d+(\.\d+)?
+    AccountStatus:
+      type: string
+      enum:
+        - active
+        - inactive
+    Account:
+      type: object
+      required:
+        - id
+        - title
+        - balances
+        - status
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        balances:
+          $ref: '#/components/schemas/Balances'
+        status:
+          $ref: '#/components/schemas/AccountStatus'
+    Balances:
+      type: array
+      description: Maps balance assets to their balances.
+      items:
+        $ref: '#/components/schemas/AssetBalance'
+    AssetBalance:
+      type: object
+      required:
+        - asset
+        - availableAmount
+      properties:
+        asset:
+          $ref: '#/components/schemas/AssetReference'
+        availableAmount:
+          $ref: '#/components/schemas/PositiveAmount'
+        lockedAmount:
+          $ref: '#/components/schemas/PositiveAmount'
+    AssetCommonProperties:
+      type: object
+      required:
+        - id
+        - name
+        - symbol
+        - type
+        - decimalPlaces
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        symbol:
+          type: string
+        description:
+          type: string
+        type:
+          $ref: '#/components/schemas/AssetDefinitionType'
+        decimalPlaces:
+          type: integer
+        testAsset:
+          type: boolean
+          default: false
+    AssetDefinitionType:
+      type: string
+      enum:
+        - BucketAsset
+        - Erc20Token
+        - Bep20Token
+        - StellarToken
+    BucketAsset:
+      allOf:
+        - $ref: '#/components/schemas/AssetCommonProperties'
+    Erc20Token:
+      allOf:
+        - $ref: '#/components/schemas/AssetCommonProperties'
+        - type: object
+          required:
+            - blockchain
+            - contractAddress
+          properties:
+            blockchain:
+              $ref: '#/components/schemas/Blockchain'
+            contractAddress:
+              type: string
+      example:
+        blockchain: Ethereum
+        name: Tether USD
+        symbol: USDT
+        decimalPlaces: 6
+        contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+    Bep20Token:
+      allOf:
+        - $ref: '#/components/schemas/AssetCommonProperties'
+        - type: object
+          required:
+            - blockchain
+            - contractAddress
+          properties:
+            blockchain:
+              $ref: '#/components/schemas/Blockchain'
+            contractAddress:
+              type: string
+    StellarToken:
+      allOf:
+        - $ref: '#/components/schemas/AssetCommonProperties'
+        - type: object
+          required:
+            - blockchain
+            - issuerAddress
+            - stellarCurrencyCode
+          properties:
+            blockchain:
+              $ref: '#/components/schemas/Blockchain'
+            issuerAddress:
+              type: string
+            stellarCurrencyCode:
+              type: string
+    AssetDefinition:
+      anyOf:
+        - $ref: '#/components/schemas/BucketAsset'
+        - $ref: '#/components/schemas/Erc20Token'
+        - $ref: '#/components/schemas/Bep20Token'
+        - $ref: '#/components/schemas/StellarToken'
+      discriminator:
+        propertyName: type
+        mapping:
+          BucketAsset: '#/components/schemas/BucketAsset'
+          Erc20Token: '#/components/schemas/Erc20Token'
+          Bep20Token: '#/components/schemas/Bep20Token'
+          StellarToken: '#/components/schemas/StellarToken'
+    NationalCurrency:
+      type: object
+      required:
+        - nationalCurrencyCode
+      properties:
+        nationalCurrencyCode:
+          $ref: '#/components/schemas/NationalCurrencyCode'
+        testAsset:
+          type: boolean
+          default: false
+    NativeCryptocurrency:
+      type: object
+      required:
+        - cryptocurrencySymbol
+      properties:
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        cryptocurrencySymbol:
+          anyOf:
+            - $ref: '#/components/schemas/Layer1Cryptocurrency'
+            - $ref: '#/components/schemas/Layer2Cryptocurrency'
+        testAsset:
+          type: boolean
+          default: false
+    OtherAssetReference:
+      type: object
+      required:
+        - assetId
+      properties:
+        assetId:
+          description: ID of one of the assets returned in get-additional-assets.
+          type: string
+    AssetReference:
+      oneOf:
+        - $ref: '#/components/schemas/NationalCurrency'
+        - $ref: '#/components/schemas/NativeCryptocurrency'
+        - $ref: '#/components/schemas/OtherAssetReference'
+    Blockchain:
+      type: string
+      enum:
+        - Algorand
+        - Avalanche
+        - Bitcoin
+        - BNB
+        - Cardano
+        - Casper
+        - Celo
+        - Cosmos
+        - Cronos
+        - Dogecoin
+        - Ethereum
+        - Ethereum Classic
+        - Hedera
+        - Litecoin
+        - Monero
+        - Polkadot
+        - Solana
+        - Stellar
+        - Tezos
+        - TRON
+        - XRP
+    Layer1Cryptocurrency:
+      type: string
+      enum:
+        - ADA
+        - ALGO
+        - ATOM
+        - AVAX
+        - BNB
+        - BTC
+        - CELO
+        - CRO
+        - CSPR
+        - DOGE
+        - DOT
+        - ETC
+        - ETH
+        - HBAR
+        - LTC
+        - SOL
+        - TRX
+        - XLM
+        - XMR
+        - XRP
+        - XTZ
+    Layer2Cryptocurrency:
+      type: string
+      enum:
+        - ARB
+        - IMX
+        - MATIC
+        - SNX
+    NationalCurrencyCode:
+      type: string
+      description: National currency codes as defined in ISO 4217.
+      enum:
+        - ADP
+        - AED
+        - AFA
+        - AFN
+        - ALK
+        - ALL
+        - AMD
+        - ANG
+        - AOA
+        - AOK
+        - AON
+        - AOR
+        - ARA
+        - ARP
+        - ARS
+        - ARY
+        - ATS
+        - AUD
+        - AWG
+        - AYM
+        - AZM
+        - BAD
+        - BAM
+        - BBD
+        - BDT
+        - BEC
+        - BEF
+        - BEL
+        - BGJ
+        - BGK
+        - BGL
+        - BGN
+        - BHD
+        - BIF
+        - BMD
+        - BND
+        - BOB
+        - BOP
+        - BOV
+        - BRB
+        - BRC
+        - BRE
+        - BRL
+        - BRN
+        - BRR
+        - BSD
+        - BTN
+        - BUK
+        - BWP
+        - BYB
+        - BYN
+        - BYR
+        - BZD
+        - CAD
+        - CDF
+        - CHC
+        - CHE
+        - CHF
+        - CHW
+        - CLF
+        - CLP
+        - CNY
+        - COP
+        - COU
+        - CRC
+        - CSD
+        - CSJ
+        - CSK
+        - CUC
+        - CUP
+        - CVE
+        - CYP
+        - CZK
+        - DDM
+        - DEM
+        - DJF
+        - DKK
+        - DOP
+        - DZD
+        - ECS
+        - ECV
+        - EEK
+        - EGP
+        - ERN
+        - ESA
+        - ESB
+        - ESP
+        - ETB
+        - EUR
+        - FIM
+        - FJD
+        - FKP
+        - FRF
+        - GBP
+        - GEK
+        - GEL
+        - GHC
+        - GHP
+        - GHS
+        - GIP
+        - GMD
+        - GNE
+        - GNF
+        - GNS
+        - GQE
+        - GRD
+        - GTQ
+        - GWE
+        - GWP
+        - GYD
+        - HKD
+        - HNL
+        - HRD
+        - HRK
+        - HTG
+        - HUF
+        - IDR
+        - IEP
+        - ILP
+        - ILR
+        - ILS
+        - INR
+        - IQD
+        - IRR
+        - ISJ
+        - ISK
+        - ITL
+        - JMD
+        - JOD
+        - JPY
+        - KES
+        - KGS
+        - KHR
+        - KMF
+        - KPW
+        - KRW
+        - KWD
+        - KYD
+        - KZT
+        - LAJ
+        - LAK
+        - LBP
+        - LKR
+        - LRD
+        - LSL
+        - LSM
+        - LTL
+        - LTT
+        - LUC
+        - LUF
+        - LUL
+        - LVL
+        - LVR
+        - LYD
+        - MAD
+        - MDL
+        - MGA
+        - MGF
+        - MKD
+        - MLF
+        - MMK
+        - MNT
+        - MOP
+        - MRO
+        - MRU
+        - MTL
+        - MTP
+        - MUR
+        - MVQ
+        - MVR
+        - MWK
+        - MXN
+        - MXP
+        - MXV
+        - MYR
+        - MZE
+        - MZM
+        - NAD
+        - NGN
+        - NIC
+        - NIO
+        - NLG
+        - NOK
+        - NPR
+        - NZD
+        - OMR
+        - PAB
+        - PEH
+        - PEI
+        - PEN
+        - PES
+        - PGK
+        - PHP
+        - PKR
+        - PLN
+        - PLZ
+        - PTE
+        - PYG
+        - QAR
+        - RHD
+        - ROK
+        - ROL
+        - RON
+        - RSD
+        - RUB
+        - RUR
+        - RWF
+        - SAR
+        - SBD
+        - SCR
+        - SDD
+        - SDG
+        - SDP
+        - SEK
+        - SGD
+        - SHP
+        - SIT
+        - SKK
+        - SLL
+        - SOS
+        - SRD
+        - SRG
+        - SSP
+        - STD
+        - STN
+        - SUR
+        - SVC
+        - SYP
+        - SZL
+        - THB
+        - TJR
+        - TJS
+        - TMM
+        - TMT
+        - TND
+        - TOP
+        - TPE
+        - TRL
+        - TRY
+        - TTD
+        - TWD
+        - TZS
+        - UAH
+        - UAK
+        - UGS
+        - UGW
+        - UGX
+        - USD
+        - USN
+        - USS
+        - UYI
+        - UYN
+        - UYP
+        - UYU
+        - UYW
+        - UZS
+        - VEB
+        - VEF
+        - VES
+        - VNC
+        - VND
+        - VUV
+        - WST
+        - XAF
+        - XCD
+        - XOF
+        - XPF
+        - XSU
+        - XTS
+        - XUA
+        - XXX
+        - YDD
+        - YER
+        - YUD
+        - YUM
+        - YUN
+        - ZAL
+        - ZAR
+        - ZMK
+        - ZMW
+        - ZRN
+        - ZRZ
+        - ZWC
+        - ZWD
+        - ZWL
+        - ZWN
+        - ZWR
+    QuoteCapability:
+      type: object
+      required:
+        - fromAsset
+        - toAsset
+      properties:
+        fromAsset:
+          $ref: '#/components/schemas/AssetReference'
+        toAsset:
+          $ref: '#/components/schemas/AssetReference'
+    QuoteCapabilities:
+      type: object
+      required:
+        - capabilities
+      properties:
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuoteCapability'
+    QuoteStatus:
+      type: string
+      enum:
+        - ready
+        - executing
+        - executed
+        - expired
+    QuoteRequest:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/QuoteCapability'
+        - oneOf:
+            - type: object
+              required:
+                - fromAmount
+              properties:
+                fromAmount:
+                  $ref: '#/components/schemas/PositiveAmount'
+            - type: object
+              required:
+                - toAmount
+              properties:
+                toAmount:
+                  $ref: '#/components/schemas/PositiveAmount'
+    Quote:
+      type: object
+      required:
+        - fromAsset
+        - fromAmount
+        - toAsset
+        - toAmount
+        - conversionFeeBps
+        - status
+        - createdAt
+        - expiresAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        fromAsset:
+          $ref: '#/components/schemas/AssetReference'
+        fromAmount:
+          $ref: '#/components/schemas/PositiveAmount'
+        toAsset:
+          $ref: '#/components/schemas/AssetReference'
+        toAmount:
+          $ref: '#/components/schemas/PositiveAmount'
+        conversionFeeBps:
+          type: integer
+          description: Conversion fee in basis points.
+        status:
+          $ref: '#/components/schemas/QuoteStatus'
+        createdAt:
+          description: Quote creation time.
+          type: string
+          format: date-time
+          readOnly: true
+        expiresAt:
+          description: Quote expiration time.
+          type: string
+          format: date-time
+          readOnly: true
+    OrderBook:
+      type: object
+      required:
+        - id
+        - baseAsset
+        - quoteAsset
+      properties:
+        id:
+          type: string
+          readOnly: true
+        baseAsset:
+          $ref: '#/components/schemas/AssetReference'
+        quoteAsset:
+          $ref: '#/components/schemas/AssetReference'
+    MarketEntry:
+      type: object
+      required:
+        - amount
+        - price
+        - priceAsset
+      properties:
+        amount:
+          $ref: '#/components/schemas/PositiveAmount'
+        price:
+          $ref: '#/components/schemas/PositiveAmount'
+        priceAsset:
+          $ref: '#/components/schemas/AssetReference'
+    MarketTrade:
+      allOf:
+        - $ref: '#/components/schemas/MarketEntry'
+        - type: object
+          required:
+            - finalizedAt
+          properties:
+            finalizedAt:
+              description: Time when the trade was finalized.
+              type: string
+              format: date-time
+              readOnly: true
+    Order:
+      type: object
+      required:
+        - idempotencyKey
+        - id
+        - bookId
+        - baseAssetQuantity
+        - baseAssetPrice
+        - side
+        - orderType
+        - timeInForce
+        - status
+        - createdAt
+      properties:
+        idempotencyKey:
+          type: string
+          writeOnly: true
+        id:
+          type: string
+          readOnly: true
+        bookId:
+          description: ID of an existing order book.
+          type: string
+        baseAssetQuantity:
+          type: integer
+        baseAssetPrice:
+          $ref: '#/components/schemas/PositiveAmount'
+        side:
+          type: string
+          enum:
+            - SELL
+            - BUY
+        orderType:
+          type: string
+          enum:
+            - MARKET
+            - LIMIT
+        timeInForce:
+          type: string
+          enum:
+            - GOOD_TILL_CANCELED
+            - FILL_OR_KILL
+            - IMMEDIATE_OR_CANCEL
+        status:
+          type: string
+          enum:
+            - PENDING
+            - FAILED
+            - FULFILLED
+          readOnly: true
+        createdAt:
+          description: Time when the order was created.
+          type: string
+          format: date-time
+          readOnly: true
+        finalizedAt:
+          description: Time when the order was finalized.
+          type: string
+          format: date-time
+          readOnly: true
+    AccountHolderDetails:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          description: Full name of the account holder.
+          type: string
+        city:
+          type: string
+        country:
+          description: Country code, as specified in ISO 3166-1 alpha-2.
+          type: string
+        subdivision:
+          description: Country administrative subdivision, as specified in ISO 3166-2.
+          type: string
+        address:
+          description: Account holder street address.
+          type: string
+        postalCode:
+          type: string
+    Iban:
+      type: string
+      pattern: ^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$
+    IbanCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          enum:
+            - Iban
+    IbanAddress:
+      type: object
+      required:
+        - asset
+        - accountHolder
+        - iban
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        amount:
+          $ref: '#/components/schemas/PositiveAmount'
+        accountHolder:
+          $ref: '#/components/schemas/AccountHolderDetails'
+        iban:
+          $ref: '#/components/schemas/Iban'
+        transferMethod:
+          $ref: '#/components/schemas/TransferMethod'
+    IbanTransfer:
+      allOf:
+        - $ref: '#/components/schemas/IbanAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+            referenceId:
+              type: string
+    SwiftCode:
+      type: string
+      pattern: ^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$
+    SwiftCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          enum:
+            - Swift
+    SwiftAddress:
+      allOf:
+        - $ref: '#/components/schemas/SwiftCapability'
+        - type: object
+          required:
+            - accountHolder
+            - swiftCode
+            - routingNumber
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            swiftCode:
+              $ref: '#/components/schemas/SwiftCode'
+            routingNumber:
+              type: string
+              description: Routing number identifying the bank account.
+    SwiftTransfer:
+      allOf:
+        - $ref: '#/components/schemas/SwiftAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+            referenceId:
+              type: string
+    PublicBlockchainCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/AssetReference'
+        transferMethod:
+          enum:
+            - PublicBlockchain
+    PublicBlockchainAddress:
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainCapability'
+        - type: object
+          required:
+            - address
+          properties:
+            address:
+              type: string
+            addressTag:
+              type: string
+    PublicBlockchainTransaction:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+            blockchainTxId:
+              type: string
+              readOnly: true
+    CrossAccountTransferCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/AssetReference'
+        transferMethod:
+          enum:
+            - InternalTransfer
+            - PeerAccountTransfer
+    CrossAccountTransfer:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/CrossAccountTransferCapability'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    TransferMethod:
+      type: string
+      enum:
+        - Iban
+        - Swift
+        - PublicBlockchain
+        - InternalTransfer
+        - PeerAccountTransfer
+    TransferCapability:
+      oneOf:
+        - $ref: '#/components/schemas/CrossAccountTransferCapability'
+        - $ref: '#/components/schemas/PublicBlockchainCapability'
+        - $ref: '#/components/schemas/IbanCapability'
+        - $ref: '#/components/schemas/SwiftCapability'
+      discriminator:
+        propertyName: transferMethod
+        mapping:
+          CrossAccountTransfer: '#/components/schemas/CrossAccountTransferCapability'
+          PublicBlockchain: '#/components/schemas/PublicBlockchainCapability'
+          Iban: '#/components/schemas/IbanCapability'
+          Swift: '#/components/schemas/SwiftCapability'
+    Transfer:
+      oneOf:
+        - $ref: '#/components/schemas/CrossAccountTransfer'
+        - $ref: '#/components/schemas/PublicBlockchainTransaction'
+        - $ref: '#/components/schemas/IbanTransfer'
+        - $ref: '#/components/schemas/SwiftTransfer'
+      discriminator:
+        propertyName: transferMethod
+        mapping:
+          CrossAccountTransfer: '#/components/schemas/CrossAccountTransfer'
+          PublicBlockchain: '#/components/schemas/PublicBlockchainTransaction'
+          Iban: '#/components/schemas/IbanTransfer'
+          Swift: '#/components/schemas/SwiftTransfer'
+    DepositDestination:
+      oneOf:
+        - $ref: '#/components/schemas/PublicBlockchainAddress'
+        - $ref: '#/components/schemas/PublicBlockchainAddress'
+        - $ref: '#/components/schemas/IbanAddress'
+        - $ref: '#/components/schemas/SwiftAddress'
+      discriminator:
+        propertyName: transferMethod
+        mapping:
+          CrossAccountTransfer: '#/components/schemas/PublicBlockchainAddress'
+          PublicBlockchain: '#/components/schemas/PublicBlockchainAddress'
+          Iban: '#/components/schemas/IbanAddress'
+          Swift: '#/components/schemas/SwiftAddress'
+    DepositAddressStatus:
+      type: string
+      readOnly: true
+      enum:
+        - enabled
+        - disabled
+    DepositAddress:
+      type: object
+      required:
+        - id
+        - destination
+        - status
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        destination:
+          $ref: '#/components/schemas/DepositDestination'
+        status:
+          $ref: '#/components/schemas/DepositAddressStatus'
+    DepositAddressCreationRequest:
+      type: object
+      required:
+        - idempotencyKey
+        - transferMethod
+      properties:
+        idempotencyKey:
+          type: string
+        transferMethod:
+          $ref: '#/components/schemas/TransferCapability'
+    DepositCapability:
+      type: object
+      description: Capability to deposit to a balance asset using a specific transfer capability.
+      required:
+        - deposit
+        - balanceAsset
+      properties:
+        deposit:
+          $ref: '#/components/schemas/TransferCapability'
+        balanceAsset:
+          $ref: '#/components/schemas/AssetReference'
+    Deposit:
+      type: object
+      required:
+        - id
+        - balanceAsset
+        - balanceAmount
+        - source
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        balanceAsset:
+          $ref: '#/components/schemas/AssetReference'
+        balanceAmount:
+          $ref: '#/components/schemas/PositiveAmount'
+        source:
+          $ref: '#/components/schemas/Transfer'
+        depositAddressId:
+          type: string
+          format: uuid
+          description: ID of the deposit address, created by posting /transfers/deposits/addresses
+        status:
+          $ref: '#/components/schemas/DepositStatus'
+        createdAt:
+          description: Time when the deposit was created.
+          type: string
+          format: date-time
+          readOnly: true
+        finalizedAt:
+          description: Time when the deposit reached a final state.
+          type: string
+          format: date-time
+          readOnly: true
+    WithdrawalCapability:
+      type: object
+      description: Capability to withdraw a balance asset using a specific transfer capability.
+      required:
+        - withdrawal
+        - balanceAsset
+      properties:
+        withdrawal:
+          $ref: '#/components/schemas/TransferCapability'
+        balanceAsset:
+          $ref: '#/components/schemas/AssetReference'
+    Withdrawal:
+      type: object
+      required:
+        - id
+        - idempotencyKey
+        - balanceAsset
+        - balanceAmount
+        - destination
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        idempotencyKey:
+          type: string
+          writeOnly: true
+        balanceAsset:
+          $ref: '#/components/schemas/AssetReference'
+        balanceAmount:
+          $ref: '#/components/schemas/PositiveAmount'
+        destination:
+          $ref: '#/components/schemas/Transfer'
+        status:
+          $ref: '#/components/schemas/WithdrawalStatus'
+        createdAt:
+          description: Time when the withdrawal was created.
+          type: string
+          format: date-time
+          readOnly: true
+        finalizedAt:
+          description: Time when the withdrawal reached a final state.
+          type: string
+          format: date-time
+          readOnly: true
+        events:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/WithdrawalEvent'
+    WithdrawalEvent:
+      type: object
+      description: Describes an event during withdrawal processing. The granularity and verbosity of the events it at the discretion of the API implementor.
+      required:
+        - status
+        - message
+        - createdAt
+      properties:
+        status:
+          $ref: '#/components/schemas/WithdrawalStatus'
+        message:
+          type: string
+          readOnly: true
+        createdAt:
+          description: Time when the withdrawal was created.
+          type: string
+          format: date-time
+          readOnly: true
+    DepositStatus:
+      type: string
+      readOnly: true
+      enum:
+        - pending
+        - succeeded
+        - failed
+    WithdrawalStatus:
+      type: string
+      readOnly: true
+      enum:
+        - pending
+        - succeeded
+        - failed
+  securitySchemes: {}
