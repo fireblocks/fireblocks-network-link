@@ -862,7 +862,7 @@ paths:
                   orders:
                     type: array
                     items:
-                      $ref: '#/components/schemas/OrderResponse'
+                      $ref: '#/components/schemas/Order'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -879,8 +879,7 @@ paths:
               $ref: '#/components/schemas/OrderRequest'
             example:
               idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
-              base: BTC
-              quote: ETH
+              bookId: BTC_ETH
               side: BUY
               orderType: LIMIT
               timeInForce: GOOD_TILL_CANCELED
@@ -892,18 +891,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrderResponse'
+                $ref: '#/components/schemas/Order'
               example:
                 id: cf091554-f2b8-4cea-9783-2a7e5065b549
-                status: PENDING
-                base: BTC
-                quote: ETH
+                status: TRADING
+                bookId: BTC_ETH
                 side: BUY
                 orderType: LIMIT
                 timeInForce: GOOD_TILL_CANCELED
                 baseAssetQuantity: 10
                 baseAssetPrice: '0.0003'
                 createdAt: 2023-06-02T19:45:26.550Z
+                trades: []
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders/{id}:
@@ -921,7 +920,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OrderResponse'
+                $ref: '#/components/schemas/Order'
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
@@ -1114,7 +1113,16 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
-          $ref: '#/components/responses/WithdrawalsResponse'
+          description: List of withdrawals.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BlockchainWithdrawal'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -1130,10 +1138,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Withdrawal'
+              $ref: '#/components/schemas/BlockchainWithdrawalRequest'
       responses:
         '201':
-          $ref: '#/components/responses/WithdrawalResponse'
+          description: New withdrawal has been successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockchainWithdrawal'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/fiat:
@@ -1148,7 +1160,16 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
-          $ref: '#/components/responses/WithdrawalsResponse'
+          description: List of withdrawals.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FiatWithdrawal'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -1164,10 +1185,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Withdrawal'
+              $ref: '#/components/schemas/FiatWithdrawalRequest'
       responses:
         '201':
-          $ref: '#/components/responses/WithdrawalResponse'
+          description: New withdrawal has been successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FiatWithdrawal'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
@@ -1182,7 +1207,16 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
-          $ref: '#/components/responses/WithdrawalsResponse'
+          description: List of withdrawals.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CrossAccountWithdrawal'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -1198,10 +1232,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Withdrawal'
+              $ref: '#/components/schemas/CrossAccountWithdrawalRequest'
       responses:
         '201':
-          $ref: '#/components/responses/WithdrawalResponse'
+          description: New withdrawal has been successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrossAccountWithdrawal'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/subaccount:
@@ -1216,14 +1254,23 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
-          $ref: '#/components/responses/WithdrawalsResponse'
+          description: List of withdrawals.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CrossAccountWithdrawal'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
       summary: Create new transfer to another sub-account
       description: Transfers assets between different sub-accounts of the same user. Should reject any withdrawals that are not sub-account transfers.
       tags:
-        - Transfers
+        - Accounts
       parameters:
         - $ref: '#/components/parameters/SecurityHeaderParams'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
@@ -1232,10 +1279,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Withdrawal'
+              $ref: '#/components/schemas/CrossAccountWithdrawalRequest'
       responses:
         '201':
-          $ref: '#/components/responses/WithdrawalResponse'
+          description: New withdrawal has been successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrossAccountWithdrawal'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits:
@@ -1255,7 +1306,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  withdrawals:
+                  deposits:
                     type: array
                     items:
                       $ref: '#/components/schemas/Deposit'
@@ -1318,7 +1369,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  withdrawals:
+                  addresses:
                     type: array
                     items:
                       $ref: '#/components/schemas/DepositAddress'
@@ -1462,12 +1513,6 @@ components:
                 $ref: '#/components/schemas/ErrorCode'
               description:
                 type: string
-    WithdrawalResponse:
-      description: New withdrawal has been successfully created.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Withdrawal'
     WithdrawalsResponse:
       description: List of withdrawals.
       content:
@@ -1502,6 +1547,9 @@ components:
     ApiComponents:
       description: Lists supported API components and which sub-accounts support the component.
       type: object
+      required:
+        - accounts
+        - balances
       properties:
         accounts:
           $ref: '#/components/schemas/AccountsSet'
@@ -1591,23 +1639,21 @@ components:
           type: string
         description:
           type: string
-        type:
-          $ref: '#/components/schemas/AssetDefinitionType'
         decimalPlaces:
           type: integer
         testAsset:
           type: boolean
           default: false
-    AssetDefinitionType:
-      type: string
-      enum:
-        - BucketAsset
-        - Erc20Token
-        - Bep20Token
-        - StellarToken
     BucketAsset:
       allOf:
         - $ref: '#/components/schemas/AssetCommonProperties'
+        - type: object
+          required:
+            - type
+          properties:
+            type:
+              enum:
+                - BucketAsset
     Erc20Token:
       allOf:
         - $ref: '#/components/schemas/AssetCommonProperties'
@@ -1615,7 +1661,11 @@ components:
           required:
             - blockchain
             - contractAddress
+            - type
           properties:
+            type:
+              enum:
+                - Erc20Token
             blockchain:
               $ref: '#/components/schemas/Blockchain'
             contractAddress:
@@ -1633,7 +1683,11 @@ components:
           required:
             - blockchain
             - contractAddress
+            - type
           properties:
+            type:
+              enum:
+                - Bep20Token
             blockchain:
               $ref: '#/components/schemas/Blockchain'
             contractAddress:
@@ -1646,7 +1700,11 @@ components:
             - blockchain
             - issuerAddress
             - stellarCurrencyCode
+            - type
           properties:
+            type:
+              enum:
+                - StellarToken
             blockchain:
               $ref: '#/components/schemas/Blockchain'
             issuerAddress:
@@ -1659,13 +1717,6 @@ components:
         - $ref: '#/components/schemas/Erc20Token'
         - $ref: '#/components/schemas/Bep20Token'
         - $ref: '#/components/schemas/StellarToken'
-      discriminator:
-        propertyName: type
-        mapping:
-          BucketAsset: '#/components/schemas/BucketAsset'
-          Erc20Token: '#/components/schemas/Erc20Token'
-          Bep20Token: '#/components/schemas/Bep20Token'
-          StellarToken: '#/components/schemas/StellarToken'
     NationalCurrency:
       type: object
       required:
@@ -1721,6 +1772,7 @@ components:
         - Hedera
         - Litecoin
         - Monero
+        - Polygon PoS
         - Polkadot
         - Solana
         - Stellar
@@ -2095,6 +2147,7 @@ components:
     Quote:
       type: object
       required:
+        - id
         - fromAsset
         - fromAmount
         - toAsset
@@ -2107,7 +2160,6 @@ components:
         id:
           type: string
           format: uuid
-          readOnly: true
         fromAsset:
           $ref: '#/components/schemas/AssetReference'
         fromAmount:
@@ -2125,12 +2177,10 @@ components:
           description: Quote creation time.
           type: string
           format: date-time
-          readOnly: true
         expiresAt:
           description: Quote expiration time.
           type: string
           format: date-time
-          readOnly: true
     OrderBook:
       type: object
       required:
@@ -2140,7 +2190,6 @@ components:
       properties:
         id:
           type: string
-          readOnly: true
         baseAsset:
           $ref: '#/components/schemas/AssetReference'
         quoteAsset:
@@ -2150,13 +2199,16 @@ components:
       required:
         - amount
         - price
-        - priceAsset
+        - totalPrice
+        - asset
       properties:
         amount:
           $ref: '#/components/schemas/PositiveAmount'
         price:
           $ref: '#/components/schemas/PositiveAmount'
-        priceAsset:
+        totalPrice:
+          $ref: '#/components/schemas/PositiveAmount'
+        asset:
           $ref: '#/components/schemas/AssetReference'
     MarketTrade:
       allOf:
@@ -2169,83 +2221,103 @@ components:
               description: Time when the trade was finalized.
               type: string
               format: date-time
-              readOnly: true
     OrderData:
+      allOf:
+        - type: object
+          required:
+            - bookId
+            - side
+            - orderType
+            - timeInForce
+          properties:
+            bookId:
+              description: ID of the order book.
+              type: string
+            side:
+              $ref: '#/components/schemas/OrderSide'
+            orderType:
+              $ref: '#/components/schemas/OrderType'
+            timeInForce:
+              $ref: '#/components/schemas/OrderTimeInForce'
+        - oneOf:
+            - $ref: '#/components/schemas/BaseAssetRequest'
+            - $ref: '#/components/schemas/QuoteAssetRequest'
+    BaseAssetRequest:
       type: object
       required:
-        - base
-        - quote
         - baseAssetQuantity
         - baseAssetPrice
-        - side
-        - orderType
-        - timeInForce
       properties:
-        base:
-          description: ID of the base asset to be trade
-          type: string
-        quote:
-          description: ID of the quote asset to be trade
-          type: string
         baseAssetQuantity:
           type: integer
         baseAssetPrice:
           $ref: '#/components/schemas/PositiveAmount'
-        side:
-          type: string
-          enum:
-            - SELL
-            - BUY
-        orderType:
-          type: string
-          enum:
-            - MARKET
-            - LIMIT
-        timeInForce:
-          type: string
-          enum:
-            - GOOD_TILL_CANCELED
-            - FILL_OR_KILL
-            - IMMEDIATE_OR_CANCEL
+    QuoteAssetRequest:
+      type: object
+      required:
+        - quoteAssetQuantity
+        - quoteAssetPrice
+      properties:
+        quoteAssetQuantity:
+          type: integer
+        quoteAssetPrice:
+          $ref: '#/components/schemas/PositiveAmount'
+    OrderSide:
+      enum:
+        - SELL
+        - BUY
+    OrderType:
+      enum:
+        - MARKET
+        - LIMIT
+    OrderTimeInForce:
+      enum:
+        - GOOD_TILL_CANCELED
+        - FILL_OR_KILL
+        - IMMEDIATE_OR_CANCEL
     OrderRequest:
       allOf:
+        - $ref: '#/components/schemas/OrderData'
         - type: object
           required:
             - idempotencyKey
           properties:
             idempotencyKey:
               type: string
-              writeOnly: true
-        - $ref: '#/components/schemas/OrderData'
-    OrderResponse:
+    Order:
       allOf:
+        - $ref: '#/components/schemas/OrderData'
         - type: object
           required:
             - id
             - status
+            - trades
             - createdAt
           properties:
             id:
               type: string
-              readOnly: true
+              format: uuid
             status:
-              type: string
-              enum:
-                - PENDING
-                - FAILED
-                - FULFILLED
-              readOnly: true
+              $ref: '#/components/schemas/OrderStatus'
+            trades:
+              type: array
+              items:
+                $ref: '#/components/schemas/MarketTrade'
             createdAt:
               description: Time when the order was created.
               type: string
               format: date-time
-              readOnly: true
             finalizedAt:
               description: Time when the order was finalized.
               type: string
               format: date-time
-              readOnly: true
-        - $ref: '#/components/schemas/OrderData'
+    OrderStatus:
+      enum:
+        - TRADING
+        - CANCELED
+        - REJECTED
+        - PARTIALLY_FILLED
+        - FULFILLED
     AccountHolderDetails:
       type: object
       required:
@@ -2282,24 +2354,18 @@ components:
           enum:
             - Iban
     IbanAddress:
-      type: object
-      required:
-        - asset
-        - accountHolder
-        - iban
-        - transferMethod
-      properties:
-        asset:
-          $ref: '#/components/schemas/NationalCurrency'
-        amount:
-          $ref: '#/components/schemas/PositiveAmount'
-        accountHolder:
-          $ref: '#/components/schemas/AccountHolderDetails'
-        iban:
-          $ref: '#/components/schemas/Iban'
-        transferMethod:
-          $ref: '#/components/schemas/TransferMethod'
-    IbanTransfer:
+      allOf:
+        - $ref: '#/components/schemas/IbanCapability'
+        - type: object
+          required:
+            - accountHolder
+            - iban
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            iban:
+              $ref: '#/components/schemas/Iban'
+    IbanTransferDestination:
       allOf:
         - $ref: '#/components/schemas/IbanAddress'
         - type: object
@@ -2308,6 +2374,11 @@ components:
           properties:
             amount:
               $ref: '#/components/schemas/PositiveAmount'
+    IbanTransfer:
+      allOf:
+        - $ref: '#/components/schemas/IbanTransferDestination'
+        - type: object
+          properties:
             referenceId:
               type: string
     SwiftCode:
@@ -2340,7 +2411,7 @@ components:
             routingNumber:
               type: string
               description: Routing number identifying the bank account.
-    SwiftTransfer:
+    SwiftTransferDestination:
       allOf:
         - $ref: '#/components/schemas/SwiftAddress'
         - type: object
@@ -2349,6 +2420,11 @@ components:
           properties:
             amount:
               $ref: '#/components/schemas/PositiveAmount'
+    SwiftTransfer:
+      allOf:
+        - $ref: '#/components/schemas/SwiftTransferDestination'
+        - type: object
+          properties:
             referenceId:
               type: string
     PublicBlockchainCapability:
@@ -2373,7 +2449,7 @@ components:
               type: string
             addressTag:
               type: string
-    PublicBlockchainTransaction:
+    PublicBlockchainTransactionDestination:
       type: object
       allOf:
         - $ref: '#/components/schemas/PublicBlockchainAddress'
@@ -2383,9 +2459,14 @@ components:
           properties:
             amount:
               $ref: '#/components/schemas/PositiveAmount'
+    PublicBlockchainTransaction:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
+        - type: object
+          properties:
             blockchainTxId:
               type: string
-              readOnly: true
     CrossAccountTransferCapability:
       type: object
       required:
@@ -2398,66 +2479,49 @@ components:
           enum:
             - InternalTransfer
             - PeerAccountTransfer
-    CrossAccountTransfer:
+    CrossAccountTransferDestination:
       type: object
       allOf:
         - $ref: '#/components/schemas/CrossAccountTransferCapability'
         - type: object
           required:
+            - accountId
             - amount
           properties:
+            accountId:
+              type: string
             amount:
               $ref: '#/components/schemas/PositiveAmount'
-    TransferMethod:
-      type: string
-      enum:
-        - Iban
-        - Swift
-        - PublicBlockchain
-        - InternalTransfer
-        - PeerAccountTransfer
+    CrossAccountTransfer:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/CrossAccountTransferDestination'
     TransferCapability:
       oneOf:
         - $ref: '#/components/schemas/CrossAccountTransferCapability'
         - $ref: '#/components/schemas/PublicBlockchainCapability'
         - $ref: '#/components/schemas/IbanCapability'
         - $ref: '#/components/schemas/SwiftCapability'
-      discriminator:
-        propertyName: transferMethod
-        mapping:
-          CrossAccountTransfer: '#/components/schemas/CrossAccountTransferCapability'
-          PublicBlockchain: '#/components/schemas/PublicBlockchainCapability'
-          Iban: '#/components/schemas/IbanCapability'
-          Swift: '#/components/schemas/SwiftCapability'
+    FiatTransferDestination:
+      oneOf:
+        - $ref: '#/components/schemas/IbanTransferDestination'
+        - $ref: '#/components/schemas/SwiftTransferDestination'
+    FiatTransfer:
+      oneOf:
+        - $ref: '#/components/schemas/IbanTransfer'
+        - $ref: '#/components/schemas/SwiftTransfer'
     Transfer:
       oneOf:
         - $ref: '#/components/schemas/CrossAccountTransfer'
         - $ref: '#/components/schemas/PublicBlockchainTransaction'
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
-      discriminator:
-        propertyName: transferMethod
-        mapping:
-          CrossAccountTransfer: '#/components/schemas/CrossAccountTransfer'
-          PublicBlockchain: '#/components/schemas/PublicBlockchainTransaction'
-          Iban: '#/components/schemas/IbanTransfer'
-          Swift: '#/components/schemas/SwiftTransfer'
     DepositDestination:
       oneOf:
         - $ref: '#/components/schemas/PublicBlockchainAddress'
-        - $ref: '#/components/schemas/PublicBlockchainAddress'
         - $ref: '#/components/schemas/IbanAddress'
         - $ref: '#/components/schemas/SwiftAddress'
-      discriminator:
-        propertyName: transferMethod
-        mapping:
-          CrossAccountTransfer: '#/components/schemas/PublicBlockchainAddress'
-          PublicBlockchain: '#/components/schemas/PublicBlockchainAddress'
-          Iban: '#/components/schemas/IbanAddress'
-          Swift: '#/components/schemas/SwiftAddress'
     DepositAddressStatus:
-      type: string
-      readOnly: true
       enum:
         - enabled
         - disabled
@@ -2471,7 +2535,6 @@ components:
         id:
           type: string
           format: uuid
-          readOnly: true
         destination:
           $ref: '#/components/schemas/DepositDestination'
         status:
@@ -2510,7 +2573,6 @@ components:
         id:
           type: string
           format: uuid
-          readOnly: true
         balanceAsset:
           $ref: '#/components/schemas/AssetReference'
         balanceAmount:
@@ -2527,12 +2589,10 @@ components:
           description: Time when the deposit was created.
           type: string
           format: date-time
-          readOnly: true
         finalizedAt:
           description: Time when the deposit reached a final state.
           type: string
           format: date-time
-          readOnly: true
     WithdrawalCapability:
       type: object
       description: Capability to withdraw a balance asset using a specific transfer capability.
@@ -2544,47 +2604,108 @@ components:
           $ref: '#/components/schemas/TransferCapability'
         balanceAsset:
           $ref: '#/components/schemas/AssetReference'
-    Withdrawal:
+    WithdrawalRequestCommonProperties:
       type: object
       required:
-        - id
         - idempotencyKey
         - balanceAsset
         - balanceAmount
-        - destination
+      properties:
+        idempotencyKey:
+          type: string
+        balanceAsset:
+          $ref: '#/components/schemas/AssetReference'
+        balanceAmount:
+          $ref: '#/components/schemas/PositiveAmount'
+    FiatWithdrawalRequest:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
+        - type: object
+          required:
+            - destination
+          properties:
+            destination:
+              $ref: '#/components/schemas/FiatTransferDestination'
+    BlockchainWithdrawalRequest:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
+        - type: object
+          required:
+            - destination
+          properties:
+            destination:
+              $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
+    CrossAccountWithdrawalRequest:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
+        - type: object
+          required:
+            - destination
+          properties:
+            destination:
+              $ref: '#/components/schemas/CrossAccountTransferDestination'
+    WithdrawalCommonProperties:
+      type: object
+      required:
+        - id
+        - balanceAsset
+        - balanceAmount
         - status
         - createdAt
       properties:
         id:
           type: string
           format: uuid
-          readOnly: true
-        idempotencyKey:
-          type: string
-          writeOnly: true
         balanceAsset:
           $ref: '#/components/schemas/AssetReference'
         balanceAmount:
           $ref: '#/components/schemas/PositiveAmount'
-        destination:
-          $ref: '#/components/schemas/Transfer'
         status:
           $ref: '#/components/schemas/WithdrawalStatus'
         createdAt:
           description: Time when the withdrawal was created.
           type: string
           format: date-time
-          readOnly: true
         finalizedAt:
           description: Time when the withdrawal reached a final state.
           type: string
           format: date-time
-          readOnly: true
         events:
           type: array
-          readOnly: true
           items:
             $ref: '#/components/schemas/WithdrawalEvent'
+    FiatWithdrawal:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalCommonProperties'
+        - type: object
+          required:
+            - destination
+          properties:
+            destination:
+              $ref: '#/components/schemas/FiatTransfer'
+    BlockchainWithdrawal:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalCommonProperties'
+        - type: object
+          required:
+            - destination
+          properties:
+            destination:
+              $ref: '#/components/schemas/PublicBlockchainTransaction'
+    CrossAccountWithdrawal:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalCommonProperties'
+        - type: object
+          required:
+            - destination
+          properties:
+            destination:
+              $ref: '#/components/schemas/CrossAccountTransfer'
+    Withdrawal:
+      oneOf:
+        - $ref: '#/components/schemas/CrossAccountWithdrawal'
+        - $ref: '#/components/schemas/BlockchainWithdrawal'
+        - $ref: '#/components/schemas/FiatWithdrawal'
     WithdrawalEvent:
       type: object
       description: Describes an event during withdrawal processing. The granularity and verbosity of the events it at the discretion of the API implementor.
@@ -2597,22 +2718,16 @@ components:
           $ref: '#/components/schemas/WithdrawalStatus'
         message:
           type: string
-          readOnly: true
         createdAt:
           description: Time when the withdrawal was created.
           type: string
           format: date-time
-          readOnly: true
     DepositStatus:
-      type: string
-      readOnly: true
       enum:
         - pending
         - succeeded
         - failed
     WithdrawalStatus:
-      type: string
-      readOnly: true
       enum:
         - pending
         - succeeded
