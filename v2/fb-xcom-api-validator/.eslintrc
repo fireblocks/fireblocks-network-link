@@ -1,0 +1,26 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
+    "no-only-tests",
+    "prettier",
+    "eslint-plugin-tsdoc"
+  ],
+  "env": {
+    "browser": true,
+    "node": true,
+    "amd": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+  ],
+  "rules": {
+    "@typescript-eslint/explicit-module-boundary-types": "error",
+    "no-only-tests/no-only-tests": "error",
+    "@typescript-eslint/no-unused-vars": ["error"],
+    "tsdoc/syntax": "error"
+  }
+}
