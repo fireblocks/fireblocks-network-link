@@ -19,7 +19,7 @@
     "types": ["jest", "node","pikaia-testing-tools"],
     "outDir": "./dist"
   },
-  "include": ["./src", "./src/config/*.json"],
+  "include": ["./src", "./src/config/*.json", "./jest.config.ts"],
   "exclude": ["node_modules"],
   "ts-node": {
     "files": true

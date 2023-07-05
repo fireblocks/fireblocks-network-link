@@ -313,6 +313,7 @@ tags:
 paths:
   /capabilities:
     get:
+      operationId: GetCapabilities
       summary: Describe server capabilities
       description: >-
         Returns the API version and all the capabilities that the server supports.  

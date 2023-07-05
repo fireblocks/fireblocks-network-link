@@ -1,4 +1,6 @@
 import logger from '../logging';
+import { WebApp } from './app';
+import { registerRoutes } from './routes';
 
 const log = logger('server');
 
@@ -23,8 +25,9 @@ process.on('unhandledRejection', handleError);
 
 async function start() {
   try {
-    log.info('Starting service 1', { ggg: 'fdfd' });
-    log.debug('Starting service 2');
+    const app = new WebApp();
+    registerRoutes(app);
+    await app.start();
   } catch (err: unknown) {
     handleError(err);
   }

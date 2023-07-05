@@ -17,7 +17,13 @@ const config = convict({
       format: 'port',
       default: 8000,
       env: 'PORT',
-      arg: 'port',
+    },
+  },
+  client: {
+    serverBaseUrl: {
+      doc: 'URL of the server that will be used to run the tests',
+      default: 'http://localhost:8000/',
+      env: 'SERVER',
     },
   },
   logging: {
