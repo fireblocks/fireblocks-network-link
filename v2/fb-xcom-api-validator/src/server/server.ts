@@ -23,7 +23,7 @@ process.on('unhandledRejection', handleError);
 
 async function start() {
   try {
-    log.info('Starting service 1');
+    log.info('Starting service 1', { ggg: 'fdfd' });
     log.debug('Starting service 2');
   } catch (err: unknown) {
     handleError(err);
