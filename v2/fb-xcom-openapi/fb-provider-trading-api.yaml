@@ -1,0 +1,418 @@
+openapi: 3.0.0
+info:
+  title: '[Draft] Fireblocks Provider Trading API'
+  version: 0.0.1
+
+  contact:
+    name: Fireblocks
+    url: https://fireblocks.com
+
+tags:
+  - name: Trading
+  - name: Capabilities
+
+x-path-params:
+  EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
+  SubAccountIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/SubAccountIdPathParam' }
+
+x-query-params:
+  PaginationQueryParams: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationQueryParams' }
+  ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
+
+x-header-params:
+  SecurityHeaderParams: { $ref: './fb-provider-api.yaml#/components/parameters/SecurityHeaderParams' }
+
+x-schemas:
+  PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
+  AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference'}
+
+paths:
+  /capabilities/trading/books:
+    get:
+      summary: List order books
+      tags: [Capabilities]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-query-params/PaginationQueryParams'
+      responses:
+        '200':
+          description: List of order books
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderBook'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /trading/books:
+    get:
+      summary: List order books
+      tags: [Trading]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-query-params/PaginationQueryParams'
+      responses:
+        '200':
+          description: List of order books
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ books ]
+                properties:
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderBook'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /trading/books/{id}:
+    get:
+      summary: Get details of an order book
+      tags: [Trading]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: The specified trading book if it exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderBook'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /trading/books/{id}/asks:
+    get:
+      summary: Get active sell orders in an order book
+      description: >-
+        List active sell orders in an order book, sorted ascending
+        by the sell price.
+      tags: [Trading]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: Active sell orders.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ asks ]
+                properties:
+                  asks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MarketEntry'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /trading/books/{id}/bids:
+    get:
+      summary: Get active buy orders in an order book
+      description: >-
+        List active buy orders in an order book, sorted descending
+        by the buy price.
+      tags: [Trading]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: Active buy orders.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ bids ]
+                properties:
+                  bids:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MarketEntry'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /trading/books/{id}/history:
+    get:
+      summary: List fulfilled orders in an order book
+      description: >-
+        List fulfilled orders in an order book, sorted descending
+        by the fulfillment time.
+      tags: [Trading]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: List of fulfilled trades.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ trades ]
+                properties:
+                  trades:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MarketTrade'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /accounts/{accountId}/trading/orders:
+    get:
+      summary: List trading orders
+      description: >-
+        List trading orders sorted descending by the creation time.
+      tags: [ Trading ]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ orders ]
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      summary: Create a new trading order
+      tags: [ Trading ]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+            example:
+              idempotencyKey: '03449d61-0966-481e-b12c-df651451c258'
+              bookId: BTC_ETH
+              side: BUY
+              orderType: LIMIT
+              timeInForce: GOOD_TILL_CANCELED
+              baseAssetQuantity: 10
+              baseAssetPrice: '0.0003'
+      responses:
+        '200':
+          description: Newly created book order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              example:
+                id: cf091554-f2b8-4cea-9783-2a7e5065b549
+                status: TRADING
+                bookId: BTC_ETH
+                side: BUY
+                orderType: LIMIT
+                timeInForce: GOOD_TILL_CANCELED
+                baseAssetQuantity: 10
+                baseAssetPrice: '0.0003'
+                createdAt: 2023-06-02T19:45:26.550Z
+                trades: []
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+  /accounts/{accountId}/trading/orders/{id}:
+    get:
+      summary: Get trading order details
+      tags: [ Trading ]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: Book order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      summary: Cancel an active trading order
+      tags: [ Trading ]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: Order canceled.
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+
+components:
+  responses:
+    ErrorResponse:
+      description: Failed to process request.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errorCode:
+                $ref: '#/components/schemas/ErrorCode'
+              description:
+                type: string
+
+  schemas:
+    ErrorCode:
+      type: string
+      enum:
+        - unexpected-error
+
+    OrderBook:
+      type: object
+      required: [ id, baseAsset, quoteAsset ]
+      properties:
+        id:
+          type: string
+        baseAsset:
+          $ref: '#/x-schemas/AssetReference'
+        quoteAsset:
+          $ref: '#/x-schemas/AssetReference'
+
+    MarketEntry:
+      type: object
+      required: [ amount, price, totalPrice, asset ]
+      properties:
+        amount:
+          $ref: '#/x-schemas/PositiveAmount'
+        price:
+          $ref: '#/x-schemas/PositiveAmount'
+        totalPrice:
+          $ref: '#/x-schemas/PositiveAmount'
+        asset:
+          $ref: '#/x-schemas/AssetReference'
+
+    MarketTrade:
+      allOf:
+        - $ref: '#/components/schemas/MarketEntry'
+        - type: object
+          required: [ finalizedAt ]
+          properties:
+            finalizedAt:
+              description: Time when the trade was finalized.
+              type: string
+              format: date-time
+
+    OrderData:
+      allOf:
+      - type: object
+        required:
+          - bookId
+          - side
+          - orderType
+          - timeInForce
+        properties:
+          bookId:
+            description: ID of the order book.
+            type: string
+          side:
+            $ref: '#/components/schemas/OrderSide'
+          orderType:
+            $ref: '#/components/schemas/OrderType'
+          timeInForce:
+            $ref: '#/components/schemas/OrderTimeInForce'
+      - oneOf:
+        - $ref: '#/components/schemas/BaseAssetRequest'
+        - $ref: '#/components/schemas/QuoteAssetRequest'
+
+    BaseAssetRequest:
+      type: object
+      required: [ baseAssetQuantity, baseAssetPrice ]
+      properties:
+        baseAssetQuantity:
+          type: integer
+        baseAssetPrice:
+          $ref: '#/x-schemas/PositiveAmount'
+
+    QuoteAssetRequest:
+      type: object
+      required: [ quoteAssetQuantity, quoteAssetPrice ]
+      properties:
+        quoteAssetQuantity:
+          type: integer
+        quoteAssetPrice:
+          $ref: '#/x-schemas/PositiveAmount'
+
+    OrderSide:
+      enum:
+        - SELL
+        - BUY
+
+    OrderType:
+      enum:
+        - MARKET
+        - LIMIT
+
+    OrderTimeInForce:
+      enum:
+        - GOOD_TILL_CANCELED
+        - FILL_OR_KILL
+        - IMMEDIATE_OR_CANCEL
+
+    OrderRequest:
+      allOf:
+        - $ref: '#/components/schemas/OrderData'
+        - type: object
+          required: [ idempotencyKey ]
+          properties:
+            idempotencyKey:
+              type: string
+
+    Order:
+      allOf:
+        - $ref: '#/components/schemas/OrderData'
+        - type: object
+          required: [ id, status, trades, createdAt ]
+          properties:
+            id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/OrderStatus'
+            trades:
+              type: array
+              items:
+                $ref: '#/components/schemas/MarketTrade'
+            createdAt:
+              description: Time when the order was created.
+              type: string
+              format: date-time
+            finalizedAt:
+              description: Time when the order was finalized.
+              type: string
+              format: date-time
+
+    OrderStatus:
+      enum:
+        - TRADING
+        - CANCELED
+        - REJECTED
+        - PARTIALLY_FILLED
+        - FULFILLED

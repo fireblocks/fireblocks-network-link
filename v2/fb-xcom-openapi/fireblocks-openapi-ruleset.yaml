@@ -1,0 +1,35 @@
+extends: [[spectral:oas, all]]
+rules:
+  operation-description: off
+  operation-operationId: off
+  tag-description: off
+
+  oas3-api-servers: off
+  info-license: off
+  license-url: off
+  contact-properties: off
+  openapi-tags-alphabetical: off
+
+  fb-response-only-objects:
+    description: Responses must be objects.
+    severity: error
+    given: "$.paths.*.*.responses.*.content.application/json.schema"
+    then:
+      field: type
+      function: pattern
+      functionOptions:
+        match: "^object$"
+
+  fb-no-readonly-properties:
+    description: Read-only properties are not allowed.
+    severity: error
+    given: "$.components.schemas..properties.*.readOnly"
+    then:
+      function: falsy
+
+  fb-no-writeonly-properties:
+    description: Write-only properties are not allowed.
+    severity: error
+    given: "$.components.schemas..properties.*.writeOnly"
+    then:
+      function: falsy

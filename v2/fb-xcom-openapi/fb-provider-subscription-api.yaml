@@ -1,0 +1,143 @@
+openapi: 3.0.0
+info:
+  title: '[Draft] Fireblocks Provider API'
+  version: 0.0.1
+
+  contact:
+    name: Fireblocks
+    url: https://fireblocks.com
+
+tags:
+  - name: Transfers
+  - name: Subscriptions
+
+x-path-params:
+  EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
+
+x-query-params:
+  PaginationQueryParams: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationQueryParams' }
+  ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
+
+x-header-params:
+  SecurityHeaderParams: { $ref: './fb-provider-api.yaml#/components/parameters/SecurityHeaderParams' }
+
+x-schemas:
+  Withdrawal: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/Withdrawal'}
+  Deposit: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/Deposit'}
+
+paths:
+  /transfers/withdrawals/subscriptions/finalized:
+    post:
+      summary: Subscribe to all withdrawal finalization events
+      description: >-
+        The subscription will cause a PUT request to the specified subscription
+        URL each time a withdrawal reaches a final state.
+      tags: [ Transfers, Subscriptions ]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+      responses:
+        '200':
+          description: Successful subscription.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+      callbacks:
+        onWithdrawalFinalized:
+          '{$request.body#/subscriberUrl}':
+            put:
+              requestBody:
+                description: Details of the withdrawal that reached a final state.
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/x-schemas/Withdrawal'
+              responses:
+                '200':
+                  description: Successful update.
+                default:
+                  $ref: '#/components/responses/ErrorResponse'
+
+  /transfers/deposits/subscriptions/finalized:
+    post:
+      summary: Subscribe to all deposit finalization events
+      description: >-
+        The subscription will cause a PUT request to the specified subscription
+        URL each time a deposit reaches a final state.
+      tags: [ Transfers, Subscriptions ]
+      parameters:
+        - $ref: '#/x-header-params/SecurityHeaderParams'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+      responses:
+        '200':
+          description: Successful subscription.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        default:
+          $ref: '#/components/responses/ErrorResponse'
+      callbacks:
+        onWithdrawalFinalized:
+          '{$request.body#/subscriberUrl}':
+            put:
+              requestBody:
+                description: Details of the deposit that reached a final state.
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/x-schemas/Deposit'
+              responses:
+                '200':
+                  description: Successful update.
+                default:
+                  $ref: '#/components/responses/ErrorResponse'
+
+components:
+  responses:
+    ErrorResponse:
+      description: Failed to process request.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errorCode:
+                $ref: '#/components/schemas/ErrorCode'
+              description:
+                type: string
+
+  schemas:
+    ErrorCode:
+      type: string
+      enum:
+        - unexpected-error
+        - bad-amount-format
+        - unknown-asset
+
+    Subscription:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        subscriberUrl:
+          description: URL that will be notified when the target event occurs.
+          type: string
+          format: uri
+        subscriptionPath:
+          description: Path on which the subscription was registered.
+          type: string
+          readOnly: true
+          example: /withdrawals/subscriptions/finalized
