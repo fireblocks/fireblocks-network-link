@@ -34,6 +34,42 @@ const config = convict({
       env: 'LOG_LEVEL',
     },
   },
+  auth: {
+    apiKey: {
+      doc: 'API key used for identification',
+      env: 'API_KEY',
+    },
+    signing: {
+      privateKey: {
+        doc: 'Private key to sign requests',
+        env: 'PRIVATE_KEY',
+      },
+      requestEncodingFormat: {
+        doc: 'Encoding format to pre-signed request',
+        format: ['plain', 'base64', 'hexstr', 'base58', 'base32'],
+        default: 'plain',
+        env: 'REQUEST_ENCODING_FORMAT',
+      },
+      signingAlgorithm: {
+        doc: 'Algorithm to use for signing the request',
+        format: ['hmac', 'rsa', 'ecdsa'],
+        default: 'hmac',
+        env: 'SIGNING_ALGORITHM',
+      },
+      requestSigningFormat: {
+        doc: 'Internal hashing algorithm for the signature',
+        format: ['sha256', 'sha512', 'sha3-256'],
+        default: 'sha256',
+        env: 'REQUEST_SIGNING_FORMAT'
+      },
+      signatureEncodingFormat: {
+        doc: 'Encoding format to signature',
+        format: ['plain', 'base64', 'hexstr', 'base58', 'base32'],
+        default: 'plain',
+        env: 'SIGNATURE_ENCODING_FORMAT',
+      },
+    }
+  },
   openApi: {
     location: {
       doc: 'The directory where the OpenAPI files are located',
