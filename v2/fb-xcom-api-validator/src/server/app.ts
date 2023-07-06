@@ -1,12 +1,23 @@
-import Fastify, { RouteOptions } from 'fastify';
+import path from 'path';
 import config from '../config';
 import logger from '../logging';
+import Fastify, { HTTPMethods, RouteOptions } from 'fastify';
+import { FastifySchemas, loadFastifySchemas } from './schemas';
 
 const log = logger('app');
 
+export async function createWebApp(): Promise<WebApp> {
+  const openApiConfig = config.get('openApi');
+  const openApiYamlPathname = path.join(openApiConfig.location, openApiConfig.unifiedFilename);
+  const schemas = await loadFastifySchemas(openApiYamlPathname);
+
+  return new WebApp(schemas);
+}
+
 export class WebApp {
   private readonly app: ReturnType<typeof Fastify>;
-  constructor() {
+
+  constructor(private readonly schemas: FastifySchemas) {
     this.app = Fastify({ logger: log.pinoLogger });
   }
 
@@ -15,11 +26,12 @@ export class WebApp {
     await this.app.listen({ port, host: '0.0.0.0' });
   }
 
-  public addRoute({ method, url, handler }: RouteOptions): void {
+  public addRoute(method: HTTPMethods, url: string, handler: RouteOptions['handler']): void {
     this.app.route({
       method,
       url,
       handler,
+      schema: this.schemas.getSchema(method, url),
     });
   }
 }

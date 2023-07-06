@@ -322,8 +322,6 @@ paths:
         names and the values are lists of account IDs. If all the accounts support
         a capability, an asterisk could be used, instead of listing all the accounts.
       tags: [Capabilities]
-      parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
       responses:
         '200':
           description: >-

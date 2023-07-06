@@ -315,6 +315,7 @@ tags:
 paths:
   /capabilities:
     get:
+      operationId: GetCapabilities
       summary: Describe server capabilities
       description: |-
         Returns the API version and all the capabilities that the server supports.  
@@ -322,8 +323,6 @@ paths:
         The capabilities are specified as a map. The map keys are the capability names and the values are lists of account IDs. If all the accounts support a capability, an asterisk could be used, instead of listing all the accounts.
       tags:
         - Capabilities
-      parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
       responses:
         '200':
           description: Server capability details.
