@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto"
-import config from "../config";
-import { signerFactory } from "../signing";
-import { encoderFactory } from "../encoding";
+import config from "./config";
+import { signerFactory } from "./signing";
+import { encoderFactory } from "./encoding";
 
 export interface AuthHeaders {
     "X-FBAPI-KEY": string,
@@ -34,21 +34,28 @@ export class AuthProvider {
         if (!timestamp) {
             timestamp = Date.now();
         }
-        const signature = this.getSignature(method, endpoint, body, timestamp, nonce);
+        const signature = this.getRequestSignature(method, endpoint, body, timestamp, nonce);
     
         return {
             "X-FBAPI-KEY": this.config.apiKey,
-            "X-FBAPI-SIGNATURE": signature,
+            "X-FBAPI-SIGNATURE": encodeURIComponent(signature),
             "X-FBAPI-TIMESTAMP": timestamp.toString(),
             "X-FBAPI-NONCE": nonce
         }
     }
+
+    public verifySignature(method: HTTPMethod, endpoint: string, body: any, timestamp: number, nonce: string, signature: string, key: string): void {
+        const decodedSignature = this.decodeSignature(decodeURIComponent(signature));
+        const prehashString = AuthProvider.createPrehashString(method, endpoint, body, timestamp, nonce);
+        const encodedPrehashString = this.encodePrehashString(prehashString);
+        this.verify(encodedPrehashString, decodedSignature, key);
+    }
     
-    public static createPrehashString(method: HTTPMethod, endpoint: string, body: any, timestamp: number, nonce: string): string {
+    private static createPrehashString(method: HTTPMethod, endpoint: string, body: any, timestamp: number, nonce: string): string {
         return `${timestamp}${nonce}${method}${endpoint}${this.stringifyBody(body)}`;;
     }
 
-    private getSignature(method: HTTPMethod, endpoint: string, body: any, timestamp: number, nonce: string): string {
+    private getRequestSignature(method: HTTPMethod, endpoint: string, body: any, timestamp: number, nonce: string): string {
         const prehashString = AuthProvider.createPrehashString(method, endpoint, body, timestamp, nonce);
         const encodedPrehashString = this.encodePrehashString(prehashString);
         const signature = this.sign(encodedPrehashString);
@@ -60,12 +67,20 @@ export class AuthProvider {
         return signerFactory(this.config.signing.signingAlgorithm).sign(payload, this.config.signing.privateKey, this.config.signing.requestSigningFormat);
     }
 
+    private verify(payload: string, decodedSignature: string, key: string): void {
+        signerFactory(this.config.signing.signingAlgorithm).verify(payload, key, decodedSignature, this.config.signing.requestSigningFormat);
+    }
+
     private encodePrehashString(prehashString: string): string {
         return encoderFactory(this.config.signing.requestEncodingFormat).encode(prehashString);
     }
 
     private encodeSignature(signature: string): string {
         return encoderFactory(this.config.signing.signatureEncodingFormat).encode(signature);
+    }
+
+    private decodeSignature(encodedSignature: string): string {
+        return encoderFactory(this.config.signing.signatureEncodingFormat).decode(encodedSignature);
     }
 
     private static stringifyBody(body: any): string {

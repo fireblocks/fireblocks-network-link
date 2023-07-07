@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { AuthProvider, HTTPMethod } from './auth-provider';
+import { AuthProvider, HTTPMethod } from '../auth-provider';
 
 export class Http {
   private readonly axiosConfig: AxiosRequestConfig;

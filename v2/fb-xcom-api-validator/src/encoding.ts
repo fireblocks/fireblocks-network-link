@@ -1,4 +1,5 @@
-import baseX from "base-x";
+import base58 from "bs58";
+import * as base32 from "hi-base32";
 
 export class UnsupportedEncodingFormatError extends Error {}
 
@@ -33,27 +34,22 @@ export class HexStr implements Encoder {
 }
 
 export class Base32 implements Encoder {
-    // RFC 4648
-    private alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-    private base32 = baseX(this.alphabet);
 
     public encode(payload: string): string {
-        return this.base32.encode(new TextEncoder().encode(payload));
+        return base32.encode(payload);
     }
     public decode(payload: string): string {
-        return new TextDecoder().decode(this.base32.decode(payload));
+        return base32.decode(payload);
     }
 }
 
 export class Base58 implements Encoder {
-    private alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-    private base58 = baseX(this.alphabet);
 
     public encode(payload: string): string {
-        return this.base58.encode(new TextEncoder().encode(payload));
+        return base58.encode(new TextEncoder().encode(payload));
     }
     public decode(payload: string): string {
-        return new TextDecoder().decode(this.base58.decode(payload));
+        return new TextDecoder().decode(base58.decode(payload));
     }
 }
 

@@ -1,5 +1,5 @@
 import { generateKeyPairSync } from "crypto";
-import { ECDSA, HMAC, RSA } from "../src/signing"
+import { AlgorithmNotSupportedError, ECDSA, HMAC, RSA } from "../src/signing"
 
 describe("Signing methods", () => {
     const data = "data";
@@ -65,13 +65,18 @@ describe("Signing methods", () => {
         const signer = new ECDSA();
         describe("SHA256", () => {
             it("Should sign and verify successfully", () => {
-                const signature = signer.sign(data, ecdsaPrivateKey.toString(), "sha256");
-                signer.verify(data, ecdsaPublicKey.toString(), signature, "sha256");
+                const signature = signer.sign(data, ecdsaPrivateKey, "sha256");
+                signer.verify(data, ecdsaPublicKey, signature, "sha256");
             })
         })
         describe("SHA512", () => {
             it("Should throw unsupported algorithm", () => {
-                
+                expect(() => { signer.sign(data, ecdsaPrivateKey, "sha512") }).toThrow(AlgorithmNotSupportedError)
+            });
+        })
+        describe("SHA3-256", () => {
+            it("Should throw unsupported algorithm", () => {
+                expect(() => { signer.sign(data, ecdsaPrivateKey, "sha3-256") }).toThrow(AlgorithmNotSupportedError)
             })
         })
     })

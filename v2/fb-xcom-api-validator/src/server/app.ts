@@ -1,4 +1,4 @@
-import Fastify, { RouteOptions } from 'fastify';
+import Fastify, { RouteOptions, preHandlerHookHandler } from 'fastify';
 import config from '../config';
 import logger from '../logging';
 
@@ -13,6 +13,10 @@ export class WebApp {
   public async start(): Promise<void> {
     const { port } = config.get('server');
     await this.app.listen({ port, host: '0.0.0.0' });
+  }
+
+  public addMiddleware(hook: preHandlerHookHandler): void {
+    this.app.addHook('preHandler', hook);
   }
 
   public addRoute({ method, url, handler }: RouteOptions): void {
