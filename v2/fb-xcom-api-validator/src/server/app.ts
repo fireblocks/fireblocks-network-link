@@ -2,22 +2,22 @@ import path from 'path';
 import config from '../config';
 import logger from '../logging';
 import Fastify, { HTTPMethods, RouteOptions } from 'fastify';
-import { FastifySchemas, loadFastifySchemas } from './schemas';
+import { OpenApiSchema, loadOpenApiSchema } from './schema';
 
 const log = logger('app');
 
 export async function createWebApp(): Promise<WebApp> {
   const openApiConfig = config.get('openApi');
   const openApiYamlPathname = path.join(openApiConfig.location, openApiConfig.unifiedFilename);
-  const schemas = await loadFastifySchemas(openApiYamlPathname);
+  const schema = await loadOpenApiSchema(openApiYamlPathname);
 
-  return new WebApp(schemas);
+  return new WebApp(schema);
 }
 
 export class WebApp {
   private readonly app: ReturnType<typeof Fastify>;
 
-  constructor(private readonly schemas: FastifySchemas) {
+  constructor(private readonly schema: OpenApiSchema) {
     this.app = Fastify({ logger: log.pinoLogger });
   }
 
@@ -31,7 +31,7 @@ export class WebApp {
       method,
       url,
       handler,
-      schema: this.schemas.getSchema(method, url),
+      schema: this.schema.getOperationSchema(method, url),
     });
   }
 }

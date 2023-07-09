@@ -5,39 +5,39 @@ import FastifyOpenApiParser from 'fastify-openapi-glue/lib/parser.v3';
 import { FastifySchema, HTTPMethods } from 'fastify';
 import { XComError } from '../error';
 
-export async function loadFastifySchemas(openApiYamlPathname: string): Promise<FastifySchemas> {
+export async function loadOpenApiSchema(openApiYamlPathname: string): Promise<OpenApiSchema> {
   const schemas = await parseOpenApiYaml(openApiYamlPathname);
-  return new FastifySchemas(schemas);
+  return new OpenApiSchema(schemas);
 }
 
-interface FastifySchemaExtended {
+type OpenApiOperationDetails = {
   method: HTTPMethods;
   url: string;
   schema: FastifySchema;
   operationId: string;
-}
+};
 
-export class FastifySchemas {
-  constructor(private readonly schemas: FastifySchemaExtended[]) {}
+export class OpenApiSchema {
+  constructor(private readonly schemas: OpenApiOperationDetails[]) {}
 
-  public getSchema(method: HTTPMethods, url: string): FastifySchema {
+  public getOperationSchema(method: HTTPMethods, url: string): FastifySchema {
     const schema = this.schemas.find((x) => x.method == method && x.url == url);
 
     if (!schema) {
-      throw new FastifySchemaNotFound(method, url);
+      throw new OpenApiSchemaNotFound(method, url);
     }
 
     return schema.schema;
   }
 }
 
-class FastifySchemaNotFound extends XComError {
+class OpenApiSchemaNotFound extends XComError {
   constructor(method: HTTPMethods, url: string) {
-    super('Fastify schema not found', { method, url });
+    super('OpenAPI schema not found', { method, url });
   }
 }
 
-async function parseOpenApiYaml(yamlPathname: string): Promise<FastifySchemaExtended[]> {
+async function parseOpenApiYaml(yamlPathname: string): Promise<OpenApiOperationDetails[]> {
   const yamlText = fs.readFileSync(yamlPathname).toString();
   const openApi = await refParser.dereference(yaml.load(yamlText));
 
