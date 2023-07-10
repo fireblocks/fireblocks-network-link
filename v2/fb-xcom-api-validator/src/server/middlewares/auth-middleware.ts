@@ -1,36 +1,64 @@
-import { FastifyInstance, FastifyReply, FastifyRequest, HookHandlerDoneFunction, preHandlerHookHandler } from 'fastify';
+import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import logger from '../../logging';
-import { AuthProvider, HTTPMethod } from '../../auth-provider';
+import { AuthProvider, HTTPMethod, MissingAuthHeaders } from '../../auth-provider';
 import { InvalidSignatureError } from '../../signing';
-import config from '../../config';
-
-const FBAPI_TIMESTAMP_HEADER = "X-FBAPI-TIMESTAMP";
-const FBAPI_NONCE_HEADER = "X-FBAPI-NONCE";
-const FBAPI_SIGNATURE_HEADER= "X-FBAPI-SIGNATURE";
 
 const log = logger('handler:auth');
-export function authMiddleware(this: FastifyInstance, request: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) {
-  const authConfig = config.get('auth');
+
+export function authMiddleware(request: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) {
   
-  // TODO: verify nonce wasn't used
-  // TODO: verify time passed since timestamp
+  // TODO: validate nonce wasn't used
+  // TODO: validate time passed since timestamp
   try {
-    // verify signature
     const body = request.body;
     const method = request.method;
     const url = request.url;
-    const timestamp = Number(request.headers[FBAPI_TIMESTAMP_HEADER]);
-    const nonce = String(request.headers[FBAPI_NONCE_HEADER]);
-    const signature = String(request.headers[FBAPI_SIGNATURE_HEADER]);
 
-    AuthProvider.getInstance().verifySignature(method as HTTPMethod, url, body, timestamp, nonce, signature, authConfig.signing.publicKey);
+    const { timestamp, nonce, signature, apiKey } = getAuthHeaders(request.raw.rawHeaders);
+
+    validateAuthHeaders(timestamp, nonce, signature, apiKey);
+    
+    AuthProvider.getInstance().verifySignature(method as HTTPMethod, url, body, timestamp, nonce, signature);
 
   } catch (err) {
-    if (err instanceof InvalidSignatureError) {
-      return reply.code(401).send();
+    if (err instanceof MissingAuthHeaders) {
+      log.debug("Missing one or more auth headers in request: " + request.raw.rawHeaders);
+      return reply.code(401).send(err.responseObject);
+    } else if (err instanceof InvalidSignatureError) {
+      log.debug("Invalid signature in request");
+      return reply.code(401).send(err.responseObject);
     }
     return reply.code(500).send();
   }
 
   done();
+}
+
+function getAuthHeaders(headers: string[]) {
+  const getHeader = (headerName: string): string => {
+    const headerNameIndex = headers.findIndex(header => header === headerName);
+    const headerValueIndex = headerNameIndex + 1
+    return headers[headerValueIndex];
+  }
+
+  const timestamp = Number(getHeader("X-FBAPI-TIMESTAMP"));
+  const nonce = String(getHeader("X-FBAPI-NONCE"));
+  const signature = String(getHeader("X-FBAPI-SIGNATURE"));
+  const apiKey = String(getHeader("X-FBAPI-KEY"));
+  return { timestamp, nonce, signature, apiKey };
+}
+
+function validateAuthHeaders(timestamp: number, nonce: string, signature: string, apiKey: string) {
+  if (!timestamp) {
+    throw new MissingAuthHeaders("timestamp");
+  }
+  if (!nonce) {
+    throw new MissingAuthHeaders("nonce");
+  }
+  if (!signature) {
+    throw new MissingAuthHeaders("signature");
+  }
+  if (!apiKey) {
+    throw new MissingAuthHeaders("key");
+  }
 }

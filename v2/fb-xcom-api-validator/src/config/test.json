@@ -12,5 +12,5 @@
         "requestSigningFormat": "sha256",
         "signatureEncodingFormat": "plain"
     }
-}
+  }
 }

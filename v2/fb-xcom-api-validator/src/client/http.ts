@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 import { AuthProvider, HTTPMethod } from '../auth-provider';
 
 export class Http {
@@ -12,7 +12,7 @@ export class Http {
   }
 
   private enrichSecurityHeaders(method: HTTPMethod, endpoint: string, body?: any, headers?: Record<string, string>): Record<string, string> {
-    const authHeaders = AuthProvider.getInstance().getSecurityHeaders(method, endpoint, body);
+    const authHeaders = AuthProvider.getInstance().getAuthHeaders(method, endpoint, body);
     if (headers) {
       return { ...headers, ...authHeaders }
     }

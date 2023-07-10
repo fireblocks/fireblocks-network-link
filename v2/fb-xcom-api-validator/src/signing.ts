@@ -1,6 +1,12 @@
 import { KeyObject, createHmac, createSign, createVerify } from "crypto"
 
-export class InvalidSignatureError extends Error {}
+export class InvalidSignatureError extends Error {
+    public get responseObject() {
+        return {
+            errorCode: "invalid-signature",
+        }
+    }
+}
 export class AlgorithmNotSupportedError extends Error {}
 
 export type HashingAlgorithm = "sha256" | "sha512" | "sha3-256"

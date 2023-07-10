@@ -13,7 +13,7 @@ describe("Client request authentication", () => {
             timestamp: 123,
             nonce: "123"
         }
-        const securityHeaders = AuthProvider.getInstance().getSecurityHeaders(request.method as HTTPMethod, request.endpoint, request.body, request.timestamp, request.nonce);
+        const securityHeaders = AuthProvider.getInstance().getAuthHeaders(request.method as HTTPMethod, request.endpoint, request.body, request.timestamp, request.nonce);
         
         it("Should set all required headers", () => {
             expect(securityHeaders["X-FBAPI-KEY"]).toBeDefined();
@@ -28,7 +28,7 @@ describe("Client request authentication", () => {
 
         it("Signature should be valid", () => {
             const signature = decodeURIComponent(securityHeaders["X-FBAPI-SIGNATURE"]);
-            AuthProvider.getInstance().verifySignature(request.method as HTTPMethod, request.endpoint, request.body, request.timestamp, request.nonce, signature, authConfig.signing.publicKey);
+            AuthProvider.getInstance().verifySignature(request.method as HTTPMethod, request.endpoint, request.body, request.timestamp, request.nonce, signature);
         })
     });
 })

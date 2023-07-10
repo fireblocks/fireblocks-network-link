@@ -12,6 +12,22 @@ export interface AuthHeaders {
 
 export type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
 
+export class MissingAuthHeaders extends Error {
+    constructor(private missingHeader: "key" | "nonce" | "timestamp" | "signature") {
+        super();
+    }
+
+    public get responseObject() {
+        return {
+            errorCode: this.getErrorCode(),
+        }
+    }
+
+    private getErrorCode() {
+        return `missing-${this.missingHeader}-header`;
+    }
+};
+
 export class AuthProvider {
     private static instance: AuthProvider;
     private config;
@@ -27,7 +43,7 @@ export class AuthProvider {
         return AuthProvider.instance;
     }
 
-    public getSecurityHeaders(method: HTTPMethod, endpoint: string, body: any, timestamp?: number, nonce?: string): AuthHeaders {
+    public getAuthHeaders(method: HTTPMethod, endpoint: string, body: any, timestamp?: number, nonce?: string): AuthHeaders {
         if (!nonce) {
             nonce = randomUUID();
         }
@@ -44,15 +60,15 @@ export class AuthProvider {
         }
     }
 
-    public verifySignature(method: HTTPMethod, endpoint: string, body: any, timestamp: number, nonce: string, signature: string, key: string): void {
+    public verifySignature(method: HTTPMethod, endpoint: string, body: any, timestamp: number, nonce: string, signature: string): void {
         const decodedSignature = this.decodeSignature(decodeURIComponent(signature));
         const prehashString = AuthProvider.createPrehashString(method, endpoint, body, timestamp, nonce);
         const encodedPrehashString = this.encodePrehashString(prehashString);
-        this.verify(encodedPrehashString, decodedSignature, key);
+        this.verify(encodedPrehashString, decodedSignature, this.config.signing.publicKey);
     }
     
     private static createPrehashString(method: HTTPMethod, endpoint: string, body: any, timestamp: number, nonce: string): string {
-        return `${timestamp}${nonce}${method}${endpoint}${this.stringifyBody(body)}`;;
+        return `${timestamp}${nonce}${method}${endpoint}${this.stringifyBody(body)}`;
     }
 
     private getRequestSignature(method: HTTPMethod, endpoint: string, body: any, timestamp: number, nonce: string): string {
