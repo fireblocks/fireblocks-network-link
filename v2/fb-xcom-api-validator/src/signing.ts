@@ -14,7 +14,7 @@ export type SigningAlgorithm = "hmac" | "rsa" | "ecda"
 
 export abstract class Signer {
     public abstract sign(payload: string, key: string | KeyObject, algorithm: HashingAlgorithm): string;
-    public abstract verify(payload: string, key: string, signature: string, algorithm: HashingAlgorithm): void;
+    public abstract verify(payload: string, key: string | KeyObject, signature: string, algorithm: HashingAlgorithm): void;
 }
 
 export class HMAC implements Signer {
@@ -56,7 +56,7 @@ export class ECDSA implements Signer {
             throw new AlgorithmNotSupportedError();
         }
     }
-
+    // need to investigate how to set the type of elliptic curve in sign and verify
     public sign(data: string, privateKey: string | KeyObject, algorithm: HashingAlgorithm) {
         this.validateAlgorithm(algorithm);
         const sign = createSign("sha256");
@@ -75,7 +75,7 @@ export class ECDSA implements Signer {
     }
 }
 
-export const signerFactory = (algorithm: SigningAlgorithm): Signer => {
+export function signerFactory(algorithm: SigningAlgorithm): Signer {
     switch(algorithm) {
         case "hmac":
             return new HMAC();

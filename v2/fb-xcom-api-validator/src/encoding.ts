@@ -53,7 +53,7 @@ export class Base58 implements Encoder {
     }
 }
 
-export const encoderFactory = (encoding: Encoding) => {
+export function encoderFactory(encoding: Encoding) {
     switch (encoding) {
         case "plain":
             return new Plain();

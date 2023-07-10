@@ -2,15 +2,14 @@
   "logging": {
     "level": "silent"
   },
-  "auth": {
+  "authentication": {
     "apiKey": "123",
     "signing": {
         "privateKey": "123",
-        "publicKey": "123",
-        "requestEncodingFormat": "plain",
+        "preEncoding": "plain",
         "signingAlgorithm": "hmac",
-        "requestSigningFormat": "sha256",
-        "signatureEncodingFormat": "plain"
+        "hashAlgorithm": "sha256",
+        "postEncoding": "plain"
     }
   }
 }

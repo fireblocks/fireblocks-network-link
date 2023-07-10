@@ -34,7 +34,7 @@ const config = convict({
       env: 'LOG_LEVEL',
     },
   },
-  auth: {
+  authentication: {
     apiKey: {
       doc: 'API key used for identification',
       env: 'API_KEY',
@@ -43,19 +43,14 @@ const config = convict({
     signing: {
       privateKey: {
         doc: 'Private key to sign requests',
-        env: 'PRIVATE_KEY',
+        env: 'SIGNING_PRIVATE_KEY',
         default: "",
       },
-      publicKey: {
-        doc: 'Key to verify requests (only used for stub server)',
-        env: 'PUBLIC_KEY',
-        default: "",
-      },
-      requestEncodingFormat: {
-        doc: 'Encoding format to pre-signed request',
+      preEncoding: {
+        doc: 'Encoding to be applied to the data before it is signed',
         format: ['plain', 'base64', 'hexstr', 'base58', 'base32'],
         default: 'plain',
-        env: 'REQUEST_ENCODING_FORMAT',
+        env: 'SIGNING_PRE_ENCODING',
       },
       signingAlgorithm: {
         doc: 'Algorithm to use for signing the request',
@@ -63,17 +58,17 @@ const config = convict({
         default: 'hmac',
         env: 'SIGNING_ALGORITHM',
       },
-      requestSigningFormat: {
-        doc: 'Internal hashing algorithm for the signature',
+      hashAlgorithm: {
+        doc: 'Hash algorithm used during the signing',
         format: ['sha256', 'sha512', 'sha3-256'],
         default: 'sha256',
-        env: 'REQUEST_SIGNING_FORMAT'
+        env: 'SIGNING_HASH_ALGORITHM'
       },
-      signatureEncodingFormat: {
-        doc: 'Encoding format to signature',
+      postEncoding: {
+        doc: 'Encoding to be applied to the signature',
         format: ['plain', 'base64', 'hexstr', 'base58', 'base32'],
         default: 'plain',
-        env: 'SIGNATURE_ENCODING_FORMAT',
+        env: 'SIGNING_POST_ENCODING',
       },
     }
   },

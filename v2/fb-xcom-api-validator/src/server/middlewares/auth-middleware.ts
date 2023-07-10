@@ -1,14 +1,11 @@
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import logger from '../../logging';
-import { AuthProvider, HTTPMethod, MissingAuthHeaders } from '../../auth-provider';
+import { HTTPMethod, MissingAuthHeaders, verifySignature } from '../../auth-provider';
 import { InvalidSignatureError } from '../../signing';
 
 const log = logger('handler:auth');
 
 export function authMiddleware(request: FastifyRequest, reply: FastifyReply, done: HookHandlerDoneFunction) {
-  
-  // TODO: validate nonce wasn't used
-  // TODO: validate time passed since timestamp
   try {
     const body = request.body;
     const method = request.method;
@@ -18,7 +15,7 @@ export function authMiddleware(request: FastifyRequest, reply: FastifyReply, don
 
     validateAuthHeaders(timestamp, nonce, signature, apiKey);
     
-    AuthProvider.getInstance().verifySignature(method as HTTPMethod, url, body, timestamp, nonce, signature);
+    verifySignature(method as HTTPMethod, url, body, timestamp, nonce, signature);
 
   } catch (err) {
     if (err instanceof MissingAuthHeaders) {
@@ -28,7 +25,7 @@ export function authMiddleware(request: FastifyRequest, reply: FastifyReply, don
       log.debug("Invalid signature in request");
       return reply.code(401).send(err.responseObject);
     }
-    return reply.code(500).send();
+    return reply.code(500).send({ errorCode: "unexpected-error" });
   }
 
   done();
