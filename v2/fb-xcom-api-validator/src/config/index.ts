@@ -70,4 +70,7 @@ if (fs.existsSync(filePath)) {
 
 config.validate({ allowed: 'strict' });
 
+config.getUnifiedOpenApiPathname = () =>
+  path.join(config.get('openApi').location, config.get('openApi').unifiedFilename);
+
 export default config;

@@ -1,4 +1,3 @@
-import path from 'path';
 import config from '../config';
 import logger from '../logging';
 import Fastify, { HTTPMethods, RouteOptions } from 'fastify';
@@ -7,8 +6,7 @@ import { OpenApiSchema, loadOpenApiSchema } from './schema';
 const log = logger('app');
 
 export async function createWebApp(): Promise<WebApp> {
-  const openApiConfig = config.get('openApi');
-  const openApiYamlPathname = path.join(openApiConfig.location, openApiConfig.unifiedFilename);
+  const openApiYamlPathname = config.getUnifiedOpenApiPathname();
   const schema = await loadOpenApiSchema(openApiYamlPathname);
 
   return new WebApp(schema);

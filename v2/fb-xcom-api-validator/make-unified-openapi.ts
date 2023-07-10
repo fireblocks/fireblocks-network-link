@@ -1,12 +1,10 @@
-import { dump as dumpYaml, load as loadYaml } from 'js-yaml';
-import { readFileSync, writeFileSync } from 'fs';
 import _ from 'lodash';
-import config from './src/config';
 import path from 'path';
+import config from './src/config';
+import { readFileSync, writeFileSync } from 'fs';
+import { dump as dumpYaml, load as loadYaml } from 'js-yaml';
 
-const openApi = config.get('openApi');
-
-const TARGET_OPENAPI_PATH = path.join(openApi.location, openApi.unifiedFilename);
+const TARGET_OPENAPI_PATH = config.getUnifiedOpenApiPathname();
 const IGNORE_PATH_LABEL = 'Private';
 
 interface OpenAPI {
@@ -30,6 +28,8 @@ function extractServiceName(servicePath: string): string | undefined {
 }
 
 async function makeUnifiedOpenApi() {
+  const openApi = config.get('openApi');
+
   const baseOpenApiFilePath = path.join(openApi.location, openApi.components[0]);
   const completeOpenAPI: OpenAPI = loadYaml(readFileSync(baseOpenApiFilePath, 'utf8'));
 
