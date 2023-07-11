@@ -20,7 +20,10 @@ x-query-params:
   ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
 
 x-header-params:
-  SecurityHeaderParams: { $ref: './fb-provider-api.yaml#/components/parameters/SecurityHeaderParams' }
+  X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
+  X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
+  X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
+  X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
 
 x-schemas:
   PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
@@ -32,7 +35,10 @@ paths:
       summary: List order books
       tags: [Capabilities]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-query-params/PaginationQueryParams'
       responses:
         '200':
@@ -54,7 +60,10 @@ paths:
       summary: List order books
       tags: [Trading]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-query-params/PaginationQueryParams'
       responses:
         '200':
@@ -77,7 +86,10 @@ paths:
       summary: Get details of an order book
       tags: [Trading]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
         '200':
@@ -97,7 +109,10 @@ paths:
         by the sell price.
       tags: [Trading]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-query-params/PaginationQueryParams'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
@@ -124,7 +139,10 @@ paths:
         by the buy price.
       tags: [Trading]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-query-params/PaginationQueryParams'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
@@ -151,7 +169,10 @@ paths:
         by the fulfillment time.
       tags: [Trading]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-query-params/PaginationQueryParams'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
@@ -177,7 +198,10 @@ paths:
         List trading orders sorted descending by the creation time.
       tags: [ Trading ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-query-params/PaginationQueryParams'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -199,7 +223,10 @@ paths:
       summary: Create a new trading order
       tags: [ Trading ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         content:
@@ -240,7 +267,10 @@ paths:
       summary: Get trading order details
       tags: [ Trading ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
@@ -256,7 +286,10 @@ paths:
       summary: Cancel an active trading order
       tags: [ Trading ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:

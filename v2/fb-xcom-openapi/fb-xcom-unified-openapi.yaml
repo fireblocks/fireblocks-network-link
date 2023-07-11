@@ -323,6 +323,11 @@ paths:
         The capabilities are specified as a map. The map keys are the capability names and the values are lists of account IDs. If all the accounts support a capability, an asterisk could be used, instead of listing all the accounts.
       tags:
         - Capabilities
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
       responses:
         '200':
           description: Server capability details.
@@ -369,13 +374,16 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets:
     get:
-      operationId: get-additional-assets
+      operationId: ListAdditionalAssets
       summary: Get list of supported additional assets
       description: Returns assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/AssetsQueryParam'
       responses:
@@ -437,12 +445,16 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets/{id}:
     get:
+      operationId: GetAssetDetails
       summary: Get details of a supported additional asset.
       description: Returns the details of an assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/AssetsQueryParam'
@@ -461,7 +473,10 @@ paths:
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/PaginationQueryParams'
       responses:
         '200':
@@ -483,7 +498,10 @@ paths:
       tags:
         - Accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/AccountPropertiesQueryParam'
       responses:
@@ -506,7 +524,10 @@ paths:
       tags:
         - Accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/AccountPropertiesQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -524,7 +545,10 @@ paths:
       tags:
         - Balances
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/AssetsQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
@@ -574,7 +598,10 @@ paths:
       tags:
         - Historic Balances
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/AssetsQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
@@ -605,7 +632,10 @@ paths:
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
       responses:
         '200':
           description: List of possible asset conversions.
@@ -622,7 +652,10 @@ paths:
       tags:
         - Liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         content:
@@ -643,7 +676,10 @@ paths:
       tags:
         - Liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
@@ -667,7 +703,10 @@ paths:
       tags:
         - Liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -685,7 +724,10 @@ paths:
       tags:
         - Liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -703,7 +745,10 @@ paths:
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
       responses:
         '200':
@@ -725,7 +770,10 @@ paths:
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
       responses:
         '200':
@@ -749,7 +797,10 @@ paths:
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
         '200':
@@ -767,7 +818,10 @@ paths:
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
@@ -793,7 +847,10 @@ paths:
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
@@ -819,7 +876,10 @@ paths:
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
@@ -845,7 +905,10 @@ paths:
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -869,7 +932,10 @@ paths:
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         content:
@@ -910,7 +976,10 @@ paths:
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
@@ -927,7 +996,10 @@ paths:
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
@@ -941,7 +1013,10 @@ paths:
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
       responses:
         '200':
@@ -1007,7 +1082,10 @@ paths:
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
       responses:
         '200':
@@ -1073,7 +1151,10 @@ paths:
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
@@ -1088,7 +1169,10 @@ paths:
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1106,7 +1190,10 @@ paths:
       tags:
         - Transfers (Blockchain)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
@@ -1130,7 +1217,10 @@ paths:
       tags:
         - Transfers (Blockchain)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -1153,7 +1243,10 @@ paths:
       tags:
         - Transfers (Fiat)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
@@ -1177,7 +1270,10 @@ paths:
       tags:
         - Transfers (Fiat)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -1200,7 +1296,10 @@ paths:
       tags:
         - Transfers (Peer Accounts)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
@@ -1224,7 +1323,10 @@ paths:
       tags:
         - Transfers (Peer Accounts)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -1247,7 +1349,10 @@ paths:
       tags:
         - Accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
@@ -1271,7 +1376,10 @@ paths:
       tags:
         - Accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -1294,7 +1402,10 @@ paths:
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1317,7 +1428,10 @@ paths:
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1335,7 +1449,10 @@ paths:
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -1357,7 +1474,10 @@ paths:
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1380,7 +1500,10 @@ paths:
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1397,7 +1520,10 @@ paths:
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1407,28 +1533,36 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
 components:
   parameters:
-    SecurityHeaderParams:
-      name: security
+    X-FBAPI-KEY:
+      name: X-FBAPI-KEY
       in: header
-      explode: true
       required: true
-      description: Mandatory security parameters.
+      description: API authentication key.
       schema:
-        type: object
-        properties:
-          X-FBAPI-KEY:
-            type: string
-          X-FBAPI-TIMESTAMP:
-            type: number
-            description: Milliseconds since Unix epoch.
-          X-FBAPI-NONCE:
-            type: string
-            description: Unique identifier of the request.
-          X-FBAPI-SIGNATURE:
-            type: string
-            description: |-
-              Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-              - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+        type: string
+    X-FBAPI-TIMESTAMP:
+      name: X-FBAPI-TIMESTAMP
+      in: header
+      required: true
+      description: Request timestamp in milliseconds since Unix epoch.
+      schema:
+        type: number
+    X-FBAPI-NONCE:
+      name: X-FBAPI-NONCE
+      in: header
+      required: true
+      description: Unique identifier of the request.
+      schema:
+        type: string
+    X-FBAPI-SIGNATURE:
+      name: X-FBAPI-SIGNATURE
+      in: header
+      required: true
+      description: |-
+        Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+        - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+      schema:
+        type: string
     EntityIdPathParam:
       name: id
       in: path

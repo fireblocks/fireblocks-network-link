@@ -322,6 +322,11 @@ paths:
         names and the values are lists of account IDs. If all the accounts support
         a capability, an asterisk could be used, instead of listing all the accounts.
       tags: [Capabilities]
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
       responses:
         '200':
           description: >-
@@ -371,14 +376,17 @@ paths:
 
   /capabilities/assets:
     get:
-      operationId: get-additional-assets
+      operationId: ListAdditionalAssets
       summary: Get list of supported additional assets
       description: >-
         Returns assets, supported in addition to the predefined national
         currencies and the native cryptocurrencies.
       tags: [Capabilities]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/AssetsQueryParam'
       responses:
@@ -448,13 +456,17 @@ paths:
 
   /capabilities/assets/{id}:
     get:
+      operationId: GetAssetDetails
       summary: Get details of a supported additional asset.
       description: >-
         Returns the details of an assets, supported in addition to the predefined
         national currencies and the native cryptocurrencies.
       tags: [Capabilities]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/AssetsQueryParam'
@@ -473,7 +485,10 @@ paths:
       summary: Get list of supported balance assets
       tags: [Capabilities]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/PaginationQueryParams'
       responses:
         '200':
@@ -496,7 +511,10 @@ paths:
       summary: Get list of sub-accounts
       tags: [Accounts]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/AccountPropertiesQueryParam'
       responses:
@@ -519,7 +537,10 @@ paths:
       summary: Get sub-account details
       tags: [Accounts]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/AccountPropertiesQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -537,7 +558,10 @@ paths:
       summary: Get current balances
       tags: [Balances]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/AssetsQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
@@ -605,7 +629,10 @@ paths:
       summary: Get balances at specific time in the past
       tags: [ 'Historic Balances' ]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/PaginationQueryParams'
         - $ref: '#/components/parameters/AssetsQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
@@ -630,35 +657,46 @@ paths:
 
 components:
   parameters:
-    SecurityHeaderParams:
-      name: security
+    X-FBAPI-KEY:
+      name: X-FBAPI-KEY
       in: header
-      explode: true
       required: true
-      description: Mandatory security parameters.
+      description: API authentication key.
       schema:
-        type: object
-        properties:
-          X-FBAPI-KEY:
-            type: string
-          X-FBAPI-TIMESTAMP:
-            type: number
-            description: Milliseconds since Unix epoch.
-          X-FBAPI-NONCE:
-            type: string
-            description: Unique identifier of the request.
-          X-FBAPI-SIGNATURE:
-            type: string
-            description: >-
-              Request signature using the chosen cryptographic algorithm.
-              The signature is to be calculated on concatenation of the
-              following request fields in the specified order:
+        type: string
 
-              - `X-FBAPI-TIMESTAMP`
-              - `X-FBAPI-NONCE`
-              - HTTP request method in upper case
-              - Endpoint path, including the query parameters
-              - Request body
+    X-FBAPI-TIMESTAMP:
+      name: X-FBAPI-TIMESTAMP
+      in: header
+      required: true
+      description: Request timestamp in milliseconds since Unix epoch.
+      schema:
+        type: number
+
+    X-FBAPI-NONCE:
+      name: X-FBAPI-NONCE
+      in: header
+      required: true
+      description: Unique identifier of the request.
+      schema:
+        type: string
+
+    X-FBAPI-SIGNATURE:
+      name: X-FBAPI-SIGNATURE
+      in: header
+      required: true
+      description: >-
+        Request signature using the chosen cryptographic algorithm.
+        The signature is to be calculated on concatenation of the
+        following request fields in the specified order:
+        
+        - `X-FBAPI-TIMESTAMP`
+        - `X-FBAPI-NONCE`
+        - HTTP request method in upper case
+        - Endpoint path, including the query parameters
+        - Request body
+      schema:
+        type: string
 
     EntityIdPathParam:
       name: id

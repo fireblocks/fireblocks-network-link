@@ -20,7 +20,10 @@ x-query-params:
   ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
 
 x-header-params:
-  SecurityHeaderParams: { $ref: './fb-provider-api.yaml#/components/parameters/SecurityHeaderParams' }
+  X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
+  X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
+  X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
+  X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
 
 x-schemas:
   AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference' }
@@ -32,7 +35,10 @@ paths:
       summary: List possible asset conversions
       tags: [Capabilities]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
       responses:
         '200':
           description: List of possible asset conversions.
@@ -52,7 +58,10 @@ paths:
         returned in the response.
       tags: [Liquidity]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         content:
@@ -72,7 +81,10 @@ paths:
       summary: Get list of quotes sorted by creation time
       tags: [Liquidity]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-query-params/PaginationQueryParams'
         - $ref: '#/x-query-params/ListOrderQueryParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
@@ -96,7 +108,10 @@ paths:
       summary: Get quote details
       tags: [Liquidity]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/EntityIdPathParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -114,7 +129,10 @@ paths:
       summary: Execute quote
       tags: [Liquidity]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/EntityIdPathParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
