@@ -38,6 +38,7 @@ paths:
 
   /capabilities/transfers/withdrawals:
     get:
+      operationId: GetWithdrawalMethods
       summary: Get list of supported withdrawal methods
       tags: [Capabilities]
       parameters:
@@ -106,6 +107,7 @@ paths:
 
   /capabilities/transfers/deposits:
     get:
+      operationId: GetDepositMethods
       summary: Get list of supported deposit methods
       tags: [Capabilities]
       parameters:
@@ -175,6 +177,7 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals:
     get:
+      operationId: GetWithdrawals
       summary: Get list of withdrawals sorted by creation time
       tags: [Transfers]
       parameters:
@@ -193,6 +196,7 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/{id}:
     get:
+      operationId: GetWithdrawalDetails
       summary: Get withdrawal details
       tags: [Transfers]
       parameters:
@@ -214,6 +218,7 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/blockchain:
     get:
+      operationId: GetBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
       tags: [ 'Transfers (Blockchain)' ]
       parameters:
@@ -239,6 +244,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateBlockchainWithdrawal
       summary: Create new withdrawal over public blockchain
       description: Should reject any non blockchain withdrawal request.
       tags: [ 'Transfers (Blockchain)' ]
@@ -266,6 +272,7 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/fiat:
     get:
+      operationId: GetFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
       tags: [ 'Transfers (Fiat)' ]
       parameters:
@@ -291,6 +298,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateFiatWithdrawal
       summary: Create new fiat withdrawal
       description: Should reject any non fiat withdrawal request.
       tags: [ 'Transfers (Fiat)' ]
@@ -318,6 +326,7 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
     get:
+      operationId: GetPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
       tags: [ 'Transfers (Peer Accounts)' ]
       parameters:
@@ -343,6 +352,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreatePeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
       description: Should reject any non peer acount withdrawal request.
       tags: [ 'Transfers (Peer Accounts)' ]
@@ -370,6 +380,7 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/subaccount:
     get:
+      operationId: GetSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
       tags: [ Accounts ]
       parameters:
@@ -395,6 +406,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateSubAccountWithdrawal
       summary: Create new transfer to another sub-account
       description: >- 
         Transfers assets between different sub-accounts of the same user.
@@ -424,6 +436,7 @@ paths:
 
   /accounts/{accountId}/transfers/deposits:
     get:
+      operationId: GetDeposits
       summary: Get list of deposits sorted by creation time
       tags: [Transfers]
       parameters:
@@ -450,6 +463,7 @@ paths:
 
   /accounts/{accountId}/transfers/deposits/{id}:
     get:
+      operationId: GetDepositDetails
       summary: Get deposit details
       tags: [Transfers]
       parameters:
@@ -471,6 +485,7 @@ paths:
 
   /accounts/{accountId}/transfers/deposits/addresses:
     post:
+      operationId: CreateDepositAddress
       summary: Create new deposit address
       tags: [Transfers]
       parameters:
@@ -495,6 +510,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
+      operationId: GetDepositAddresses
       summary: Get list of existing deposit addresses
       tags: [Transfers]
       parameters:
@@ -521,6 +537,7 @@ paths:
 
   /accounts/{accountId}/transfers/deposits/addresses/{id}:
     get:
+      operationId: GetDepositAddressDetails
       summary: Get details of a deposit address
       tags: [Transfers]
       parameters:
@@ -541,6 +558,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
 
     delete:
+      operationId: DisableDepositAddress
       summary: Disable a deposit address
       tags: [Transfers]
       parameters:

@@ -32,6 +32,7 @@ x-schemas:
 paths:
   /capabilities/liquidity/quotes:
     get:
+      operationId: GetQuoteCapabilities
       summary: List possible asset conversions
       tags: [Capabilities]
       parameters:
@@ -51,6 +52,7 @@ paths:
 
   /accounts/{accountId}/liquidity/quotes:
     post:
+      operationId: CreateQuote
       summary: Quote creation request
       description: >-
         Either `fromAmount` or `toAmount` must be specified,
@@ -78,6 +80,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
+      operationId: GetQuotes
       summary: Get list of quotes sorted by creation time
       tags: [Liquidity]
       parameters:
@@ -105,6 +108,7 @@ paths:
 
   /accounts/{accountId}/liquidity/quotes/{id}:
     get:
+      operationId: GetQuoteDetails
       summary: Get quote details
       tags: [Liquidity]
       parameters:
@@ -126,6 +130,7 @@ paths:
 
   /accounts/{accountId}/liquidity/quotes/{id}/execute:
     post:
+      operationId: ExecuteQuote
       summary: Execute quote
       tags: [Liquidity]
       parameters:

@@ -376,7 +376,7 @@ paths:
 
   /capabilities/assets:
     get:
-      operationId: ListAdditionalAssets
+      operationId: GetAdditionalAssets
       summary: Get list of supported additional assets
       description: >-
         Returns assets, supported in addition to the predefined national
@@ -482,6 +482,7 @@ paths:
 
   /capabilities/balances:
     get:
+      operationId: GetBalanceAssets
       summary: Get list of supported balance assets
       tags: [Capabilities]
       parameters:
@@ -508,6 +509,7 @@ paths:
 
   /accounts:
     get:
+      operationId: GetAccounts
       summary: Get list of sub-accounts
       tags: [Accounts]
       parameters:
@@ -534,6 +536,7 @@ paths:
 
   /accounts/{accountId}:
     get:
+      operationId: GetAccountDetails
       summary: Get sub-account details
       tags: [Accounts]
       parameters:
@@ -555,6 +558,7 @@ paths:
 
   /accounts/{accountId}/balances:
     get:
+      operationId: GetBalances
       summary: Get current balances
       tags: [Balances]
       parameters:
@@ -626,6 +630,7 @@ paths:
 
   /accounts/{accountId}/historic-balances:
     get:
+      operationId: GetHistoricBalances
       summary: Get balances at specific time in the past
       tags: [ 'Historic Balances' ]
       parameters:

@@ -374,7 +374,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets:
     get:
-      operationId: ListAdditionalAssets
+      operationId: GetAdditionalAssets
       summary: Get list of supported additional assets
       description: Returns assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
       tags:
@@ -469,6 +469,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/balances:
     get:
+      operationId: GetBalanceAssets
       summary: Get list of supported balance assets
       tags:
         - Capabilities
@@ -494,6 +495,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts:
     get:
+      operationId: GetAccounts
       summary: Get list of sub-accounts
       tags:
         - Accounts
@@ -520,6 +522,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}:
     get:
+      operationId: GetAccountDetails
       summary: Get sub-account details
       tags:
         - Accounts
@@ -541,6 +544,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/balances:
     get:
+      operationId: GetBalances
       summary: Get current balances
       tags:
         - Balances
@@ -594,6 +598,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/historic-balances:
     get:
+      operationId: GetHistoricBalances
       summary: Get balances at specific time in the past
       tags:
         - Historic Balances
@@ -628,6 +633,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/liquidity/quotes:
     get:
+      operationId: GetQuoteCapabilities
       summary: List possible asset conversions
       tags:
         - Capabilities
@@ -647,6 +653,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes:
     post:
+      operationId: CreateQuote
       summary: Quote creation request
       description: Either `fromAmount` or `toAmount` must be specified, while the unspecified amount will be populated by the server and returned in the response.
       tags:
@@ -672,6 +679,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
+      operationId: GetQuotes
       summary: Get list of quotes sorted by creation time
       tags:
         - Liquidity
@@ -699,6 +707,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}:
     get:
+      operationId: GetQuoteDetails
       summary: Get quote details
       tags:
         - Liquidity
@@ -720,6 +729,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}/execute:
     post:
+      operationId: ExecuteQuote
       summary: Execute quote
       tags:
         - Liquidity
@@ -741,6 +751,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/trading/books:
     get:
+      operationId: GetBooks
       summary: List order books
       tags:
         - Capabilities
@@ -764,35 +775,9 @@ paths:
                       $ref: '#/components/schemas/OrderBook'
         default:
           $ref: '#/components/responses/ErrorResponse'
-  /trading/books:
-    get:
-      summary: List order books
-      tags:
-        - Trading
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/PaginationQueryParams'
-      responses:
-        '200':
-          description: List of order books
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - books
-                properties:
-                  books:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/OrderBook'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}:
     get:
+      operationId: GetBookDetails
       summary: Get details of an order book
       tags:
         - Trading
@@ -813,6 +798,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/asks:
     get:
+      operationId: GetBookAsks
       summary: Get active sell orders in an order book
       description: List active sell orders in an order book, sorted ascending by the sell price.
       tags:
@@ -842,6 +828,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/bids:
     get:
+      operationId: GetBookBids
       summary: Get active buy orders in an order book
       description: List active buy orders in an order book, sorted descending by the buy price.
       tags:
@@ -871,6 +858,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/history:
     get:
+      operationId: GetBookOrderHistory
       summary: List fulfilled orders in an order book
       description: List fulfilled orders in an order book, sorted descending by the fulfillment time.
       tags:
@@ -900,6 +888,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders:
     get:
+      operationId: GetOrders
       summary: List trading orders
       description: List trading orders sorted descending by the creation time.
       tags:
@@ -928,6 +917,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateOrder
       summary: Create a new trading order
       tags:
         - Trading
@@ -972,6 +962,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders/{id}:
     get:
+      operationId: GetOrderDetails
       summary: Get trading order details
       tags:
         - Trading
@@ -992,6 +983,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
+      operationId: CancelOrder
       summary: Cancel an active trading order
       tags:
         - Trading
@@ -1009,6 +1001,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/transfers/withdrawals:
     get:
+      operationId: GetWithdrawalMethods
       summary: Get list of supported withdrawal methods
       tags:
         - Capabilities
@@ -1078,6 +1071,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/transfers/deposits:
     get:
+      operationId: GetDepositMethods
       summary: Get list of supported deposit methods
       tags:
         - Capabilities
@@ -1147,6 +1141,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals:
     get:
+      operationId: GetWithdrawals
       summary: Get list of withdrawals sorted by creation time
       tags:
         - Transfers
@@ -1165,6 +1160,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/{id}:
     get:
+      operationId: GetWithdrawalDetails
       summary: Get withdrawal details
       tags:
         - Transfers
@@ -1186,6 +1182,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/blockchain:
     get:
+      operationId: GetBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
       tags:
         - Transfers (Blockchain)
@@ -1212,6 +1209,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateBlockchainWithdrawal
       summary: Create new withdrawal over public blockchain
       description: Should reject any non blockchain withdrawal request.
       tags:
@@ -1239,6 +1237,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/fiat:
     get:
+      operationId: GetFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
       tags:
         - Transfers (Fiat)
@@ -1265,6 +1264,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateFiatWithdrawal
       summary: Create new fiat withdrawal
       description: Should reject any non fiat withdrawal request.
       tags:
@@ -1292,6 +1292,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
     get:
+      operationId: GetPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
       tags:
         - Transfers (Peer Accounts)
@@ -1318,6 +1319,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreatePeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
       description: Should reject any non peer acount withdrawal request.
       tags:
@@ -1345,6 +1347,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/subaccount:
     get:
+      operationId: GetSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
       tags:
         - Accounts
@@ -1371,6 +1374,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateSubAccountWithdrawal
       summary: Create new transfer to another sub-account
       description: Transfers assets between different sub-accounts of the same user. Should reject any withdrawals that are not sub-account transfers.
       tags:
@@ -1398,6 +1402,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits:
     get:
+      operationId: GetDeposits
       summary: Get list of deposits sorted by creation time
       tags:
         - Transfers
@@ -1424,6 +1429,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/{id}:
     get:
+      operationId: GetDepositDetails
       summary: Get deposit details
       tags:
         - Transfers
@@ -1445,6 +1451,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses:
     post:
+      operationId: CreateDepositAddress
       summary: Create new deposit address
       tags:
         - Transfers
@@ -1470,6 +1477,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
+      operationId: GetDepositAddresses
       summary: Get list of existing deposit addresses
       tags:
         - Transfers
@@ -1496,6 +1504,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses/{id}:
     get:
+      operationId: GetDepositAddressDetails
       summary: Get details of a deposit address
       tags:
         - Transfers
@@ -1516,6 +1525,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
+      operationId: DisableDepositAddress
       summary: Disable a deposit address
       tags:
         - Transfers
