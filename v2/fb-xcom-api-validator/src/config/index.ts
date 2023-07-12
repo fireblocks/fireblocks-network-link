@@ -38,13 +38,15 @@ const config = convict({
     apiKey: {
       doc: 'API key used for identification',
       env: 'API_KEY',
-      default: "",
+      format: String,
+      default: null,
     },
     signing: {
       privateKey: {
         doc: 'Private key to sign requests',
         env: 'SIGNING_PRIVATE_KEY',
-        default: "",
+        format: String,
+        default: null,
       },
       preEncoding: {
         doc: 'Encoding to be applied to the data before it is signed',

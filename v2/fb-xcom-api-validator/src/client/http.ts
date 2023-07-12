@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { HTTPMethod, getAuthHeaders } from '../auth-provider';
+import { HTTPMethod, getSecurityHeaders } from '../auth-provider';
 
 export class Http {
   private readonly axiosConfig: AxiosRequestConfig;
@@ -11,12 +11,8 @@ export class Http {
     };
   }
 
-  private enrichSecurityHeaders(method: HTTPMethod, endpoint: string, body?: any, headers?: Record<string, string>): Record<string, string> {
-    const authHeaders = getAuthHeaders(method, endpoint, body);
-    if (headers) {
-      return { ...headers, ...authHeaders }
-    }
-    return { ...authHeaders };
+  private createSecurityHeaders(method: HTTPMethod, endpoint: string, body?: any,): Record<string, string> {
+    return getSecurityHeaders(method, endpoint, body);
   }
 
   private makeConfig(
@@ -38,25 +34,25 @@ export class Http {
     params?: URLSearchParams,
     headers?: Record<string, string>
   ): Promise<T> {
-    headers = this.enrichSecurityHeaders("GET", url)
+    headers = this.createSecurityHeaders("GET", url)
     const r = await axios.get<T>(url, this.makeConfig(headers, params));
     return r.data;
   }
 
   public async post<T>(url: string, data: unknown, headers?: Record<string, string>): Promise<T> {
-    headers = this.enrichSecurityHeaders("POST", url, data);
+    headers = this.createSecurityHeaders("POST", url, data);
     const r = await axios.post<T>(url, data, this.makeConfig(headers));
     return r.data;
   }
 
   public async put<T>(url: string, data: unknown, headers?: Record<string, string>): Promise<T> {
-    headers = this.enrichSecurityHeaders("PUT", url, data);
+    headers = this.createSecurityHeaders("PUT", url, data);
     const r = await axios.put<T>(url, data, this.makeConfig(headers));
     return r.data;
   }
 
   public async delete<T>(url: string, headers?: Record<string, string>): Promise<T> {
-    headers = this.enrichSecurityHeaders("DELETE", url);
+    headers = this.createSecurityHeaders("DELETE", url);
     const r = await axios.delete<T>(url, this.makeConfig(headers));
     return r.data;
   }

@@ -1,9 +1,9 @@
-import { HTTPMethod, getAuthHeaders, verifySignature } from "../src/auth-provider"
+import { HTTPMethod, getSecurityHeaders, verifySignature } from "../src/auth-provider"
 import config from "../src/config";
 
 
 describe("Client request authentication", () => {
-    describe("Headers enrichment", () => {
+    describe("Request headers", () => {
         const authConfig = config.get("authentication");
         const request = {
             method: "GET",
@@ -12,7 +12,7 @@ describe("Client request authentication", () => {
             timestamp: 123,
             nonce: "123"
         }
-        const securityHeaders = getAuthHeaders(request.method as HTTPMethod, request.endpoint, request.body, request.timestamp, request.nonce);
+        const securityHeaders = getSecurityHeaders(request.method as HTTPMethod, request.endpoint, request.body, request.timestamp, request.nonce);
         
         it("Should set all required headers", () => {
             expect(securityHeaders["X-FBAPI-KEY"]).toBeDefined();

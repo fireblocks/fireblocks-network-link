@@ -1,14 +1,8 @@
-import { KeyObject, createPrivateKey, createPublicKey, randomUUID } from "crypto"
+import { randomUUID } from "crypto"
 import config from "./config";
-import { signerFactory } from "./signing";
+import { getVerifyKey, signerFactory } from "./signing";
 import { encoderFactory } from "./encoding";
 
-export interface AuthHeaders {
-    "X-FBAPI-KEY": string,
-    "X-FBAPI-SIGNATURE": string,
-    "X-FBAPI-TIMESTAMP": string,
-    "X-FBAPI-NONCE": string;
-}
 
 export type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -32,7 +26,7 @@ export class MissingAuthHeaders extends Error {
 const authConfig = config.get('authentication');
 
 
-export function getAuthHeaders(method: HTTPMethod, endpoint: string, body: any, timestamp?: number, nonce?: string): AuthHeaders {
+export function getSecurityHeaders(method: HTTPMethod, endpoint: string, body: any, timestamp?: number, nonce?: string): Record<string, string> {
     if (!nonce) {
         nonce = randomUUID();
     }
@@ -69,11 +63,11 @@ function getRequestSignature(method: HTTPMethod, endpoint: string, body: any, ti
 }
 
 function sign(payload: string): string {
-    return signerFactory(authConfig.signing.signingAlgorithm).sign(payload, getSignKey(), authConfig.signing.hashAlgorithm);
+    return signerFactory(authConfig.signing.signingAlgorithm).sign(payload, authConfig.signing.privateKey, { algorithm: authConfig.signing.hashAlgorithm, curve: authConfig.signing.namedCurve });
 }
 
 function verify(payload: string, decodedSignature: string): void {
-    signerFactory(authConfig.signing.signingAlgorithm).verify(payload, getVerifyKey(), decodedSignature, authConfig.signing.hashAlgorithm);
+    signerFactory(authConfig.signing.signingAlgorithm).verify(payload, getVerifyKey(authConfig.signing.privateKey, authConfig.signing.signingAlgorithm), decodedSignature, { algorithm: authConfig.signing.hashAlgorithm, curve: authConfig.signing.namedCurve });
 }
 
 function encodePrehashString(prehashString: string): string {
@@ -86,22 +80,6 @@ function encodeSignature(signature: string): string {
 
 function decodeSignature(encodedSignature: string): string {
     return encoderFactory(authConfig.signing.postEncoding).decode(encodedSignature);
-}
-
-function getSignKey(): KeyObject | string {
-    if (authConfig.signing.signingAlgorithm === "hmac") {
-        return authConfig.signing.privateKey;
-    }
-
-    return createPrivateKey(authConfig.signing.privateKey);
-}
-
-function getVerifyKey(): KeyObject | string {
-    if (authConfig.signing.signingAlgorithm === "hmac") {
-        return authConfig.signing.privateKey;
-    }
-
-    return createPublicKey(getSignKey());
 }
 
 function stringifyBody(body: any): string {

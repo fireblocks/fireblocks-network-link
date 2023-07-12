@@ -765,12 +765,6 @@ components:
       type: string
       enum:
         - unexpected-error
-        - invalid-signature
-        - missing-timestamp-header
-        - missing-nonce-header
-        - missing-key-header
-        - missing-signature-header
-        - nonce-already-used
 
     Capabilities:
       type: object
