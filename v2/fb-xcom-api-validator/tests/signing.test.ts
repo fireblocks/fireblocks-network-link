@@ -1,4 +1,4 @@
-import { AlgorithmNotSupportedError, InvalidSignatureError, signerFactory } from "../src/signing"
+import { AlgorithmNotSupportedError, InvalidSignatureError, signerFactory } from "../src/security/signing"
 
 describe("Signing methods", () => {
     const data = "data";
@@ -61,21 +61,21 @@ describe("Signing methods", () => {
         const secret = "secret";
 
         describe("SHA256", () => {
-            it("Should sign and verify successfully", () => {
-                const signature = signerFactory("hmac").sign(data, secret, { algorithm: "sha256" });
-                signerFactory("hmac").verify(data, secret, signature, { algorithm: "sha256" });
+            it("should sign and verify successfully", () => {
+                const signature = signerFactory("hmac").sign(data, secret, "sha256");
+                signerFactory("hmac").verify(data, secret, signature, "sha256");
             });
         });
         describe("SHA512", () => {
-            it("Should sign and verify successfully", () => {
-                const signature = signerFactory("hmac").sign(data, secret, { algorithm: "sha512" });
-                signerFactory("hmac").verify(data, secret, signature, { algorithm: "sha512" });
+            it("should sign and verify successfully", () => {
+                const signature = signerFactory("hmac").sign(data, secret, "sha512");
+                signerFactory("hmac").verify(data, secret, signature, "sha512");
             });
         });
         describe("SHA3-256", () => {
-            it("Should sign and verify successfully", () => {
-                const signature = signerFactory("hmac").sign(data, secret, { algorithm: "sha3-256" });
-                signerFactory("hmac").verify(data, secret, signature, { algorithm: "sha3-256" });
+            it("should sign and verify successfully", () => {
+                const signature = signerFactory("hmac").sign(data, secret, "sha3-256");
+                signerFactory("hmac").verify(data, secret, signature, "sha3-256");
             });
         });
     });
@@ -83,25 +83,25 @@ describe("Signing methods", () => {
     describe("RSA", () => {
 
         describe("SHA256", () => {
-            it("Should sign and verify successfully", () => {
-                const signature = signerFactory("rsa").sign(data, rsaPrivateKey, { algorithm: "sha256" });
-                signerFactory("rsa").verify(data, rsaPublicKey, signature, { algorithm: "sha256" });
+            it("should sign and verify successfully", () => {
+                const signature = signerFactory("rsa").sign(data, rsaPrivateKey, "sha256");
+                signerFactory("rsa").verify(data, rsaPublicKey, signature, "sha256");
             });
             it("Invalid pub key should not verify successfully", () => {
-                const signature = signerFactory("rsa").sign(data, rsaPrivateKey, { algorithm: "sha256" });
-                expect(() => { signerFactory("rsa").verify(data, ecdsaPublicKey, signature, { algorithm: "sha256" }) }).toThrow(Error);
+                const signature = signerFactory("rsa").sign(data, rsaPrivateKey, "sha256");
+                expect(() => { signerFactory("rsa").verify(data, ecdsaPublicKey, signature, "sha256") }).toThrow(Error);
             })
         });
         describe("SHA512", () => {
-            it("Should sign and verify successfully", () => {
-                const signature = signerFactory("rsa").sign(data, rsaPrivateKey, { algorithm: "sha512" });
-                signerFactory("rsa").verify(data, rsaPublicKey, signature, { algorithm: "sha512" });
+            it("should sign and verify successfully", () => {
+                const signature = signerFactory("rsa").sign(data, rsaPrivateKey, "sha512");
+                signerFactory("rsa").verify(data, rsaPublicKey, signature, "sha512");
             });
         });
         describe("SHA3-256", () => {
-            it("Should sign and verify successfully", () => {
-                const signature = signerFactory("rsa").sign(data, rsaPrivateKey, { algorithm: "sha3-256" });
-                signerFactory("rsa").verify(data, rsaPublicKey, signature, { algorithm: "sha3-256" });
+            it("should sign and verify successfully", () => {
+                const signature = signerFactory("rsa").sign(data, rsaPrivateKey, "sha3-256");
+                signerFactory("rsa").verify(data, rsaPublicKey, signature, "sha3-256");
             });
         });
     });
@@ -110,25 +110,25 @@ describe("Signing methods", () => {
 
 
         describe("SHA256", () => {
-            it("Should sign and verify successfully", () => {
-                const signature = signerFactory("ecdsa").sign(data, ecdsaPrivateKey, { algorithm: "sha256", curve: "secp256k1" });
-                signerFactory("ecdsa").verify(data, ecdsaPublicKey, signature, { algorithm: "sha256", curve: "secp256k1" });
+            it("should sign and verify successfully", () => {
+                const signature = signerFactory("ecdsa").sign(data, ecdsaPrivateKey, "sha256");
+                signerFactory("ecdsa").verify(data, ecdsaPublicKey, signature, "sha256");
             })
             it("Verifying with an invalid public key should fail", () => {
-                const signature = signerFactory("ecdsa").sign(data, ecdsaPrivateKey, { algorithm: "sha256", curve: "secp256k1" });
-                expect(() => { signerFactory("ecdsa").verify(data, rsaPublicKey, signature, { algorithm: "sha256", curve: "secp256k1" }) }).toThrow(InvalidSignatureError);
+                const signature = signerFactory("ecdsa").sign(data, ecdsaPrivateKey, "sha256");
+                expect(() => { signerFactory("ecdsa").verify(data, rsaPublicKey, signature, "sha256") }).toThrow(InvalidSignatureError);
             })
         })
         describe("SHA512", () => {
-            it("Should throw unsupported algorithm", () => {
-                expect(() => { signerFactory("ecdsa").sign(data, ecdsaPrivateKey, { algorithm: "sha512", curve: "prime256v1" }) }).toThrow(AlgorithmNotSupportedError);
-                expect(() => { signerFactory("ecdsa").verify(data, ecdsaPublicKey, "signature", { algorithm: "sha512", curve: "prime256v1" }) }).toThrow(AlgorithmNotSupportedError);
+            it("should throw unsupported algorithm", () => {
+                expect(() => { signerFactory("ecdsa").sign(data, ecdsaPrivateKey, "sha512") }).toThrow(AlgorithmNotSupportedError);
+                expect(() => { signerFactory("ecdsa").verify(data, ecdsaPublicKey, "signature", "sha512") }).toThrow(AlgorithmNotSupportedError);
             });
         })
         describe("SHA3-256", () => {
-            it("Should throw unsupported algorithm", () => {
-                expect(() => { signerFactory("ecdsa").sign(data, ecdsaPrivateKey, { algorithm: "sha3-256" }) }).toThrow(AlgorithmNotSupportedError);
-                expect(() => { signerFactory("ecdsa").verify(data, ecdsaPublicKey, "signature", { algorithm: "sha3-256" }) }).toThrow(AlgorithmNotSupportedError);
+            it("should throw unsupported algorithm", () => {
+                expect(() => { signerFactory("ecdsa").sign(data, ecdsaPrivateKey, "sha3-256") }).toThrow(AlgorithmNotSupportedError);
+                expect(() => { signerFactory("ecdsa").verify(data, ecdsaPublicKey, "signature", "sha3-256") }).toThrow(AlgorithmNotSupportedError);
             })
         })
     })

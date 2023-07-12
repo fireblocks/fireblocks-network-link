@@ -5,9 +5,9 @@ export class UnsupportedEncodingFormatError extends Error {}
 
 export type Encoding = "plain" | "base64" | "hexstr" | "base32" | "base58";
 
-export abstract class Encoder {
-    public abstract encode(payload: string): string;
-    public abstract decode(payload: string): string;
+export interface Encoder {
+    encode(payload: string): string;
+    decode(payload: string): string;
 }
 
 export class Plain implements Encoder {

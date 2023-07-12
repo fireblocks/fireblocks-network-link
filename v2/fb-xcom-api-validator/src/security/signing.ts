@@ -9,24 +9,22 @@ export class InvalidSignatureError extends Error {
 }
 export class AlgorithmNotSupportedError extends Error {}
 
-type HashingAlgorithm = "sha256" | "sha512" | "sha3-256"
-type SigningAlgorithm = "hmac" | "rsa" | "ecdsa"
-type NamedCurve = "prime256v1" | "secp256k1"
-type Options = { algorithm: HashingAlgorithm, curve?: NamedCurve }
+export type HashAlgorithm = "sha256" | "sha512" | "sha3-256"
+export type SigningAlgorithm = "hmac" | "rsa" | "ecdsa"
 
-export abstract class Signer {
-    public abstract sign(payload: string, key: string, options: Options): string;
-    public abstract verify(payload: string, key: string, signature: string, options: Options): void;
+export interface Signer {
+    sign(payload: string, key: string, hashAlgorithm: HashAlgorithm): string;
+    verify(payload: string, key: string, signature: string, hashAlgorithm: HashAlgorithm): void;
 }
 
 export class HMAC implements Signer {
 
-    public sign(data: string, key: string, options: Options): string {
-        return createHmac(options.algorithm, key).update(data).digest().toString("binary");
+    public sign(data: string, key: string, hashAlgorithm: HashAlgorithm): string {
+        return createHmac(hashAlgorithm, key).update(data).digest().toString("binary");
     }
 
-    public verify(data: string, key: string, recv_signature: string, options: Options): void {
-        const signature = this.sign(data, key, options);
+    public verify(data: string, key: string, recv_signature: string, hashAlgorithm: HashAlgorithm): void {
+        const signature = this.sign(data, key, hashAlgorithm);
         if (signature !== recv_signature) {
             throw new InvalidSignatureError();
         }
@@ -34,17 +32,17 @@ export class HMAC implements Signer {
 }
 
 export class RSA implements Signer {
-    public sign(data: string, privateKey: string, options: Options): string {
+    public sign(data: string, privateKey: string, hashAlgorithm: HashAlgorithm): string {
         const priv = createPrivateKey({ key: pemToDer(privateKey), format: "der", type: "pkcs1"})
-        const sign = createSign(`rsa-${options.algorithm}`);
+        const sign = createSign(`rsa-${hashAlgorithm}`);
         sign.update(data);
         const sigBuffer = sign.sign(priv);
         return sigBuffer.toString("binary");
     }
 
-    public verify(data: string, publicKey: string, signature: string, options: Options): void {
+    public verify(data: string, publicKey: string, signature: string, hashAlgorithm: HashAlgorithm): void {
         const pub = createPublicKey({ key: pemToDer(publicKey), format: "der", type: "spki" })
-        const verify = createVerify(`rsa-${options.algorithm}`);
+        const verify = createVerify(`rsa-${hashAlgorithm}`);
         verify.update(data);
         const isValid = verify.verify(pub, Buffer.from(signature, "binary"));
         if (!isValid) {
@@ -55,17 +53,14 @@ export class RSA implements Signer {
 
 export class ECDSA implements Signer {
 
-    private validateOptions(options: Options) {
-        if (options.algorithm !== "sha256") {
-            throw new AlgorithmNotSupportedError();
-        }
-        if (!options.curve || !["prime256v1", "secp256k1"].includes(options.curve)) {
+    private validateHashAlgorithm(hashAlgorithm: HashAlgorithm) {
+        if (hashAlgorithm !== "sha256") {
             throw new AlgorithmNotSupportedError();
         }
     }
 
-    public sign(data: string, privateKey: string, options: Options): string {
-        this.validateOptions(options);
+    public sign(data: string, privateKey: string, hashAlgorithm: HashAlgorithm): string {
+        this.validateHashAlgorithm(hashAlgorithm);
         const priv = createPrivateKey({ key: pemToDer(privateKey), format: "der", type: "sec1"})
         const sign = createSign("sha256");
         sign.update(data);
@@ -73,8 +68,8 @@ export class ECDSA implements Signer {
         return sigBuffer.toString("binary");
     }
 
-    public verify(data: string, publicKey: string, signature: string, options: Options): void {
-        this.validateOptions(options);
+    public verify(data: string, publicKey: string, signature: string, hashAlgorithm: HashAlgorithm): void {
+        this.validateHashAlgorithm(hashAlgorithm);
         const pub = createPublicKey({ key: pemToDer(publicKey), format: "der", type: "spki" })
         const verify = createVerify("sha256");
         verify.update(data);

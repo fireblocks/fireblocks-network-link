@@ -17,7 +17,7 @@ import {
   TransfersPeerAccountsService,
   TransfersService,
 } from './generated';
-import { createSecurityHeaders } from '../auth-provider';
+import { createSecurityHeaders } from '../security/auth-provider';
 
 export type SecurityHeaders = {
   xFbapiKey: string;
