@@ -323,7 +323,10 @@ paths:
         a capability, an asterisk could be used, instead of listing all the accounts.
       tags: [Capabilities]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
       responses:
         '200':
           description: >-
@@ -373,15 +376,20 @@ paths:
 
   /capabilities/assets:
     get:
-      operationId: get-additional-assets
+      operationId: GetAdditionalAssets
       summary: Get list of supported additional assets
       description: >-
         Returns assets, supported in addition to the predefined national
         currencies and the native cryptocurrencies.
       tags: [Capabilities]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/AssetsQueryParam'
       responses:
         '200':
@@ -450,16 +458,18 @@ paths:
 
   /capabilities/assets/{id}:
     get:
+      operationId: GetAssetDetails
       summary: Get details of a supported additional asset.
       description: >-
         Returns the details of an assets, supported in addition to the predefined
         national currencies and the native cryptocurrencies.
       tags: [Capabilities]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/EntityIdPathParam'
-        - $ref: '#/components/parameters/PaginationQueryParams'
-        - $ref: '#/components/parameters/AssetsQueryParam'
       responses:
         '200':
           description: List of additional assets.
@@ -472,11 +482,17 @@ paths:
 
   /capabilities/balances:
     get:
+      operationId: GetBalanceAssets
       summary: Get list of supported balance assets
       tags: [Capabilities]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
       responses:
         '200':
           description: List of balance assets
@@ -495,11 +511,17 @@ paths:
 
   /accounts:
     get:
+      operationId: GetAccounts
       summary: Get list of sub-accounts
       tags: [Accounts]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/AccountPropertiesQueryParam'
       responses:
         '200':
@@ -518,10 +540,14 @@ paths:
 
   /accounts/{accountId}:
     get:
+      operationId: GetAccountDetails
       summary: Get sub-account details
       tags: [Accounts]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/AccountPropertiesQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -536,11 +562,17 @@ paths:
 
   /accounts/{accountId}/balances:
     get:
+      operationId: GetBalances
       summary: Get current balances
       tags: [Balances]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/AssetsQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -604,11 +636,17 @@ paths:
 
   /accounts/{accountId}/historic-balances:
     get:
+      operationId: GetHistoricBalances
       summary: Get balances at specific time in the past
       tags: [ 'Historic Balances' ]
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/AssetsQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - name: time
@@ -632,35 +670,46 @@ paths:
 
 components:
   parameters:
-    SecurityHeaderParams:
-      name: security
+    X-FBAPI-KEY:
+      name: X-FBAPI-KEY
       in: header
-      explode: true
       required: true
-      description: Mandatory security parameters.
+      description: API authentication key.
       schema:
-        type: object
-        properties:
-          X-FBAPI-KEY:
-            type: string
-          X-FBAPI-TIMESTAMP:
-            type: number
-            description: Milliseconds since Unix epoch.
-          X-FBAPI-NONCE:
-            type: string
-            description: Unique identifier of the request.
-          X-FBAPI-SIGNATURE:
-            type: string
-            description: >-
-              Request signature using the chosen cryptographic algorithm.
-              The signature is to be calculated on concatenation of the
-              following request fields in the specified order:
+        type: string
 
-              - `X-FBAPI-TIMESTAMP`
-              - `X-FBAPI-NONCE`
-              - HTTP request method in upper case
-              - Endpoint path, including the query parameters
-              - Request body
+    X-FBAPI-TIMESTAMP:
+      name: X-FBAPI-TIMESTAMP
+      in: header
+      required: true
+      description: Request timestamp in milliseconds since Unix epoch.
+      schema:
+        type: number
+
+    X-FBAPI-NONCE:
+      name: X-FBAPI-NONCE
+      in: header
+      required: true
+      description: Unique identifier of the request.
+      schema:
+        type: string
+
+    X-FBAPI-SIGNATURE:
+      name: X-FBAPI-SIGNATURE
+      in: header
+      required: true
+      description: >-
+        Request signature using the chosen cryptographic algorithm.
+        The signature is to be calculated on concatenation of the
+        following request fields in the specified order:
+        
+        - `X-FBAPI-TIMESTAMP`
+        - `X-FBAPI-NONCE`
+        - HTTP request method in upper case
+        - Endpoint path, including the query parameters
+        - Request body
+      schema:
+        type: string
 
     EntityIdPathParam:
       name: id
@@ -691,33 +740,35 @@ components:
           - desc
         default: desc
 
-    PaginationQueryParams:
-      name: pagination
+    PaginationLimit:
+      name: limit
       in: query
-      description: Parameters controlling list pagination.
-      style: form
-      explode: true
+      description: Maximum number of returned items.
       schema:
-        type: object
-        properties:
-          limit:
-            description: Maximum number of returned items.
-            type: integer
-            minimum: 1
-            maximum: 200
-            default: 10
-          startingAfter:
-            description: >-
-              Object ID.
-              Instructs to return the items immediately following this
-              object. Cannot be used together with `endingBefore`.
-            type: string
-          endingBefore:
-            description: >-
-              Object ID.
-              Instructs to return the items immediately preceding this
-              object. Cannot be used together with `startingAfter`.
-            type: string
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 10
+
+    PaginationStartingAfter:
+      name: startingAfter
+      in: query
+      description: >-
+        Object ID.
+        Instructs to return the items immediately following this
+        object. Cannot be used together with `endingBefore`.
+      schema:
+        type: string
+
+    PaginationEndingBefore:
+      name: endingBefore
+      in: query
+      description: >-
+        Object ID.
+        Instructs to return the items immediately preceding this
+        object. Cannot be used together with `startingAfter`.
+      schema:
+        type: string
 
     AssetsQueryParam:
       name: asset

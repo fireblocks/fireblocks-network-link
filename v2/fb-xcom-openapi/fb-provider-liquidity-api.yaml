@@ -16,11 +16,16 @@ x-path-params:
   SubAccountIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/SubAccountIdPathParam' }
 
 x-query-params:
-  PaginationQueryParams: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationQueryParams' }
+  PaginationLimit: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationLimit' }
+  PaginationStartingAfter: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationStartingAfter' }
+  PaginationEndingBefore: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationEndingBefore' }
   ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
 
 x-header-params:
-  SecurityHeaderParams: { $ref: './fb-provider-api.yaml#/components/parameters/SecurityHeaderParams' }
+  X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
+  X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
+  X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
+  X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
 
 x-schemas:
   AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference' }
@@ -29,10 +34,14 @@ x-schemas:
 paths:
   /capabilities/liquidity/quotes:
     get:
+      operationId: GetQuoteCapabilities
       summary: List possible asset conversions
       tags: [Capabilities]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
       responses:
         '200':
           description: List of possible asset conversions.
@@ -45,6 +54,7 @@ paths:
 
   /accounts/{accountId}/liquidity/quotes:
     post:
+      operationId: CreateQuote
       summary: Quote creation request
       description: >-
         Either `fromAmount` or `toAmount` must be specified,
@@ -52,7 +62,10 @@ paths:
         returned in the response.
       tags: [Liquidity]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         content:
@@ -69,11 +82,17 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
+      operationId: GetQuotes
       summary: Get list of quotes sorted by creation time
       tags: [Liquidity]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
-        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
         - $ref: '#/x-query-params/ListOrderQueryParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -93,10 +112,14 @@ paths:
 
   /accounts/{accountId}/liquidity/quotes/{id}:
     get:
+      operationId: GetQuoteDetails
       summary: Get quote details
       tags: [Liquidity]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/EntityIdPathParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -111,10 +134,14 @@ paths:
 
   /accounts/{accountId}/liquidity/quotes/{id}/execute:
     post:
+      operationId: ExecuteQuote
       summary: Execute quote
       tags: [Liquidity]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/EntityIdPathParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:

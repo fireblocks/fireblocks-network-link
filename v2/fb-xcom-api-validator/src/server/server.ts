@@ -1,6 +1,6 @@
 import logger from '../logging';
-import { WebApp } from './app';
 import { registerMiddlewares } from './middlewares';
+import { createWebApp } from './app';
 import { registerRoutes } from './routes';
 
 const log = logger('server');
@@ -26,7 +26,7 @@ process.on('unhandledRejection', handleError);
 
 async function start() {
   try {
-    const app = new WebApp();
+    const app = await createWebApp();
     registerMiddlewares(app);
     registerRoutes(app);
     await app.start();

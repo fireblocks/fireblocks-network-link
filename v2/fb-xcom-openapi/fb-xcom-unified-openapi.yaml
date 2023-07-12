@@ -315,6 +315,7 @@ tags:
 paths:
   /capabilities:
     get:
+      operationId: GetCapabilities
       summary: Describe server capabilities
       description: |-
         Returns the API version and all the capabilities that the server supports.  
@@ -323,7 +324,10 @@ paths:
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
       responses:
         '200':
           description: Server capability details.
@@ -370,14 +374,19 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets:
     get:
-      operationId: get-additional-assets
+      operationId: GetAdditionalAssets
       summary: Get list of supported additional assets
       description: Returns assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/AssetsQueryParam'
       responses:
         '200':
@@ -438,15 +447,17 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets/{id}:
     get:
+      operationId: GetAssetDetails
       summary: Get details of a supported additional asset.
       description: Returns the details of an assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/EntityIdPathParam'
-        - $ref: '#/components/parameters/PaginationQueryParams'
-        - $ref: '#/components/parameters/AssetsQueryParam'
       responses:
         '200':
           description: List of additional assets.
@@ -458,12 +469,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/balances:
     get:
+      operationId: GetBalanceAssets
       summary: Get list of supported balance assets
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
       responses:
         '200':
           description: List of balance assets
@@ -480,12 +497,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts:
     get:
+      operationId: GetAccounts
       summary: Get list of sub-accounts
       tags:
         - Accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/AccountPropertiesQueryParam'
       responses:
         '200':
@@ -503,11 +526,15 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}:
     get:
+      operationId: GetAccountDetails
       summary: Get sub-account details
       tags:
         - Accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/AccountPropertiesQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -521,12 +548,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/balances:
     get:
+      operationId: GetBalances
       summary: Get current balances
       tags:
         - Balances
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/AssetsQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -571,12 +604,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/historic-balances:
     get:
+      operationId: GetHistoricBalances
       summary: Get balances at specific time in the past
       tags:
         - Historic Balances
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/AssetsQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - name: time
@@ -602,11 +641,15 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/liquidity/quotes:
     get:
+      operationId: GetQuoteCapabilities
       summary: List possible asset conversions
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
       responses:
         '200':
           description: List of possible asset conversions.
@@ -618,12 +661,16 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes:
     post:
+      operationId: CreateQuote
       summary: Quote creation request
       description: Either `fromAmount` or `toAmount` must be specified, while the unspecified amount will be populated by the server and returned in the response.
       tags:
         - Liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         content:
@@ -640,12 +687,18 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
+      operationId: GetQuotes
       summary: Get list of quotes sorted by creation time
       tags:
         - Liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -664,11 +717,15 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}:
     get:
+      operationId: GetQuoteDetails
       summary: Get quote details
       tags:
         - Liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -682,11 +739,15 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}/execute:
     post:
+      operationId: ExecuteQuote
       summary: Execute quote
       tags:
         - Liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -700,12 +761,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/trading/books:
     get:
+      operationId: GetBooks
       summary: List order books
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
       responses:
         '200':
           description: List of order books
@@ -713,30 +780,6 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  books:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/OrderBook'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-  /trading/books:
-    get:
-      summary: List order books
-      tags:
-        - Trading
-      parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
-      responses:
-        '200':
-          description: List of order books
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - books
                 properties:
                   books:
                     type: array
@@ -746,11 +789,15 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}:
     get:
+      operationId: GetBookDetails
       summary: Get details of an order book
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
         '200':
@@ -763,13 +810,19 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/asks:
     get:
+      operationId: GetBookAsks
       summary: Get active sell orders in an order book
       description: List active sell orders in an order book, sorted ascending by the sell price.
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
         '200':
@@ -789,13 +842,19 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/bids:
     get:
+      operationId: GetBookBids
       summary: Get active buy orders in an order book
       description: List active buy orders in an order book, sorted descending by the buy price.
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
         '200':
@@ -815,13 +874,19 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/history:
     get:
+      operationId: GetBookOrderHistory
       summary: List fulfilled orders in an order book
       description: List fulfilled orders in an order book, sorted descending by the fulfillment time.
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
         '200':
@@ -841,13 +906,19 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders:
     get:
+      operationId: GetOrders
       summary: List trading orders
       description: List trading orders sorted descending by the creation time.
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
@@ -866,11 +937,15 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateOrder
       summary: Create a new trading order
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         content:
@@ -907,11 +982,15 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders/{id}:
     get:
+      operationId: GetOrderDetails
       summary: Get trading order details
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
@@ -924,11 +1003,15 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
+      operationId: CancelOrder
       summary: Cancel an active trading order
       tags:
         - Trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
@@ -938,12 +1021,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/transfers/withdrawals:
     get:
+      operationId: GetWithdrawalMethods
       summary: Get list of supported withdrawal methods
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
       responses:
         '200':
           description: List of withdrawal methods for account.
@@ -1004,12 +1093,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/transfers/deposits:
     get:
+      operationId: GetDepositMethods
       summary: Get list of supported deposit methods
       tags:
         - Capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
       responses:
         '200':
           description: List of deposit methods for account.
@@ -1070,12 +1165,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals:
     get:
+      operationId: GetWithdrawals
       summary: Get list of withdrawals sorted by creation time
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1085,11 +1186,15 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/{id}:
     get:
+      operationId: GetWithdrawalDetails
       summary: Get withdrawal details
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1103,12 +1208,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/blockchain:
     get:
+      operationId: GetBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
       tags:
         - Transfers (Blockchain)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1126,12 +1237,16 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateBlockchainWithdrawal
       summary: Create new withdrawal over public blockchain
       description: Should reject any non blockchain withdrawal request.
       tags:
         - Transfers (Blockchain)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -1150,12 +1265,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/fiat:
     get:
+      operationId: GetFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
       tags:
         - Transfers (Fiat)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1173,12 +1294,16 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateFiatWithdrawal
       summary: Create new fiat withdrawal
       description: Should reject any non fiat withdrawal request.
       tags:
         - Transfers (Fiat)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -1197,12 +1322,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
     get:
+      operationId: GetPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
       tags:
         - Transfers (Peer Accounts)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1220,12 +1351,16 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreatePeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
       description: Should reject any non peer acount withdrawal request.
       tags:
         - Transfers (Peer Accounts)
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -1244,12 +1379,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/subaccount:
     get:
+      operationId: GetSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
       tags:
         - Accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1267,12 +1408,16 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateSubAccountWithdrawal
       summary: Create new transfer to another sub-account
       description: Transfers assets between different sub-accounts of the same user. Should reject any withdrawals that are not sub-account transfers.
       tags:
         - Accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -1291,12 +1436,18 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits:
     get:
+      operationId: GetDeposits
       summary: Get list of deposits sorted by creation time
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
@@ -1314,11 +1465,15 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/{id}:
     get:
+      operationId: GetDepositDetails
       summary: Get deposit details
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1332,11 +1487,15 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses:
     post:
+      operationId: CreateDepositAddress
       summary: Create new deposit address
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -1354,12 +1513,18 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
+      operationId: GetDepositAddresses
       summary: Get list of existing deposit addresses
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
@@ -1377,11 +1542,15 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses/{id}:
     get:
+      operationId: GetDepositAddressDetails
       summary: Get details of a deposit address
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1394,11 +1563,15 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
+      operationId: DisableDepositAddress
       summary: Disable a deposit address
       tags:
         - Transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1408,28 +1581,36 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
 components:
   parameters:
-    SecurityHeaderParams:
-      name: security
+    X-FBAPI-KEY:
+      name: X-FBAPI-KEY
       in: header
-      explode: true
       required: true
-      description: Mandatory security parameters.
+      description: API authentication key.
       schema:
-        type: object
-        properties:
-          X-FBAPI-KEY:
-            type: string
-          X-FBAPI-TIMESTAMP:
-            type: number
-            description: Milliseconds since Unix epoch.
-          X-FBAPI-NONCE:
-            type: string
-            description: Unique identifier of the request.
-          X-FBAPI-SIGNATURE:
-            type: string
-            description: |-
-              Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-              - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+        type: string
+    X-FBAPI-TIMESTAMP:
+      name: X-FBAPI-TIMESTAMP
+      in: header
+      required: true
+      description: Request timestamp in milliseconds since Unix epoch.
+      schema:
+        type: number
+    X-FBAPI-NONCE:
+      name: X-FBAPI-NONCE
+      in: header
+      required: true
+      description: Unique identifier of the request.
+      schema:
+        type: string
+    X-FBAPI-SIGNATURE:
+      name: X-FBAPI-SIGNATURE
+      in: header
+      required: true
+      description: |-
+        Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+        - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+      schema:
+        type: string
     EntityIdPathParam:
       name: id
       in: path
@@ -1456,27 +1637,27 @@ components:
           - asc
           - desc
         default: desc
-    PaginationQueryParams:
-      name: pagination
+    PaginationLimit:
+      name: limit
       in: query
-      description: Parameters controlling list pagination.
-      style: form
-      explode: true
+      description: Maximum number of returned items.
       schema:
-        type: object
-        properties:
-          limit:
-            description: Maximum number of returned items.
-            type: integer
-            minimum: 1
-            maximum: 200
-            default: 10
-          startingAfter:
-            description: Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
-            type: string
-          endingBefore:
-            description: Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
-            type: string
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 10
+    PaginationStartingAfter:
+      name: startingAfter
+      in: query
+      description: Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
+      schema:
+        type: string
+    PaginationEndingBefore:
+      name: endingBefore
+      in: query
+      description: Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
+      schema:
+        type: string
     AssetsQueryParam:
       name: asset
       in: query

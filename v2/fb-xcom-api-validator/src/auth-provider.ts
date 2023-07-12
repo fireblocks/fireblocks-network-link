@@ -2,28 +2,23 @@ import { randomUUID } from "crypto"
 import config from "./config";
 import { getVerifyKey, signerFactory } from "./signing";
 import { encoderFactory } from "./encoding";
+import { SecurityHeaders } from "./client/SecureClient";
+import { ApiRequestOptions } from "./client/generated/core/ApiRequestOptions";
 
-
-export type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
-
+export type HTTPMethod = 'GET' | 'PUT' | 'POST' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'PATCH';
 
 const authConfig = config.get('authentication');
 
-
-export function getSecurityHeaders(method: HTTPMethod, endpoint: string, body: any, timestamp?: number, nonce?: string): Record<string, string> {
-    if (!nonce) {
-        nonce = randomUUID();
-    }
-    if (!timestamp) {
-        timestamp = Date.now();
-    }
-    const signature = getRequestSignature(method, endpoint, body, timestamp, nonce);
+export function createSecurityHeaders({ method, url, body }: ApiRequestOptions): SecurityHeaders {
+    const nonce = randomUUID();
+    const timestamp = Date.now();
+    const signature = getRequestSignature(method, url, body, timestamp, nonce);
 
     return {
-        "X-FBAPI-KEY": authConfig.apiKey,
-        "X-FBAPI-SIGNATURE": encodeURIComponent(signature),
-        "X-FBAPI-TIMESTAMP": timestamp.toString(),
-        "X-FBAPI-NONCE": nonce
+        xFbapiKey: authConfig.apiKey,
+        xFbapiSignature: encodeURIComponent(signature),
+        xFbapiTimestamp: timestamp,
+        xFbapiNonce: nonce
     }
 }
 
