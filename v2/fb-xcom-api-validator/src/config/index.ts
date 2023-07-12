@@ -43,7 +43,7 @@ const config = convict({
     },
     signing: {
       privateKey: {
-        doc: 'Private key to sign requests',
+        doc: 'Raw string of private key to sign requests. For RSA and ECDSA in pem format',
         env: 'SIGNING_PRIVATE_KEY',
         format: String,
         default: null,
