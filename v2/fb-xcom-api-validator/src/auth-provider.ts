@@ -6,22 +6,6 @@ import { encoderFactory } from "./encoding";
 
 export type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-export class MissingAuthHeaders extends Error {
-    constructor(private missingHeader: "key" | "nonce" | "timestamp" | "signature") {
-        super();
-    }
-
-    public get responseObject() {
-        return {
-            errorCode: this.getErrorCode(),
-        }
-    }
-
-    private getErrorCode() {
-        return `missing-${this.missingHeader}-header`;
-    }
-};
-
 
 const authConfig = config.get('authentication');
 
