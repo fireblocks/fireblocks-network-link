@@ -19,11 +19,16 @@ x-path-params:
   SubAccountIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/SubAccountIdPathParam' }
 
 x-query-params:
-  PaginationQueryParams: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationQueryParams' }
+  PaginationLimit: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationLimit' }
+  PaginationStartingAfter: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationStartingAfter' }
+  PaginationEndingBefore: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationEndingBefore' }
   ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
 
 x-header-params:
-  SecurityHeaderParams: { $ref: './fb-provider-api.yaml#/components/parameters/SecurityHeaderParams' }
+  X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
+  X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
+  X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
+  X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
 
 x-schemas:
   PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
@@ -35,11 +40,17 @@ paths:
 
   /capabilities/transfers/withdrawals:
     get:
+      operationId: GetWithdrawalMethods
       summary: Get list of supported withdrawal methods
       tags: [Capabilities]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
-        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
       responses:
         '200':
           description: List of withdrawal methods for account.
@@ -100,11 +111,17 @@ paths:
 
   /capabilities/transfers/deposits:
     get:
+      operationId: GetDepositMethods
       summary: Get list of supported deposit methods
       tags: [Capabilities]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
-        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
       responses:
         '200':
           description: List of deposit methods for account.
@@ -166,11 +183,17 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals:
     get:
+      operationId: GetWithdrawals
       summary: Get list of withdrawals sorted by creation time
       tags: [Transfers]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
-        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
         - $ref: '#/x-query-params/ListOrderQueryParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -181,10 +204,14 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/{id}:
     get:
+      operationId: GetWithdrawalDetails
       summary: Get withdrawal details
       tags: [Transfers]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/EntityIdPathParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -199,11 +226,17 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/blockchain:
     get:
+      operationId: GetBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
       tags: [ 'Transfers (Blockchain)' ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
-        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
         - $ref: '#/x-query-params/ListOrderQueryParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -221,11 +254,15 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateBlockchainWithdrawal
       summary: Create new withdrawal over public blockchain
       description: Should reject any non blockchain withdrawal request.
       tags: [ 'Transfers (Blockchain)' ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -245,11 +282,17 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/fiat:
     get:
+      operationId: GetFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
       tags: [ 'Transfers (Fiat)' ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
-        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
         - $ref: '#/x-query-params/ListOrderQueryParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -267,11 +310,15 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateFiatWithdrawal
       summary: Create new fiat withdrawal
       description: Should reject any non fiat withdrawal request.
       tags: [ 'Transfers (Fiat)' ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -291,11 +338,17 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
     get:
+      operationId: GetPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
       tags: [ 'Transfers (Peer Accounts)' ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
-        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
         - $ref: '#/x-query-params/ListOrderQueryParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -313,11 +366,15 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreatePeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
       description: Should reject any non peer acount withdrawal request.
       tags: [ 'Transfers (Peer Accounts)' ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -337,11 +394,17 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/subaccount:
     get:
+      operationId: GetSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
       tags: [ Accounts ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
-        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
         - $ref: '#/x-query-params/ListOrderQueryParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -359,13 +422,17 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: CreateSubAccountWithdrawal
       summary: Create new transfer to another sub-account
       description: >- 
         Transfers assets between different sub-accounts of the same user.
         Should reject any withdrawals that are not sub-account transfers.
       tags: [ Accounts ]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -385,11 +452,17 @@ paths:
 
   /accounts/{accountId}/transfers/deposits:
     get:
+      operationId: GetDeposits
       summary: Get list of deposits sorted by creation time
       tags: [Transfers]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
-        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
         '200':
@@ -408,10 +481,14 @@ paths:
 
   /accounts/{accountId}/transfers/deposits/{id}:
     get:
+      operationId: GetDepositDetails
       summary: Get deposit details
       tags: [Transfers]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/EntityIdPathParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -426,10 +503,14 @@ paths:
 
   /accounts/{accountId}/transfers/deposits/addresses:
     post:
+      operationId: CreateDepositAddress
       summary: Create new deposit address
       tags: [Transfers]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         required: true
@@ -447,11 +528,17 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
+      operationId: GetDepositAddresses
       summary: Get list of existing deposit addresses
       tags: [Transfers]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
-        - $ref: '#/x-query-params/PaginationQueryParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
         '200':
@@ -470,10 +557,14 @@ paths:
 
   /accounts/{accountId}/transfers/deposits/addresses/{id}:
     get:
+      operationId: GetDepositAddressDetails
       summary: Get details of a deposit address
       tags: [Transfers]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/EntityIdPathParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -487,10 +578,14 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
 
     delete:
+      operationId: DisableDepositAddress
       summary: Disable a deposit address
       tags: [Transfers]
       parameters:
-        - $ref: '#/x-header-params/SecurityHeaderParams'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/EntityIdPathParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
