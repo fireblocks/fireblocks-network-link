@@ -64,15 +64,6 @@ export class ECDSA implements Signer {
         }
     }
 
-    private translateCurvName(namedCurve: NamedCurve) {
-        switch (namedCurve) {
-            case "prime256v1":
-                return "secp256r1";
-            default:
-                return namedCurve;
-        }
-    }
-
     public sign(data: string, privateKey: string, options: Options): string {
         this.validateOptions(options);
         const priv = createPrivateKey({ key: pemToDer(privateKey), format: "der", type: "sec1"})
@@ -81,15 +72,6 @@ export class ECDSA implements Signer {
         const sigBuffer = sign.sign(priv);
         return sigBuffer.toString("binary");
     }
-
-    // public sign(data: string, privateKey: string, options: Options): string {
-    //     this.validateOptions(options);
-    //     const ec = new EC("secp256k1");
-    //     const priv = ec.keyFromPrivate(pemToDer(privateKey));
-    //     const hSig = priv.sign(data).toDER("hex")
-    //     console.log(Buffer.from(hSig, "hex").toString("base64"));
-    //     return Buffer.from(hSig, "hex").toString("binary");
-    // }
 
     public verify(data: string, publicKey: string, signature: string, options: Options): void {
         this.validateOptions(options);
