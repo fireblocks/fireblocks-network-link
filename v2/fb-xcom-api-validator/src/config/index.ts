@@ -22,7 +22,7 @@ const config = convict({
   client: {
     serverBaseUrl: {
       doc: 'URL of the server that will be used to run the tests',
-      default: 'http://0.0.0.0:8000/',
+      default: 'http://0.0.0.0:8000',
       env: 'SERVER',
     },
   },
@@ -53,6 +53,10 @@ const config = convict({
     unifiedFilename: {
       doc: 'Unified OpenAPI file containing all the components in the same file',
       default: 'fb-xcom-unified-openapi.yaml',
+    },
+    generatedClientLocation: {
+      doc: 'The directory containing the code generated from the OpenAPI spec',
+      default: 'src/client/generated',
     },
   },
 });
