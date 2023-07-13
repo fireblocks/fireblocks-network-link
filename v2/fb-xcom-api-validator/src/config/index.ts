@@ -4,6 +4,8 @@ import fs from 'fs';
 import { config as dotenvConfig } from 'dotenv';
 dotenvConfig();
 
+export const encodingTypes = ['url-encoding', 'base64', 'hexstr', 'base58', 'base32'];
+
 const config = convict({
   env: {
     doc: 'The execution environment',
@@ -50,7 +52,7 @@ const config = convict({
       },
       preEncoding: {
         doc: 'Encoding to be applied to the data before it is signed',
-        format: ['url-encoding', 'base64', 'hexstr', 'base58', 'base32'],
+        format: encodingTypes,
         default: 'url-encoding',
         env: 'SIGNING_PRE_ENCODING',
       },
@@ -68,7 +70,7 @@ const config = convict({
       },
       postEncoding: {
         doc: 'Encoding to be applied to the signature',
-        format: ['url-encoding', 'base64', 'hexstr', 'base58', 'base32'],
+        format: encodingTypes,
         default: 'url-encoding',
         env: 'SIGNING_POST_ENCODING',
       },
