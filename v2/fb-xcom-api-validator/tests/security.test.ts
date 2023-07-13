@@ -1,4 +1,3 @@
-import { InvalidSignatureError } from '../src/security/signing';
 import { buildRequestSignature, verifySignature } from '../src/security';
 import config, { encodingTypes } from '../src/config';
 
@@ -60,15 +59,11 @@ describe('Signature creation and verification', () => {
       });
 
       it('should verify the signature successfully on the correct payload', () => {
-        expect(() => {
-          verifySignature(payload, signature);
-        }).not.toThrow();
+        expect(verifySignature(payload, signature)).toBe(true);
       });
 
       it('should fail the signature verification on the wrong payload', () => {
-        expect(() => {
-          verifySignature(differentPayload, signature);
-        }).toThrow(InvalidSignatureError);
+        expect(verifySignature(differentPayload, signature)).toBe(false);
       });
     }
   );

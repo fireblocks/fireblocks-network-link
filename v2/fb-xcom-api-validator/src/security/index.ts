@@ -2,13 +2,11 @@ import config from '../config';
 import { Encoding, encoderFactory } from './encoding';
 import { HashAlgorithm, SigningAlgorithm, getVerifyKey, signerFactory } from './signing';
 
-export { InvalidSignatureError } from './signing';
-
-export function verifySignature(payload: string, signature: string): void {
+export function verifySignature(payload: string, signature: string): boolean {
   const signingConfig = config.get('authentication').signing;
   const decodedSignature = decode(signature, signingConfig.postEncoding);
   const encodedPayload = encode(payload, signingConfig.preEncoding);
-  verify(
+  return verify(
     encodedPayload,
     decodedSignature,
     signingConfig.signingAlgorithm,
@@ -45,8 +43,8 @@ function verify(
   signingAlgorithm: SigningAlgorithm,
   privateKey: string,
   hashAlgorithm: HashAlgorithm
-): void {
-  signerFactory(signingAlgorithm).verify(
+): boolean {
+  return signerFactory(signingAlgorithm).verify(
     payload,
     getVerifyKey(privateKey, signingAlgorithm),
     decodedSignature,

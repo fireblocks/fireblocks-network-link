@@ -1,12 +1,5 @@
 import { createHmac, createPrivateKey, createPublicKey, createSign, createVerify } from 'crypto';
 
-export class InvalidSignatureError extends Error {
-  public get responseObject(): { errorCode: string } {
-    return {
-      errorCode: 'invalid-signature',
-    };
-  }
-}
 export class AlgorithmNotSupportedError extends Error {}
 
 export type HashAlgorithm = 'sha256' | 'sha512' | 'sha3-256';
@@ -14,7 +7,7 @@ export type SigningAlgorithm = 'hmac' | 'rsa' | 'ecdsa';
 
 export interface Signer {
   sign(payload: string, key: string, hashAlgorithm: HashAlgorithm): string;
-  verify(payload: string, key: string, signature: string, hashAlgorithm: HashAlgorithm): void;
+  verify(payload: string, key: string, signature: string, hashAlgorithm: HashAlgorithm): boolean;
 }
 
 export class HMAC implements Signer {
@@ -27,11 +20,9 @@ export class HMAC implements Signer {
     key: string,
     recv_signature: string,
     hashAlgorithm: HashAlgorithm
-  ): void {
+  ): boolean {
     const signature = this.sign(data, key, hashAlgorithm);
-    if (signature !== recv_signature) {
-      throw new InvalidSignatureError();
-    }
+    return signature === recv_signature;
   }
 }
 
@@ -49,14 +40,11 @@ export class RSA implements Signer {
     publicKey: string,
     signature: string,
     hashAlgorithm: HashAlgorithm
-  ): void {
+  ): boolean {
     const pub = createPublicKey({ key: pemToDer(publicKey), format: 'der', type: 'spki' });
     const verify = createVerify(`rsa-${hashAlgorithm}`);
     verify.update(data);
-    const isValid = verify.verify(pub, Buffer.from(signature, 'binary'));
-    if (!isValid) {
-      throw new InvalidSignatureError();
-    }
+    return verify.verify(pub, Buffer.from(signature, 'binary'));
   }
 }
 
@@ -81,15 +69,12 @@ export class ECDSA implements Signer {
     publicKey: string,
     signature: string,
     hashAlgorithm: HashAlgorithm
-  ): void {
+  ): boolean {
     this.validateHashAlgorithm(hashAlgorithm);
     const pub = createPublicKey({ key: pemToDer(publicKey), format: 'der', type: 'spki' });
     const verify = createVerify('sha256');
     verify.update(data);
-    const isValid = verify.verify(pub, Buffer.from(signature, 'binary'));
-    if (!isValid) {
-      throw new InvalidSignatureError();
-    }
+    return verify.verify(pub, Buffer.from(signature, 'binary'));
   }
 }
 

@@ -2,6 +2,7 @@ import config from '../config';
 import logger from '../logging';
 import Fastify, { HTTPMethods, RouteOptions, preHandlerHookHandler } from 'fastify';
 import { OpenApiSchema, loadOpenApiSchema } from './schema';
+import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
 
 const log = logger('app');
 
@@ -17,6 +18,7 @@ export class WebApp {
 
   constructor(private readonly schema: OpenApiSchema) {
     this.app = Fastify({ logger: log.pinoLogger });
+    this.app.addHook('preHandler', verifySignatureMiddleware);
   }
 
   public async start(): Promise<void> {

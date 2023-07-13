@@ -1,6 +1,6 @@
 import logger from '../../logging';
 import { IncomingHttpHeaders } from 'http';
-import { verifySignature, InvalidSignatureError } from '../../security';
+import { verifySignature } from '../../security';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 
 const log = logger('middleware:verify-signature');
@@ -10,23 +10,18 @@ export function verifySignatureMiddleware(
   reply: FastifyReply,
   done: HookHandlerDoneFunction
 ): void {
-  try {
-    const body = request.body;
-    const method = request.method;
-    const url = request.url;
+  const body = request.body;
+  const method = request.method;
+  const url = request.url;
 
-    const { timestamp, nonce, signature } = getSignatureHeaders(request.headers);
+  const { timestamp, nonce, signature } = getSignatureHeaders(request.headers);
 
-    const payload = buildSignaturePayload(method, url, body as object, timestamp, nonce);
+  const payload = buildSignaturePayload(method, url, body as object, timestamp, nonce);
 
-    verifySignature(payload, signature);
-  } catch (err) {
-    if (err instanceof InvalidSignatureError) {
-      log.debug('Invalid signature in request');
-      reply.code(401).send(err.responseObject);
-      return;
-    }
-    reply.code(500).send({ errorCode: 'unexpected-error' });
+  const isValid = verifySignature(payload, signature);
+
+  if (!isValid) {
+    reply.code(400).send({ errorCode: 'invalid-signature' });
     return;
   }
 
