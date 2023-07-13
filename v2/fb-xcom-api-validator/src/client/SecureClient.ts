@@ -1,4 +1,6 @@
 import config from '../config';
+import { randomUUID } from 'crypto';
+import { getRequestSignature } from '../security/auth-provider';
 import { request as requestInternal } from './generated/core/request';
 import { ApiRequestOptions } from './generated/core/ApiRequestOptions';
 import {
@@ -17,7 +19,6 @@ import {
   TransfersPeerAccountsService,
   TransfersService,
 } from './generated';
-import { createSecurityHeaders } from '../security/auth-provider';
 
 export type SecurityHeaders = {
   xFbapiKey: string;
@@ -133,4 +134,19 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
       },
     });
   }
+}
+
+function createSecurityHeaders({ method, url, body }: ApiRequestOptions): SecurityHeaders {
+  const authConfig = config.get('authentication');
+
+  const nonce = randomUUID();
+  const timestamp = Date.now();
+  const signature = getRequestSignature(method, url, body, timestamp, nonce, authConfig.signing);
+
+  return {
+    xFbapiKey: authConfig.apiKey,
+    xFbapiSignature: encodeURIComponent(signature),
+    xFbapiTimestamp: timestamp,
+    xFbapiNonce: nonce,
+  };
 }

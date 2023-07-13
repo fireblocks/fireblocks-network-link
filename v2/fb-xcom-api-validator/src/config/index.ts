@@ -64,7 +64,7 @@ const config = convict({
         doc: 'Hash algorithm used during the signing',
         format: ['sha256', 'sha512', 'sha3-256'],
         default: 'sha256',
-        env: 'SIGNING_HASH_ALGORITHM'
+        env: 'SIGNING_HASH_ALGORITHM',
       },
       postEncoding: {
         doc: 'Encoding to be applied to the signature',
@@ -72,7 +72,7 @@ const config = convict({
         default: 'plain',
         env: 'SIGNING_POST_ENCODING',
       },
-    }
+    },
   },
   openApi: {
     location: {

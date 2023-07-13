@@ -1,6 +1,6 @@
-import { WebApp } from "./app";
-import { verifySignatureMiddleware } from "./middlewares/verify-signature-middleware";
+import { WebApp } from './app';
+import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
 
-export const registerMiddlewares = (app: WebApp) => {
-    app.addMiddleware(verifySignatureMiddleware);
+export function registerMiddlewares(app: WebApp): void {
+  app.addMiddleware(verifySignatureMiddleware);
 }
