@@ -2,6 +2,7 @@ import { InvalidSignatureError } from '../src/security/signing';
 import { buildRequestSignature, verifySignature } from '../src/security';
 import config, { encodingTypes } from '../src/config';
 
+// 78965 Used only for testing
 const ecdsaPrivateKey = `-----BEGIN EC PRIVATE KEY-----
 MHcCAQEEILQYC64rX4hZrYhCCoTmxLKSCqPYd530UoV69DWu5xPmoAoGCCqGSM49
 AwEHoUQDQgAEU07Yntilfgln/MSCpWH6rMcwyiZzff7SYxgxIuOv/t5LpR5vfY7A
@@ -9,6 +10,7 @@ AwEHoUQDQgAEU07Yntilfgln/MSCpWH6rMcwyiZzff7SYxgxIuOv/t5LpR5vfY7A
 -----END EC PRIVATE KEY-----
 `;
 
+// 78965 Used only for testing
 const rsaPrivateKey = `-----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEAxjjIY3iOVBy3QTKhr0Ke6fx/LvwzUpt7P9803b1fnmyxIJzK
 xC17cS/AbDVA2p3SjaYtf9Ad6LmL/GVIZFhA935O+nMECcowebuo5Uc5wMIL/KLS

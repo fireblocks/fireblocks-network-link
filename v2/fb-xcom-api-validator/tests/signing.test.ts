@@ -7,18 +7,22 @@ import {
 describe('Signing methods', () => {
   const data = 'data';
 
+  // 78965 Used only for testing
   const ecdsaPrivateKey = `-----BEGIN EC PRIVATE KEY-----
     MHcCAQEEILQYC64rX4hZrYhCCoTmxLKSCqPYd530UoV69DWu5xPmoAoGCCqGSM49
     AwEHoUQDQgAEU07Yntilfgln/MSCpWH6rMcwyiZzff7SYxgxIuOv/t5LpR5vfY7A
     1PlkFOKzV/bvobG+ZpT+mGWE8kmyiqZ20A==
     -----END EC PRIVATE KEY-----
     `;
+
+  // 78965 Used only for testing
   const ecdsaPublicKey = `-----BEGIN PUBLIC KEY-----
     MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEU07Yntilfgln/MSCpWH6rMcwyiZz
     ff7SYxgxIuOv/t5LpR5vfY7A1PlkFOKzV/bvobG+ZpT+mGWE8kmyiqZ20A==
     -----END PUBLIC KEY-----
     `;
 
+  // 78965 Used only for testing
   const rsaPrivateKey = `-----BEGIN RSA PRIVATE KEY-----
     MIIEpQIBAAKCAQEAxjjIY3iOVBy3QTKhr0Ke6fx/LvwzUpt7P9803b1fnmyxIJzK
     xC17cS/AbDVA2p3SjaYtf9Ad6LmL/GVIZFhA935O+nMECcowebuo5Uc5wMIL/KLS
@@ -47,6 +51,8 @@ describe('Signing methods', () => {
     16lU3hp5P19DSGRcYOmQHj37CS9vyk/i94lF/aysGFRKIdVGbROLPT0=
     -----END RSA PRIVATE KEY-----
     `;
+
+  // 78965 Used only for testing
   const rsaPublicKey = `-----BEGIN PUBLIC KEY-----
     MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxjjIY3iOVBy3QTKhr0Ke
     6fx/LvwzUpt7P9803b1fnmyxIJzKxC17cS/AbDVA2p3SjaYtf9Ad6LmL/GVIZFhA
