@@ -36,7 +36,7 @@ export function verifySignatureMiddleware(
 function getSignatureHeaders(headers: IncomingHttpHeaders) {
   const timestamp = Number(headers['x-fbapi-timestamp']);
   const nonce = String(headers['x-fbapi-nonce']);
-  const signature = decodeURIComponent(String(headers['x-fbapi-signature']));
+  const signature = String(headers['x-fbapi-signature']);
   return { timestamp, nonce, signature };
 }
 
