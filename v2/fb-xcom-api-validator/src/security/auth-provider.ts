@@ -1,22 +1,13 @@
 import config from '../config';
-import { HTTPMethods } from 'fastify';
 import { Encoding, encoderFactory } from './encoding';
 import { HashAlgorithm, SigningAlgorithm, getVerifyKey, signerFactory } from './signing';
 
-export function verifySignature(
-  method: HTTPMethods,
-  endpoint: string,
-  body: any,
-  timestamp: number,
-  nonce: string,
-  signature: string
-): void {
+export function verifySignature(payload: string, signature: string): void {
   const signingConfig = config.get('authentication').signing;
   const decodedSignature = decode(signature, signingConfig.postEncoding);
-  const prehashString = createPrehashString(method, endpoint, body, timestamp, nonce);
-  const encodedPrehashString = encode(prehashString, signingConfig.preEncoding);
+  const encodedPayload = encode(payload, signingConfig.preEncoding);
   verify(
-    encodedPrehashString,
+    encodedPayload,
     decodedSignature,
     signingConfig.signingAlgorithm,
     signingConfig.privateKey,
@@ -24,28 +15,11 @@ export function verifySignature(
   );
 }
 
-function createPrehashString(
-  method: HTTPMethods,
-  endpoint: string,
-  body: any,
-  timestamp: number,
-  nonce: string
-): string {
-  return `${timestamp}${nonce}${method.toUpperCase()}${endpoint}${stringifyBody(body)}`;
-}
-
-export function getRequestSignature(
-  method: HTTPMethods,
-  endpoint: string,
-  body: any,
-  timestamp: number,
-  nonce: string,
-  signingConfig: any
-): string {
-  const prehashString = createPrehashString(method, endpoint, body, timestamp, nonce);
-  const encodedPrehashString = encode(prehashString, signingConfig.preEncoding);
+export function buildRequestSignature(payload: string): string {
+  const signingConfig = config.get('authentication').signing;
+  const encodedPayload = encode(payload, signingConfig.preEncoding);
   const signature = sign(
-    encodedPrehashString,
+    encodedPayload,
     signingConfig.signingAlgorithm,
     signingConfig.privateKey,
     signingConfig.hashAlgorithm
@@ -84,11 +58,4 @@ function encode(payload: string, encoding: Encoding): string {
 
 function decode(payload: string, encoding: Encoding): string {
   return encoderFactory(encoding).decode(payload);
-}
-
-function stringifyBody(body): string {
-  if (!body) {
-    return '';
-  }
-  return JSON.stringify(body);
 }

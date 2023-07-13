@@ -50,8 +50,8 @@ const config = convict({
       },
       preEncoding: {
         doc: 'Encoding to be applied to the data before it is signed',
-        format: ['plain', 'base64', 'hexstr', 'base58', 'base32'],
-        default: 'plain',
+        format: ['url-encoding', 'base64', 'hexstr', 'base58', 'base32'],
+        default: 'url-encoding',
         env: 'SIGNING_PRE_ENCODING',
       },
       signingAlgorithm: {
@@ -68,8 +68,8 @@ const config = convict({
       },
       postEncoding: {
         doc: 'Encoding to be applied to the signature',
-        format: ['plain', 'base64', 'hexstr', 'base58', 'base32'],
-        default: 'plain',
+        format: ['url-encoding', 'base64', 'hexstr', 'base58', 'base32'],
+        default: 'url-encoding',
         env: 'SIGNING_POST_ENCODING',
       },
     },

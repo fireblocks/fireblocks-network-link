@@ -3,19 +3,19 @@ import * as base32 from 'hi-base32';
 
 export class UnsupportedEncodingFormatError extends Error {}
 
-export type Encoding = 'plain' | 'base64' | 'hexstr' | 'base32' | 'base58';
+export type Encoding = 'url-encoding' | 'base64' | 'hexstr' | 'base32' | 'base58';
 
 export interface Encoder {
   encode(payload: string): string;
   decode(payload: string): string;
 }
 
-export class Plain implements Encoder {
+export class URL implements Encoder {
   public encode(payload: string): string {
-    return payload;
+    return encodeURIComponent(payload);
   }
   public decode(payload: string): string {
-    return payload;
+    return decodeURIComponent(payload);
   }
 }
 
@@ -57,8 +57,8 @@ export class Base58 implements Encoder {
 
 export function encoderFactory(encoding: Encoding): Encoder {
   switch (encoding) {
-    case 'plain':
-      return new Plain();
+    case 'url-encoding':
+      return new URL();
     case 'base32':
       return new Base32();
     case 'base58':
