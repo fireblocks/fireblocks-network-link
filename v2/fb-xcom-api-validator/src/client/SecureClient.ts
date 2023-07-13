@@ -1,6 +1,6 @@
 import config from '../config';
 import { randomUUID } from 'crypto';
-import { buildRequestSignature } from '../security/auth-provider';
+import { buildRequestSignature } from '../security';
 import { request as requestInternal } from './generated/core/request';
 import { ApiRequestOptions } from './generated/core/ApiRequestOptions';
 import {

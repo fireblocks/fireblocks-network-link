@@ -2,6 +2,8 @@ import config from '../config';
 import { Encoding, encoderFactory } from './encoding';
 import { HashAlgorithm, SigningAlgorithm, getVerifyKey, signerFactory } from './signing';
 
+export { InvalidSignatureError } from './signing';
+
 export function verifySignature(payload: string, signature: string): void {
   const signingConfig = config.get('authentication').signing;
   const decodedSignature = decode(signature, signingConfig.postEncoding);

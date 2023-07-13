@@ -1,7 +1,6 @@
 import logger from '../../logging';
 import { IncomingHttpHeaders } from 'http';
-import { verifySignature } from '../../security/auth-provider';
-import { InvalidSignatureError } from '../../security/signing';
+import { verifySignature, InvalidSignatureError } from '../../security';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 
 const log = logger('middleware:verify-signature');

@@ -1,5 +1,5 @@
 import { InvalidSignatureError } from '../src/security/signing';
-import { buildRequestSignature, verifySignature } from '../src/security/auth-provider';
+import { buildRequestSignature, verifySignature } from '../src/security';
 
 describe('Signature creation and verification', () => {
   let signature: string;
