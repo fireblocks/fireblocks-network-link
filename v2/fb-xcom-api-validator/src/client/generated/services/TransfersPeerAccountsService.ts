@@ -4,7 +4,7 @@
 /* eslint-disable */
 import type { CrossAccountWithdrawal } from '../models/CrossAccountWithdrawal';
 import type { CrossAccountWithdrawalRequest } from '../models/CrossAccountWithdrawalRequest';
-import type { ErrorCode } from '../models/ErrorCode';
+import type { GeneralError } from '../models/GeneralError';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -16,6 +16,7 @@ export class TransfersPeerAccountsService {
     /**
      * Get list of withdrawals to peer accounts, sorted by creation time
      * @returns any List of withdrawals.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getPeerAccountWithdrawals({
@@ -68,7 +69,7 @@ export class TransfersPeerAccountsService {
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
         withdrawals?: Array<CrossAccountWithdrawal>;
-    }> {
+    } | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/withdrawals/peeraccount',
@@ -87,13 +88,16 @@ export class TransfersPeerAccountsService {
                 'endingBefore': endingBefore,
                 'order': order,
             },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Create new withdrawal to a peer account
      * Should reject any non peer acount withdrawal request.
-     * @returns any Failed to process request.
+     * @returns GeneralError Failed to process request.
      * @returns CrossAccountWithdrawal New withdrawal has been successfully created.
      * @throws ApiError
      */
@@ -127,10 +131,7 @@ export class TransfersPeerAccountsService {
          */
         accountId: string,
         requestBody: CrossAccountWithdrawalRequest,
-    }): CancelablePromise<{
-        errorCode?: ErrorCode;
-        description?: string;
-    } | CrossAccountWithdrawal> {
+    }): CancelablePromise<GeneralError | CrossAccountWithdrawal> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/transfers/withdrawals/peeraccount',
@@ -145,6 +146,9 @@ export class TransfersPeerAccountsService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 

@@ -5,7 +5,7 @@
 import type { Deposit } from '../models/Deposit';
 import type { DepositAddress } from '../models/DepositAddress';
 import type { DepositAddressCreationRequest } from '../models/DepositAddressCreationRequest';
-import type { ErrorCode } from '../models/ErrorCode';
+import type { GeneralError } from '../models/GeneralError';
 import type { Withdrawal } from '../models/Withdrawal';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -18,6 +18,7 @@ export class TransfersService {
     /**
      * Get list of withdrawals sorted by creation time
      * @returns any List of withdrawals.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getWithdrawals({
@@ -70,7 +71,7 @@ export class TransfersService {
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
         withdrawals?: Array<Withdrawal>;
-    }> {
+    } | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/withdrawals',
@@ -89,13 +90,16 @@ export class TransfersService {
                 'endingBefore': endingBefore,
                 'order': order,
             },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Get withdrawal details
      * @returns Withdrawal Withdrawals details.
-     * @returns any Failed to process request.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getWithdrawalDetails({
@@ -131,10 +135,7 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
-    }): CancelablePromise<Withdrawal | {
-        errorCode?: ErrorCode;
-        description?: string;
-    }> {
+    }): CancelablePromise<Withdrawal | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/withdrawals/{id}',
@@ -148,12 +149,16 @@ export class TransfersService {
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
             },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Get list of deposits sorted by creation time
      * @returns any Deposits details.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getDeposits({
@@ -201,7 +206,7 @@ export class TransfersService {
         endingBefore?: string,
     }): CancelablePromise<{
         deposits?: Array<Deposit>;
-    }> {
+    } | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/deposits',
@@ -219,13 +224,16 @@ export class TransfersService {
                 'startingAfter': startingAfter,
                 'endingBefore': endingBefore,
             },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Get deposit details
      * @returns Deposit List of deposits.
-     * @returns any Failed to process request.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getDepositDetails({
@@ -261,10 +269,7 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
-    }): CancelablePromise<Deposit | {
-        errorCode?: ErrorCode;
-        description?: string;
-    }> {
+    }): CancelablePromise<Deposit | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/deposits/{id}',
@@ -278,13 +283,16 @@ export class TransfersService {
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
             },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Create new deposit address
      * @returns DepositAddress New deposit address created.
-     * @returns any Failed to process request.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public createDepositAddress({
@@ -317,10 +325,7 @@ export class TransfersService {
          */
         accountId: string,
         requestBody: DepositAddressCreationRequest,
-    }): CancelablePromise<DepositAddress | {
-        errorCode?: ErrorCode;
-        description?: string;
-    }> {
+    }): CancelablePromise<DepositAddress | GeneralError> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/transfers/deposits/addresses',
@@ -335,12 +340,16 @@ export class TransfersService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Get list of existing deposit addresses
      * @returns any List of existing deposit addresses.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getDepositAddresses({
@@ -388,7 +397,7 @@ export class TransfersService {
         endingBefore?: string,
     }): CancelablePromise<{
         addresses?: Array<DepositAddress>;
-    }> {
+    } | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/deposits/addresses',
@@ -406,13 +415,16 @@ export class TransfersService {
                 'startingAfter': startingAfter,
                 'endingBefore': endingBefore,
             },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Get details of a deposit address
      * @returns DepositAddress New deposit address created.
-     * @returns any Failed to process request.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getDepositAddressDetails({
@@ -448,10 +460,7 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
-    }): CancelablePromise<DepositAddress | {
-        errorCode?: ErrorCode;
-        description?: string;
-    }> {
+    }): CancelablePromise<DepositAddress | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/deposits/addresses/{id}',
@@ -465,12 +474,16 @@ export class TransfersService {
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
             },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Disable a deposit address
      * @returns any Deposit address disabled.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public disableDepositAddress({
@@ -506,7 +519,7 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
-    }): CancelablePromise<any> {
+    }): CancelablePromise<any | GeneralError> {
         return this.httpRequest.request({
             method: 'DELETE',
             url: '/accounts/{accountId}/transfers/deposits/addresses/{id}',
@@ -519,6 +532,9 @@ export class TransfersService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+            },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
             },
         });
     }

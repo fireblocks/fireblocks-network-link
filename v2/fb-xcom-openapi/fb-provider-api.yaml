@@ -370,7 +370,8 @@ paths:
                       transfersFiat:
                         - "6cd2fe1e-d0bc-4fad-a9ba-9384e0fdfdc0"
                         - "7885a47b-0719-4448-b59e-3b8497cd1685"
-
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -453,6 +454,8 @@ paths:
                         "decimalPlaces": 6,
                       }
                     ]
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -477,6 +480,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AssetDefinition'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -505,7 +510,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/AssetReference'
-
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -535,6 +541,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -557,6 +565,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Account'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -630,7 +640,8 @@ paths:
                       }
                     ]
                   }
-
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -665,6 +676,8 @@ paths:
                 properties:
                   balances:
                     $ref: '#/components/schemas/Balances'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -799,23 +812,70 @@ components:
           value: ['title', 'balances']
 
   responses:
+    BadRequestResponse:
+      description: Request could not be processed due to a client error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestError'
+
     ErrorResponse:
       description: Failed to process request.
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              errorCode:
-                $ref: '#/components/schemas/ErrorCode'
-              description:
-                type: string
+            $ref: '#/components/schemas/GeneralError'
 
   schemas:
-    ErrorCode:
+    GeneralError:
+      description: >-
+        Should be returned only if there in no more specific object.
+      properties:
+        message:
+          description: Description of the error.
+          type: string
+        errorType:
+          $ref: '#/components/schemas/ErrorType'
+
+    BadRequestError:
+      description: >-
+        Request could not be processed due to a client error.
+        
+        If the error is caused by a missing or wrong property in the request,
+        `errorType` must have the value `schema-property-error` and the properties 
+        `propertyName` and `requestPart` must be specified. For more general
+        schema errors, the error type should be `schema-error` and `requestPart` must
+        be specified. For all the other cases the error type should be `bad-request`.
+      type: object
+      required: [message, errorType]
+      properties:
+        message:
+          description: Description of the error.
+          type: string
+        errorType:
+          enum:
+            - schema-error
+            - schema-property-error
+            - bad-request
+        propertyName:
+          description: Name of property that caused the error.
+          type: string
+        requestPart:
+          $ref: '#/components/schemas/RequestPart'
+
+    RequestPart:
+      description: Request part where the error occurred.
+      enum:
+        - params
+        - body
+        - querystring
+        - headers
+
+    ErrorType:
       type: string
       enum:
         - unexpected-error
+        - bad-request
 
     Capabilities:
       type: object

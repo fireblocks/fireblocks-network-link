@@ -31,6 +31,10 @@ x-schemas:
   PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
   AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference'}
 
+x-responses:
+  BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
+
 paths:
   /capabilities/trading/books:
     get:
@@ -57,8 +61,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/OrderBook'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /trading/books/{id}:
     get:
@@ -78,8 +84,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderBook'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /trading/books/{id}/asks:
     get:
@@ -111,8 +119,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/MarketEntry'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /trading/books/{id}/bids:
     get:
@@ -144,8 +154,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/MarketEntry'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /trading/books/{id}/history:
     get:
@@ -177,8 +189,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/MarketTrade'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/trading/orders:
     get:
@@ -209,8 +223,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Order'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
     post:
       operationId: CreateOrder
       summary: Create a new trading order
@@ -252,8 +268,10 @@ paths:
                 baseAssetPrice: '0.0003'
                 createdAt: 2023-06-02T19:45:26.550Z
                 trades: []
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/trading/orders/{id}:
     get:
@@ -274,8 +292,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Order'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
     delete:
       operationId: CancelOrder
       summary: Cancel an active trading order
@@ -290,29 +310,13 @@ paths:
       responses:
         '200':
           description: Order canceled.
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
 components:
-  responses:
-    ErrorResponse:
-      description: Failed to process request.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              errorCode:
-                $ref: '#/components/schemas/ErrorCode'
-              description:
-                type: string
-
   schemas:
-    ErrorCode:
-      type: string
-      enum:
-        - unexpected-error
-
     OrderBook:
       type: object
       required: [ id, baseAsset, quoteAsset ]

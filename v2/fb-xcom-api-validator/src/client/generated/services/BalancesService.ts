@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { AssetReference } from '../models/AssetReference';
 import type { Balances } from '../models/Balances';
+import type { GeneralError } from '../models/GeneralError';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -15,6 +16,7 @@ export class BalancesService {
     /**
      * Get current balances
      * @returns any List of asset balances.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getBalances({
@@ -67,7 +69,7 @@ export class BalancesService {
         asset?: AssetReference,
     }): CancelablePromise<{
         balances: Balances;
-    }> {
+    } | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/balances',
@@ -85,6 +87,9 @@ export class BalancesService {
                 'startingAfter': startingAfter,
                 'endingBefore': endingBefore,
                 'asset': asset,
+            },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
             },
         });
     }

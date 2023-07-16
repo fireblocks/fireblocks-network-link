@@ -80,6 +80,9 @@ async function makeUnifiedOpenApi() {
         if (key.endsWith('-schemas')) {
           refReplacements[key] = 'components/schemas';
         }
+        if (key.endsWith('-responses')) {
+          refReplacements[key] = 'components/responses';
+        }
       }
     }
 
