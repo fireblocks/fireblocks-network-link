@@ -2,8 +2,16 @@ import logger from '../../logging';
 import { IncomingHttpHeaders } from 'http';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import config from '../../config';
+import { BadRequestError, RequestPart } from '../../client/generated';
 
 const log = logger('middleware:timestamp');
+
+const EXPIRED_REQUEST_ERROR: BadRequestError = {
+  message: 'Expired request',
+  errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
+  requestPart: RequestPart.HEADERS,
+  propertyName: 'X-FBAPI-TIMESTAMP',
+};
 
 export function timestampMiddleware(
   request: FastifyRequest,
@@ -15,7 +23,7 @@ export function timestampMiddleware(
   const expired = isExpired(timestamp);
 
   if (expired) {
-    reply.code(400).send({ errorCode: 'request-expired' });
+    reply.code(400).send(EXPIRED_REQUEST_ERROR);
     return;
   }
 
