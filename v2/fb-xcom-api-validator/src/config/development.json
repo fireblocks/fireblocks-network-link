@@ -1,5 +1,8 @@
 {
   "logging": {
     "level": "debug"
+  },
+  "authentication": {
+    "apiKey": "123"
   }
 }

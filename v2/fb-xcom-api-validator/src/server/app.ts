@@ -2,9 +2,10 @@ import config from '../config';
 import logger from '../logging';
 import { XComError } from '../error';
 import { OpenApiSchema, loadOpenApiSchema } from './schema';
-import Fastify, { HTTPMethods, RouteOptions } from 'fastify';
 import { BadRequestError, RequestPart } from '../client/generated';
+import Fastify, { HTTPMethods, RouteOptions, preHandlerHookHandler } from 'fastify';
 import { FastifySchemaValidationError, SchemaErrorDataVar } from 'fastify/types/schema';
+import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
 
 const log = logger('app');
 
@@ -20,11 +21,16 @@ export class WebApp {
 
   constructor(private readonly schema: OpenApiSchema) {
     this.app = Fastify({ logger: log.pinoLogger, schemaErrorFormatter });
+    this.app.addHook('preHandler', verifySignatureMiddleware);
   }
 
   public async start(): Promise<void> {
     const { port } = config.get('server');
     await this.app.listen({ port, host: '0.0.0.0' });
+  }
+
+  public addMiddleware(hook: preHandlerHookHandler): void {
+    this.app.addHook('preHandler', hook);
   }
 
   public addRoute(method: HTTPMethods, url: string, handler: RouteOptions['handler']): void {

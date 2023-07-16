@@ -16,6 +16,7 @@
   "scripts": {
     "start:server:dev": "NODE_ENV=development ts-node src/server/server.ts | pino-pretty",
     "test": "NODE_ENV=test jest --verbose",
+    "test:watch": "NODE_ENV=test jest --verbose --watch",
     "generate-openapi-client": "ts-node generate-openapi-client.ts",
     "make-unified-openapi": "ts-node make-unified-openapi.ts"
   },
@@ -23,11 +24,13 @@
     "@apidevtools/json-schema-ref-parser": "^10.1.0",
     "ajv-oai": "^1.2.1",
     "axios": "^1.4.0",
+    "bs58": "^5.0.0",
     "convict": "^6.2.4",
     "dotenv": "^16.3.1",
     "fastify": "^4.19.2",
     "fastify-openapi-glue": "^1.7.1",
     "form-data": "^4.0.0",
+    "hi-base32": "^0.5.1",
     "http-status-codes": "^2.2.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
