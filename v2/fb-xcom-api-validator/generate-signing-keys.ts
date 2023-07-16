@@ -1,6 +1,6 @@
 import { KeyPairSyncResult, generateKeyPairSync } from 'crypto';
 
-function createRSAKeyPair(): KeyPairSyncResult<string, string> {
+function generateRSAKeyPair(): KeyPairSyncResult<string, string> {
   return generateKeyPairSync('rsa', {
     modulusLength: 1024,
     publicKeyEncoding: { type: 'pkcs1', format: 'pem' },
@@ -30,7 +30,7 @@ function generateKeys() {
 
   switch (keyType) {
     case 'rsa':
-      keyPair = createRSAKeyPair();
+      keyPair = generateRSAKeyPair();
       break;
     case 'ecdsa-secp256k1':
       keyPair = generateECDSAsecp256k1KeyPair();
