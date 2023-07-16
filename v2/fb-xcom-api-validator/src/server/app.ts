@@ -28,10 +28,6 @@ export class WebApp {
     await this.app.listen({ port, host: '0.0.0.0' });
   }
 
-  public addMiddleware(hook: preHandlerHookHandler): void {
-    this.app.addHook('preHandler', hook);
-  }
-
   public addRoute(method: HTTPMethods, url: string, handler: RouteOptions['handler']): void {
     this.app.route({
       method,
