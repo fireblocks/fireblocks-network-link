@@ -18,7 +18,10 @@
     "test": "NODE_ENV=test jest --verbose",
     "test:watch": "NODE_ENV=test jest --verbose --watch",
     "generate-openapi-client": "ts-node generate-openapi-client.ts",
-    "make-unified-openapi": "ts-node make-unified-openapi.ts"
+    "make-unified-openapi": "ts-node make-unified-openapi.ts",
+    "generate-rsa-key-pair": "ts-node generate-signing-keys.ts rsa",
+    "generate-ecdsa-secp256k1-key-pair": "ts-node generate-signing-keys.ts ecdsa-secp256k1",
+    "generate-ecdsa-prime256v1-key-pair": "ts-node generate-signing-keys.ts ecdsa-prime256v1"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^10.1.0",
