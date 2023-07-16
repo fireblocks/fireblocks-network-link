@@ -33,6 +33,7 @@ x-schemas:
 
 x-responses:
   BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
   ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
 
 paths:
@@ -63,6 +64,8 @@ paths:
                       $ref: '#/components/schemas/OrderBook'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -86,6 +89,8 @@ paths:
                 $ref: '#/components/schemas/OrderBook'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -121,6 +126,8 @@ paths:
                       $ref: '#/components/schemas/MarketEntry'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -156,6 +163,8 @@ paths:
                       $ref: '#/components/schemas/MarketEntry'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -191,6 +200,8 @@ paths:
                       $ref: '#/components/schemas/MarketTrade'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -225,6 +236,8 @@ paths:
                       $ref: '#/components/schemas/Order'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
     post:
@@ -270,6 +283,8 @@ paths:
                 trades: []
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -294,6 +309,8 @@ paths:
                 $ref: '#/components/schemas/Order'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
     delete:
@@ -312,6 +329,8 @@ paths:
           description: Order canceled.
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 

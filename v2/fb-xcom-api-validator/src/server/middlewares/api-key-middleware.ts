@@ -2,8 +2,16 @@ import logger from '../../logging';
 import { IncomingHttpHeaders } from 'http';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import config from '../../config';
+import { RequestPart, UnauthorizedError } from '../../client/generated';
 
 const log = logger('middleware:api-key');
+
+const INVALID_API_KEY_ERROR: UnauthorizedError = {
+  message: 'Provided API key is not authorized',
+  errorType: UnauthorizedError.errorType.SCHEMA_PROPERTY_ERROR,
+  propertyName: 'X-FBAPI-KEY',
+  requestPart: RequestPart.HEADERS,
+};
 
 export function apiKeyMiddleware(
   request: FastifyRequest,
@@ -15,7 +23,7 @@ export function apiKeyMiddleware(
   const isValid = isApiKeyValid(apiKey);
 
   if (!isValid) {
-    reply.code(401).send();
+    reply.code(401).send(INVALID_API_KEY_ERROR);
     return;
   }
 

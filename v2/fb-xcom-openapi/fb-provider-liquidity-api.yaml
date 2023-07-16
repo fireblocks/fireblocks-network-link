@@ -33,6 +33,7 @@ x-schemas:
 
 x-responses:
   BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
   ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
 
 
@@ -56,6 +57,8 @@ paths:
                 $ref: '#/components/schemas/QuoteCapabilities'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -88,6 +91,8 @@ paths:
                 $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
     get:
@@ -118,6 +123,8 @@ paths:
                       $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -142,6 +149,8 @@ paths:
                 $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -166,6 +175,8 @@ paths:
                 $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 

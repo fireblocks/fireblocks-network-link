@@ -372,6 +372,8 @@ paths:
                         - "7885a47b-0719-4448-b59e-3b8497cd1685"
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -456,6 +458,8 @@ paths:
                     ]
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -482,6 +486,8 @@ paths:
                 $ref: '#/components/schemas/AssetDefinition'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -512,6 +518,8 @@ paths:
                       $ref: '#/components/schemas/AssetReference'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -543,6 +551,8 @@ paths:
                       $ref: '#/components/schemas/Account'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -567,6 +577,8 @@ paths:
                 $ref: '#/components/schemas/Account'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -642,6 +654,8 @@ paths:
                   }
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -678,6 +692,8 @@ paths:
                     $ref: '#/components/schemas/Balances'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 
@@ -819,6 +835,13 @@ components:
           schema:
             $ref: '#/components/schemas/BadRequestError'
 
+    UnauthorizedResponse:
+      description: Request is unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
+
     ErrorResponse:
       description: Failed to process request.
       content:
@@ -857,6 +880,26 @@ components:
             - schema-error
             - schema-property-error
             - bad-request
+        propertyName:
+          description: Name of property that caused the error.
+          type: string
+        requestPart:
+          $ref: '#/components/schemas/RequestPart'
+
+    UnauthorizedError:
+      description: >-
+        Request is unauthorized
+      type: object
+      required: [message, errorType]
+      properties:
+        message:
+          description: Description of the error.
+          type: string
+        errorType:
+          enum:
+            - schema-error
+            - schema-property-error
+            - unauthorized
         propertyName:
           description: Name of property that caused the error.
           type: string
