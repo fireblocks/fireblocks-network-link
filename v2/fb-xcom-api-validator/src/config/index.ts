@@ -43,6 +43,12 @@ const config = convict({
       format: String,
       default: null,
     },
+    requestTTL: {
+      doc: 'Request time to live (TTL) in seconds, which is expressed by the time that has passed since the timestamp recorded in X-FBAPI-TIMESTAMP header',
+      env: 'REQUEST_TTL',
+      format: Number,
+      default: 10,
+    },
     signing: {
       privateKey: {
         doc: 'Raw string of private key to sign requests. For RSA and ECDSA in pem format',
