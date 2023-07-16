@@ -36,6 +36,10 @@ x-schemas:
   Blockchain: { $ref: './fb-provider-api.yaml#/components/schemas/Blockchain'}
   NationalCurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrency' }
 
+x-responses:
+  BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
+
 paths:
 
   /capabilities/transfers/withdrawals:
@@ -106,8 +110,10 @@ paths:
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: "f0844d82-7097-4521-95bc-d843724a893e"
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /capabilities/transfers/deposits:
     get:
@@ -178,8 +184,10 @@ paths:
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: "f0844d82-7097-4521-95bc-d843724a893e"
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/withdrawals:
     get:
@@ -199,8 +207,10 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/WithdrawalsResponse'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/withdrawals/{id}:
     get:
@@ -221,8 +231,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Withdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/withdrawals/blockchain:
     get:
@@ -251,8 +263,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/BlockchainWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
     post:
       operationId: CreateBlockchainWithdrawal
       summary: Create new withdrawal over public blockchain
@@ -277,8 +291,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BlockchainWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/withdrawals/fiat:
     get:
@@ -307,8 +323,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/FiatWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
     post:
       operationId: CreateFiatWithdrawal
       summary: Create new fiat withdrawal
@@ -333,8 +351,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FiatWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
     get:
@@ -363,8 +383,11 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/CrossAccountWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
+
     post:
       operationId: CreatePeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
@@ -389,8 +412,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrossAccountWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
+
 
   /accounts/{accountId}/transfers/withdrawals/subaccount:
     get:
@@ -419,8 +445,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/CrossAccountWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
     post:
       operationId: CreateSubAccountWithdrawal
       summary: Create new transfer to another sub-account
@@ -447,8 +475,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrossAccountWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/deposits:
     get:
@@ -476,8 +506,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Deposit'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/deposits/{id}:
     get:
@@ -498,8 +530,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deposit'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/deposits/addresses:
     post:
@@ -525,8 +559,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DepositAddress'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
     get:
       operationId: GetDepositAddresses
       summary: Get list of existing deposit addresses
@@ -552,8 +588,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/DepositAddress'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/deposits/addresses/{id}:
     get:
@@ -574,8 +612,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DepositAddress'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
     delete:
       operationId: DisableDepositAddress
@@ -591,23 +631,13 @@ paths:
       responses:
         '200':
           description: Deposit address disabled.
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
 components:
   responses:
-    ErrorResponse:
-      description: Failed to process request.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              errorCode:
-                $ref: '#/components/schemas/ErrorCode'
-              description:
-                type: string
-
     WithdrawalsResponse:
       description: List of withdrawals.
       content:
@@ -621,13 +651,6 @@ components:
                   $ref: '#/components/schemas/Withdrawal'
 
   schemas:
-    ErrorCode:
-      type: string
-      enum:
-        - unexpected-error
-        - bad-amount-format
-        - unknown-asset
-
     AccountHolderDetails:
       type: object
       required: [ name ]

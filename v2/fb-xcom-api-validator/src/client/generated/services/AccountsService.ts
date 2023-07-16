@@ -5,7 +5,7 @@
 import type { Account } from '../models/Account';
 import type { CrossAccountWithdrawal } from '../models/CrossAccountWithdrawal';
 import type { CrossAccountWithdrawalRequest } from '../models/CrossAccountWithdrawalRequest';
-import type { ErrorCode } from '../models/ErrorCode';
+import type { GeneralError } from '../models/GeneralError';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -17,6 +17,7 @@ export class AccountsService {
     /**
      * Get list of sub-accounts
      * @returns any List of sub-accounts.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getAccounts({
@@ -64,7 +65,7 @@ export class AccountsService {
         assets?: Array<string>,
     }): CancelablePromise<{
         withdrawals?: Array<Account>;
-    }> {
+    } | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts',
@@ -80,13 +81,16 @@ export class AccountsService {
                 'endingBefore': endingBefore,
                 'assets': assets,
             },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Get sub-account details
      * @returns Account List of sub-accounts.
-     * @returns any Failed to process request.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getAccountDetails({
@@ -122,10 +126,7 @@ export class AccountsService {
          * Array of account property names. Indicates which account properties should be returned. All properties by default. Account ID is always returned.
          */
         assets?: Array<string>,
-    }): CancelablePromise<Account | {
-        errorCode?: ErrorCode;
-        description?: string;
-    }> {
+    }): CancelablePromise<Account | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}',
@@ -141,12 +142,16 @@ export class AccountsService {
             query: {
                 'assets': assets,
             },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Get list of withdrawals to sub-accounts, sorted by creation time
      * @returns any List of withdrawals.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getSubAccountWithdrawals({
@@ -199,7 +204,7 @@ export class AccountsService {
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
         withdrawals?: Array<CrossAccountWithdrawal>;
-    }> {
+    } | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/withdrawals/subaccount',
@@ -218,13 +223,16 @@ export class AccountsService {
                 'endingBefore': endingBefore,
                 'order': order,
             },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Create new transfer to another sub-account
      * Transfers assets between different sub-accounts of the same user. Should reject any withdrawals that are not sub-account transfers.
-     * @returns any Failed to process request.
+     * @returns GeneralError Failed to process request.
      * @returns CrossAccountWithdrawal New withdrawal has been successfully created.
      * @throws ApiError
      */
@@ -258,10 +266,7 @@ export class AccountsService {
          */
         accountId: string,
         requestBody: CrossAccountWithdrawalRequest,
-    }): CancelablePromise<{
-        errorCode?: ErrorCode;
-        description?: string;
-    } | CrossAccountWithdrawal> {
+    }): CancelablePromise<GeneralError | CrossAccountWithdrawal> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/transfers/withdrawals/subaccount',
@@ -276,6 +281,9 @@ export class AccountsService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 

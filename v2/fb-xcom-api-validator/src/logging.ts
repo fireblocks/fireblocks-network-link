@@ -1,9 +1,12 @@
-import { pino as Pino } from 'pino';
+import VError from 'verror';
 import config from './config';
+import { pino as Pino } from 'pino';
+import { XComError } from './error';
 
 export type ObjectType = Record<string, unknown>;
+export type ErrorType = XComError | Error | ObjectType;
 export type LogFn = (msg: string, data?: ObjectType) => void;
-export type ErrorLogFn = (msg: string, data?: ObjectType, error?: ObjectType) => void;
+export type ErrorLogFn = (msg: string, data?: ObjectType, error?: ErrorType) => void;
 
 export class Logger {
   readonly fatal: LogFn;
@@ -22,7 +25,7 @@ export class Logger {
     };
 
     const makeErrorLogFn = (pinoFn: Pino.LogFn): ErrorLogFn => {
-      return (msg: string, data?: ObjectType, error?: ObjectType) => {
+      return (msg: string, data?: ObjectType, error?: ErrorType) => {
         const errorData = error ? extractErrorData(error) : {};
         const completeData = { ...data, ...errorData };
         return pinoFn.bind(this.pinoLogger)({
@@ -41,11 +44,26 @@ export class Logger {
   }
 }
 
-function extractErrorData(error: ObjectType): ObjectType {
+function extractErrorData(error: ErrorType): ObjectType {
+  const name = error['name'];
+  const errorMessage = error.message;
+
+  const basicErrorData = { name, errorMessage };
+
+  if (error instanceof XComError) {
+    return {
+      ...basicErrorData,
+      ...error.data,
+      ...VError.info(error),
+      stack: VError.fullStack(error),
+    };
+  }
+
   if (error instanceof Error) {
     const { name, message: errorMessage } = error;
     return { name, errorMessage, stack: error.stack };
   }
+
   return error;
 }
 

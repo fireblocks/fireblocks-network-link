@@ -31,6 +31,11 @@ x-schemas:
   AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference' }
   PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount' }
 
+x-responses:
+  BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
+
+
 paths:
   /capabilities/liquidity/quotes:
     get:
@@ -49,8 +54,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QuoteCapabilities'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/liquidity/quotes:
     post:
@@ -79,8 +86,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Quote'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
     get:
       operationId: GetQuotes
       summary: Get list of quotes sorted by creation time
@@ -107,8 +116,10 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Quote'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/liquidity/quotes/{id}:
     get:
@@ -129,8 +140,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Quote'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/liquidity/quotes/{id}/execute:
     post:
@@ -151,29 +164,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Quote'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
 
 components:
-  responses:
-    ErrorResponse:
-      description: Failed to process request.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              errorCode:
-                $ref: '#/components/schemas/ErrorCode'
-              description:
-                type: string
-
   schemas:
-    ErrorCode:
-      type: string
-      enum:
-        - unexpected-error
-
     QuoteCapability:
       type: object
       required: [ fromAsset, toAsset ]
