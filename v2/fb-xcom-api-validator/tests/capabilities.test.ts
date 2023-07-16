@@ -6,7 +6,7 @@ describe('Capabilities', () => {
 
     beforeAll(async () => {
       const client = new Client();
-      await client.capabilities.getCapabilities({});
+      result = await client.capabilities.getCapabilities({});
     });
 
     it('should work', () => {

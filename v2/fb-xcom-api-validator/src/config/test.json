@@ -1,5 +1,8 @@
 {
   "logging": {
     "level": "silent"
+  },
+  "authentication": {
+    "apiKey": "123"
   }
 }

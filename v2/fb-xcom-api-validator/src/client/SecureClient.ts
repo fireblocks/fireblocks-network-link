@@ -1,5 +1,6 @@
 import config from '../config';
 import { randomUUID } from 'crypto';
+import { buildRequestSignature } from '../security';
 import { request as requestInternal } from './generated/core/request';
 import { ApiRequestOptions } from './generated/core/ApiRequestOptions';
 import {
@@ -18,8 +19,9 @@ import {
   TransfersPeerAccountsService,
   TransfersService,
 } from './generated';
+import { Method } from 'axios';
 
-type SecurityHeaders = {
+export type SecurityHeaders = {
   xFbapiKey: string;
   xFbapiNonce: string;
   xFbapiTimestamp: number;
@@ -135,11 +137,38 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
   }
 }
 
-function createSecurityHeaders(options: ApiRequestOptions): SecurityHeaders {
+function createSecurityHeaders({ method, url, body }: ApiRequestOptions): SecurityHeaders {
+  const apiKey = config.get('authentication').apiKey;
+  const nonce = randomUUID();
+  const timestamp = Date.now();
+
+  const payload = buildSignaturePayload(method, url, body, timestamp, nonce);
+  const signature = buildRequestSignature(payload);
+
   return {
-    xFbapiKey: 'FIXME',
-    xFbapiNonce: randomUUID(),
-    xFbapiTimestamp: Date.now(),
-    xFbapiSignature: 'FIXME',
+    xFbapiKey: apiKey,
+    xFbapiSignature: signature,
+    xFbapiTimestamp: timestamp,
+    xFbapiNonce: nonce,
   };
+}
+
+/**
+ * Builds the payload to sign from the request components
+ */
+function buildSignaturePayload(
+  method: Method,
+  endpoint: string,
+  body: object,
+  timestamp: number,
+  nonce: string
+): string {
+  return `${timestamp}${nonce}${method.toUpperCase()}${endpoint}${stringifyBody(body)}`;
+}
+
+function stringifyBody(body): string {
+  if (!body) {
+    return '';
+  }
+  return JSON.stringify(body);
 }
