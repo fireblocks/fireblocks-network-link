@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Account Linking Partners
-  version: "0.9"
+  version: "0.9.2"
   contact:
     email: support@fireblocks.com
   license:
@@ -335,9 +335,11 @@ paths:
                   description: >
                     The destination address of the withdraw.
                     Will be masked if configured on the registration, by default it's not masked.
-                    Masking options: `NONE`, `SHA256`, `SHA3\_256`, `SHA512`
+                    Masking options: `NONE`, `SHA256`, `SHA3_256`, `SHA512`
                 tag:
-                  description: "A 'tag' or 'memo', if required by the network"
+                  description: >
+                    A 'tag' or 'memo', if required by the network.
+                    Will be masked the similar way toAddress will be masked.
                   type: string
                   nullable: true
                   example: null
