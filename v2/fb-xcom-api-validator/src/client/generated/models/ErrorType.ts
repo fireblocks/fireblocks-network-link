@@ -3,8 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export enum ErrorCode {
+export enum ErrorType {
     UNEXPECTED_ERROR = 'unexpected-error',
-    BAD_AMOUNT_FORMAT = 'bad-amount-format',
-    UNKNOWN_ASSET = 'unknown-asset',
+    BAD_REQUEST = 'bad-request',
 }

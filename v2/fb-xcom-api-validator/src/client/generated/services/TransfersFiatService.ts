@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ErrorCode } from '../models/ErrorCode';
 import type { FiatWithdrawal } from '../models/FiatWithdrawal';
 import type { FiatWithdrawalRequest } from '../models/FiatWithdrawalRequest';
+import type { GeneralError } from '../models/GeneralError';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -16,6 +16,7 @@ export class TransfersFiatService {
     /**
      * Get list of fiat withdrawals sorted by creation time
      * @returns any List of withdrawals.
+     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getFiatWithdrawals({
@@ -68,7 +69,7 @@ export class TransfersFiatService {
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
         withdrawals?: Array<FiatWithdrawal>;
-    }> {
+    } | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/withdrawals/fiat',
@@ -87,13 +88,16 @@ export class TransfersFiatService {
                 'endingBefore': endingBefore,
                 'order': order,
             },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 
     /**
      * Create new fiat withdrawal
      * Should reject any non fiat withdrawal request.
-     * @returns any Failed to process request.
+     * @returns GeneralError Failed to process request.
      * @returns FiatWithdrawal New withdrawal has been successfully created.
      * @throws ApiError
      */
@@ -127,10 +131,7 @@ export class TransfersFiatService {
          */
         accountId: string,
         requestBody: FiatWithdrawalRequest,
-    }): CancelablePromise<{
-        errorCode?: ErrorCode;
-        description?: string;
-    } | FiatWithdrawal> {
+    }): CancelablePromise<GeneralError | FiatWithdrawal> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/transfers/withdrawals/fiat',
@@ -145,6 +146,9 @@ export class TransfersFiatService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+            },
         });
     }
 

@@ -30,6 +30,11 @@ x-schemas:
   Withdrawal: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/Withdrawal'}
   Deposit: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/Deposit'}
 
+x-responses:
+  BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
+
+
 paths:
   /transfers/withdrawals/subscriptions/finalized:
     post:
@@ -56,8 +61,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Subscription'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
       callbacks:
         onWithdrawalFinalized:
           '{$request.body#/subscriberUrl}':
@@ -99,8 +106,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Subscription'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
         default:
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: '#/x-responses/ErrorResponse'
       callbacks:
         onWithdrawalFinalized:
           '{$request.body#/subscriberUrl}':
@@ -118,27 +127,7 @@ paths:
                   $ref: '#/components/responses/ErrorResponse'
 
 components:
-  responses:
-    ErrorResponse:
-      description: Failed to process request.
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              errorCode:
-                $ref: '#/components/schemas/ErrorCode'
-              description:
-                type: string
-
   schemas:
-    ErrorCode:
-      type: string
-      enum:
-        - unexpected-error
-        - bad-amount-format
-        - unknown-asset
-
     Subscription:
       type: object
       properties:
