@@ -2,8 +2,16 @@ import logger from '../../logging';
 import { IncomingHttpHeaders } from 'http';
 import { verifySignature } from '../../security';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
+import { BadRequestError, RequestPart } from '../../client/generated';
 
 const log = logger('middleware:verify-signature');
+
+const INVALID_SIGNATURE_ERROR: BadRequestError = {
+  message: 'Provided signature is invalid',
+  errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
+  propertyName: 'X-FBAPI-SIGNATURE',
+  requestPart: RequestPart.HEADERS,
+};
 
 export function verifySignatureMiddleware(
   request: FastifyRequest,
@@ -21,7 +29,7 @@ export function verifySignatureMiddleware(
   const isValid = verifySignature(payload, signature);
 
   if (!isValid) {
-    reply.code(400).send({ errorCode: 'invalid-signature' });
+    reply.code(400).send(INVALID_SIGNATURE_ERROR);
     return;
   }
 

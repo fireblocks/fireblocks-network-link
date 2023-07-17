@@ -17,7 +17,7 @@ describe('Security header tests', () => {
 
   describe.each(supportedOpenApiEndpoints)(
     '$method $url',
-    ({ method, url, schema, operationId }: OpenApiOperationDetails) => {
+    ({ schema, operationId }: OpenApiOperationDetails) => {
       const sendRequest = async (headersGenerator: HeadersGenerator) => {
         const client = new ApiClient(headersGenerator);
         const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
@@ -43,7 +43,7 @@ describe('Security header tests', () => {
           expect(apiError.status).toEqual(400);
         });
         it('should properly describe the error in the response body', () => {
-          expect(apiError.body.errorCode).toEqual(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
+          expect(apiError.body.errorType).toEqual(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
           expect(apiError.body.requestPart).toEqual(RequestPart.HEADERS);
           expect(apiError.body.propertyName).toEqual('X-FBAPI-SIGNATURE');
         });
