@@ -334,12 +334,15 @@ paths:
                   type: string
                   description: >
                     The destination address of the withdraw.
-                    Will be masked if configured on the registration, by default it's not masked.
+                    The `toAddress`` and `tag` fields will be masked if configured on the registration of the third party,
+                    by default `NONE` is selected - meaning they're not masked.
                     Masking options: `NONE`, `SHA256`, `SHA3_256`, `SHA512`
                 tag:
                   description: >
                     A 'tag' or 'memo', if required by the network.
-                    Will be masked the similar way toAddress will be masked.
+                    The `toAddress`` and `tag` fields will be masked if configured on the registration of the third party,
+                    by default `NONE` is selected - meaning they're not masked.
+                    Masking options: `NONE`, `SHA256`, `SHA3_256`, `SHA512`
                   type: string
                   nullable: true
                   example: null
