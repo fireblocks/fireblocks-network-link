@@ -13,7 +13,7 @@ const optionalCapabilitiesComponents = [
 ];
 
 describe('Capabilities', () => {
-  describe('Initial discovery', () => {
+  describe('/capabilities', () => {
     let result: Capabilities;
 
     beforeAll(async () => {
