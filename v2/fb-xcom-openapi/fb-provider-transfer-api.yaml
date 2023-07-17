@@ -8,11 +8,16 @@ info:
     url: https://fireblocks.com
 
 tags:
-  - name: Capabilities
-  - name: Transfers
-  - name: Transfers (Blockchain)
-  - name: Transfers (Fiat)
-  - name: Transfers (Peer Accounts)
+  - name: capabilities
+    description: Server capabilities discovery operations.
+  - name: transfers
+    description: Fund transfers management operations.
+  - name: transfersBlockchain
+    description: Fund transfers over public blockchains.
+  - name: transfersFiat
+    description: National currency fund transfers.
+  - name: transfersPeerAccounts
+    description: Transfers to a peer account managed by the same provider.
 
 x-path-params:
   EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
@@ -44,9 +49,9 @@ paths:
 
   /capabilities/transfers/withdrawals:
     get:
-      operationId: GetWithdrawalMethods
+      operationId: getWithdrawalMethods
       summary: Get list of supported withdrawal methods
-      tags: [Capabilities]
+      tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -117,9 +122,9 @@ paths:
 
   /capabilities/transfers/deposits:
     get:
-      operationId: GetDepositMethods
+      operationId: getDepositMethods
       summary: Get list of supported deposit methods
-      tags: [Capabilities]
+      tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -191,9 +196,9 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals:
     get:
-      operationId: GetWithdrawals
+      operationId: getWithdrawals
       summary: Get list of withdrawals sorted by creation time
-      tags: [Transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -214,9 +219,9 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/{id}:
     get:
-      operationId: GetWithdrawalDetails
+      operationId: getWithdrawalDetails
       summary: Get withdrawal details
-      tags: [Transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -238,9 +243,9 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/blockchain:
     get:
-      operationId: GetBlockchainWithdrawals
+      operationId: getBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
-      tags: [ 'Transfers (Blockchain)' ]
+      tags: [ transfersBlockchain ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -268,10 +273,10 @@ paths:
         default:
           $ref: '#/x-responses/ErrorResponse'
     post:
-      operationId: CreateBlockchainWithdrawal
+      operationId: createBlockchainWithdrawal
       summary: Create new withdrawal over public blockchain
       description: Should reject any non blockchain withdrawal request.
-      tags: [ 'Transfers (Blockchain)' ]
+      tags: [ transfersBlockchain ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -298,9 +303,9 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/fiat:
     get:
-      operationId: GetFiatWithdrawals
+      operationId: getFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
-      tags: [ 'Transfers (Fiat)' ]
+      tags: [ transfersFiat ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -328,10 +333,10 @@ paths:
         default:
           $ref: '#/x-responses/ErrorResponse'
     post:
-      operationId: CreateFiatWithdrawal
+      operationId: createFiatWithdrawal
       summary: Create new fiat withdrawal
       description: Should reject any non fiat withdrawal request.
-      tags: [ 'Transfers (Fiat)' ]
+      tags: [ transfersFiat ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -358,9 +363,9 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
     get:
-      operationId: GetPeerAccountWithdrawals
+      operationId: getPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
-      tags: [ 'Transfers (Peer Accounts)' ]
+      tags: [ transfersPeerAccounts ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -389,10 +394,10 @@ paths:
           $ref: '#/x-responses/ErrorResponse'
 
     post:
-      operationId: CreatePeerAccountWithdrawal
+      operationId: createPeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
       description: Should reject any non peer acount withdrawal request.
-      tags: [ 'Transfers (Peer Accounts)' ]
+      tags: [ transfersPeerAccounts ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -420,9 +425,9 @@ paths:
 
   /accounts/{accountId}/transfers/withdrawals/subaccount:
     get:
-      operationId: GetSubAccountWithdrawals
+      operationId: getSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
-      tags: [ Accounts ]
+      tags: [ accounts ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -450,12 +455,12 @@ paths:
         default:
           $ref: '#/x-responses/ErrorResponse'
     post:
-      operationId: CreateSubAccountWithdrawal
+      operationId: createSubAccountWithdrawal
       summary: Create new transfer to another sub-account
       description: >- 
         Transfers assets between different sub-accounts of the same user.
         Should reject any withdrawals that are not sub-account transfers.
-      tags: [ Accounts ]
+      tags: [ accounts ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -482,9 +487,9 @@ paths:
 
   /accounts/{accountId}/transfers/deposits:
     get:
-      operationId: GetDeposits
+      operationId: getDeposits
       summary: Get list of deposits sorted by creation time
-      tags: [Transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -513,9 +518,9 @@ paths:
 
   /accounts/{accountId}/transfers/deposits/{id}:
     get:
-      operationId: GetDepositDetails
+      operationId: getDepositDetails
       summary: Get deposit details
-      tags: [Transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -537,9 +542,9 @@ paths:
 
   /accounts/{accountId}/transfers/deposits/addresses:
     post:
-      operationId: CreateDepositAddress
+      operationId: createDepositAddress
       summary: Create new deposit address
-      tags: [Transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -564,9 +569,9 @@ paths:
         default:
           $ref: '#/x-responses/ErrorResponse'
     get:
-      operationId: GetDepositAddresses
+      operationId: getDepositAddresses
       summary: Get list of existing deposit addresses
-      tags: [Transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -595,9 +600,9 @@ paths:
 
   /accounts/{accountId}/transfers/deposits/addresses/{id}:
     get:
-      operationId: GetDepositAddressDetails
+      operationId: getDepositAddressDetails
       summary: Get details of a deposit address
-      tags: [Transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -618,9 +623,9 @@ paths:
           $ref: '#/x-responses/ErrorResponse'
 
     delete:
-      operationId: DisableDepositAddress
+      operationId: disableDepositAddress
       summary: Disable a deposit address
-      tags: [Transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'

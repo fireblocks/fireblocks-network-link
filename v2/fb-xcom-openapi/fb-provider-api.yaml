@@ -305,15 +305,19 @@ info:
     ```
 
 tags:
-  - name: Capabilities
-  - name: Accounts
-  - name: Balances
-  - name: 'Historic Balances'
+  - name: capabilities
+    description: Server capabilities discovery operations.
+  - name: accounts
+    description: User accounts management operations.
+  - name: balances
+    description: Balances management operations.
+  - name: historicBalances
+    description: Historic balances operations.
 
 paths:
   /capabilities:
     get:
-      operationId: GetCapabilities
+      operationId: getCapabilities
       summary: Describe server capabilities
       description: >-
         Returns the API version and all the capabilities that the server supports.  
@@ -321,7 +325,7 @@ paths:
         The capabilities are specified as a map. The map keys are the capability
         names and the values are lists of account IDs. If all the accounts support
         a capability, an asterisk could be used, instead of listing all the accounts.
-      tags: [Capabilities]
+      tags: [ capabilities ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -377,12 +381,12 @@ paths:
 
   /capabilities/assets:
     get:
-      operationId: GetAdditionalAssets
+      operationId: getAdditionalAssets
       summary: Get list of supported additional assets
       description: >-
         Returns assets, supported in addition to the predefined national
         currencies and the native cryptocurrencies.
-      tags: [Capabilities]
+      tags: [ capabilities ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -461,12 +465,12 @@ paths:
 
   /capabilities/assets/{id}:
     get:
-      operationId: GetAssetDetails
+      operationId: getAssetDetails
       summary: Get details of a supported additional asset.
       description: >-
         Returns the details of an assets, supported in addition to the predefined
         national currencies and the native cryptocurrencies.
-      tags: [Capabilities]
+      tags: [ capabilities ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -487,9 +491,9 @@ paths:
 
   /capabilities/balances:
     get:
-      operationId: GetBalanceAssets
+      operationId: getBalanceAssets
       summary: Get list of supported balance assets
-      tags: [Capabilities]
+      tags: [ capabilities ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -517,9 +521,9 @@ paths:
 
   /accounts:
     get:
-      operationId: GetAccounts
+      operationId: getAccounts
       summary: Get list of sub-accounts
-      tags: [Accounts]
+      tags: [ accounts ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -548,9 +552,9 @@ paths:
 
   /accounts/{accountId}:
     get:
-      operationId: GetAccountDetails
+      operationId: getAccountDetails
       summary: Get sub-account details
-      tags: [Accounts]
+      tags: [ accounts ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -572,9 +576,9 @@ paths:
 
   /accounts/{accountId}/balances:
     get:
-      operationId: GetBalances
+      operationId: getBalances
       summary: Get current balances
-      tags: [Balances]
+      tags: [ balances ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -647,9 +651,9 @@ paths:
 
   /accounts/{accountId}/historic-balances:
     get:
-      operationId: GetHistoricBalances
+      operationId: getHistoricBalances
       summary: Get balances at specific time in the past
-      tags: [ 'Historic Balances' ]
+      tags: [ historicBalances ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
