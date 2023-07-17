@@ -382,6 +382,8 @@ paths:
                         - 7885a47b-0719-4448-b59e-3b8497cd1685
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets:
@@ -457,6 +459,8 @@ paths:
                         decimalPlaces: 6
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets/{id}:
@@ -481,6 +485,8 @@ paths:
                 $ref: '#/components/schemas/AssetDefinition'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/balances:
@@ -511,6 +517,8 @@ paths:
                       $ref: '#/components/schemas/AssetReference'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts:
@@ -542,6 +550,8 @@ paths:
                       $ref: '#/components/schemas/Account'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}:
@@ -566,6 +576,8 @@ paths:
                 $ref: '#/components/schemas/Account'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/balances:
@@ -624,6 +636,8 @@ paths:
                         availableAmount: '95.03'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/historic-balances:
@@ -663,6 +677,8 @@ paths:
                     $ref: '#/components/schemas/Balances'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/liquidity/quotes:
@@ -685,6 +701,8 @@ paths:
                 $ref: '#/components/schemas/QuoteCapabilities'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes:
@@ -714,6 +732,8 @@ paths:
                 $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
@@ -745,6 +765,8 @@ paths:
                       $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}:
@@ -769,6 +791,8 @@ paths:
                 $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}/execute:
@@ -793,6 +817,8 @@ paths:
                 $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/trading/books:
@@ -823,6 +849,8 @@ paths:
                       $ref: '#/components/schemas/OrderBook'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}:
@@ -846,6 +874,8 @@ paths:
                 $ref: '#/components/schemas/OrderBook'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/asks:
@@ -880,6 +910,8 @@ paths:
                       $ref: '#/components/schemas/MarketEntry'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/bids:
@@ -914,6 +946,8 @@ paths:
                       $ref: '#/components/schemas/MarketEntry'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/history:
@@ -948,6 +982,8 @@ paths:
                       $ref: '#/components/schemas/MarketTrade'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders:
@@ -982,6 +1018,8 @@ paths:
                       $ref: '#/components/schemas/Order'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -1028,6 +1066,8 @@ paths:
                 trades: []
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders/{id}:
@@ -1052,6 +1092,8 @@ paths:
                 $ref: '#/components/schemas/Order'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
@@ -1071,6 +1113,8 @@ paths:
           description: Order canceled.
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/transfers/withdrawals:
@@ -1145,6 +1189,8 @@ paths:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/transfers/deposits:
@@ -1219,6 +1265,8 @@ paths:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals:
@@ -1242,6 +1290,8 @@ paths:
           $ref: '#/components/responses/WithdrawalsResponse'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/{id}:
@@ -1266,6 +1316,8 @@ paths:
                 $ref: '#/components/schemas/Withdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/blockchain:
@@ -1298,6 +1350,8 @@ paths:
                       $ref: '#/components/schemas/BlockchainWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -1327,6 +1381,8 @@ paths:
                 $ref: '#/components/schemas/BlockchainWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/fiat:
@@ -1359,6 +1415,8 @@ paths:
                       $ref: '#/components/schemas/FiatWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -1388,6 +1446,8 @@ paths:
                 $ref: '#/components/schemas/FiatWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
@@ -1420,6 +1480,8 @@ paths:
                       $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -1449,6 +1511,8 @@ paths:
                 $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/subaccount:
@@ -1481,6 +1545,8 @@ paths:
                       $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
@@ -1510,6 +1576,8 @@ paths:
                 $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits:
@@ -1541,6 +1609,8 @@ paths:
                       $ref: '#/components/schemas/Deposit'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/{id}:
@@ -1565,6 +1635,8 @@ paths:
                 $ref: '#/components/schemas/Deposit'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses:
@@ -1594,6 +1666,8 @@ paths:
                 $ref: '#/components/schemas/DepositAddress'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
@@ -1624,6 +1698,8 @@ paths:
                       $ref: '#/components/schemas/DepositAddress'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses/{id}:
@@ -1648,6 +1724,8 @@ paths:
                 $ref: '#/components/schemas/DepositAddress'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
@@ -1667,6 +1745,8 @@ paths:
           description: Deposit address disabled.
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 components:
@@ -1779,6 +1859,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/BadRequestError'
+    UnauthorizedResponse:
+      description: Request is unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
     ErrorResponse:
       description: Failed to process request.
       content:
@@ -1827,6 +1913,27 @@ components:
           type: string
         requestPart:
           $ref: '#/components/schemas/RequestPart'
+    UnauthorizedError:
+      description: Request is unauthorized
+      type: object
+      required:
+        - message
+        - errorType
+      properties:
+        message:
+          description: Description of the error.
+          type: string
+        errorType:
+          enum:
+            - unauthorized
+        propertyName:
+          description: Name of property that caused the error.
+          enum:
+            - X-FBAPI-KEY
+        requestPart:
+          description: Request part where the error occurred.
+          enum:
+            - headers
     RequestPart:
       description: Request part where the error occurred.
       enum:

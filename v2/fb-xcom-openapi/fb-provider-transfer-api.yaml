@@ -43,6 +43,7 @@ x-schemas:
 
 x-responses:
   BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
   ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
 
 paths:
@@ -117,6 +118,8 @@ paths:
                           assetId: "f0844d82-7097-4521-95bc-d843724a893e"
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -191,6 +194,8 @@ paths:
                           assetId: "f0844d82-7097-4521-95bc-d843724a893e"
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -214,6 +219,8 @@ paths:
           $ref: '#/components/responses/WithdrawalsResponse'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -238,6 +245,8 @@ paths:
                 $ref: '#/components/schemas/Withdrawal'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -270,6 +279,8 @@ paths:
                       $ref: '#/components/schemas/BlockchainWithdrawal'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
     post:
@@ -298,6 +309,8 @@ paths:
                 $ref: '#/components/schemas/BlockchainWithdrawal'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -330,6 +343,8 @@ paths:
                       $ref: '#/components/schemas/FiatWithdrawal'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
     post:
@@ -358,6 +373,8 @@ paths:
                 $ref: '#/components/schemas/FiatWithdrawal'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -390,6 +407,8 @@ paths:
                       $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -419,6 +438,8 @@ paths:
                 $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -452,6 +473,8 @@ paths:
                       $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
     post:
@@ -482,6 +505,8 @@ paths:
                 $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -513,6 +538,8 @@ paths:
                       $ref: '#/components/schemas/Deposit'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -537,6 +564,8 @@ paths:
                 $ref: '#/components/schemas/Deposit'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -566,6 +595,8 @@ paths:
                 $ref: '#/components/schemas/DepositAddress'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
     get:
@@ -595,6 +626,8 @@ paths:
                       $ref: '#/components/schemas/DepositAddress'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -619,6 +652,8 @@ paths:
                 $ref: '#/components/schemas/DepositAddress'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
@@ -638,6 +673,8 @@ paths:
           description: Deposit address disabled.
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
 
