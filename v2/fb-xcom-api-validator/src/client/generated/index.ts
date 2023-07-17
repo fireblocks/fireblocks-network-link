@@ -96,6 +96,7 @@ export type { SwiftTransfer } from './models/SwiftTransfer';
 export type { SwiftTransferDestination } from './models/SwiftTransferDestination';
 export type { Transfer } from './models/Transfer';
 export type { TransferCapability } from './models/TransferCapability';
+export { UnauthorizedError } from './models/UnauthorizedError';
 export type { Withdrawal } from './models/Withdrawal';
 export type { WithdrawalCapability } from './models/WithdrawalCapability';
 export type { WithdrawalCommonProperties } from './models/WithdrawalCommonProperties';

@@ -7,6 +7,7 @@ import Fastify, { HTTPMethods, RouteOptions, preHandlerHookHandler } from 'fasti
 import { FastifySchemaValidationError, SchemaErrorDataVar } from 'fastify/types/schema';
 import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
 import { timestampMiddleware } from './middlewares/timestamp-middleware';
+import { apiKeyMiddleware } from './middlewares/api-key-middleware';
 
 const log = logger('app');
 
@@ -24,6 +25,7 @@ export class WebApp {
     this.app = Fastify({ logger: log.pinoLogger, schemaErrorFormatter });
     this.app.addHook('preHandler', verifySignatureMiddleware);
     this.app.addHook('preHandler', timestampMiddleware);
+    this.app.addHook('preHandler', apiKeyMiddleware);
   }
 
   public async start(): Promise<void> {
