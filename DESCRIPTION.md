@@ -43,7 +43,7 @@ Once your license agreement for listing your 3rd party with Fireblocks is signed
 11.  Connection supports sub-account to sub-account transfers: true or false
 12.  What is your sub account's main fundable type? By default it is equal to the main account's fundable type.
 13.  Does transferring assets to the 3rd party account require manually generating a deposit address on the 3rd party's portal?: true or false
-14. Upon withdrawals, does your 3rd party require the "address" field to be masked?: valid values are NONE, SHA512, SHA3\_256, SHA256. NONE is the default.
+14. Upon withdrawals, does your 3rd party require the "address" & "tag" field to be masked?: valid values are NONE, SHA512, SHA3\_256, SHA256. NONE is the default.
 15.  Select your authentication preferences:
 * HMAC:
     - Request encoding format: valid values are PLAIN, BASE64, HEXSTR, BASE58, BASE32
@@ -186,6 +186,10 @@ _Note_ that not all error codes need to be in use!
 
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
+
+### v0.9.3
+> 17 July 2023
+* Added isSettlementTx as a flag for the withdraw endpoint, for third party services that support off-exchange.
 
 ### v0.9.2
 > 16 July 2023
