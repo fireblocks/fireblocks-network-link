@@ -8,8 +8,10 @@ info:
     url: https://fireblocks.com
 
 tags:
-  - name: Trading
-  - name: Capabilities
+  - name: trading
+    description: Order book trading operations.
+  - name: capabilities
+    description: Server capabilities discovery operations.
 
 x-path-params:
   EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
@@ -38,9 +40,9 @@ x-responses:
 paths:
   /capabilities/trading/books:
     get:
-      operationId: GetBooks
+      operationId: getBooks
       summary: List order books
-      tags: [Capabilities]
+      tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -68,9 +70,9 @@ paths:
 
   /trading/books/{id}:
     get:
-      operationId: GetBookDetails
+      operationId: getBookDetails
       summary: Get details of an order book
-      tags: [Trading]
+      tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -91,12 +93,12 @@ paths:
 
   /trading/books/{id}/asks:
     get:
-      operationId: GetBookAsks
+      operationId: getBookAsks
       summary: Get active sell orders in an order book
       description: >-
         List active sell orders in an order book, sorted ascending
         by the sell price.
-      tags: [Trading]
+      tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -126,12 +128,12 @@ paths:
 
   /trading/books/{id}/bids:
     get:
-      operationId: GetBookBids
+      operationId: getBookBids
       summary: Get active buy orders in an order book
       description: >-
         List active buy orders in an order book, sorted descending
         by the buy price.
-      tags: [Trading]
+      tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -161,12 +163,12 @@ paths:
 
   /trading/books/{id}/history:
     get:
-      operationId: GetBookOrderHistory
+      operationId: getBookOrderHistory
       summary: List fulfilled orders in an order book
       description: >-
         List fulfilled orders in an order book, sorted descending
         by the fulfillment time.
-      tags: [Trading]
+      tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -196,11 +198,11 @@ paths:
 
   /accounts/{accountId}/trading/orders:
     get:
-      operationId: GetOrders
+      operationId: getOrders
       summary: List trading orders
       description: >-
         List trading orders sorted descending by the creation time.
-      tags: [ Trading ]
+      tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -228,9 +230,9 @@ paths:
         default:
           $ref: '#/x-responses/ErrorResponse'
     post:
-      operationId: CreateOrder
+      operationId: createOrder
       summary: Create a new trading order
-      tags: [ Trading ]
+      tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -275,9 +277,9 @@ paths:
 
   /accounts/{accountId}/trading/orders/{id}:
     get:
-      operationId: GetOrderDetails
+      operationId: getOrderDetails
       summary: Get trading order details
-      tags: [ Trading ]
+      tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -297,9 +299,9 @@ paths:
         default:
           $ref: '#/x-responses/ErrorResponse'
     delete:
-      operationId: CancelOrder
+      operationId: cancelOrder
       summary: Cancel an active trading order
-      tags: [ Trading ]
+      tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'

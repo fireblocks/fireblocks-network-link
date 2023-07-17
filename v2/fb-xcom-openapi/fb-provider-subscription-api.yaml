@@ -8,8 +8,10 @@ info:
     url: https://fireblocks.com
 
 tags:
-  - name: Transfers
-  - name: Subscriptions
+  - name: transfers
+    description: Fun transfer operations.
+  - name: subscriptions
+    description: Web hook subscription operations.
 
 x-path-params:
   EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
@@ -79,7 +81,7 @@ paths:
                 '200':
                   description: Successful update.
                 default:
-                  $ref: '#/components/responses/ErrorResponse'
+                  $ref: '#/x-responses/ErrorResponse'
 
   /transfers/deposits/subscriptions/finalized:
     post:
@@ -124,7 +126,7 @@ paths:
                 '200':
                   description: Successful update.
                 default:
-                  $ref: '#/components/responses/ErrorResponse'
+                  $ref: '#/x-responses/ErrorResponse'
 
 components:
   schemas:

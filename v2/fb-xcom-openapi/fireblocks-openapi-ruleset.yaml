@@ -1,7 +1,6 @@
 extends: [[spectral:oas, all]]
 rules:
   operation-description: off
-  tag-description: off
 
   oas3-api-servers: off
   info-license: off
@@ -105,3 +104,22 @@ rules:
               name:
                 const: X-FBAPI-SIGNATURE
 
+  fb-tags-camelcase:
+    description: All tag names must be camelCase.
+    severity: error
+    given: "$.tags[*].name"
+    then:
+      function: casing
+      functionOptions:
+        type: camel
+    message: "{{description}} But {{path}}: \"{{value}}\""
+
+  fb-operation-ids-camelcase:
+    description: All operation IDs must be camelCase.
+    severity: error
+    given: "$.paths.*.*.operationId"
+    then:
+      function: casing
+      functionOptions:
+        type: camel
+    message: "{{description}} But {{property}}: \"{{value}}\""
