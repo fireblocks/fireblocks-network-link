@@ -7,7 +7,7 @@ import { BadRequestError, RequestPart } from '../../client/generated';
 const log = logger('middleware:timestamp');
 
 const EXPIRED_REQUEST_ERROR: BadRequestError = {
-  message: 'Expired request',
+  message: 'Request timestamp header is too old',
   errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
   requestPart: RequestPart.HEADERS,
   propertyName: 'X-FBAPI-TIMESTAMP',
@@ -20,9 +20,7 @@ export function timestampMiddleware(
 ): void {
   const timestamp = getTimestampFromHeaders(request.headers);
 
-  const expired = isExpired(timestamp);
-
-  if (expired) {
+  if (isExpired(timestamp)) {
     reply.code(400).send(EXPIRED_REQUEST_ERROR);
     return;
   }
@@ -34,7 +32,7 @@ function getTimestampFromHeaders(headers: IncomingHttpHeaders): number {
   return Number(headers['x-fbapi-timestamp']);
 }
 
-function isExpired(timestamp: number): boolean {
+export function isExpired(timestamp: number): boolean {
   const requestTTLInSeconds = config.get('authentication').requestTTL;
   const oldestAllowed = Date.now() - requestTTLInSeconds * 1000;
   return timestamp < oldestAllowed;
