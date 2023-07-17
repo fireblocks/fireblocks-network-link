@@ -12,6 +12,8 @@ const optionalCapabilitiesComponents = [
   'subscriptions',
 ];
 
+const requiredCapabilitiesComponents = ['accounts', 'balances'];
+
 describe('Capabilities', () => {
   describe('/capabilities', () => {
     let result: Capabilities;
@@ -25,14 +27,19 @@ describe('Capabilities', () => {
       expect(isValidApiVersion(result.version)).toBe(true);
     });
 
-    describe('Components', () => {
-      it('should contain accounts and balances (required components)', () => {
-        expect(result.components.accounts).toBeDefined();
-        expect(result.components.balances).toBeDefined();
+    describe('Component', () => {
+      describe.each(requiredCapabilitiesComponents)('%s (required)', (componentName) => {
+        it('should be listed in response', () => {
+          expect(result.components[componentName]).toBeDefined();
+        });
+
+        it('should have a valid value', () => {
+          expect(isValidComponentValue(result.components[componentName])).toBe(true);
+        });
       });
 
-      describe.each(optionalCapabilitiesComponents)('%s', (componentName) => {
-        it('should have wildcard value or an array of identifiers when component is returned', () => {
+      describe.each(optionalCapabilitiesComponents)('%s (optional)', (componentName) => {
+        it('should have a valid value when listed in the response', () => {
           expect(isValidComponentValue(result.components[componentName])).toBe(true);
         });
       });
