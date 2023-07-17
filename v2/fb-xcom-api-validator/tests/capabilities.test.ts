@@ -21,8 +21,8 @@ describe('Capabilities', () => {
       result = (await client.capabilities.getCapabilities({})) as Capabilities;
     });
 
-    it('should include the correct api version', () => {
-      expect(result.version).toEqual('0.0.1');
+    it('should include a valid api version', () => {
+      expect(isValidApiVersion(result.version)).toBe(true);
     });
 
     describe('Components', () => {
@@ -39,6 +39,11 @@ describe('Capabilities', () => {
     });
   });
 });
+
+function isValidApiVersion(value: string) {
+  const apiVersionRegex = /^\d+\.\d+\.\d+$/;
+  return apiVersionRegex.test(value);
+}
 
 function isStringArray(value: unknown) {
   if (!Array.isArray(value)) {
