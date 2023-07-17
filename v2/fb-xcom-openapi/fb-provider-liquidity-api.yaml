@@ -8,8 +8,10 @@ info:
     url: https://fireblocks.com
 
 tags:
-  - name: Liquidity
-  - name: Capabilities
+  - name: liquidity
+    description: Liquidity operations
+  - name: capabilities
+    description: Server capabilities discovery operations.
 
 x-path-params:
   EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
@@ -39,9 +41,9 @@ x-responses:
 paths:
   /capabilities/liquidity/quotes:
     get:
-      operationId: GetQuoteCapabilities
+      operationId: getQuoteCapabilities
       summary: List possible asset conversions
-      tags: [Capabilities]
+      tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -61,13 +63,13 @@ paths:
 
   /accounts/{accountId}/liquidity/quotes:
     post:
-      operationId: CreateQuote
+      operationId: createQuote
       summary: Quote creation request
       description: >-
         Either `fromAmount` or `toAmount` must be specified,
         while the unspecified amount will be populated by the server and
         returned in the response.
-      tags: [Liquidity]
+      tags: [ liquidity ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -91,9 +93,9 @@ paths:
         default:
           $ref: '#/x-responses/ErrorResponse'
     get:
-      operationId: GetQuotes
+      operationId: getQuotes
       summary: Get list of quotes sorted by creation time
-      tags: [Liquidity]
+      tags: [ liquidity ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -123,9 +125,9 @@ paths:
 
   /accounts/{accountId}/liquidity/quotes/{id}:
     get:
-      operationId: GetQuoteDetails
+      operationId: getQuoteDetails
       summary: Get quote details
-      tags: [Liquidity]
+      tags: [ liquidity ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -147,9 +149,9 @@ paths:
 
   /accounts/{accountId}/liquidity/quotes/{id}/execute:
     post:
-      operationId: ExecuteQuote
+      operationId: executeQuote
       summary: Execute quote
-      tags: [Liquidity]
+      tags: [ liquidity ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
