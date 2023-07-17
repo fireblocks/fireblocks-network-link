@@ -1,4 +1,6 @@
+import { JsonValue } from 'type-fest';
 import ApiClient from '../../src/client';
+import { JSONSchemaFaker } from 'json-schema-faker';
 import { OpenApiOperationDetails } from '../../src/server/schema';
 import { ApiRequestOptions } from '../../src/client/generated/core/ApiRequestOptions';
 import { createSecurityHeaders, SecurityHeaders } from '../../src/client/SecureClient';
@@ -29,12 +31,18 @@ describe('Security header tests', () => {
 
   describe.each(supportedOpenApiEndpoints)(
     '$method $url',
-    ({ schema, operationId }: OpenApiOperationDetails) => {
+    ({ method, operationId, schema }: OpenApiOperationDetails) => {
       const sendRequest = async (headersGenerator: HeadersGenerator) => {
         const client = new ApiClient(headersGenerator);
         const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
+
+        let requestBody: JsonValue | undefined = undefined;
+        if (method === 'POST' && schema?.body) {
+          requestBody = await JSONSchemaFaker.resolve(schema.body);
+        }
+
         try {
-          await operationFunction({});
+          await operationFunction({ requestBody });
         } catch (err) {
           if (err instanceof ApiError) {
             return err;
