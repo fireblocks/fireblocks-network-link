@@ -1,7 +1,7 @@
 import config from '../config';
 import { randomUUID } from 'crypto';
 import { buildRequestSignature } from '../security';
-import { request as requestInternal } from './generated/core/request';
+import { getQueryString, request as requestInternal } from './generated/core/request';
 import { ApiRequestOptions } from './generated/core/ApiRequestOptions';
 import {
   AccountsService,
@@ -137,12 +137,19 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
   }
 }
 
-export function createSecurityHeaders({ method, url, body }: ApiRequestOptions): SecurityHeaders {
+export function createSecurityHeaders(options: ApiRequestOptions): SecurityHeaders {
   const apiKey = config.get('authentication').apiKey;
   const nonce = randomUUID();
   const timestamp = Date.now();
 
-  const payload = buildSignaturePayload(method, url, body, timestamp, nonce);
+  const relativeUrl = buildRelativeUrl(options);
+  const payload = buildSignaturePayload(
+    options.method,
+    relativeUrl,
+    options.body,
+    timestamp,
+    nonce
+  );
   const signature = buildRequestSignature(payload);
 
   return {
@@ -151,6 +158,20 @@ export function createSecurityHeaders({ method, url, body }: ApiRequestOptions):
     xFbapiTimestamp: timestamp,
     xFbapiNonce: nonce,
   };
+}
+
+/**
+ * Imitates the uri building done in the generated client from the url, path and query options
+ */
+function buildRelativeUrl(options: ApiRequestOptions): string {
+  const relativePath = options.url.replace(/{(.*?)}/g, (substring: string, group: string) => {
+    // eslint-disable-next-line no-prototype-builtins
+    if (options.path?.hasOwnProperty(group)) {
+      return encodeURI(String(options.path[group]));
+    }
+    return substring;
+  });
+  return `${relativePath}${options.query ? getQueryString(options.query) : ''}`;
 }
 
 /**
