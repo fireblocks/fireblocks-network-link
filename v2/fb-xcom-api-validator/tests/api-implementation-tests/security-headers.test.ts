@@ -8,16 +8,17 @@ import {
   RequestPart,
   UnauthorizedError,
 } from '../../src/client/generated';
+import { AxiosRequestConfig } from 'axios';
 
-type HeadersGenerator = (options: ApiRequestOptions) => SecurityHeaders;
+type HeadersGenerator = (options: AxiosRequestConfig) => SecurityHeaders;
 
-function headersWithoutSignature(options: ApiRequestOptions): SecurityHeaders {
+function headersWithoutSignature(options: AxiosRequestConfig): SecurityHeaders {
   const headers = createSecurityHeaders(options);
   headers.xFbapiSignature = '';
   return headers;
 }
 
-function headersWithoutApiKey(options: ApiRequestOptions): SecurityHeaders {
+function headersWithoutApiKey(options: AxiosRequestConfig): SecurityHeaders {
   const headers = createSecurityHeaders(options);
   headers.xFbapiKey = '';
   return headers;
