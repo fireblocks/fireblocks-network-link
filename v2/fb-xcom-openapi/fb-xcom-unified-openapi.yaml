@@ -302,27 +302,37 @@ info:
     Example: MXN              MXN                                  USD               USDC
     ```
 tags:
-  - name: Capabilities
-  - name: Accounts
-  - name: Balances
-  - name: Historic Balances
-  - name: Liquidity
-  - name: Trading
-  - name: Transfers
-  - name: Transfers (Blockchain)
-  - name: Transfers (Fiat)
-  - name: Transfers (Peer Accounts)
+  - name: capabilities
+    description: Server capabilities discovery operations.
+  - name: accounts
+    description: User accounts management operations.
+  - name: balances
+    description: Balances management operations.
+  - name: historicBalances
+    description: Historic balances operations.
+  - name: liquidity
+    description: Liquidity operations
+  - name: trading
+    description: Order book trading operations.
+  - name: transfers
+    description: Fund transfers management operations.
+  - name: transfersBlockchain
+    description: Fund transfers over public blockchains.
+  - name: transfersFiat
+    description: National currency fund transfers.
+  - name: transfersPeerAccounts
+    description: Transfers to a peer account managed by the same provider.
 paths:
   /capabilities:
     get:
-      operationId: GetCapabilities
+      operationId: getCapabilities
       summary: Describe server capabilities
       description: |-
         Returns the API version and all the capabilities that the server supports.  
           
         The capabilities are specified as a map. The map keys are the capability names and the values are lists of account IDs. If all the accounts support a capability, an asterisk could be used, instead of listing all the accounts.
       tags:
-        - Capabilities
+        - capabilities
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -372,15 +382,17 @@ paths:
                         - 7885a47b-0719-4448-b59e-3b8497cd1685
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets:
     get:
-      operationId: GetAdditionalAssets
+      operationId: getAdditionalAssets
       summary: Get list of supported additional assets
       description: Returns assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
       tags:
-        - Capabilities
+        - capabilities
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -447,15 +459,17 @@ paths:
                         decimalPlaces: 6
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets/{id}:
     get:
-      operationId: GetAssetDetails
+      operationId: getAssetDetails
       summary: Get details of a supported additional asset.
       description: Returns the details of an assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
       tags:
-        - Capabilities
+        - capabilities
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -471,14 +485,16 @@ paths:
                 $ref: '#/components/schemas/AssetDefinition'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/balances:
     get:
-      operationId: GetBalanceAssets
+      operationId: getBalanceAssets
       summary: Get list of supported balance assets
       tags:
-        - Capabilities
+        - capabilities
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -501,14 +517,16 @@ paths:
                       $ref: '#/components/schemas/AssetReference'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts:
     get:
-      operationId: GetAccounts
+      operationId: getAccounts
       summary: Get list of sub-accounts
       tags:
-        - Accounts
+        - accounts
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -532,14 +550,16 @@ paths:
                       $ref: '#/components/schemas/Account'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}:
     get:
-      operationId: GetAccountDetails
+      operationId: getAccountDetails
       summary: Get sub-account details
       tags:
-        - Accounts
+        - accounts
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -556,14 +576,16 @@ paths:
                 $ref: '#/components/schemas/Account'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/balances:
     get:
-      operationId: GetBalances
+      operationId: getBalances
       summary: Get current balances
       tags:
-        - Balances
+        - balances
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -614,14 +636,16 @@ paths:
                         availableAmount: '95.03'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/historic-balances:
     get:
-      operationId: GetHistoricBalances
+      operationId: getHistoricBalances
       summary: Get balances at specific time in the past
       tags:
-        - Historic Balances
+        - historicBalances
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -653,14 +677,16 @@ paths:
                     $ref: '#/components/schemas/Balances'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/liquidity/quotes:
     get:
-      operationId: GetQuoteCapabilities
+      operationId: getQuoteCapabilities
       summary: List possible asset conversions
       tags:
-        - Capabilities
+        - capabilities
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -675,15 +701,17 @@ paths:
                 $ref: '#/components/schemas/QuoteCapabilities'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes:
     post:
-      operationId: CreateQuote
+      operationId: createQuote
       summary: Quote creation request
       description: Either `fromAmount` or `toAmount` must be specified, while the unspecified amount will be populated by the server and returned in the response.
       tags:
-        - Liquidity
+        - liquidity
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -704,13 +732,15 @@ paths:
                 $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
-      operationId: GetQuotes
+      operationId: getQuotes
       summary: Get list of quotes sorted by creation time
       tags:
-        - Liquidity
+        - liquidity
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -735,14 +765,16 @@ paths:
                       $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}:
     get:
-      operationId: GetQuoteDetails
+      operationId: getQuoteDetails
       summary: Get quote details
       tags:
-        - Liquidity
+        - liquidity
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -759,14 +791,16 @@ paths:
                 $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}/execute:
     post:
-      operationId: ExecuteQuote
+      operationId: executeQuote
       summary: Execute quote
       tags:
-        - Liquidity
+        - liquidity
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -783,14 +817,16 @@ paths:
                 $ref: '#/components/schemas/Quote'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/trading/books:
     get:
-      operationId: GetBooks
+      operationId: getBooks
       summary: List order books
       tags:
-        - Capabilities
+        - capabilities
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -813,14 +849,16 @@ paths:
                       $ref: '#/components/schemas/OrderBook'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}:
     get:
-      operationId: GetBookDetails
+      operationId: getBookDetails
       summary: Get details of an order book
       tags:
-        - Trading
+        - trading
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -836,15 +874,17 @@ paths:
                 $ref: '#/components/schemas/OrderBook'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/asks:
     get:
-      operationId: GetBookAsks
+      operationId: getBookAsks
       summary: Get active sell orders in an order book
       description: List active sell orders in an order book, sorted ascending by the sell price.
       tags:
-        - Trading
+        - trading
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -870,15 +910,17 @@ paths:
                       $ref: '#/components/schemas/MarketEntry'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/bids:
     get:
-      operationId: GetBookBids
+      operationId: getBookBids
       summary: Get active buy orders in an order book
       description: List active buy orders in an order book, sorted descending by the buy price.
       tags:
-        - Trading
+        - trading
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -904,15 +946,17 @@ paths:
                       $ref: '#/components/schemas/MarketEntry'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/history:
     get:
-      operationId: GetBookOrderHistory
+      operationId: getBookOrderHistory
       summary: List fulfilled orders in an order book
       description: List fulfilled orders in an order book, sorted descending by the fulfillment time.
       tags:
-        - Trading
+        - trading
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -938,15 +982,17 @@ paths:
                       $ref: '#/components/schemas/MarketTrade'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders:
     get:
-      operationId: GetOrders
+      operationId: getOrders
       summary: List trading orders
       description: List trading orders sorted descending by the creation time.
       tags:
-        - Trading
+        - trading
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -972,13 +1018,15 @@ paths:
                       $ref: '#/components/schemas/Order'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
-      operationId: CreateOrder
+      operationId: createOrder
       summary: Create a new trading order
       tags:
-        - Trading
+        - trading
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1018,14 +1066,16 @@ paths:
                 trades: []
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders/{id}:
     get:
-      operationId: GetOrderDetails
+      operationId: getOrderDetails
       summary: Get trading order details
       tags:
-        - Trading
+        - trading
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1042,13 +1092,15 @@ paths:
                 $ref: '#/components/schemas/Order'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
-      operationId: CancelOrder
+      operationId: cancelOrder
       summary: Cancel an active trading order
       tags:
-        - Trading
+        - trading
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1061,14 +1113,16 @@ paths:
           description: Order canceled.
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/transfers/withdrawals:
     get:
-      operationId: GetWithdrawalMethods
+      operationId: getWithdrawalMethods
       summary: Get list of supported withdrawal methods
       tags:
-        - Capabilities
+        - capabilities
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1135,14 +1189,16 @@ paths:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/transfers/deposits:
     get:
-      operationId: GetDepositMethods
+      operationId: getDepositMethods
       summary: Get list of supported deposit methods
       tags:
-        - Capabilities
+        - capabilities
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1209,14 +1265,16 @@ paths:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals:
     get:
-      operationId: GetWithdrawals
+      operationId: getWithdrawals
       summary: Get list of withdrawals sorted by creation time
       tags:
-        - Transfers
+        - transfers
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1232,14 +1290,16 @@ paths:
           $ref: '#/components/responses/WithdrawalsResponse'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/{id}:
     get:
-      operationId: GetWithdrawalDetails
+      operationId: getWithdrawalDetails
       summary: Get withdrawal details
       tags:
-        - Transfers
+        - transfers
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1256,14 +1316,16 @@ paths:
                 $ref: '#/components/schemas/Withdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/blockchain:
     get:
-      operationId: GetBlockchainWithdrawals
+      operationId: getBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
       tags:
-        - Transfers (Blockchain)
+        - transfersBlockchain
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1288,14 +1350,16 @@ paths:
                       $ref: '#/components/schemas/BlockchainWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
-      operationId: CreateBlockchainWithdrawal
+      operationId: createBlockchainWithdrawal
       summary: Create new withdrawal over public blockchain
       description: Should reject any non blockchain withdrawal request.
       tags:
-        - Transfers (Blockchain)
+        - transfersBlockchain
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1317,14 +1381,16 @@ paths:
                 $ref: '#/components/schemas/BlockchainWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/fiat:
     get:
-      operationId: GetFiatWithdrawals
+      operationId: getFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
       tags:
-        - Transfers (Fiat)
+        - transfersFiat
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1349,14 +1415,16 @@ paths:
                       $ref: '#/components/schemas/FiatWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
-      operationId: CreateFiatWithdrawal
+      operationId: createFiatWithdrawal
       summary: Create new fiat withdrawal
       description: Should reject any non fiat withdrawal request.
       tags:
-        - Transfers (Fiat)
+        - transfersFiat
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1378,14 +1446,16 @@ paths:
                 $ref: '#/components/schemas/FiatWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
     get:
-      operationId: GetPeerAccountWithdrawals
+      operationId: getPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
       tags:
-        - Transfers (Peer Accounts)
+        - transfersPeerAccounts
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1410,14 +1480,16 @@ paths:
                       $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
-      operationId: CreatePeerAccountWithdrawal
+      operationId: createPeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
       description: Should reject any non peer acount withdrawal request.
       tags:
-        - Transfers (Peer Accounts)
+        - transfersPeerAccounts
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1439,14 +1511,16 @@ paths:
                 $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/subaccount:
     get:
-      operationId: GetSubAccountWithdrawals
+      operationId: getSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
       tags:
-        - Accounts
+        - accounts
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1471,14 +1545,16 @@ paths:
                       $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     post:
-      operationId: CreateSubAccountWithdrawal
+      operationId: createSubAccountWithdrawal
       summary: Create new transfer to another sub-account
       description: Transfers assets between different sub-accounts of the same user. Should reject any withdrawals that are not sub-account transfers.
       tags:
-        - Accounts
+        - accounts
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1500,14 +1576,16 @@ paths:
                 $ref: '#/components/schemas/CrossAccountWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits:
     get:
-      operationId: GetDeposits
+      operationId: getDeposits
       summary: Get list of deposits sorted by creation time
       tags:
-        - Transfers
+        - transfers
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1531,14 +1609,16 @@ paths:
                       $ref: '#/components/schemas/Deposit'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/{id}:
     get:
-      operationId: GetDepositDetails
+      operationId: getDepositDetails
       summary: Get deposit details
       tags:
-        - Transfers
+        - transfers
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1555,14 +1635,16 @@ paths:
                 $ref: '#/components/schemas/Deposit'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses:
     post:
-      operationId: CreateDepositAddress
+      operationId: createDepositAddress
       summary: Create new deposit address
       tags:
-        - Transfers
+        - transfers
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1584,13 +1666,15 @@ paths:
                 $ref: '#/components/schemas/DepositAddress'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     get:
-      operationId: GetDepositAddresses
+      operationId: getDepositAddresses
       summary: Get list of existing deposit addresses
       tags:
-        - Transfers
+        - transfers
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1614,14 +1698,16 @@ paths:
                       $ref: '#/components/schemas/DepositAddress'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses/{id}:
     get:
-      operationId: GetDepositAddressDetails
+      operationId: getDepositAddressDetails
       summary: Get details of a deposit address
       tags:
-        - Transfers
+        - transfers
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1638,13 +1724,15 @@ paths:
                 $ref: '#/components/schemas/DepositAddress'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
     delete:
-      operationId: DisableDepositAddress
+      operationId: disableDepositAddress
       summary: Disable a deposit address
       tags:
-        - Transfers
+        - transfers
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1657,6 +1745,8 @@ paths:
           description: Deposit address disabled.
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
 components:
@@ -1769,6 +1859,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/BadRequestError'
+    UnauthorizedResponse:
+      description: Request is unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
     ErrorResponse:
       description: Failed to process request.
       content:
@@ -1817,6 +1913,27 @@ components:
           type: string
         requestPart:
           $ref: '#/components/schemas/RequestPart'
+    UnauthorizedError:
+      description: Request is unauthorized
+      type: object
+      required:
+        - message
+        - errorType
+      properties:
+        message:
+          description: Description of the error.
+          type: string
+        errorType:
+          enum:
+            - unauthorized
+        propertyName:
+          description: Name of property that caused the error.
+          enum:
+            - X-FBAPI-KEY
+        requestPart:
+          description: Request part where the error occurred.
+          enum:
+            - headers
     RequestPart:
       description: Request part where the error occurred.
       enum:

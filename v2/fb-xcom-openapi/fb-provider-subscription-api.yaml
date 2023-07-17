@@ -8,8 +8,10 @@ info:
     url: https://fireblocks.com
 
 tags:
-  - name: Transfers
-  - name: Subscriptions
+  - name: transfers
+    description: Fun transfer operations.
+  - name: subscriptions
+    description: Web hook subscription operations.
 
 x-path-params:
   EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
@@ -32,6 +34,7 @@ x-schemas:
 
 x-responses:
   BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
   ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
 
 
@@ -63,6 +66,8 @@ paths:
                 $ref: '#/components/schemas/Subscription'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
       callbacks:
@@ -79,7 +84,7 @@ paths:
                 '200':
                   description: Successful update.
                 default:
-                  $ref: '#/components/responses/ErrorResponse'
+                  $ref: '#/x-responses/ErrorResponse'
 
   /transfers/deposits/subscriptions/finalized:
     post:
@@ -108,6 +113,8 @@ paths:
                 $ref: '#/components/schemas/Subscription'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
         default:
           $ref: '#/x-responses/ErrorResponse'
       callbacks:
@@ -124,7 +131,7 @@ paths:
                 '200':
                   description: Successful update.
                 default:
-                  $ref: '#/components/responses/ErrorResponse'
+                  $ref: '#/x-responses/ErrorResponse'
 
 components:
   schemas:

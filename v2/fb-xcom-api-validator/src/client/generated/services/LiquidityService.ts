@@ -67,6 +67,7 @@ export class LiquidityService {
             mediaType: 'application/json',
             errors: {
                 400: `Request could not be processed due to a client error.`,
+                401: `Request is unauthorized`,
             },
         });
     }
@@ -148,6 +149,7 @@ export class LiquidityService {
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
+                401: `Request is unauthorized`,
             },
         });
     }
@@ -207,6 +209,7 @@ export class LiquidityService {
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
+                401: `Request is unauthorized`,
             },
         });
     }
@@ -266,6 +269,7 @@ export class LiquidityService {
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
+                401: `Request is unauthorized`,
             },
         });
     }
