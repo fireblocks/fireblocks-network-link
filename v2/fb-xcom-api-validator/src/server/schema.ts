@@ -10,10 +10,10 @@ export async function loadOpenApiSchema(openApiYamlPathname: string): Promise<Op
   return new OpenApiSchema(schemas);
 }
 
-type OpenApiOperationDetails = {
+export type OpenApiOperationDetails = {
   method: HTTPMethods;
   url: string;
-  schema: FastifySchema;
+  schema: FastifySchema & { tags: string[] };
   operationId: string;
 };
 
@@ -31,15 +31,19 @@ export class OpenApiSchema {
   }
 }
 
-class OpenApiSchemaNotFound extends XComError {
+export class OpenApiSchemaNotFound extends XComError {
   constructor(method: HTTPMethods, url: string) {
     super('OpenAPI schema not found', { method, url });
   }
 }
 
-async function parseOpenApiYaml(yamlPathname: string): Promise<OpenApiOperationDetails[]> {
+export function loadYaml(yamlPathname: string) {
   const yamlText = fs.readFileSync(yamlPathname).toString();
-  const openApi = await refParser.dereference(yaml.load(yamlText));
+  return yaml.load(yamlText);
+}
+
+export async function parseOpenApiYaml(yamlPathname: string): Promise<OpenApiOperationDetails[]> {
+  const openApi = await refParser.dereference(loadYaml(yamlPathname));
 
   const parser = new FastifyOpenApiParser();
   return parser.parse(openApi).routes;
