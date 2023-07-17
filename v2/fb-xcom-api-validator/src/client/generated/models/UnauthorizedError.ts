@@ -3,8 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { RequestPart } from './RequestPart';
-
 /**
  * Request is unauthorized
  */
@@ -17,16 +15,31 @@ export type UnauthorizedError = {
     /**
      * Name of property that caused the error.
      */
-    propertyName?: string;
-    requestPart?: RequestPart;
+    propertyName?: UnauthorizedError.propertyName;
+    /**
+     * Request part where the error occurred.
+     */
+    requestPart?: UnauthorizedError.requestPart;
 };
 
 export namespace UnauthorizedError {
 
     export enum errorType {
-        SCHEMA_ERROR = 'schema-error',
-        SCHEMA_PROPERTY_ERROR = 'schema-property-error',
         UNAUTHORIZED = 'unauthorized',
+    }
+
+    /**
+     * Name of property that caused the error.
+     */
+    export enum propertyName {
+        X_FBAPI_KEY = 'X-FBAPI-KEY',
+    }
+
+    /**
+     * Request part where the error occurred.
+     */
+    export enum requestPart {
+        HEADERS = 'headers',
     }
 
 

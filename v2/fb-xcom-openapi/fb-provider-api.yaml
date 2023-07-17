@@ -897,14 +897,15 @@ components:
           type: string
         errorType:
           enum:
-            - schema-error
-            - schema-property-error
             - unauthorized
         propertyName:
           description: Name of property that caused the error.
-          type: string
+          enum:
+            - X-FBAPI-KEY
         requestPart:
-          $ref: '#/components/schemas/RequestPart'
+          description: Request part where the error occurred.
+          enum:
+            - headers
 
     RequestPart:
       description: Request part where the error occurred.

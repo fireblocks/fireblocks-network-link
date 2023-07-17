@@ -8,9 +8,9 @@ const log = logger('middleware:api-key');
 
 const INVALID_API_KEY_ERROR: UnauthorizedError = {
   message: 'Provided API key is not authorized',
-  errorType: UnauthorizedError.errorType.SCHEMA_PROPERTY_ERROR,
-  propertyName: 'X-FBAPI-KEY',
-  requestPart: RequestPart.HEADERS,
+  errorType: UnauthorizedError.errorType.UNAUTHORIZED,
+  propertyName: UnauthorizedError.propertyName.X_FBAPI_KEY,
+  requestPart: UnauthorizedError.requestPart.HEADERS,
 };
 
 export function apiKeyMiddleware(
@@ -20,9 +20,7 @@ export function apiKeyMiddleware(
 ): void {
   const apiKey = getApiKeyFromHeaders(request.headers);
 
-  const isValid = isApiKeyValid(apiKey);
-
-  if (!isValid) {
+  if (isApiKeyValid(apiKey)) {
     reply.code(401).send(INVALID_API_KEY_ERROR);
     return;
   }
