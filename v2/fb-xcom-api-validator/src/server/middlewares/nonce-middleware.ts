@@ -8,7 +8,7 @@ const log = logger('middleware:nonce');
 const usedNoncesForApiKeyMap = new Map<string, Set<string>>();
 
 const NONCE_USED_ERROR: BadRequestError = {
-  message: 'Provided nonce was received in a prior request',
+  message: 'Provided nonce was already used',
   errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
   propertyName: 'X-FBAPI-NONCE',
   requestPart: RequestPart.HEADERS,
@@ -21,14 +21,12 @@ export function nonceMiddleware(
 ): void {
   const { apiKey, nonce } = getNonceHeaders(request.headers);
 
-  const isUsed = isNonceUsed(apiKey, nonce);
-
-  if (isUsed) {
+  if (isNonceUsed(apiKey, nonce, usedNoncesForApiKeyMap)) {
     reply.code(400).send(NONCE_USED_ERROR);
     return;
   }
 
-  registerNonce(apiKey, nonce);
+  registerNonce(apiKey, nonce, usedNoncesForApiKeyMap);
 
   done();
 }
@@ -39,12 +37,20 @@ function getNonceHeaders(headers: IncomingHttpHeaders) {
   return { apiKey, nonce };
 }
 
-function isNonceUsed(apiKey: string, nonce: string): boolean {
+export function isNonceUsed(
+  apiKey: string,
+  nonce: string,
+  usedNoncesForApiKeyMap: Map<string, Set<string>>
+): boolean {
   const usedNonces = usedNoncesForApiKeyMap.get(apiKey);
   return !!usedNonces?.has(nonce);
 }
 
-function registerNonce(apiKey: string, nonce: string): void {
+export function registerNonce(
+  apiKey: string,
+  nonce: string,
+  usedNoncesForApiKeyMap: Map<string, Set<string>>
+): void {
   const usedNonces = usedNoncesForApiKeyMap.get(apiKey);
 
   if (usedNonces) {
