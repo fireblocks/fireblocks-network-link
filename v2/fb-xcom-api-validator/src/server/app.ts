@@ -6,6 +6,7 @@ import { BadRequestError, RequestPart } from '../client/generated';
 import Fastify, { HTTPMethods, RouteOptions, preHandlerHookHandler } from 'fastify';
 import { FastifySchemaValidationError, SchemaErrorDataVar } from 'fastify/types/schema';
 import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
+import { nonceMiddleware } from './middlewares/nonce-middleware';
 import { timestampMiddleware } from './middlewares/timestamp-middleware';
 import { apiKeyMiddleware } from './middlewares/api-key-middleware';
 
@@ -24,6 +25,7 @@ export class WebApp {
   constructor(private readonly schema: OpenApiSchema) {
     this.app = Fastify({ logger: log.pinoLogger, schemaErrorFormatter });
     this.app.addHook('preHandler', verifySignatureMiddleware);
+    this.app.addHook('preHandler', nonceMiddleware);
     this.app.addHook('preHandler', timestampMiddleware);
     this.app.addHook('preHandler', apiKeyMiddleware);
   }
@@ -31,10 +33,6 @@ export class WebApp {
   public async start(): Promise<void> {
     const { port } = config.get('server');
     await this.app.listen({ port, host: '0.0.0.0' });
-  }
-
-  public addMiddleware(hook: preHandlerHookHandler): void {
-    this.app.addHook('preHandler', hook);
   }
 
   public addRoute(method: HTTPMethods, url: string, handler: RouteOptions['handler']): void {
