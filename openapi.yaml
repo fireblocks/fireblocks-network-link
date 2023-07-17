@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Account Linking Partners
-  version: "0.9.2"
+  version: "0.9.3"
   contact:
     email: support@fireblocks.com
   license:
@@ -326,6 +326,7 @@ paths:
                 - network
                 - amount
                 - isGross
+                - isSettlementTx
               properties:
                 accountType:
                   $ref : '#/components/schemas/Account_Type'
@@ -357,14 +358,25 @@ paths:
                   example: "0.0010597"
                   type: string
                 isGross:
-                  example: true
-                  description: "Is the amount sent a gross amount? (Includes gas fees if necessary, and service fees)"
+                  example: "true"
+                  description: >
+                    Is the amount sent a gross amount? (Includes gas fees if necessary, and service fees)
+
+                    Can be either `"true"` or `"false"`.
                   type: string
                 maxFee:
                   example: "0.00001616"
                   description: The service fee charged for withdrawal
                   type: string
                   nullable: true
+                isSettlementTx:
+                  example: "false"
+                  description: >
+                    If the third party service supports off-exchange, and this transaction was created in a settlement flow,
+                    this flag will be true.
+
+                    Can be either `"true"` or `"false"`.
+                  type: string
       responses:
         '200':
           description: successful operation
