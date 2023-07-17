@@ -137,7 +137,7 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
   }
 }
 
-function createSecurityHeaders({ method, url, body }: ApiRequestOptions): SecurityHeaders {
+export function createSecurityHeaders({ method, url, body }: ApiRequestOptions): SecurityHeaders {
   const apiKey = config.get('authentication').apiKey;
   const nonce = randomUUID();
   const timestamp = Date.now();
