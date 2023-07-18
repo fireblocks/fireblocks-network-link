@@ -2,7 +2,6 @@ import { JsonValue } from 'type-fest';
 import ApiClient from '../../src/client';
 import { JSONSchemaFaker } from 'json-schema-faker';
 import { OpenApiOperationDetails } from '../../src/server/schema';
-import { ApiRequestOptions } from '../../src/client/generated/core/ApiRequestOptions';
 import { createSecurityHeaders, SecurityHeaders } from '../../src/client/SecureClient';
 import {
   ApiError,
@@ -24,6 +23,10 @@ function headersWithoutApiKey(options: AxiosRequestConfig): SecurityHeaders {
   const headers = createSecurityHeaders(options);
   headers.xFbapiKey = '';
   return headers;
+}
+
+function headersWithoutNonce(options: AxiosRequestConfig): SecurityHeaders {
+  return createSecurityHeaders(options, { nonce: '' });
 }
 
 describe('Security header tests', () => {
@@ -83,6 +86,23 @@ describe('Security header tests', () => {
           expect(apiError.body.errorType).toEqual(UnauthorizedError.errorType.UNAUTHORIZED);
           expect(apiError.body.requestPart).toEqual(UnauthorizedError.requestPart.HEADERS);
           expect(apiError.body.propertyName).toEqual('X-FBAPI-KEY');
+        });
+      });
+
+      describe('Request without nonce', () => {
+        let apiError: ApiError;
+
+        beforeAll(async () => {
+          apiError = await sendRequest(headersWithoutNonce);
+        });
+
+        it('should respond with HTTP response code 400 (Bad Request)', () => {
+          expect(apiError.status).toEqual(400);
+        });
+        it('should properly describe the error in the response body', () => {
+          expect(apiError.body.errorType).toEqual(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
+          expect(apiError.body.requestPart).toEqual(RequestPart.HEADERS);
+          expect(apiError.body.propertyName).toEqual('X-FBAPI-NONCE');
         });
       });
     }

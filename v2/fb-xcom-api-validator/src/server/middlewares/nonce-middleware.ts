@@ -14,12 +14,24 @@ const NONCE_USED_ERROR: BadRequestError = {
   requestPart: RequestPart.HEADERS,
 };
 
+const INVALID_NONCE_ERROR: BadRequestError = {
+  message: 'Nonce must be a non empty string',
+  errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
+  propertyName: 'X-FBAPI-NONCE',
+  requestPart: RequestPart.HEADERS,
+};
+
 export function nonceMiddleware(
   request: FastifyRequest,
   reply: FastifyReply,
   done: HookHandlerDoneFunction
 ): void {
   const { apiKey, nonce } = getNonceHeaders(request.headers);
+
+  if (!isValidNonce(nonce)) {
+    reply.code(400).send(INVALID_NONCE_ERROR);
+    return;
+  }
 
   if (isNonceUsed(apiKey, nonce, usedNoncesForApiKeyMap)) {
     reply.code(400).send(NONCE_USED_ERROR);
@@ -35,6 +47,10 @@ function getNonceHeaders(headers: IncomingHttpHeaders) {
   const apiKey = String(headers['x-fbapi-key']);
   const nonce = String(headers['x-fbapi-nonce']);
   return { apiKey, nonce };
+}
+
+function isValidNonce(nonce: string): boolean {
+  return !!nonce && typeof nonce === 'string';
 }
 
 export function isNonceUsed(

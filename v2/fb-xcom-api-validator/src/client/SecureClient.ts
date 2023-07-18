@@ -145,10 +145,14 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
   }
 }
 
-export function createSecurityHeaders(options: AxiosRequestConfig): SecurityHeaders {
+export function createSecurityHeaders(
+  options: AxiosRequestConfig,
+  overrideOptions?: { nonce?: string; timestamp?: number }
+): SecurityHeaders {
   const apiKey = config.get('authentication').apiKey;
-  const nonce = randomUUID();
-  const timestamp = Date.now();
+  const nonce = overrideOptions?.nonce === undefined ? randomUUID() : overrideOptions.nonce;
+  const timestamp =
+    overrideOptions?.timestamp === undefined ? Date.now() : overrideOptions.timestamp;
 
   const relativeUrl = getRelativeUrl(options.url as string);
   const payload = buildSignaturePayload(
