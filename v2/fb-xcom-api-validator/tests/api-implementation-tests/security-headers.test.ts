@@ -29,6 +29,10 @@ function headersWithoutNonce(options: AxiosRequestConfig): SecurityHeaders {
   return createSecurityHeaders(options, { nonce: '' });
 }
 
+function headersWithoutTimestamp(options: AxiosRequestConfig): SecurityHeaders {
+  return createSecurityHeaders(options, { timestamp: 0 });
+}
+
 describe('Security header tests', () => {
   const supportedOpenApiEndpoints: OpenApiOperationDetails[] = global.supportedOpenApiEndpoints;
 
@@ -103,6 +107,23 @@ describe('Security header tests', () => {
           expect(apiError.body.errorType).toEqual(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
           expect(apiError.body.requestPart).toEqual(RequestPart.HEADERS);
           expect(apiError.body.propertyName).toEqual('X-FBAPI-NONCE');
+        });
+      });
+
+      describe('Request without timestamp', () => {
+        let apiError: ApiError;
+
+        beforeAll(async () => {
+          apiError = await sendRequest(headersWithoutTimestamp);
+        });
+
+        it('should respond with HTTP response code 400 (Bad Request)', () => {
+          expect(apiError.status).toEqual(400);
+        });
+        it('should properly describe the error in the response body', () => {
+          expect(apiError.body.errorType).toEqual(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
+          expect(apiError.body.requestPart).toEqual(RequestPart.HEADERS);
+          expect(apiError.body.propertyName).toEqual('X-FBAPI-TIMESTAMP');
         });
       });
     }
