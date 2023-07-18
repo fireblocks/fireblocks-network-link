@@ -2,7 +2,7 @@ import logger from '../../logging';
 import { IncomingHttpHeaders } from 'http';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import config from '../../config';
-import { RequestPart, UnauthorizedError } from '../../client/generated';
+import { UnauthorizedError } from '../../client/generated';
 
 const log = logger('middleware:api-key');
 
@@ -20,7 +20,7 @@ export function apiKeyMiddleware(
 ): void {
   const apiKey = getApiKeyFromHeaders(request.headers);
 
-  if (isApiKeyValid(apiKey)) {
+  if (!isApiKeyValid(apiKey)) {
     reply.code(401).send(INVALID_API_KEY_ERROR);
     return;
   }

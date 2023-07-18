@@ -3,6 +3,7 @@ import { randomUUID } from 'crypto';
 import { buildRequestSignature } from '../security';
 import { request as requestInternal } from './generated/core/request';
 import { ApiRequestOptions } from './generated/core/ApiRequestOptions';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import {
   AccountsService,
   BalancesService,
@@ -19,7 +20,6 @@ import {
   TransfersPeerAccountsService,
   TransfersService,
 } from './generated';
-import { Method } from 'axios';
 
 export type SecurityHeaders = {
   xFbapiKey: string;
@@ -76,7 +76,7 @@ function stripSecurityHeaderArgs<ServiceType extends object>(
   return securedService as SecureService<ServiceType>;
 }
 
-type SecurityHeadersFactory = (options: ApiRequestOptions) => SecurityHeaders;
+type SecurityHeadersFactory = (options: AxiosRequestConfig) => SecurityHeaders;
 
 export class SecureClient {
   public readonly accounts: SecureService<AccountsService>;
@@ -116,33 +116,52 @@ export class SecureClient {
 }
 
 export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
+  private axiosClient: AxiosInstance;
   constructor(
     private readonly securityHeadersFactory: SecurityHeadersFactory,
     config: OpenAPIConfig
   ) {
     super(config);
+    this.axiosClient = axios.create();
+    const originalRequestMethod = this.axiosClient.request.bind(this.axiosClient);
+    this.axiosClient.request = <T = any, R = AxiosResponse<T>, D = any>(
+      config: AxiosRequestConfig<D>
+    ): Promise<R> => {
+      const headers = this.securityHeadersFactory(config);
+      return originalRequestMethod({
+        ...config,
+        headers: {
+          'X-FBAPI-KEY': headers.xFbapiKey,
+          'X-FBAPI-NONCE': headers.xFbapiNonce,
+          'X-FBAPI-TIMESTAMP': headers.xFbapiTimestamp,
+          'X-FBAPI-SIGNATURE': headers.xFbapiSignature,
+        },
+      });
+    };
   }
 
   public override request<T>(options: ApiRequestOptions): CancelablePromise<T> {
-    const headers = this.securityHeadersFactory(options);
-    return requestInternal(this.config, {
-      ...options,
-      headers: {
-        'X-FBAPI-KEY': headers.xFbapiKey,
-        'X-FBAPI-NONCE': headers.xFbapiNonce,
-        'X-FBAPI-TIMESTAMP': headers.xFbapiTimestamp,
-        'X-FBAPI-SIGNATURE': headers.xFbapiSignature,
-      },
-    });
+    return requestInternal(this.config, options, this.axiosClient);
   }
 }
 
-export function createSecurityHeaders({ method, url, body }: ApiRequestOptions): SecurityHeaders {
+export function createSecurityHeaders(
+  options: AxiosRequestConfig,
+  overrideOptions?: { nonce?: string; timestamp?: number }
+): SecurityHeaders {
   const apiKey = config.get('authentication').apiKey;
-  const nonce = randomUUID();
-  const timestamp = Date.now();
+  const nonce = overrideOptions?.nonce === undefined ? randomUUID() : overrideOptions.nonce;
+  const timestamp =
+    overrideOptions?.timestamp === undefined ? Date.now() : overrideOptions.timestamp;
 
-  const payload = buildSignaturePayload(method, url, body, timestamp, nonce);
+  const relativeUrl = getRelativeUrl(options.url as string);
+  const payload = buildSignaturePayload(
+    options.method as Method,
+    relativeUrl,
+    options.data,
+    timestamp,
+    nonce
+  );
   const signature = buildRequestSignature(payload);
 
   return {
@@ -151,6 +170,12 @@ export function createSecurityHeaders({ method, url, body }: ApiRequestOptions):
     xFbapiTimestamp: timestamp,
     xFbapiNonce: nonce,
   };
+}
+
+function getRelativeUrl(url: string) {
+  const parsedUrl = new URL(url);
+  const relativePath = parsedUrl.pathname + parsedUrl.search;
+  return relativePath;
 }
 
 /**
