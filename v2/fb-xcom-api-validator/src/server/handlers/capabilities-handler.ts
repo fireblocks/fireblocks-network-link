@@ -1,8 +1,26 @@
+import { Capabilities } from '../../client/generated';
 import logger from '../../logging';
 
 const log = logger('handler:capabilities');
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export async function handleGetCapabilities(): Promise<string> {
+
+const CAPABILITIES: Capabilities = {
+  version: '0.0.1',
+  components: {
+    accounts: '*',
+    balances: '*',
+    historicBalances: '*',
+    transfers: '*',
+    transfersBlockchain: '*',
+    transfersFiat: '*',
+    transfersPeerAccounts: '*',
+    trading: '*',
+    liquidity: '*',
+    subscriptions: '*',
+  },
+};
+
+export async function handleGetCapabilities(): Promise<Capabilities> {
   log.info('GetCapabilities');
-  return 'Vigilo Confido';
+
+  return CAPABILITIES;
 }
