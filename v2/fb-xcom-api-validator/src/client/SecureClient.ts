@@ -123,11 +123,12 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
   ) {
     super(config);
     this.axiosClient = axios.create();
+    const originalRequestMethod = this.axiosClient.request.bind(this.axiosClient);
     this.axiosClient.request = <T = any, R = AxiosResponse<T>, D = any>(
       config: AxiosRequestConfig<D>
     ): Promise<R> => {
       const headers = this.securityHeadersFactory(config);
-      return axios.request({
+      return originalRequestMethod({
         ...config,
         headers: {
           'X-FBAPI-KEY': headers.xFbapiKey,
