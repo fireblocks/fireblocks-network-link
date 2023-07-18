@@ -116,20 +116,22 @@ export class SecureClient {
 }
 
 export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
-  private axiosClient: AxiosInstance;
+  private readonly axiosClient: AxiosInstance;
+
   constructor(
     private readonly securityHeadersFactory: SecurityHeadersFactory,
-    config: OpenAPIConfig
+    openAPIConfig: OpenAPIConfig
   ) {
-    super(config);
+    super(openAPIConfig);
     this.axiosClient = axios.create();
     const originalRequestMethod = this.axiosClient.request.bind(this.axiosClient);
+
     this.axiosClient.request = <T = any, R = AxiosResponse<T>, D = any>(
-      config: AxiosRequestConfig<D>
+      axiosRequestConfig: AxiosRequestConfig<D>
     ): Promise<R> => {
-      const headers = this.securityHeadersFactory(config);
+      const headers = this.securityHeadersFactory(axiosRequestConfig);
       return originalRequestMethod({
-        ...config,
+        ...axiosRequestConfig,
         headers: {
           'X-FBAPI-KEY': headers.xFbapiKey,
           'X-FBAPI-NONCE': headers.xFbapiNonce,
@@ -174,8 +176,7 @@ export function createSecurityHeaders(
 
 function getRelativeUrl(url: string) {
   const parsedUrl = new URL(url);
-  const relativePath = parsedUrl.pathname + parsedUrl.search;
-  return relativePath;
+  return parsedUrl.pathname + parsedUrl.search;
 }
 
 /**
