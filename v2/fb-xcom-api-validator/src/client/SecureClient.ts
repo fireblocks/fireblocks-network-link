@@ -1,6 +1,9 @@
 import config from '../config';
 import { randomUUID } from 'crypto';
+import { XComError } from '../error';
+import { ErrorObject } from 'ajv/lib/types';
 import { buildRequestSignature } from '../security';
+import { ResponseSchemaValidator } from './response-schema-validator';
 import { request as requestInternal } from './generated/core/request';
 import { ApiRequestOptions } from './generated/core/ApiRequestOptions';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, Method } from 'axios';
@@ -117,12 +120,14 @@ export class SecureClient {
 
 export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
   private readonly axiosClient: AxiosInstance;
+  private readonly responseValidator = new ResponseSchemaValidator();
 
   constructor(
     private readonly securityHeadersFactory: SecurityHeadersFactory,
     openAPIConfig: OpenAPIConfig
   ) {
     super(openAPIConfig);
+
     this.axiosClient = axios.create();
     const originalRequestMethod = this.axiosClient.request.bind(this.axiosClient);
 
@@ -142,8 +147,34 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
     };
   }
 
+  private async requestWithValidation<T>(options: ApiRequestOptions): Promise<T> {
+    const response = await requestInternal<T>(this.config, options, this.axiosClient);
+
+    const validationResult = await this.responseValidator.validate(
+      options.method,
+      options.url,
+      response
+    );
+    if (!validationResult.success) {
+      throw new ResponseSchemaValidationFailed(
+        options.method,
+        options.url,
+        response,
+        validationResult.error
+      );
+    }
+
+    return response;
+  }
+
   public override request<T>(options: ApiRequestOptions): CancelablePromise<T> {
-    return requestInternal(this.config, options, this.axiosClient);
+    return this.requestWithValidation<T>(options) as CancelablePromise<T>;
+  }
+}
+
+class ResponseSchemaValidationFailed extends XComError {
+  constructor(method: Method, url: string, response: any, error?: ErrorObject) {
+    super('Schema validation failed', { method, url, response, error });
   }
 }
 
