@@ -401,7 +401,6 @@ paths:
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/AssetsQueryParam'
       responses:
         '200':
           description: List of additional assets.

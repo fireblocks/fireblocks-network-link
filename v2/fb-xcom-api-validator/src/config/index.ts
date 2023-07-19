@@ -36,6 +36,66 @@ const config = convict({
       env: 'LOG_LEVEL',
     },
   },
+  capabilities: {
+    version: {
+      doc: 'Version of the API used',
+      format: String,
+      default: '0.0.1',
+      env: 'CAPABILITIES_VERSION',
+    },
+    components: {
+      accounts: {
+        format: capabilitiesComponent,
+        default: '*',
+        env: 'CAPABILITIES_ACCOUNTS',
+      },
+      balances: {
+        format: capabilitiesComponent,
+        default: '*',
+        env: 'CAPABILITIES_BALANCES',
+      },
+      historicBalances: {
+        format: capabilitiesComponent,
+        default: '*',
+        env: 'CAPABILITIES_HISTORIC_BALANCES',
+      },
+      transfers: {
+        format: capabilitiesComponent,
+        default: '*',
+        env: 'CAPABILITIES_TRANSFERS',
+      },
+      transfersBlockchain: {
+        format: capabilitiesComponent,
+        default: '*',
+        env: 'CAPABILITIES_TRANSFERS_BLOCKCHAIN',
+      },
+      transfersFiat: {
+        format: capabilitiesComponent,
+        default: '*',
+        env: 'CAPABILITIES_TRANSFERS_FIAT',
+      },
+      transfersPeerAccounts: {
+        format: capabilitiesComponent,
+        default: '*',
+        env: 'CAPABILITIES_TRANSFERS_PEER_ACCOUNTS',
+      },
+      trading: {
+        format: capabilitiesComponent,
+        default: '*',
+        env: 'CAPABILITIES_TRADING',
+      },
+      liquidity: {
+        format: capabilitiesComponent,
+        default: '*',
+        env: 'CAPABILITIES_LIQUIDITY',
+      },
+      subscriptions: {
+        format: capabilitiesComponent,
+        default: '*',
+        env: 'CAPABILITIES_SUBSCRIPTIONS',
+      },
+    },
+  },
   authentication: {
     apiKey: {
       doc: 'API key used for identification',
@@ -115,6 +175,30 @@ function filename(f: string) {
   if (!fs.existsSync(f)) {
     throw new Error(`Configuration error: no such file or directory`);
   }
+}
+
+function isStringArray(value: string[]) {
+  if (!Array.isArray(value)) {
+    return false;
+  }
+
+  if (value.find((item) => typeof item !== 'string')) {
+    return false;
+  }
+
+  return true;
+}
+
+function capabilitiesComponent(value: string) {
+  if (value === undefined) {
+    return;
+  }
+
+  if (value === '*' || isStringArray(value.split(','))) {
+    return;
+  }
+
+  throw new Error(`Configuration error: invalid capabilities component format: ${value}`);
 }
 
 const filePath = path.join(__dirname, `${config.get('env')}.json`);

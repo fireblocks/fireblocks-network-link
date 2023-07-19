@@ -1,9 +1,9 @@
 import 'ts-node/register';
-import Client from '../../src/client';
+import config from '../../src/config';
 
 async function preloadCapabilities() {
-  const client = new Client();
-  global['capabilities'] = await client.capabilities.getCapabilities({});
+  const capabilitiesConfig = config.get('capabilities');
+  global['capabilities'] = capabilitiesConfig;
 }
 
 module.exports = preloadCapabilities;

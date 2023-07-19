@@ -3,7 +3,7 @@ import logger from '../logging';
 import { XComError } from '../error';
 import { OpenApiSchema, loadOpenApiSchema } from './schema';
 import { BadRequestError, RequestPart } from '../client/generated';
-import Fastify, { HTTPMethods, RouteOptions, preHandlerHookHandler } from 'fastify';
+import Fastify, { HTTPMethods, RouteOptions } from 'fastify';
 import { FastifySchemaValidationError, SchemaErrorDataVar } from 'fastify/types/schema';
 import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
 import { nonceMiddleware } from './middlewares/nonce-middleware';
@@ -23,7 +23,10 @@ export class WebApp {
   private readonly app: ReturnType<typeof Fastify>;
 
   constructor(private readonly schema: OpenApiSchema) {
-    this.app = Fastify({ logger: log.pinoLogger, schemaErrorFormatter });
+    this.app = Fastify({
+      logger: log.pinoLogger,
+      schemaErrorFormatter,
+    });
     this.app.addHook('preHandler', verifySignatureMiddleware);
     this.app.addHook('preHandler', nonceMiddleware);
     this.app.addHook('preHandler', timestampMiddleware);
