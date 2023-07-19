@@ -82,7 +82,6 @@ export class CapabilitiesService {
         limit = 10,
         startingAfter,
         endingBefore,
-        asset,
     }: {
         /**
          * API authentication key.
@@ -113,10 +112,6 @@ export class CapabilitiesService {
          * Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
-        /**
-         * Limits the response to one asset.
-         */
-        asset?: AssetReference,
     }): CancelablePromise<{
         assets: Array<AssetDefinition>;
     } | GeneralError> {
@@ -133,7 +128,6 @@ export class CapabilitiesService {
                 'limit': limit,
                 'startingAfter': startingAfter,
                 'endingBefore': endingBefore,
-                'asset': asset,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
@@ -193,6 +187,7 @@ export class CapabilitiesService {
             errors: {
                 400: `Request could not be processed due to a client error.`,
                 401: `Request is unauthorized`,
+                404: `Requested resource not found`,
             },
         });
     }

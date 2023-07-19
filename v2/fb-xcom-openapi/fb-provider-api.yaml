@@ -397,7 +397,6 @@ paths:
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/AssetsQueryParam'
       responses:
         '200':
           description: List of additional assets.
@@ -490,6 +489,8 @@ paths:
                 $ref: '#/components/schemas/AssetDefinition'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
         default:
@@ -751,7 +752,6 @@ components:
       description: Entity unique identifier.
       schema:
         type: string
-        format: uuid
 
     SubAccountIdPathParam:
       name: accountId
@@ -846,6 +846,13 @@ components:
           schema:
             $ref: '#/components/schemas/UnauthorizedError'
 
+    NotFoundResponse:
+      description: Requested resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFoundError'
+
     ErrorResponse:
       description: Failed to process request.
       content:
@@ -910,6 +917,18 @@ components:
           description: Request part where the error occurred.
           enum:
             - headers
+
+    NotFoundError:
+      description: Requested resource not found
+      type: object
+      required: [message, errorType]
+      properties:
+        message:
+          description: Description of the error.
+          type: string
+        errorType:
+          enum:
+            - not-found
 
     RequestPart:
       description: Request part where the error occurred.
