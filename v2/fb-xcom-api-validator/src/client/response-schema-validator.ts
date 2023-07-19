@@ -1,4 +1,5 @@
 import config from '../config';
+import addFormats from 'ajv-formats';
 import { HTTPMethods } from 'fastify';
 import { ErrorObject } from 'ajv/lib/types';
 import Ajv, { Schema, ValidateFunction } from 'ajv';
@@ -67,6 +68,7 @@ export class ResponseSchemaValidator {
 
 function compileResponseSchemas(schemas: OpenApiOperationDetails[]): ValidatorsDirectory {
   const ajv = new Ajv({ strictSchema: false });
+  addFormats(ajv);
 
   // Maps urls to HTTP methods to schema validation function
   const allValidators = new Map<string, Map<string, ValidateFunction>>();
