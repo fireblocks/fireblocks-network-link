@@ -45,7 +45,7 @@ export const SUPPORTED_ASSETS: AssetDefinition[] = [
 export async function handleGetAdditionalAssets(
   request: FastifyRequest,
   reply: FastifyReply
-): Promise<{ assets: AssetDefinition[] }> {
+): Promise<{ assets: AssetDefinition[] } | void> {
   const paginationParams = request.query as PaginationParams;
 
   log.info('GetAdditionalAssets');
@@ -57,6 +57,7 @@ export async function handleGetAdditionalAssets(
 
   if (!valid) {
     reply.code(400).send(error);
+    return;
   }
 
   const result = getPaginationResult(

@@ -78,7 +78,7 @@ function schemaErrorFormatter(errors: FastifySchemaValidationError[], dataVar: S
   let erroneousProperty = '';
 
   if (error.instancePath) {
-    erroneousProperty = error.instancePath;
+    erroneousProperty = error.instancePath.replace('/', '');
   }
   if (error.keyword === 'required') {
     erroneousProperty += `/${error.params.missingProperty}`;

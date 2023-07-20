@@ -12,13 +12,6 @@ export const ENDING_STARTING_COMBINATION_ERROR: BadRequestError = {
   requestPart: RequestPart.QUERYSTRING,
 };
 
-export const INVALID_LIMIT_ERROR: BadRequestError = {
-  message: 'Limit must be between 1 and 200',
-  errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
-  requestPart: RequestPart.QUERYSTRING,
-  propertyName: 'limit',
-};
-
 export function getPaginationResult<T>(
   limit: number,
   startingAfter: string | undefined,
@@ -57,12 +50,6 @@ export function validatePaginationParams(
     return {
       valid: false,
       error: ENDING_STARTING_COMBINATION_ERROR,
-    };
-  }
-  if (limit < 1 || limit > 200) {
-    return {
-      valid: false,
-      error: INVALID_LIMIT_ERROR,
     };
   }
   return { valid: true };

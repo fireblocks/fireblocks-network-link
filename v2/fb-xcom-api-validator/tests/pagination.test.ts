@@ -1,6 +1,5 @@
 import {
   ENDING_STARTING_COMBINATION_ERROR,
-  INVALID_LIMIT_ERROR,
   getPaginationResult,
   validatePaginationParams,
 } from '../src/server/pagination';
@@ -10,28 +9,6 @@ describe('Pagination', () => {
     const defaultLimit = 10;
     const nonEmptyStartingAfter = 'any-value-works';
     const nonEmptyEndingBefore = 'any-value-works';
-
-    describe('Limit', () => {
-      it('should return invalid limit error when limit < 1', () => {
-        const limit = 0;
-        const { valid, error } = validatePaginationParams(limit, undefined, undefined);
-        expect(valid).toBe(false);
-        expect(error).toBe(INVALID_LIMIT_ERROR);
-      });
-
-      it('should return invalid limit error when limit > 200', () => {
-        const limit = 201;
-        const { valid, error } = validatePaginationParams(limit, undefined, undefined);
-        expect(valid).toBe(false);
-        expect(error).toBe(INVALID_LIMIT_ERROR);
-      });
-
-      it.each([1, 5, 10, 50, 100, 200])('should return valid when 1 <= limit <= 200', (limit) => {
-        const { valid, error } = validatePaginationParams(limit, undefined, undefined);
-        expect(valid).toBe(true);
-        expect(error).toBeUndefined();
-      });
-    });
 
     it('should return invalid result when both startingAfter and endingBefore options are used', () => {
       const { valid, error } = validatePaginationParams(
