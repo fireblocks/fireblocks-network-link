@@ -1891,6 +1891,7 @@ components:
   schemas:
     GeneralError:
       description: Should be returned only if there in no more specific object.
+      type: object
       properties:
         message:
           description: Description of the error.

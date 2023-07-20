@@ -16,7 +16,7 @@
     "skipLibCheck": true /* Skip type checking of declaration files. */,
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
     "resolveJsonModule": true,
-    "types": ["jest", "node","pikaia-testing-tools"],
+    "types": ["jest", "node"],
     "outDir": "./dist"
   },
   "include": ["./src", "./src/config/*.json", "./jest.config.ts"],

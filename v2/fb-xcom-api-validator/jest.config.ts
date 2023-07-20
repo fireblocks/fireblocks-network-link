@@ -3,4 +3,5 @@ export default {
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   setupFiles: ['./tests/setup/preload-schemas.ts', './tests/setup/preload-capabilities.ts'],
+  setupFilesAfterEnv: ['./tests/setup/matchers.ts'],
 };

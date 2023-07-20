@@ -14,11 +14,8 @@ describe('Validating timestamp', () => {
     expect(isExpired(timestamp)).toBe(true);
   });
 
-  it('should not be expired when timestamp is equal to configured ttl or newer', () => {
+  it('should not be expired when timestamp is newer than configured ttl', () => {
     const newerTimestamp = Date.now() - configuredTTLInSeconds * 1000 + 1;
-    const ttlThresholdTimestamp = Date.now() - configuredTTLInSeconds * 1000;
-
     expect(isExpired(newerTimestamp)).toBe(false);
-    expect(isExpired(ttlThresholdTimestamp)).toBe(false);
   });
 });

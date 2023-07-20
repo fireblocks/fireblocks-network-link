@@ -42,10 +42,7 @@ describe('Capabilities', () => {
     describe('Interaction with /capabilities/assets/:id', () => {
       it('should find each listed asset on asset details endpoint', async () => {
         for (const asset of result.assets) {
-          const assetDetails = (await client.capabilities.getAssetDetails({
-            id: asset.id,
-          })) as AssetDefinition;
-          expect(assetDetails.id).toBe(asset.id);
+          await expect(asset.id).toBeListedAsset();
         }
       });
     });
