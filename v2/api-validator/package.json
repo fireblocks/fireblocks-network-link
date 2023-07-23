@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start:server:dev": "NODE_ENV=development ts-node src/server/server.ts | pino-pretty",
-    "test": "NODE_ENV=test jest --verbose",
+    "test": "NODE_ENV=test jest --verbose --json --outputFile=test-results.json",
     "test:watch": "NODE_ENV=test jest --verbose --watch",
     "generate-rsa-key-pair": "ts-node generate-signing-keys.ts rsa",
     "generate-ecdsa-secp256k1-key-pair": "ts-node generate-signing-keys.ts ecdsa-secp256k1",
@@ -55,6 +55,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-tsdoc": "^0.2.17",
     "jest": "^29.6.1",
+    "jest-html-reporters": "^3.1.4",
     "json-schema-faker": "^0.5.3",
     "openapi-typescript-codegen": "^0.25.0",
     "prettier": "^2.8.8",

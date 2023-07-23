@@ -18,8 +18,6 @@ describe('Not Found tests', () => {
       if (method === 'POST' && schema?.body) {
         requestBody = await JSONSchemaFaker.resolve(schema.body);
       }
-      console.log(`${method} ${url}`);
-      console.log(requestBody);
 
       try {
         await operationFunction({ requestBody, ...paramValues });
