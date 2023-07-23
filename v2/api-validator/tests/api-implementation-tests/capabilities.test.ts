@@ -1,6 +1,6 @@
-import Client from '../src/client';
-import config from '../src/config';
-import { AssetDefinition, Capabilities, ErrorType } from '../src/client/generated';
+import Client from '../../src/client';
+import config from '../../src/config';
+import { AssetDefinition, Capabilities, ErrorType } from '../../src/client/generated';
 
 const KNWON_API_VERSIONS = ['0.0.1'];
 

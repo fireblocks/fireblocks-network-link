@@ -3,7 +3,7 @@ import {
   HashAlgorithm,
   SigningAlgorithm,
   signerFactory,
-} from '../src/security/signing';
+} from '../../src/security/signing';
 
 const data = 'data';
 

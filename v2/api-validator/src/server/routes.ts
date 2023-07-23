@@ -8,7 +8,6 @@ import { handleCreateQuote } from './handlers/liguidity-handlers';
 
 export function registerRoutes(app: WebApp): void {
   app.addRoute('GET', '/capabilities', handleGetCapabilities);
-  app.addRoute('POST', '/accounts/:accountId/trading/orders', handleGetCapabilities);
   app.addRoute('GET', '/capabilities/assets', handleGetAdditionalAssets);
   app.addRoute('GET', '/capabilities/assets/:id', handleGetAssetDetails);
   app.addRoute('POST', '/accounts/:accountId/liquidity/quotes', handleCreateQuote);

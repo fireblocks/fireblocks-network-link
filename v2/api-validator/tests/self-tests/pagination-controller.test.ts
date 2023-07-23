@@ -2,7 +2,7 @@ import {
   InvalidPaginationParamsCombinationError,
   getPaginationResult,
   validatePaginationParams,
-} from '../src/server/controllers/pagination-controller';
+} from '../../src/server/controllers/pagination-controller';
 
 describe('Pagination', () => {
   describe('Validate pagination parameters', () => {

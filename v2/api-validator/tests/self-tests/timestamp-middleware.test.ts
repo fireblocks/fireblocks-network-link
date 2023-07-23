@@ -1,5 +1,5 @@
-import config from '../src/config';
-import { isExpired } from '../src/server/middlewares/timestamp-middleware';
+import config from '../../src/config';
+import { isExpired } from '../../src/server/middlewares/timestamp-middleware';
 
 describe('Validating timestamp', () => {
   let configuredTTLInSeconds: number;
