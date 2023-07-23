@@ -1,7 +1,18 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
-import { AssetDefinition, Blockchain, Erc20Token, StellarToken } from '../../client/generated';
 import logger from '../../logging';
-import { PaginationParams, getPaginationResult, validatePaginationParams } from '../pagination';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import {
+  AssetDefinition,
+  Blockchain,
+  Erc20Token,
+  ErrorType,
+  StellarToken,
+} from '../../client/generated';
+import {
+  ENDING_STARTING_COMBINATION_ERROR,
+  InvalidPaginationParamsCombinationError,
+  PaginationParams,
+  getPaginationResult,
+} from '../controllers/pagination-controller';
 
 const log = logger('handler:additional-assets');
 
@@ -48,24 +59,19 @@ export async function handleGetAdditionalAssets(
 ): Promise<{ assets: AssetDefinition[] }> {
   const paginationParams = request.query as PaginationParams;
 
-  log.info('GetAdditionalAssets');
-  const { valid, error } = validatePaginationParams(
-    paginationParams.limit,
-    paginationParams.startingAfter,
-    paginationParams.endingBefore
-  );
-
-  if (!valid) {
-    reply.code(400).send(error);
+  try {
+    const result = getPaginationResult(
+      paginationParams.limit,
+      paginationParams.startingAfter,
+      paginationParams.endingBefore,
+      SUPPORTED_ASSETS,
+      'id'
+    );
+    return { assets: result };
+  } catch (err) {
+    if (err instanceof InvalidPaginationParamsCombinationError) {
+      return reply.code(400).send(ENDING_STARTING_COMBINATION_ERROR);
+    }
+    return reply.code(500).send({ errorType: ErrorType.UNEXPECTED_ERROR });
   }
-
-  const result = getPaginationResult(
-    paginationParams.limit,
-    paginationParams.startingAfter,
-    paginationParams.endingBefore,
-    SUPPORTED_ASSETS,
-    'id'
-  );
-
-  return { assets: result };
 }

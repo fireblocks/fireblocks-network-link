@@ -63,7 +63,6 @@ export type { MarketTrade } from './models/MarketTrade';
 export type { NationalCurrency } from './models/NationalCurrency';
 export { NationalCurrencyCode } from './models/NationalCurrencyCode';
 export type { NativeCryptocurrency } from './models/NativeCryptocurrency';
-export { NotFoundError } from './models/NotFoundError';
 export type { Order } from './models/Order';
 export type { OrderBook } from './models/OrderBook';
 export type { OrderData } from './models/OrderData';
