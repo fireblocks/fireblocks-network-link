@@ -1,5 +1,5 @@
-import { buildRequestSignature, verifySignature } from '../src/security';
-import config, { encodingTypes } from '../src/config';
+import { buildRequestSignature, verifySignature } from '../../src/security';
+import config, { encodingTypes } from '../../src/config';
 
 // 78965 Used only for testing
 const ecdsaPrivateKey = `-----BEGIN EC PRIVATE KEY-----

@@ -148,7 +148,7 @@ const config = convict({
     location: {
       doc: 'The directory where the OpenAPI files are located',
       format: filename,
-      default: '../fb-xcom-openapi',
+      default: '../openapi',
     },
     components: {
       doc: 'Files defining the various API components; specified relative to openApi.location',
@@ -162,7 +162,7 @@ const config = convict({
     },
     unifiedFilename: {
       doc: 'Unified OpenAPI file containing all the components in the same file',
-      default: 'fb-xcom-unified-openapi.yaml',
+      default: 'fb-unified-openapi.yaml',
     },
     generatedClientLocation: {
       doc: 'The directory containing the code generated from the OpenAPI spec',

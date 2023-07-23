@@ -1,4 +1,4 @@
-import { encoderFactory } from '../src/security/encoding';
+import { encoderFactory } from '../../src/security/encoding';
 
 describe('Encoding methods', () => {
   const data = 'All in the golden afternoon Full leisurely we glide';

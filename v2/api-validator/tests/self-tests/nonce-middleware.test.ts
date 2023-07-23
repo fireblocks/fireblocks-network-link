@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto';
-import { isNonceUsed, registerNonce } from '../src/server/middlewares/nonce-middleware';
+import { isNonceUsed, registerNonce } from '../../src/server/middlewares/nonce-middleware';
 
 describe('Nonce validation', () => {
   const apiKey = 'api-key';
