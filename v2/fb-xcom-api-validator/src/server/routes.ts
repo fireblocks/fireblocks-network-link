@@ -1,4 +1,6 @@
 import { WebApp } from './app';
+import { handleGetAdditionalAssets } from './handlers/additional-assets-handler';
+import { handleGetAssetDetails } from './handlers/asset-details-handler';
 import { handleCreateOrder } from './handlers/trading-handlers';
 import { handleGetCapabilities } from './handlers/capabilities-handler';
 import { handleCreateBlockchainWithdrawal } from './handlers/transfer-handlers';
@@ -6,6 +8,9 @@ import { handleCreateQuote } from './handlers/liguidity-handlers';
 
 export function registerRoutes(app: WebApp): void {
   app.addRoute('GET', '/capabilities', handleGetCapabilities);
+  app.addRoute('POST', '/accounts/:accountId/trading/orders', handleGetCapabilities);
+  app.addRoute('GET', '/capabilities/assets', handleGetAdditionalAssets);
+  app.addRoute('GET', '/capabilities/assets/:id', handleGetAssetDetails);
   app.addRoute('POST', '/accounts/:accountId/liquidity/quotes', handleCreateQuote);
   app.addRoute('POST', '/accounts/:accountId/trading/orders', handleCreateOrder);
   app.addRoute(

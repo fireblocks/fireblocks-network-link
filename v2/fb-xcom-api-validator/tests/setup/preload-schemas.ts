@@ -1,6 +1,6 @@
 import 'ts-node/register';
-import config from '../src/config';
-import { parseOpenApiYaml } from '../src/server/schema';
+import config from '../../src/config';
+import { parseOpenApiYaml } from '../../src/server/schema';
 
 async function preloadSchemas() {
   const openApiYamlPathname = config.getUnifiedOpenApiPathname();

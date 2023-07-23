@@ -1,77 +1,72 @@
 import Client from '../src/client';
-import { Capabilities } from '../src/client/generated';
+import config from '../src/config';
+import { AssetDefinition, Capabilities, ErrorType } from '../src/client/generated';
 
-const optionalCapabilitiesComponents = [
-  'historicBalances',
-  'transfers',
-  'transfersBlockchain',
-  'transfersFiat',
-  'transfersPeerAccounts',
-  'trading',
-  'liquidity',
-  'subscriptions',
-];
-
-const requiredCapabilitiesComponents = ['accounts', 'balances'];
+const KNWON_API_VERSIONS = ['0.0.1'];
 
 describe('Capabilities', () => {
+  let client: Client;
+
+  beforeAll(() => {
+    client = new Client();
+  });
+
   describe('/capabilities', () => {
-    let result: Capabilities;
+    const capabilitiesConfig: Capabilities = config.get('capabilities');
+    let capabilitiesResponse: Capabilities;
 
     beforeAll(async () => {
-      const client = new Client();
-      result = (await client.capabilities.getCapabilities({})) as Capabilities;
+      capabilitiesResponse = (await client.capabilities.getCapabilities({})) as Capabilities;
     });
 
-    it('should include a valid api version', () => {
-      expect(isValidApiVersion(result.version)).toBe(true);
+    it('should match config capabilities', () => {
+      expect(capabilitiesResponse).toEqual(capabilitiesConfig);
     });
 
-    describe('Component', () => {
-      describe.each(requiredCapabilitiesComponents)('%s (required)', (componentName) => {
-        it('should be listed in response', () => {
-          expect(result.components[componentName]).toBeDefined();
-        });
+    it('should include a known api version', () => {
+      expect(isKnownApiVersion(capabilitiesConfig.version)).toBe(true);
+    });
+  });
 
-        it('should have a valid value', () => {
-          expect(isValidComponentValue(result.components[componentName])).toBe(true);
-        });
-      });
+  describe('/capabilities/assets', () => {
+    let result: { assets: AssetDefinition[] };
 
-      describe.each(optionalCapabilitiesComponents)('%s (optional)', (componentName) => {
-        it('should have a valid value when listed in the response', () => {
-          expect(isValidComponentValue(result.components[componentName])).toBe(true);
-        });
+    beforeAll(async () => {
+      result = (await client.capabilities.getAdditionalAssets({})) as { assets: AssetDefinition[] };
+    });
+
+    it('should return list of assets', () => {
+      expect(result.assets).toBeDefined();
+    });
+
+    describe('Interaction with /capabilities/assets/:id', () => {
+      const isListedAsset = async (assetId: string): Promise<boolean> => {
+        try {
+          const asset = (await client.capabilities.getAssetDetails({
+            id: assetId,
+          })) as AssetDefinition;
+          if (!asset || asset.id !== assetId) {
+            return false;
+          }
+          return true;
+        } catch (err) {
+          if ((err as any).body?.errorType === ErrorType.NOT_FOUND) {
+            return false;
+          }
+          throw err;
+        }
+      };
+
+      it('should find each listed asset on asset details endpoint', async () => {
+        for (const asset of result.assets) {
+          const found = await isListedAsset(asset.id);
+          expect(found).toBe(true);
+        }
       });
     });
   });
 });
 
-function isValidApiVersion(value: string) {
-  const apiVersionRegex = /^\d+\.\d+\.\d+$/;
-  return apiVersionRegex.test(value);
-}
-
-function isStringArray(value: unknown) {
-  if (!Array.isArray(value)) {
-    return false;
-  }
-
-  if (value.find((item) => typeof item !== 'string')) {
-    return false;
-  }
-
-  return true;
-}
-
-function isValidComponentValue(value: unknown) {
-  if (value === undefined) {
-    return true;
-  }
-
-  if (value === '*' || isStringArray(value)) {
-    return true;
-  }
-
-  return false;
+function isKnownApiVersion(apiVersion: string) {
+  return KNWON_API_VERSIONS.includes(apiVersion);
 }
