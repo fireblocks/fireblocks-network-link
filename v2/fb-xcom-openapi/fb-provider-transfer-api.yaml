@@ -38,6 +38,7 @@ x-header-params:
 x-schemas:
   PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
   AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference'}
+  CryptocurrencyReference: { $ref: './fb-provider-api.yaml#/components/schemas/CryptocurrencyReference'}
   Blockchain: { $ref: './fb-provider-api.yaml#/components/schemas/Blockchain'}
   NationalCurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrency' }
 
@@ -804,7 +805,7 @@ components:
       required: [ asset, transferMethod ]
       properties:
         asset:
-          $ref: '#/x-schemas/AssetReference'
+          $ref: '#/x-schemas/CryptocurrencyReference'
         transferMethod:
           enum: [ PublicBlockchain ]
 
