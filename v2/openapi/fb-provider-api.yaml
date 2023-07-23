@@ -1009,8 +1009,10 @@ components:
 
     AssetBalance:
       type: object
-      required: [ asset, availableAmount ]
+      required: [ id, asset, availableAmount ]
       properties:
+        id:
+          type: string
         asset:
           $ref: '#/components/schemas/AssetReference'
         availableAmount:
@@ -1141,6 +1143,11 @@ components:
         - $ref: '#/components/schemas/NationalCurrency'
         - $ref: '#/components/schemas/NativeCryptocurrency'
         - $ref: '#/components/schemas/OtherAssetReference'
+        - type: object
+          required: [ id ]
+          properties:
+            id:
+              type: string
 
     Blockchain:
       type: string

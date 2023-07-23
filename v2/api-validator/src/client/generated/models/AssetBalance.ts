@@ -7,6 +7,7 @@ import type { AssetReference } from './AssetReference';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type AssetBalance = {
+    id: string;
     asset: AssetReference;
     availableAmount: PositiveAmount;
     lockedAmount?: PositiveAmount;

@@ -67,7 +67,6 @@ describe('Pagination', () => {
         const index = 0;
         const page = getPaginationResult(defaultLimit, data[index].id, undefined, data, idProp);
         expect(page[0].id).toBe(data[index + 1].id);
-        console.log(page);
         expect(page.length).toBe(4);
       });
     });

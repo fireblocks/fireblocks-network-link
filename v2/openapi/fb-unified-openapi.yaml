@@ -2027,9 +2027,12 @@ components:
     AssetBalance:
       type: object
       required:
+        - id
         - asset
         - availableAmount
       properties:
+        id:
+          type: string
         asset:
           $ref: '#/components/schemas/AssetReference'
         availableAmount:

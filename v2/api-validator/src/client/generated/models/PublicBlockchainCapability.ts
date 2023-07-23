@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { AssetReference } from './AssetReference';
+import type { CryptocurrencyReference } from './CryptocurrencyReference';
 
 export type PublicBlockchainCapability = {
-    asset: AssetReference;
+    asset: CryptocurrencyReference;
     transferMethod: PublicBlockchainCapability.transferMethod;
 };
 

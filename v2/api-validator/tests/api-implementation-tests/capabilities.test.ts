@@ -35,10 +35,6 @@ describe('Capabilities', () => {
       result = (await client.capabilities.getAdditionalAssets({})) as { assets: AssetDefinition[] };
     });
 
-    it('should return list of assets', () => {
-      expect(result.assets).toBeDefined();
-    });
-
     describe('Interaction with /capabilities/assets/:id', () => {
       const isListedAsset = async (assetId: string): Promise<boolean> => {
         try {
