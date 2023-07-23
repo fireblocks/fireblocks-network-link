@@ -3,6 +3,7 @@ import { JsonValue } from 'type-fest';
 import ApiClient from '../../src/client';
 import { JSONSchemaFaker, Schema } from 'json-schema-faker';
 import { OpenApiOperationDetails } from '../../src/server/schema';
+import { deleteDeepProperty, getPropertyPaths } from '../property-extraction';
 import { ApiError, BadRequestError, RequestPart } from '../../src/client/generated';
 
 JSONSchemaFaker.option('requiredOnly', true);
@@ -62,82 +63,8 @@ describe('Test request bodies missing one required property', () => {
   );
 });
 
-describe('getPropertyPaths', () => {
-  it('should work for empty objects', () => {
-    const result = getPropertyPaths({});
-    expect(result).toEqual([]);
-  });
-
-  it('should work for undefined objects', () => {
-    const result = getPropertyPaths(undefined);
-    expect(result).toEqual([]);
-  });
-
-  it('should work for null objects', () => {
-    const result = getPropertyPaths(null);
-    expect(result).toEqual([]);
-  });
-
-  it('should work for objects with one simple property', () => {
-    const result = getPropertyPaths({ a: 100 });
-    expect(result).toEqual([['a']]);
-  });
-
-  it('should work for objects with nested properties', () => {
-    const result = getPropertyPaths({
-      a: 100,
-      b: {
-        c: 'c',
-        d: {
-          e: 200,
-          f: 300,
-        },
-      },
-      g: 'g',
-    });
-    expect(result).toEqual([
-      ['a'],
-      ['b'],
-      ['b', 'c'],
-      ['b', 'd'],
-      ['b', 'd', 'e'],
-      ['b', 'd', 'f'],
-      ['g'],
-    ]);
-  });
-});
-
-describe('deleteDeepProperty', () => {
-  let obj: object;
-
-  beforeEach(() => {
-    obj = { a: 1, b: { c: { d: 2 } } };
-  });
-
-  it('should do nothing if path is empty', () => {
-    deleteDeepProperty(obj, []);
-    expect(obj).toEqual({ a: 1, b: { c: { d: 2 } } });
-  });
-  it('should be able to remove top level non-object property', () => {
-    deleteDeepProperty(obj, ['a']);
-    expect(obj).toEqual({ b: { c: { d: 2 } } });
-  });
-  it('should be able to remove top level object property', () => {
-    deleteDeepProperty(obj, ['b']);
-    expect(obj).toEqual({ a: 1 });
-  });
-  it('should be able to remove property of property', () => {
-    deleteDeepProperty(obj, ['b', 'c']);
-    expect(obj).toEqual({ a: 1, b: {} });
-  });
-  it('should be able to remove property of property of property', () => {
-    deleteDeepProperty(obj, ['b', 'c', 'd']);
-    expect(obj).toEqual({ a: 1, b: { c: {} } });
-  });
-});
-
 // When missing a properties appearing in oneOf, the server might report as if
-// another property in the same oneOf is missing. These are the sets of such
+// a property in another branch of oneOf is missing. These are the sets of such
 // properties for each endpoint
 const ambiguousProperties = {
   '/accounts/:accountId/liquidity/quotes': [
@@ -207,7 +134,7 @@ const ambiguousProperties = {
 
 /**
  * Get the properties that a server can report as missing when the actual missing
- * property is `propertyPath`. This non deterministic behavior can happen for any
+ * property is `propertyPath`. This non-deterministic behavior can happen for any
  * property that is defined using `oneOf`.
  */
 function getExpectedVariants(endpoint: string, propertyPath: string[]) {
@@ -225,46 +152,4 @@ function getExpectedVariants(endpoint: string, propertyPath: string[]) {
   }
 
   return [prop];
-}
-
-function isObject(x) {
-  return x && typeof x === 'object' && !Array.isArray(x);
-}
-
-function getPropertyPaths(obj?: JsonValue): Array<Array<string>> {
-  if (!isObject(obj) || typeof obj === 'string') {
-    return [];
-  }
-
-  const getAllPropPaths = (obj, head: string[] = []) => {
-    const paths: Array<Array<string>> = [];
-
-    for (const [key, value] of Object.entries(obj)) {
-      const path = [...head, key];
-      paths.push(path);
-
-      if (isObject(value)) {
-        paths.push(...getAllPropPaths(value, path));
-      }
-    }
-
-    return paths;
-  };
-
-  return getAllPropPaths(obj);
-}
-
-function deleteDeepProperty(obj: object, propertyPath: string[]) {
-  // Don't modify the original list
-  const properties = [...propertyPath];
-
-  const lastProp = properties.pop();
-  if (!lastProp) return;
-
-  let targetObj = obj;
-  for (const prop of properties) {
-    targetObj = targetObj[prop];
-  }
-
-  delete targetObj[lastProp];
 }
