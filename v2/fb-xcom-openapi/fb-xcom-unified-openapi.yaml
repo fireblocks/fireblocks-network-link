@@ -486,8 +486,6 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        '404':
-          $ref: '#/components/responses/NotFoundResponse'
         default:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/balances:
@@ -1865,12 +1863,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/UnauthorizedError'
-    NotFoundResponse:
-      description: Requested resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotFoundError'
     ErrorResponse:
       description: Failed to process request.
       content:
@@ -1891,7 +1883,6 @@ components:
   schemas:
     GeneralError:
       description: Should be returned only if there in no more specific object.
-      type: object
       properties:
         message:
           description: Description of the error.
@@ -1941,19 +1932,6 @@ components:
           description: Request part where the error occurred.
           enum:
             - headers
-    NotFoundError:
-      description: Requested resource not found
-      type: object
-      required:
-        - message
-        - errorType
-      properties:
-        message:
-          description: Description of the error.
-          type: string
-        errorType:
-          enum:
-            - not-found
     RequestPart:
       description: Request part where the error occurred.
       enum:
@@ -1966,6 +1944,7 @@ components:
       enum:
         - unexpected-error
         - bad-request
+        - not-found
     Capabilities:
       type: object
       required:

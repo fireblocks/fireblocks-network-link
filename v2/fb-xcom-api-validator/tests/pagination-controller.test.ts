@@ -1,8 +1,8 @@
 import {
-  ENDING_STARTING_COMBINATION_ERROR,
+  InvalidPaginationParamsCombinationError,
   getPaginationResult,
   validatePaginationParams,
-} from '../src/server/pagination';
+} from '../src/server/controllers/pagination-controller';
 
 describe('Pagination', () => {
   describe('Validate pagination parameters', () => {
@@ -11,33 +11,21 @@ describe('Pagination', () => {
     const nonEmptyEndingBefore = 'any-value-works';
 
     it('should return invalid result when both startingAfter and endingBefore options are used', () => {
-      const { valid, error } = validatePaginationParams(
-        10,
-        nonEmptyStartingAfter,
-        nonEmptyEndingBefore
-      );
-      expect(valid).toBe(false);
-      expect(error).toBe(ENDING_STARTING_COMBINATION_ERROR);
+      expect(() => {
+        validatePaginationParams(10, nonEmptyStartingAfter, nonEmptyEndingBefore);
+      }).toThrow(InvalidPaginationParamsCombinationError);
     });
 
     it('should return valid with only startingAfter', () => {
-      const { valid, error } = validatePaginationParams(
-        defaultLimit,
-        nonEmptyStartingAfter,
-        undefined
-      );
-      expect(valid).toBe(true);
-      expect(error).toBeUndefined();
+      expect(() => {
+        validatePaginationParams(defaultLimit, nonEmptyStartingAfter, undefined);
+      }).not.toThrow();
     });
 
     it('should return valid with only endingBefore', () => {
-      const { valid, error } = validatePaginationParams(
-        defaultLimit,
-        undefined,
-        nonEmptyEndingBefore
-      );
-      expect(valid).toBe(true);
-      expect(error).toBeUndefined();
+      expect(() => {
+        validatePaginationParams(defaultLimit, undefined, nonEmptyEndingBefore);
+      }).not.toThrow();
     });
   });
 
@@ -79,6 +67,8 @@ describe('Pagination', () => {
         const index = 0;
         const page = getPaginationResult(defaultLimit, data[index].id, undefined, data, idProp);
         expect(page[0].id).toBe(data[index + 1].id);
+        console.log(page);
+        expect(page.length).toBe(4);
       });
     });
 
@@ -92,6 +82,7 @@ describe('Pagination', () => {
         const index = 4;
         const page = getPaginationResult(defaultLimit, undefined, data[index].id, data, idProp);
         expect(page[page.length - 1].id).toBe(data[index - 1].id);
+        expect(page.length).toBe(4);
       });
     });
   });

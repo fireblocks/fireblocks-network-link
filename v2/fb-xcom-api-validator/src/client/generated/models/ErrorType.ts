@@ -6,4 +6,5 @@
 export enum ErrorType {
     UNEXPECTED_ERROR = 'unexpected-error',
     BAD_REQUEST = 'bad-request',
+    NOT_FOUND = 'not-found',
 }

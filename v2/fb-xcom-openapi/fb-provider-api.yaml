@@ -489,8 +489,6 @@ paths:
                 $ref: '#/components/schemas/AssetDefinition'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
-        '404':
-          $ref: '#/components/responses/NotFoundResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
         default:
@@ -846,13 +844,6 @@ components:
           schema:
             $ref: '#/components/schemas/UnauthorizedError'
 
-    NotFoundResponse:
-      description: Requested resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/NotFoundError'
-
     ErrorResponse:
       description: Failed to process request.
       content:
@@ -918,18 +909,6 @@ components:
           enum:
             - headers
 
-    NotFoundError:
-      description: Requested resource not found
-      type: object
-      required: [message, errorType]
-      properties:
-        message:
-          description: Description of the error.
-          type: string
-        errorType:
-          enum:
-            - not-found
-
     RequestPart:
       description: Request part where the error occurred.
       enum:
@@ -943,6 +922,7 @@ components:
       enum:
         - unexpected-error
         - bad-request
+        - not-found
 
     Capabilities:
       type: object

@@ -1,6 +1,6 @@
-import { randomUUID } from 'crypto';
 import Client from '../src/client';
-import { ApiError, AssetDefinition, Capabilities, NotFoundError } from '../src/client/generated';
+import config from '../src/config';
+import { AssetDefinition, Capabilities, ErrorType } from '../src/client/generated';
 
 const KNWON_API_VERSIONS = ['0.0.1'];
 
@@ -12,7 +12,7 @@ describe('Capabilities', () => {
   });
 
   describe('/capabilities', () => {
-    const capabilitiesConfig: Capabilities = global.capabilities;
+    const capabilitiesConfig: Capabilities = config.get('capabilities');
     let capabilitiesResponse: Capabilities;
 
     beforeAll(async () => {
@@ -23,8 +23,8 @@ describe('Capabilities', () => {
       expect(capabilitiesResponse).toEqual(capabilitiesConfig);
     });
 
-    it('should include a valid api version', () => {
-      expect(isValidApiVersion(capabilitiesConfig.version)).toBe(true);
+    it('should include a known api version', () => {
+      expect(isKnownApiVersion(capabilitiesConfig.version)).toBe(true);
     });
   });
 
@@ -40,46 +40,33 @@ describe('Capabilities', () => {
     });
 
     describe('Interaction with /capabilities/assets/:id', () => {
-      it('should find each listed asset on asset details endpoint', async () => {
-        for (const asset of result.assets) {
-          await expect(asset.id).toBeListedAsset();
-        }
-      });
-    });
-  });
-
-  describe('/capabilities/assets/:id', () => {
-    const unsupportedAssetId = randomUUID();
-
-    describe('Requesting unsupported asset', () => {
-      let apiError: ApiError;
-      const fetchUnsupportedAsset = async () => {
+      const isListedAsset = async (assetId: string): Promise<boolean> => {
         try {
-          await client.capabilities.getAssetDetails({ id: unsupportedAssetId });
+          const asset = (await client.capabilities.getAssetDetails({
+            id: assetId,
+          })) as AssetDefinition;
+          if (!asset || asset.id !== assetId) {
+            return false;
+          }
+          return true;
         } catch (err) {
-          if (err instanceof ApiError) {
-            return err;
+          if ((err as any).body?.errorType === ErrorType.NOT_FOUND) {
+            return false;
           }
           throw err;
         }
-        throw new Error('Expected to throw');
       };
 
-      beforeAll(async () => {
-        apiError = await fetchUnsupportedAsset();
-      });
-
-      it('should respond with HTTP response code 404 (Not Found)', () => {
-        expect(apiError.status).toBe(404);
-      });
-
-      it('should respond with the correct error type in the response body', () => {
-        expect(apiError.body.errorType).toBe(NotFoundError.errorType.NOT_FOUND);
+      it('should find each listed asset on asset details endpoint', async () => {
+        for (const asset of result.assets) {
+          const found = await isListedAsset(asset.id);
+          expect(found).toBe(true);
+        }
       });
     });
   });
 });
 
-function isValidApiVersion(apiVersion: string) {
+function isKnownApiVersion(apiVersion: string) {
   return KNWON_API_VERSIONS.includes(apiVersion);
 }
