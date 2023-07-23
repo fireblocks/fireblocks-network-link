@@ -46,7 +46,7 @@ describe('Pagination params tests', () => {
       it('should properly describe the error in the response body', () => {
         expect(apiError.body.errorType).toEqual(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
         expect(apiError.body.requestPart).toEqual(RequestPart.QUERYSTRING);
-        expect(apiError.body.propertyName).toEqual('limit');
+        expect(apiError.body.propertyName).toEqual('/limit');
       });
     });
 
