@@ -1034,7 +1034,6 @@ components:
           type: integer
         testAsset:
           type: boolean
-          default: false
 
     BucketAsset:
       allOf:
@@ -1108,7 +1107,6 @@ components:
           $ref: '#/components/schemas/NationalCurrencyCode'
         testAsset:
           type: boolean
-          default: false
 
     NativeCryptocurrency:
       type: object
@@ -1123,7 +1121,6 @@ components:
             - $ref: '#/components/schemas/Layer2Cryptocurrency'
         testAsset:
           type: boolean
-          default: false
 
     OtherAssetReference:
       type: object
@@ -1133,6 +1130,11 @@ components:
         assetId:
           description: ID of one of the assets returned in get-additional-assets.
           type: string
+
+    CryptocurrencyReference:
+      oneOf:
+        - $ref: '#/components/schemas/NativeCryptocurrency'
+        - $ref: '#/components/schemas/OtherAssetReference'
 
     AssetReference:
       oneOf:

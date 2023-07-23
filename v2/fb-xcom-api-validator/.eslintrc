@@ -18,9 +18,10 @@
     "plugin:prettier/recommended"
   ],
   "rules": {
-    "@typescript-eslint/explicit-module-boundary-types": "error",
-    "no-only-tests/no-only-tests": "error",
+    "@typescript-eslint/explicit-module-boundary-types": ["error", {"allowArgumentsExplicitlyTypedAsAny": true}],
     "@typescript-eslint/no-unused-vars": ["error"],
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-only-tests/no-only-tests": "error",
     "tsdoc/syntax": "error"
   }
 }
