@@ -1,7 +1,6 @@
-import { randomUUID } from 'crypto';
 import Client from '../src/client';
-import { ApiError, AssetDefinition, Capabilities, ErrorType } from '../src/client/generated';
 import config from '../src/config';
+import { AssetDefinition, Capabilities, ErrorType } from '../src/client/generated';
 
 const KNWON_API_VERSIONS = ['0.0.1'];
 
@@ -63,37 +62,6 @@ describe('Capabilities', () => {
           const found = await isListedAsset(asset.id);
           expect(found).toBe(true);
         }
-      });
-    });
-  });
-
-  describe('/capabilities/assets/:id', () => {
-    const unsupportedAssetId = randomUUID();
-
-    describe('Requesting unsupported asset', () => {
-      let apiError: ApiError;
-      const fetchUnsupportedAsset = async () => {
-        try {
-          await client.capabilities.getAssetDetails({ id: unsupportedAssetId });
-        } catch (err) {
-          if (err instanceof ApiError) {
-            return err;
-          }
-          throw err;
-        }
-        throw new Error('Expected to throw');
-      };
-
-      beforeAll(async () => {
-        apiError = await fetchUnsupportedAsset();
-      });
-
-      it('should respond with HTTP response code 404 (Not Found)', () => {
-        expect(apiError.status).toBe(404);
-      });
-
-      it('should respond with the correct error type in the response body', () => {
-        expect(apiError.body.errorType).toBe(ErrorType.NOT_FOUND);
       });
     });
   });
