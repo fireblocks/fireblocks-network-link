@@ -177,7 +177,7 @@ function filename(f: string) {
   }
 }
 
-function isStringArray(value: string[]) {
+function isStringArray(value: unknown) {
   if (!Array.isArray(value)) {
     return false;
   }
@@ -189,12 +189,12 @@ function isStringArray(value: string[]) {
   return true;
 }
 
-function capabilitiesComponent(value: string) {
-  if (value === undefined) {
+function capabilitiesComponent(value: unknown) {
+  if (value == undefined) {
     return;
   }
 
-  if (value === '*' || isStringArray(value.split(','))) {
+  if (value === '*' || isStringArray(value)) {
     return;
   }
 
