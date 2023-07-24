@@ -87,7 +87,7 @@ describe('Accounts', () => {
       });
     });
 
-    describe('With excludeBalances', () => {
+    describe('With balances', () => {
       let accountDetailsWithoutBalances: Account;
 
       beforeAll(async () => {
