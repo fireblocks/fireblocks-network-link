@@ -1,8 +1,28 @@
 import { Account, AccountStatus } from '../../src/client/generated';
-import { excludeBalances } from '../../src/server/controllers/accounts-controller';
+import {
+  omitBalancesFromAccount,
+  omitBalancesFromAccountList,
+} from '../../src/server/controllers/accounts-controller';
 
 describe('Accounts Controller', () => {
-  describe('Exclude Balances', () => {
+  describe('Omit balances from account', () => {
+    const account: Account = {
+      id: '',
+      status: AccountStatus.ACTIVE,
+      title: '',
+      balances: [],
+    };
+
+    beforeAll(() => {
+      omitBalancesFromAccount(account);
+    });
+
+    it('should remove balance property from account object', () => {
+      expect(account.balances).toBeUndefined();
+    });
+  });
+
+  describe('Omit balances from account list', () => {
     const accounts: Account[] = [
       {
         id: '',
@@ -19,7 +39,7 @@ describe('Accounts Controller', () => {
     ];
 
     beforeAll(() => {
-      excludeBalances(accounts);
+      omitBalancesFromAccountList(accounts);
     });
 
     it('should remove balances property from every item in array', () => {

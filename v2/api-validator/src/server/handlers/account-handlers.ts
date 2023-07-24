@@ -13,7 +13,10 @@ import {
   PaginationParams,
   getPaginationResult,
 } from '../controllers/pagination-controller';
-import { excludeBalances } from '../controllers/accounts-controller';
+import {
+  omitBalancesFromAccount,
+  omitBalancesFromAccountList,
+} from '../controllers/accounts-controller';
 
 const ACCOUNT_NOT_FOUND_ERROR = {
   message: 'Account not found',
@@ -48,7 +51,7 @@ export async function handleGetAccounts(
     );
 
     if (requestQuery.excludeBalances) {
-      excludeBalances(page);
+      omitBalancesFromAccountList(page);
     }
 
     return { accounts: page };
@@ -65,11 +68,16 @@ export async function handleGetAccountDetails(
   reply: FastifyReply
 ): Promise<Account> {
   const params = request.params as { accountId: SubAccountIdPathParam };
-  const asset = ACCOUNTS.find((account) => account.id === params.accountId);
+  const query = request.query as { excludeBalances?: AccountExcludeBalancesQueryParam };
+  const account = ACCOUNTS.find((account) => account.id === params.accountId);
 
-  if (!asset) {
+  if (!account) {
     return reply.code(404).send(ACCOUNT_NOT_FOUND_ERROR);
   }
 
-  return asset;
+  if (query.excludeBalances) {
+    omitBalancesFromAccount(account);
+  }
+
+  return account;
 }
