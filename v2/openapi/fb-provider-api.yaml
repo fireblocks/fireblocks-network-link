@@ -539,7 +539,7 @@ paths:
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/AccountExcludeBalancesQueryParam'
+        - $ref: '#/components/parameters/AccountBalancesQueryParam'
       responses:
         '200':
           description: List of sub-accounts.
@@ -570,7 +570,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/AccountExcludeBalancesQueryParam'
+        - $ref: '#/components/parameters/AccountBalancesQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
@@ -811,13 +811,12 @@ components:
       schema:
         $ref: '#/components/schemas/AssetReference'
 
-    AccountExcludeBalancesQueryParam:
-      name: excludeBalances
+    AccountBalancesQueryParam:
+      name: balances
       in: query
       description: >-
-        Flag to exclude balances from accounts response.
-        By default balances are returns for every account
-        in the response.
+        Flag to include the account balances in the response.
+        Balances are not returned by default for account endpoints.
       schema:
         type: boolean
 

@@ -11,7 +11,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { Account } from './models/Account';
-export type { AccountExcludeBalancesQueryParam } from './models/AccountExcludeBalancesQueryParam';
+export type { AccountBalancesQueryParam } from './models/AccountBalancesQueryParam';
 export type { AccountHolderDetails } from './models/AccountHolderDetails';
 export type { AccountsSet } from './models/AccountsSet';
 export { AccountStatus } from './models/AccountStatus';

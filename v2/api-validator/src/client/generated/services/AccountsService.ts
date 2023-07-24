@@ -28,7 +28,7 @@ export class AccountsService {
         limit = 10,
         startingAfter,
         endingBefore,
-        excludeBalances,
+        balances,
     }: {
         /**
          * API authentication key.
@@ -60,9 +60,9 @@ export class AccountsService {
          */
         endingBefore?: string,
         /**
-         * Flag to exclude balances from accounts response. By default balances are returns for every account in the response.
+         * Flag to include the account balances in the response. Balances are not returned by default for account endpoints.
          */
-        excludeBalances?: boolean,
+        balances?: boolean,
     }): CancelablePromise<{
         accounts: Array<Account>;
     } | GeneralError> {
@@ -79,7 +79,7 @@ export class AccountsService {
                 'limit': limit,
                 'startingAfter': startingAfter,
                 'endingBefore': endingBefore,
-                'excludeBalances': excludeBalances,
+                'balances': balances,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
@@ -100,7 +100,7 @@ export class AccountsService {
         xFbapiTimestamp,
         xFbapiSignature,
         accountId,
-        excludeBalances,
+        balances,
     }: {
         /**
          * API authentication key.
@@ -124,9 +124,9 @@ export class AccountsService {
          */
         accountId: string,
         /**
-         * Flag to exclude balances from accounts response. By default balances are returns for every account in the response.
+         * Flag to include the account balances in the response. Balances are not returned by default for account endpoints.
          */
-        excludeBalances?: boolean,
+        balances?: boolean,
     }): CancelablePromise<Account | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
@@ -141,7 +141,7 @@ export class AccountsService {
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
             },
             query: {
-                'excludeBalances': excludeBalances,
+                'balances': balances,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,

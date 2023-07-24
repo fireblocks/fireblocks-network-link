@@ -11,26 +11,26 @@ describe('Accounts', () => {
   });
 
   describe('/accounts', () => {
-    it('should include balances in each account response by default', () => {
+    it('should exclude balances in each account response by default', () => {
       for (const account of accountsResponse.accounts) {
-        expect(account.balances).toBeDefined();
+        expect(account.balances).toBeUndefined();
       }
     });
 
-    describe('Excluding balances from response', () => {
+    describe('With balances', () => {
       let balanceExcludedResponse: { accounts: Account[] };
 
       beforeAll(async () => {
         balanceExcludedResponse = (await client.accounts.getAccounts({
-          excludeBalances: true,
+          balances: true,
         })) as {
           accounts: Account[];
         };
       });
 
-      it('should respond with balance excluded', () => {
+      it('should respond with accounts balances', () => {
         for (const account of balanceExcludedResponse.accounts) {
-          expect(account.balances).toBeUndefined();
+          expect(account.balances).toBeDefined();
         }
       });
     });
@@ -82,8 +82,8 @@ describe('Accounts', () => {
         })) as Account;
       });
 
-      it('should have balances in response', () => {
-        expect(accountDetailsWithBalances.balances).toBeDefined();
+      it('should not have account balances in response', () => {
+        expect(accountDetailsWithBalances.balances).toBeUndefined();
       });
     });
 
@@ -93,11 +93,11 @@ describe('Accounts', () => {
       beforeAll(async () => {
         accountDetailsWithoutBalances = (await client.accounts.getAccountDetails({
           accountId,
-          excludeBalances: true,
+          balances: true,
         })) as Account;
       });
 
-      it('should not have balances in response', () => {
+      it('should have account balances in response', () => {
         expect(accountDetailsWithoutBalances.balances).toBeDefined();
       });
     });
