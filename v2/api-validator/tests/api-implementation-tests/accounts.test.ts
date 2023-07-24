@@ -1,6 +1,6 @@
 import Client from '../../src/client';
 import { Account } from '../../src/client/generated';
-import { isFoundInAccountDetails } from './utils';
+import { isFoundInAccountDetails } from './account-validation';
 
 describe('Accounts', () => {
   let client: Client;

@@ -1,7 +1,7 @@
 import Client from '../../src/client';
 import config from '../../src/config';
 import { AssetDefinition, Capabilities, ErrorType } from '../../src/client/generated';
-import { isFoundInAccountDetails } from './utils';
+import { isFoundInAccountDetails } from './account-validation';
 import { itif } from '../conditional-tests';
 
 const KNWON_API_VERSIONS = ['0.0.1'];

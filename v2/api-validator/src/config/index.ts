@@ -190,7 +190,7 @@ function isStringArray(value: unknown) {
 }
 
 function capabilitiesComponent(value: unknown) {
-  if (value == undefined) {
+  if (value === undefined) {
     return;
   }
 
