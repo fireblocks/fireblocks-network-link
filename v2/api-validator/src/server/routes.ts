@@ -5,12 +5,7 @@ import { handleCreateOrder } from './handlers/trading-handlers';
 import { handleGetCapabilities } from './handlers/capabilities-handler';
 import { handleCreateBlockchainWithdrawal } from './handlers/transfer-handlers';
 import { handleCreateQuote } from './handlers/liguidity-handlers';
-import {
-  handleGetAccountDetails,
-  handleGetAccounts,
-  handleGetBalances,
-  handleGetHistoricBalances,
-} from './handlers/account-handlers';
+import { handleGetAccountDetails, handleGetAccounts } from './handlers/account-handlers';
 
 export function registerRoutes(app: WebApp): void {
   app.addRoute('GET', '/capabilities', handleGetCapabilities);
@@ -45,6 +40,4 @@ export function registerRoutes(app: WebApp): void {
   );
   app.addRoute('GET', '/accounts', handleGetAccounts);
   app.addRoute('GET', '/accounts/:accountId', handleGetAccountDetails);
-  app.addRoute('GET', '/accounts/:accountId/balances', handleGetBalances);
-  app.addRoute('GET', '/accounts/:accountId/historic-balances', handleGetHistoricBalances);
 }

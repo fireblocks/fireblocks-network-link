@@ -10,7 +10,7 @@ export type Account = {
     id: string;
     title: string;
     description?: string;
-    balances: Balances;
+    balances?: Balances;
     status: AccountStatus;
 };
 

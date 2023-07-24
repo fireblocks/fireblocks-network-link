@@ -28,7 +28,7 @@ export class AccountsService {
         limit = 10,
         startingAfter,
         endingBefore,
-        assets,
+        excludeBalances,
     }: {
         /**
          * API authentication key.
@@ -60,11 +60,11 @@ export class AccountsService {
          */
         endingBefore?: string,
         /**
-         * Array of account property names. Indicates which account properties should be returned. All properties by default. Account ID is always returned.
+         * Flag to exclude balances from accounts response. By default balances are returns for every account in the response.
          */
-        assets?: Array<string>,
+        excludeBalances?: boolean,
     }): CancelablePromise<{
-        withdrawals?: Array<Account>;
+        accounts: Array<Account>;
     } | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
@@ -79,7 +79,7 @@ export class AccountsService {
                 'limit': limit,
                 'startingAfter': startingAfter,
                 'endingBefore': endingBefore,
-                'assets': assets,
+                'excludeBalances': excludeBalances,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
@@ -100,7 +100,7 @@ export class AccountsService {
         xFbapiTimestamp,
         xFbapiSignature,
         accountId,
-        assets,
+        excludeBalances,
     }: {
         /**
          * API authentication key.
@@ -124,9 +124,9 @@ export class AccountsService {
          */
         accountId: string,
         /**
-         * Array of account property names. Indicates which account properties should be returned. All properties by default. Account ID is always returned.
+         * Flag to exclude balances from accounts response. By default balances are returns for every account in the response.
          */
-        assets?: Array<string>,
+        excludeBalances?: boolean,
     }): CancelablePromise<Account | GeneralError> {
         return this.httpRequest.request({
             method: 'GET',
@@ -141,7 +141,7 @@ export class AccountsService {
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
             },
             query: {
-                'assets': assets,
+                'excludeBalances': excludeBalances,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,

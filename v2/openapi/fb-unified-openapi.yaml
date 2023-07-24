@@ -534,7 +534,7 @@ paths:
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/AccountPropertiesQueryParam'
+        - $ref: '#/components/parameters/AccountExcludeBalancesQueryParam'
       responses:
         '200':
           description: List of sub-accounts.
@@ -542,8 +542,10 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - accounts
                 properties:
-                  withdrawals:
+                  accounts:
                     type: array
                     items:
                       $ref: '#/components/schemas/Account'
@@ -564,7 +566,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/AccountPropertiesQueryParam'
+        - $ref: '#/components/parameters/AccountExcludeBalancesQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
@@ -1834,22 +1836,12 @@ components:
       explode: true
       schema:
         $ref: '#/components/schemas/AssetReference'
-    AccountPropertiesQueryParam:
-      name: assets
+    AccountExcludeBalancesQueryParam:
+      name: excludeBalances
       in: query
-      description: Array of account property names. Indicates which account properties should be returned. All properties by default. Account ID is always returned.
-      style: form
-      explode: true
+      description: Flag to exclude balances from accounts response. By default balances are returns for every account in the response.
       schema:
-        type: array
-        items:
-          type: string
-      examples:
-        two-assets:
-          summary: Request to return the ID, the title, and the balances.
-          value:
-            - title
-            - balances
+        type: boolean
   responses:
     BadRequestResponse:
       description: Request could not be processed due to a client error.
@@ -2006,7 +1998,6 @@ components:
       required:
         - id
         - title
-        - balances
         - status
       properties:
         id:
@@ -2172,6 +2163,12 @@ components:
         - $ref: '#/components/schemas/NationalCurrency'
         - $ref: '#/components/schemas/NativeCryptocurrency'
         - $ref: '#/components/schemas/OtherAssetReference'
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
     Blockchain:
       type: string
       enum:

@@ -9,15 +9,38 @@ describe('Accounts', () => {
   });
 
   describe('/accounts', () => {
-    let result: { withdrawals?: Account[] };
+    let result: { accounts: Account[] };
 
     beforeAll(async () => {
-      result = await client.accounts.getAccounts({});
-      expect(result.withdrawals).toBeDefined();
+      result = (await client.accounts.getAccounts({})) as { accounts: Account[] };
+    });
+
+    it('should include balances in each account response by default', () => {
+      for (const account of result.accounts) {
+        expect(account.balances).toBeDefined();
+      }
+    });
+
+    describe('Excluding balances from response', () => {
+      let balanceExcludedResponse: { accounts: Account[] };
+
+      beforeAll(async () => {
+        balanceExcludedResponse = (await client.accounts.getAccounts({
+          excludeBalances: true,
+        })) as {
+          accounts: Account[];
+        };
+      });
+
+      it('should respond with balance excluded', () => {
+        for (const account of balanceExcludedResponse.accounts) {
+          expect(account.balances).toBeUndefined();
+        }
+      });
     });
 
     describe('Interaction with /accounts/:accountId', () => {
-      const isListedAccount = async (accountId: string): Promise<boolean> => {
+      const isFoundInAccountDetails = async (accountId: string): Promise<boolean> => {
         try {
           const account = (await client.accounts.getAccountDetails({
             accountId,
@@ -34,9 +57,9 @@ describe('Accounts', () => {
         }
       };
 
-      it('should find each listed asset on account details endpoint', async () => {
-        for (const asset of result.withdrawals as Account[]) {
-          const found = await isListedAccount(asset.id);
+      it('should find each account in response on account details endpoint', async () => {
+        for (const asset of result.accounts) {
+          const found = await isFoundInAccountDetails(asset.id);
           expect(found).toBe(true);
         }
       });

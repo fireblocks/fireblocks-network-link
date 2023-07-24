@@ -1,9 +1,8 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import {
   Account,
-  AccountPropertiesQueryParam,
+  AccountExcludeBalancesQueryParam,
   AccountStatus,
-  AssetReference,
   Balances,
   ErrorType,
   SubAccountIdPathParam,
@@ -14,7 +13,7 @@ import {
   PaginationParams,
   getPaginationResult,
 } from '../controllers/pagination-controller';
-import { getPartialAccountByQuery } from '../controllers/accounts-controller';
+import { excludeBalances } from '../controllers/accounts-controller';
 
 const ACCOUNT_NOT_FOUND_ERROR = {
   message: 'Account not found',
@@ -34,8 +33,10 @@ const ACCOUNTS: Account[] = [
 export async function handleGetAccounts(
   request: FastifyRequest,
   reply: FastifyReply
-): Promise<{ withdrawals: Partial<Account>[] }> {
-  const requestQuery = request.query as PaginationParams & { assets?: AccountPropertiesQueryParam };
+): Promise<{ accounts: Partial<Account>[] }> {
+  const requestQuery = request.query as PaginationParams & {
+    excludeBalances?: AccountExcludeBalancesQueryParam;
+  };
 
   try {
     const page = getPaginationResult(
@@ -46,7 +47,11 @@ export async function handleGetAccounts(
       'id'
     );
 
-    return { withdrawals: getPartialAccountByQuery(page, requestQuery.assets) };
+    if (requestQuery.excludeBalances) {
+      excludeBalances(page);
+    }
+
+    return { accounts: page };
   } catch (err) {
     if (err instanceof InvalidPaginationParamsCombinationError) {
       return reply.code(400).send(ENDING_STARTING_COMBINATION_ERROR);
@@ -67,134 +72,4 @@ export async function handleGetAccountDetails(
   }
 
   return asset;
-}
-
-export async function handleGetBalances(
-  request: FastifyRequest,
-  reply: FastifyReply
-): Promise<{ balances: Balances }> {
-  const params = request.params as { accountId: SubAccountIdPathParam };
-  const requestQuery = request.query as PaginationParams & { asset?: AssetReference };
-
-  if (requestQuery.asset) {
-    if ('nationalCurrencyCode' in requestQuery.asset) {
-      return {
-        balances: [
-          {
-            asset: { nationalCurrencyCode: requestQuery.asset.nationalCurrencyCode },
-            id: '1',
-            availableAmount: '123',
-          },
-        ],
-      };
-    }
-    if ('cryptocurrencySymbol' in requestQuery.asset) {
-      return {
-        balances: [
-          {
-            asset: { cryptocurrencySymbol: requestQuery.asset.cryptocurrencySymbol },
-            id: '2',
-            availableAmount: '123',
-          },
-        ],
-      };
-    }
-    if ('assetId' in requestQuery.asset) {
-      return {
-        balances: [
-          {
-            asset: { assetId: requestQuery.asset.assetId },
-            id: '3',
-            availableAmount: '123',
-          },
-        ],
-      };
-    }
-  }
-
-  try {
-    const accountBalances = ACCOUNTS.find((account) => account.id === params.accountId)?.balances;
-    if (!accountBalances) {
-      return { balances: [] };
-    }
-    const page = getPaginationResult(
-      requestQuery.limit,
-      requestQuery.startingAfter,
-      requestQuery.endingBefore,
-      accountBalances,
-      'id'
-    );
-
-    return { balances: page };
-  } catch (err) {
-    if (err instanceof InvalidPaginationParamsCombinationError) {
-      return reply.code(400).send(ENDING_STARTING_COMBINATION_ERROR);
-    }
-    return reply.code(500).send({ errorType: ErrorType.UNEXPECTED_ERROR });
-  }
-}
-
-export async function handleGetHistoricBalances(
-  request: FastifyRequest,
-  reply: FastifyReply
-): Promise<{ balances: Balances }> {
-  const params = request.params as { accountId: SubAccountIdPathParam };
-  const requestQuery = request.query as PaginationParams & { asset?: AssetReference; time: string };
-
-  if (requestQuery.asset) {
-    if ('nationalCurrencyCode' in requestQuery.asset) {
-      return {
-        balances: [
-          {
-            asset: { nationalCurrencyCode: requestQuery.asset.nationalCurrencyCode },
-            id: '1',
-            availableAmount: '123',
-          },
-        ],
-      };
-    }
-    if ('cryptocurrencySymbol' in requestQuery.asset) {
-      return {
-        balances: [
-          {
-            asset: { cryptocurrencySymbol: requestQuery.asset.cryptocurrencySymbol },
-            id: '2',
-            availableAmount: '123',
-          },
-        ],
-      };
-    }
-    if ('assetId' in requestQuery.asset) {
-      return {
-        balances: [
-          {
-            asset: { assetId: requestQuery.asset.assetId },
-            id: '3',
-            availableAmount: '123',
-          },
-        ],
-      };
-    }
-  }
-
-  try {
-    const accountBalances = ACCOUNTS.find((account) => account.id === params.accountId)?.balances;
-    if (!accountBalances) {
-      return { balances: [] };
-    }
-    const page = getPaginationResult(
-      requestQuery.limit,
-      requestQuery.startingAfter,
-      requestQuery.endingBefore,
-      accountBalances,
-      'id'
-    );
-
-    return { balances: page };
-  } catch (err) {
-    if (err instanceof InvalidPaginationParamsCombinationError) {
-      return reply.code(400).send(ENDING_STARTING_COMBINATION_ERROR);
-    }
-    return reply.code(500).send({ errorType: ErrorType.UNEXPECTED_ERROR });
-  }
 }

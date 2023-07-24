@@ -1,17 +1,9 @@
 import { Account } from '../../client/generated';
 
-export function getPartialAccountByQuery(
-  accounts: Account[],
-  properties: string[] | undefined
-): Partial<Account>[] {
-  if (!properties) {
-    return accounts;
+export function excludeBalances(accounts: Account[]): void {
+  for (let i = 0; i < accounts.length; i++) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { balances, ...accountWithoutBalances } = accounts[i];
+    accounts[i] = accountWithoutBalances;
   }
-  return accounts.map((account) => {
-    const partialAccount = { id: account.id };
-    for (const property of properties) {
-      partialAccount[property] = account[property];
-    }
-    return partialAccount;
-  });
 }
