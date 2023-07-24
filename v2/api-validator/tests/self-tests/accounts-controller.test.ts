@@ -13,12 +13,14 @@ describe('Accounts Controller', () => {
       balances: [],
     };
 
+    let accountWithoutBalances: Account;
+
     beforeAll(() => {
-      omitBalancesFromAccount(account);
+      accountWithoutBalances = omitBalancesFromAccount(account);
     });
 
     it('should remove balance property from account object', () => {
-      expect(account.balances).toBeUndefined();
+      expect(accountWithoutBalances.balances).toBeUndefined();
     });
   });
 
@@ -38,12 +40,14 @@ describe('Accounts Controller', () => {
       },
     ];
 
+    let accountsWithoutBalances: Account[];
+
     beforeAll(() => {
-      omitBalancesFromAccountList(accounts);
+      accountsWithoutBalances = omitBalancesFromAccountList(accounts);
     });
 
     it('should remove balances property from every item in array', () => {
-      for (const account of accounts) {
+      for (const account of accountsWithoutBalances) {
         expect(account.balances).toBeUndefined();
       }
     });

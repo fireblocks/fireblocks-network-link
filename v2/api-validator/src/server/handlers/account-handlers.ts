@@ -42,7 +42,7 @@ export async function handleGetAccounts(
   };
 
   try {
-    const page = getPaginationResult(
+    let page = getPaginationResult(
       requestQuery.limit,
       requestQuery.startingAfter,
       requestQuery.endingBefore,
@@ -51,7 +51,7 @@ export async function handleGetAccounts(
     );
 
     if (requestQuery.excludeBalances) {
-      omitBalancesFromAccountList(page);
+      page = omitBalancesFromAccountList(page);
     }
 
     return { accounts: page };
@@ -69,14 +69,14 @@ export async function handleGetAccountDetails(
 ): Promise<Account> {
   const params = request.params as { accountId: SubAccountIdPathParam };
   const query = request.query as { excludeBalances?: AccountExcludeBalancesQueryParam };
-  const account = ACCOUNTS.find((account) => account.id === params.accountId);
+  let account = ACCOUNTS.find((account) => account.id === params.accountId);
 
   if (!account) {
     return reply.code(404).send(ACCOUNT_NOT_FOUND_ERROR);
   }
 
   if (query.excludeBalances) {
-    omitBalancesFromAccount(account);
+    account = omitBalancesFromAccount(account);
   }
 
   return account;

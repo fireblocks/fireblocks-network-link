@@ -1,13 +1,11 @@
 import { Account } from '../../client/generated';
 
-export function omitBalancesFromAccountList(accounts: Account[]): void {
-  for (let i = 0; i < accounts.length; i++) {
-    omitBalancesFromAccount(accounts[i]);
-  }
+export function omitBalancesFromAccountList(accounts: Account[]): Account[] {
+  return accounts.map((account) => omitBalancesFromAccount(account));
 }
 
-export function omitBalancesFromAccount(account: Account): void {
+export function omitBalancesFromAccount(account: Account): Account {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { balances, ...accountWithoutBalances } = account;
-  account = accountWithoutBalances;
+  return accountWithoutBalances;
 }
