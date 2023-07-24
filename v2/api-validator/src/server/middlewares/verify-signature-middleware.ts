@@ -1,4 +1,6 @@
+import _ from 'lodash';
 import logger from '../../logging';
+import { JsonValue } from 'type-fest';
 import { IncomingHttpHeaders } from 'http';
 import { verifySignature } from '../../security';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
@@ -18,13 +20,13 @@ export function verifySignatureMiddleware(
   reply: FastifyReply,
   done: HookHandlerDoneFunction
 ): void {
-  const body = request.body;
+  const body = request.body as JsonValue;
   const method = request.method;
   const url = request.url;
 
   const { timestamp, nonce, signature } = getSignatureHeaders(request.headers);
 
-  const payload = buildSignaturePayload(method, url, body as object, timestamp, nonce);
+  const payload = buildSignaturePayload(method, url, body, timestamp, nonce);
 
   const isValid = verifySignature(payload, signature);
 
@@ -49,15 +51,15 @@ function getSignatureHeaders(headers: IncomingHttpHeaders) {
 function buildSignaturePayload(
   method: string,
   endpoint: string,
-  body: object,
+  body: JsonValue,
   timestamp: number,
   nonce: string
 ): string {
   return `${timestamp}${nonce}${method.toUpperCase()}${endpoint}${stringifyBody(body)}`;
 }
 
-function stringifyBody(body): string {
-  if (!body) {
+function stringifyBody(body: JsonValue): string {
+  if (_.isEmpty(body)) {
     return '';
   }
   return JSON.stringify(body);
