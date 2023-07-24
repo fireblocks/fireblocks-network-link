@@ -7,7 +7,5 @@ import type { NationalCurrency } from './NationalCurrency';
 import type { NativeCryptocurrency } from './NativeCryptocurrency';
 import type { OtherAssetReference } from './OtherAssetReference';
 
-export type AssetReference = (NationalCurrency | NativeCryptocurrency | OtherAssetReference | {
-    id: string;
-});
+export type AssetReference = (NationalCurrency | NativeCryptocurrency | OtherAssetReference);
 
