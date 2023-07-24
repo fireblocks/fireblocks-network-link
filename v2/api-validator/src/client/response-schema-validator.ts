@@ -39,12 +39,12 @@ export class ResponseSchemaValidator {
    * specified endpoint.
    *
    * @param method - HTTP method
-   * @param url - Relative path, as appears in the OpenAPI spec.
+   * @param openApiUrl - Relative path, as appears in the OpenAPI spec.
    * @param response - Response object to be validated.
    */
   public async validate(
     method: HTTPMethods,
-    url: string,
+    openApiUrl: string,
     response: any
   ): Promise<ValidationResult> {
     await this.openApiCompiled;
@@ -52,6 +52,10 @@ export class ResponseSchemaValidator {
     if (!this.validatorsDirectory) {
       throw new Error('Validators were not initialized properly');
     }
+
+    // The parsed schemas use Fastify parameters notation: `:param`
+    // While the client specifies URLs in OpenAPI notation: `{param}`
+    const url = openApiUrlToFastifyUrl(openApiUrl);
 
     const validator = this.validatorsDirectory.get(url)?.get(method);
     if (!validator) {
@@ -91,6 +95,10 @@ function compileResponseSchemas(schemas: OpenApiOperationDetails[]): ValidatorsD
   }
 
   return allValidators;
+}
+
+function openApiUrlToFastifyUrl(url: string): string {
+  return url.replace(/{(\w+)}/g, ':$1');
 }
 
 export class SchemaCompilationError extends XComError {
