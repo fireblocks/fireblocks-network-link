@@ -5,6 +5,7 @@ import { handleCreateOrder } from './handlers/trading-handlers';
 import { handleGetCapabilities } from './handlers/capabilities-handler';
 import { handleCreateBlockchainWithdrawal } from './handlers/transfer-handlers';
 import { handleCreateQuote } from './handlers/liguidity-handlers';
+import { getAccountDetails, getAccounts } from './handlers/account-handlers';
 
 export function registerRoutes(app: WebApp): void {
   app.addRoute('GET', '/capabilities', handleGetCapabilities);
@@ -37,4 +38,6 @@ export function registerRoutes(app: WebApp): void {
     '/accounts/:accountId/transfers/deposits/addresses',
     handleCreateBlockchainWithdrawal
   );
+  app.addRoute('GET', '/accounts', getAccounts);
+  app.addRoute('GET', '/accounts/:accountId', getAccountDetails);
 }

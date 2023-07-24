@@ -11,8 +11,8 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { Account } from './models/Account';
+export type { AccountBalancesQueryParam } from './models/AccountBalancesQueryParam';
 export type { AccountHolderDetails } from './models/AccountHolderDetails';
-export type { AccountPropertiesQueryParam } from './models/AccountPropertiesQueryParam';
 export type { AccountsSet } from './models/AccountsSet';
 export { AccountStatus } from './models/AccountStatus';
 export type { ApiComponents } from './models/ApiComponents';
@@ -35,6 +35,7 @@ export { CrossAccountTransferCapability } from './models/CrossAccountTransferCap
 export type { CrossAccountTransferDestination } from './models/CrossAccountTransferDestination';
 export type { CrossAccountWithdrawal } from './models/CrossAccountWithdrawal';
 export type { CrossAccountWithdrawalRequest } from './models/CrossAccountWithdrawalRequest';
+export type { CryptocurrencyReference } from './models/CryptocurrencyReference';
 export type { Deposit } from './models/Deposit';
 export type { DepositAddress } from './models/DepositAddress';
 export type { DepositAddressCreationRequest } from './models/DepositAddressCreationRequest';
