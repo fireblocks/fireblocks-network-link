@@ -1,5 +1,5 @@
 import { Order } from '../../client/generated';
 
-export async function handleCreateOrder(): Promise<Order> {
+export async function createOrder(): Promise<Order> {
   return {} as Order;
 }

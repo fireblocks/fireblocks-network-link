@@ -1,40 +1,35 @@
 import { WebApp } from './app';
-import { handleGetAdditionalAssets } from './handlers/additional-assets-handler';
-import { handleGetAssetDetails } from './handlers/asset-details-handler';
-import { handleCreateOrder } from './handlers/trading-handlers';
-import { handleGetCapabilities } from './handlers/capabilities-handler';
-import { handleCreateBlockchainWithdrawal } from './handlers/transfer-handlers';
-import { handleCreateQuote } from './handlers/liguidity-handlers';
+import logger from '../logging';
+import * as Handlers from './handlers';
+import { ErrorType } from '../client/generated';
+import { FastifyReply, FastifyRequest } from 'fastify';
+
+const log = logger('app:routes');
+
+async function alwaysReturns200(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+  reply.code(200).send();
+}
+
+async function alwaysReturns404(request: FastifyRequest, reply: FastifyReply): Promise<void> {
+  reply.code(404).send({
+    message: 'Entity not found',
+    errorType: ErrorType.NOT_FOUND,
+  });
+}
 
 export function registerRoutes(app: WebApp): void {
-  app.addRoute('GET', '/capabilities', handleGetCapabilities);
-  app.addRoute('GET', '/capabilities/assets', handleGetAdditionalAssets);
-  app.addRoute('GET', '/capabilities/assets/:id', handleGetAssetDetails);
-  app.addRoute('POST', '/accounts/:accountId/liquidity/quotes', handleCreateQuote);
-  app.addRoute('POST', '/accounts/:accountId/trading/orders', handleCreateOrder);
-  app.addRoute(
-    'POST',
-    '/accounts/:accountId/transfers/withdrawals/blockchain',
-    handleCreateBlockchainWithdrawal
-  );
-  app.addRoute(
-    'POST',
-    '/accounts/:accountId/transfers/withdrawals/fiat',
-    handleCreateBlockchainWithdrawal
-  );
-  app.addRoute(
-    'POST',
-    '/accounts/:accountId/transfers/withdrawals/peeraccount',
-    handleCreateBlockchainWithdrawal
-  );
-  app.addRoute(
-    'POST',
-    '/accounts/:accountId/transfers/withdrawals/subaccount',
-    handleCreateBlockchainWithdrawal
-  );
-  app.addRoute(
-    'POST',
-    '/accounts/:accountId/transfers/deposits/addresses',
-    handleCreateBlockchainWithdrawal
-  );
+  for (const { method, url, operationId, schema } of app.getAllOperations()) {
+    const stubHandler = schema.params ? alwaysReturns404 : alwaysReturns200;
+
+    const handler = Handlers[operationId] ?? stubHandler;
+    app.addRoute(method, url, handler);
+
+    const usingDummyHandler = !Handlers[operationId];
+    const registrationInfo = { method, url, operationId, isDummy: usingDummyHandler };
+    if (usingDummyHandler) {
+      log.warn('Route registered', registrationInfo);
+    } else {
+      log.debug('Route registered', registrationInfo);
+    }
+  }
 }

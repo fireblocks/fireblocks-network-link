@@ -19,7 +19,7 @@ const CAPABILITIES: Capabilities = {
   },
 };
 
-export async function handleGetCapabilities(): Promise<Capabilities> {
+export async function getCapabilities(): Promise<Capabilities> {
   log.info('GetCapabilities');
 
   return CAPABILITIES;

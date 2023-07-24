@@ -920,7 +920,7 @@ components:
     ErrorType:
       type: string
       enum:
-        - unexpected-error
+        - internal-error
         - bad-request
         - not-found
 
