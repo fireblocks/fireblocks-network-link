@@ -1,5 +1,6 @@
 import Client from '../../src/client';
-import { Account, ErrorType } from '../../src/client/generated';
+import { Account } from '../../src/client/generated';
+import { isFoundInAccountDetails } from './account-validation';
 
 describe('Accounts', () => {
   let client: Client;
@@ -36,26 +37,9 @@ describe('Accounts', () => {
     });
 
     describe('Interaction with /accounts/:accountId', () => {
-      const isFoundInAccountDetails = async (accountId: string): Promise<boolean> => {
-        try {
-          const account = (await client.accounts.getAccountDetails({
-            accountId,
-          })) as Account;
-          if (!account || account.id !== accountId) {
-            return false;
-          }
-          return true;
-        } catch (err) {
-          if ((err as any).body?.errorType === ErrorType.NOT_FOUND) {
-            return false;
-          }
-          throw err;
-        }
-      };
-
       it('should find each account in response on account details endpoint', async () => {
-        for (const asset of accountsResponse.accounts) {
-          const found = await isFoundInAccountDetails(asset.id);
+        for (const account of accountsResponse.accounts) {
+          const found = await isFoundInAccountDetails(account.id);
           expect(found).toBe(true);
         }
       });
