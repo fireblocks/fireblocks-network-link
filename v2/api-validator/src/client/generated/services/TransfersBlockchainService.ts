@@ -4,7 +4,6 @@
 /* eslint-disable */
 import type { BlockchainWithdrawal } from '../models/BlockchainWithdrawal';
 import type { BlockchainWithdrawalRequest } from '../models/BlockchainWithdrawalRequest';
-import type { GeneralError } from '../models/GeneralError';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -16,7 +15,6 @@ export class TransfersBlockchainService {
     /**
      * Get list of withdrawals over public blockchains sorted by creation time
      * @returns any List of withdrawals.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getBlockchainWithdrawals({
@@ -69,7 +67,7 @@ export class TransfersBlockchainService {
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
         withdrawals?: Array<BlockchainWithdrawal>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/withdrawals/blockchain',
@@ -98,7 +96,6 @@ export class TransfersBlockchainService {
     /**
      * Create new withdrawal over public blockchain
      * Should reject any non blockchain withdrawal request.
-     * @returns GeneralError Failed to process request.
      * @returns BlockchainWithdrawal New withdrawal has been successfully created.
      * @throws ApiError
      */
@@ -132,7 +129,7 @@ export class TransfersBlockchainService {
          */
         accountId: string,
         requestBody: BlockchainWithdrawalRequest,
-    }): CancelablePromise<GeneralError | BlockchainWithdrawal> {
+    }): CancelablePromise<BlockchainWithdrawal> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/transfers/withdrawals/blockchain',

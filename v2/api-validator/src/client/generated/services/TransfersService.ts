@@ -5,7 +5,6 @@
 import type { Deposit } from '../models/Deposit';
 import type { DepositAddress } from '../models/DepositAddress';
 import type { DepositAddressCreationRequest } from '../models/DepositAddressCreationRequest';
-import type { GeneralError } from '../models/GeneralError';
 import type { Withdrawal } from '../models/Withdrawal';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -18,7 +17,6 @@ export class TransfersService {
     /**
      * Get list of withdrawals sorted by creation time
      * @returns any List of withdrawals.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getWithdrawals({
@@ -71,7 +69,7 @@ export class TransfersService {
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
         withdrawals?: Array<Withdrawal>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/withdrawals',
@@ -100,7 +98,6 @@ export class TransfersService {
     /**
      * Get withdrawal details
      * @returns Withdrawal Withdrawals details.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getWithdrawalDetails({
@@ -136,7 +133,7 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
-    }): CancelablePromise<Withdrawal | GeneralError> {
+    }): CancelablePromise<Withdrawal> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/withdrawals/{id}',
@@ -160,7 +157,6 @@ export class TransfersService {
     /**
      * Get list of deposits sorted by creation time
      * @returns any Deposits details.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getDeposits({
@@ -208,7 +204,7 @@ export class TransfersService {
         endingBefore?: string,
     }): CancelablePromise<{
         deposits?: Array<Deposit>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/deposits',
@@ -236,7 +232,6 @@ export class TransfersService {
     /**
      * Get deposit details
      * @returns Deposit List of deposits.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getDepositDetails({
@@ -272,7 +267,7 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
-    }): CancelablePromise<Deposit | GeneralError> {
+    }): CancelablePromise<Deposit> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/deposits/{id}',
@@ -296,7 +291,6 @@ export class TransfersService {
     /**
      * Create new deposit address
      * @returns DepositAddress New deposit address created.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public createDepositAddress({
@@ -329,7 +323,7 @@ export class TransfersService {
          */
         accountId: string,
         requestBody: DepositAddressCreationRequest,
-    }): CancelablePromise<DepositAddress | GeneralError> {
+    }): CancelablePromise<DepositAddress> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/transfers/deposits/addresses',
@@ -354,7 +348,6 @@ export class TransfersService {
     /**
      * Get list of existing deposit addresses
      * @returns any List of existing deposit addresses.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getDepositAddresses({
@@ -402,7 +395,7 @@ export class TransfersService {
         endingBefore?: string,
     }): CancelablePromise<{
         addresses?: Array<DepositAddress>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/deposits/addresses',
@@ -430,7 +423,6 @@ export class TransfersService {
     /**
      * Get details of a deposit address
      * @returns DepositAddress New deposit address created.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getDepositAddressDetails({
@@ -466,7 +458,7 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
-    }): CancelablePromise<DepositAddress | GeneralError> {
+    }): CancelablePromise<DepositAddress> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/deposits/addresses/{id}',
@@ -490,7 +482,6 @@ export class TransfersService {
     /**
      * Disable a deposit address
      * @returns any Deposit address disabled.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public disableDepositAddress({
@@ -526,7 +517,7 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
-    }): CancelablePromise<any | GeneralError> {
+    }): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'DELETE',
             url: '/accounts/{accountId}/transfers/deposits/addresses/{id}',

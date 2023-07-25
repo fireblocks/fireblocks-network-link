@@ -68,7 +68,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /trading/books/{id}:
@@ -93,7 +95,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /trading/books/{id}/asks:
@@ -130,7 +134,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /trading/books/{id}/bids:
@@ -167,7 +173,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /trading/books/{id}/history:
@@ -204,7 +212,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/trading/orders:
@@ -240,7 +250,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
     post:
       operationId: createOrder
@@ -287,7 +299,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/trading/orders/{id}:
@@ -313,7 +327,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
     delete:
       operationId: cancelOrder
@@ -333,7 +349,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
 components:

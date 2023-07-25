@@ -121,7 +121,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /capabilities/transfers/deposits:
@@ -197,7 +199,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/withdrawals:
@@ -222,7 +226,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/withdrawals/{id}:
@@ -248,7 +254,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/withdrawals/blockchain:
@@ -282,7 +290,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
     post:
       operationId: createBlockchainWithdrawal
@@ -312,7 +322,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/withdrawals/fiat:
@@ -346,7 +358,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
     post:
       operationId: createFiatWithdrawal
@@ -376,7 +390,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
@@ -410,7 +426,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
     post:
@@ -441,7 +459,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
 
@@ -476,7 +496,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
     post:
       operationId: createSubAccountWithdrawal
@@ -508,7 +530,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/deposits:
@@ -541,7 +565,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/deposits/{id}:
@@ -567,7 +593,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/deposits/addresses:
@@ -598,7 +626,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
     get:
       operationId: getDepositAddresses
@@ -629,7 +659,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/transfers/deposits/addresses/{id}:
@@ -655,7 +687,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
     delete:
@@ -676,7 +710,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
 components:

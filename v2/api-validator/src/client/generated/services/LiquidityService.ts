@@ -2,7 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { GeneralError } from '../models/GeneralError';
 import type { Quote } from '../models/Quote';
 import type { QuoteRequest } from '../models/QuoteRequest';
 
@@ -17,7 +16,6 @@ export class LiquidityService {
      * Quote creation request
      * Either `fromAmount` or `toAmount` must be specified, while the unspecified amount will be populated by the server and returned in the response.
      * @returns Quote Quote details.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public createQuote({
@@ -50,7 +48,7 @@ export class LiquidityService {
          */
         accountId: string,
         requestBody?: QuoteRequest,
-    }): CancelablePromise<Quote | GeneralError> {
+    }): CancelablePromise<Quote> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/liquidity/quotes',
@@ -75,7 +73,6 @@ export class LiquidityService {
     /**
      * Get list of quotes sorted by creation time
      * @returns any Quotes details.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getQuotes({
@@ -128,7 +125,7 @@ export class LiquidityService {
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
         withdrawals?: Array<Quote>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/liquidity/quotes',
@@ -157,7 +154,6 @@ export class LiquidityService {
     /**
      * Get quote details
      * @returns Quote Quote details.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getQuoteDetails({
@@ -193,7 +189,7 @@ export class LiquidityService {
          * Sub-account identifier.
          */
         accountId: string,
-    }): CancelablePromise<Quote | GeneralError> {
+    }): CancelablePromise<Quote> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/liquidity/quotes/{id}',
@@ -217,7 +213,6 @@ export class LiquidityService {
     /**
      * Execute quote
      * @returns Quote Quote details.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public executeQuote({
@@ -253,7 +248,7 @@ export class LiquidityService {
          * Sub-account identifier.
          */
         accountId: string,
-    }): CancelablePromise<Quote | GeneralError> {
+    }): CancelablePromise<Quote> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/liquidity/quotes/{id}/execute',

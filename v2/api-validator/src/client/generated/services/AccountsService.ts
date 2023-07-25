@@ -5,7 +5,6 @@
 import type { Account } from '../models/Account';
 import type { CrossAccountWithdrawal } from '../models/CrossAccountWithdrawal';
 import type { CrossAccountWithdrawalRequest } from '../models/CrossAccountWithdrawalRequest';
-import type { GeneralError } from '../models/GeneralError';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -17,7 +16,6 @@ export class AccountsService {
     /**
      * Get list of sub-accounts
      * @returns any List of sub-accounts.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getAccounts({
@@ -65,7 +63,7 @@ export class AccountsService {
         balances?: boolean,
     }): CancelablePromise<{
         accounts: Array<Account>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts',
@@ -91,7 +89,6 @@ export class AccountsService {
     /**
      * Get sub-account details
      * @returns Account List of sub-accounts.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getAccountDetails({
@@ -127,7 +124,7 @@ export class AccountsService {
          * Flag to include the account balances in the response. Balances are not returned by default for account endpoints.
          */
         balances?: boolean,
-    }): CancelablePromise<Account | GeneralError> {
+    }): CancelablePromise<Account> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}',
@@ -153,7 +150,6 @@ export class AccountsService {
     /**
      * Get list of withdrawals to sub-accounts, sorted by creation time
      * @returns any List of withdrawals.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getSubAccountWithdrawals({
@@ -206,7 +202,7 @@ export class AccountsService {
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
         withdrawals?: Array<CrossAccountWithdrawal>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/transfers/withdrawals/subaccount',
@@ -235,7 +231,6 @@ export class AccountsService {
     /**
      * Create new transfer to another sub-account
      * Transfers assets between different sub-accounts of the same user. Should reject any withdrawals that are not sub-account transfers.
-     * @returns GeneralError Failed to process request.
      * @returns CrossAccountWithdrawal New withdrawal has been successfully created.
      * @throws ApiError
      */
@@ -269,7 +264,7 @@ export class AccountsService {
          */
         accountId: string,
         requestBody: CrossAccountWithdrawalRequest,
-    }): CancelablePromise<GeneralError | CrossAccountWithdrawal> {
+    }): CancelablePromise<CrossAccountWithdrawal> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/transfers/withdrawals/subaccount',

@@ -2,7 +2,6 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { GeneralError } from '../models/GeneralError';
 import type { MarketEntry } from '../models/MarketEntry';
 import type { MarketTrade } from '../models/MarketTrade';
 import type { Order } from '../models/Order';
@@ -19,7 +18,6 @@ export class TradingService {
     /**
      * Get details of an order book
      * @returns OrderBook The specified trading book if it exists
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getBookDetails({
@@ -50,7 +48,7 @@ export class TradingService {
          * Entity unique identifier.
          */
         id: string,
-    }): CancelablePromise<OrderBook | GeneralError> {
+    }): CancelablePromise<OrderBook> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/trading/books/{id}',
@@ -74,7 +72,6 @@ export class TradingService {
      * Get active sell orders in an order book
      * List active sell orders in an order book, sorted ascending by the sell price.
      * @returns any Active sell orders.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getBookAsks({
@@ -122,7 +119,7 @@ export class TradingService {
         endingBefore?: string,
     }): CancelablePromise<{
         asks: Array<MarketEntry>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/trading/books/{id}/asks',
@@ -151,7 +148,6 @@ export class TradingService {
      * Get active buy orders in an order book
      * List active buy orders in an order book, sorted descending by the buy price.
      * @returns any Active buy orders.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getBookBids({
@@ -199,7 +195,7 @@ export class TradingService {
         endingBefore?: string,
     }): CancelablePromise<{
         bids: Array<MarketEntry>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/trading/books/{id}/bids',
@@ -228,7 +224,6 @@ export class TradingService {
      * List fulfilled orders in an order book
      * List fulfilled orders in an order book, sorted descending by the fulfillment time.
      * @returns any List of fulfilled trades.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getBookOrderHistory({
@@ -276,7 +271,7 @@ export class TradingService {
         endingBefore?: string,
     }): CancelablePromise<{
         trades: Array<MarketTrade>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/trading/books/{id}/history',
@@ -305,7 +300,6 @@ export class TradingService {
      * List trading orders
      * List trading orders sorted descending by the creation time.
      * @returns any Order details
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getOrders({
@@ -353,7 +347,7 @@ export class TradingService {
         endingBefore?: string,
     }): CancelablePromise<{
         orders: Array<Order>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/trading/orders',
@@ -381,7 +375,6 @@ export class TradingService {
     /**
      * Create a new trading order
      * @returns Order Newly created book order details
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public createOrder({
@@ -414,7 +407,7 @@ export class TradingService {
          */
         accountId: string,
         requestBody?: OrderRequest,
-    }): CancelablePromise<Order | GeneralError> {
+    }): CancelablePromise<Order> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/trading/orders',
@@ -439,7 +432,6 @@ export class TradingService {
     /**
      * Get trading order details
      * @returns Order Book order details
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getOrderDetails({
@@ -475,7 +467,7 @@ export class TradingService {
          * Entity unique identifier.
          */
         id: string,
-    }): CancelablePromise<Order | GeneralError> {
+    }): CancelablePromise<Order> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/trading/orders/{id}',
@@ -499,7 +491,6 @@ export class TradingService {
     /**
      * Cancel an active trading order
      * @returns any Order canceled.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public cancelOrder({
@@ -535,7 +526,7 @@ export class TradingService {
          * Entity unique identifier.
          */
         id: string,
-    }): CancelablePromise<any | GeneralError> {
+    }): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'DELETE',
             url: '/accounts/{accountId}/trading/orders/{id}',

@@ -384,7 +384,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets:
     get:
@@ -460,7 +462,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets/{id}:
     get:
@@ -486,7 +490,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/balances:
     get:
@@ -518,7 +524,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts:
     get:
@@ -553,7 +561,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}:
     get:
@@ -579,7 +589,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/balances:
     get:
@@ -641,7 +653,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/historic-balances:
     get:
@@ -684,7 +698,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/liquidity/quotes:
     get:
@@ -708,7 +724,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes:
     post:
@@ -739,7 +757,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     get:
       operationId: getQuotes
@@ -772,7 +792,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}:
     get:
@@ -798,7 +820,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}/execute:
     post:
@@ -824,7 +848,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/trading/books:
     get:
@@ -856,7 +882,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}:
     get:
@@ -881,7 +909,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/asks:
     get:
@@ -917,7 +947,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/bids:
     get:
@@ -953,7 +985,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/history:
     get:
@@ -989,7 +1023,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders:
     get:
@@ -1025,7 +1061,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     post:
       operationId: createOrder
@@ -1073,7 +1111,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders/{id}:
     get:
@@ -1099,7 +1139,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     delete:
       operationId: cancelOrder
@@ -1120,7 +1162,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/transfers/withdrawals:
     get:
@@ -1196,7 +1240,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/transfers/deposits:
     get:
@@ -1272,7 +1318,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals:
     get:
@@ -1297,7 +1345,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/{id}:
     get:
@@ -1323,7 +1373,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/blockchain:
     get:
@@ -1357,7 +1409,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     post:
       operationId: createBlockchainWithdrawal
@@ -1388,7 +1442,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/fiat:
     get:
@@ -1422,7 +1478,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     post:
       operationId: createFiatWithdrawal
@@ -1453,7 +1511,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
     get:
@@ -1487,7 +1547,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     post:
       operationId: createPeerAccountWithdrawal
@@ -1518,7 +1580,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/subaccount:
     get:
@@ -1552,7 +1616,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     post:
       operationId: createSubAccountWithdrawal
@@ -1583,7 +1649,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits:
     get:
@@ -1616,7 +1684,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/{id}:
     get:
@@ -1642,7 +1712,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses:
     post:
@@ -1673,7 +1745,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     get:
       operationId: getDepositAddresses
@@ -1705,7 +1779,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses/{id}:
     get:
@@ -1731,7 +1807,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     delete:
       operationId: disableDepositAddress
@@ -1752,7 +1830,9 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
-        default:
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
 components:
   parameters:

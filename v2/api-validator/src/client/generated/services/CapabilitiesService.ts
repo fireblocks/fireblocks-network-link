@@ -6,7 +6,6 @@ import type { AssetDefinition } from '../models/AssetDefinition';
 import type { BalanceCapability } from '../models/BalanceCapability';
 import type { Capabilities } from '../models/Capabilities';
 import type { DepositCapability } from '../models/DepositCapability';
-import type { GeneralError } from '../models/GeneralError';
 import type { OrderBook } from '../models/OrderBook';
 import type { QuoteCapabilities } from '../models/QuoteCapabilities';
 import type { WithdrawalCapability } from '../models/WithdrawalCapability';
@@ -24,7 +23,6 @@ export class CapabilitiesService {
      *
      * The capabilities are specified as a map. The map keys are the capability names and the values are lists of account IDs. If all the accounts support a capability, an asterisk could be used, instead of listing all the accounts.
      * @returns Capabilities Server capability details.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getCapabilities({
@@ -50,7 +48,7 @@ export class CapabilitiesService {
          * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
          */
         xFbapiSignature: string,
-    }): CancelablePromise<Capabilities | GeneralError> {
+    }): CancelablePromise<Capabilities> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities',
@@ -71,7 +69,6 @@ export class CapabilitiesService {
      * Get list of supported additional assets
      * Returns assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
      * @returns any List of additional assets.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getAdditionalAssets({
@@ -114,7 +111,7 @@ export class CapabilitiesService {
         endingBefore?: string,
     }): CancelablePromise<{
         assets: Array<AssetDefinition>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities/assets',
@@ -140,7 +137,6 @@ export class CapabilitiesService {
      * Get details of a supported additional asset.
      * Returns the details of an assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
      * @returns AssetDefinition List of additional assets.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getAssetDetails({
@@ -171,7 +167,7 @@ export class CapabilitiesService {
          * Entity unique identifier.
          */
         id: string,
-    }): CancelablePromise<AssetDefinition | GeneralError> {
+    }): CancelablePromise<AssetDefinition> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities/assets/{id}',
@@ -194,7 +190,6 @@ export class CapabilitiesService {
     /**
      * Get list of supported balance assets
      * @returns any List of balance assets
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getBalanceAssets({
@@ -237,7 +232,7 @@ export class CapabilitiesService {
         endingBefore?: string,
     }): CancelablePromise<{
         capabilities?: Array<BalanceCapability>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities/balances',
@@ -262,7 +257,6 @@ export class CapabilitiesService {
     /**
      * List possible asset conversions
      * @returns QuoteCapabilities List of possible asset conversions.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getQuoteCapabilities({
@@ -288,7 +282,7 @@ export class CapabilitiesService {
          * Request timestamp in milliseconds since Unix epoch.
          */
         xFbapiTimestamp: number,
-    }): CancelablePromise<QuoteCapabilities | GeneralError> {
+    }): CancelablePromise<QuoteCapabilities> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities/liquidity/quotes',
@@ -308,7 +302,6 @@ export class CapabilitiesService {
     /**
      * List order books
      * @returns any List of order books
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getBooks({
@@ -351,7 +344,7 @@ export class CapabilitiesService {
         endingBefore?: string,
     }): CancelablePromise<{
         books?: Array<OrderBook>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities/trading/books',
@@ -376,7 +369,6 @@ export class CapabilitiesService {
     /**
      * Get list of supported withdrawal methods
      * @returns any List of withdrawal methods for account.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getWithdrawalMethods({
@@ -419,7 +411,7 @@ export class CapabilitiesService {
         endingBefore?: string,
     }): CancelablePromise<{
         capabilities?: Array<WithdrawalCapability>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities/transfers/withdrawals',
@@ -444,7 +436,6 @@ export class CapabilitiesService {
     /**
      * Get list of supported deposit methods
      * @returns any List of deposit methods for account.
-     * @returns GeneralError Failed to process request.
      * @throws ApiError
      */
     public getDepositMethods({
@@ -487,7 +478,7 @@ export class CapabilitiesService {
         endingBefore?: string,
     }): CancelablePromise<{
         capabilities?: Array<DepositCapability>;
-    } | GeneralError> {
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities/transfers/deposits',
