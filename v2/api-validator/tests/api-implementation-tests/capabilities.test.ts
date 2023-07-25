@@ -18,7 +18,7 @@ describe('Capabilities', () => {
     let capabilitiesResponse: Capabilities;
 
     beforeAll(async () => {
-      capabilitiesResponse = (await client.capabilities.getCapabilities({})) as Capabilities;
+      capabilitiesResponse = await client.capabilities.getCapabilities({});
     });
 
     it('should match config capabilities', () => {
@@ -47,7 +47,7 @@ describe('Capabilities', () => {
     let result: { assets: AssetDefinition[] };
 
     beforeAll(async () => {
-      result = (await client.capabilities.getAdditionalAssets({})) as { assets: AssetDefinition[] };
+      result = await client.capabilities.getAdditionalAssets({});
     });
 
     describe('Interaction with /capabilities/assets/:id', () => {

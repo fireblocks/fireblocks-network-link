@@ -783,8 +783,10 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - quotes
                 properties:
-                  withdrawals:
+                  quotes:
                     type: array
                     items:
                       $ref: '#/components/schemas/Quote'
