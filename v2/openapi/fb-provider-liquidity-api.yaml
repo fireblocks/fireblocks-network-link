@@ -61,7 +61,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/liquidity/quotes:
@@ -95,7 +97,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
     get:
       operationId: getQuotes
@@ -127,7 +131,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/liquidity/quotes/{id}:
@@ -153,7 +159,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
   /accounts/{accountId}/liquidity/quotes/{id}/execute:
@@ -179,7 +187,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
 components:

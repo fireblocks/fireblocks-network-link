@@ -68,7 +68,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
       callbacks:
         onWithdrawalFinalized:
@@ -83,7 +85,9 @@ paths:
               responses:
                 '200':
                   description: Successful update.
-                default:
+                '4XX':
+                  $ref: '#/x-responses/ErrorResponse'
+                '5XX':
                   $ref: '#/x-responses/ErrorResponse'
 
   /transfers/deposits/subscriptions/finalized:
@@ -115,7 +119,9 @@ paths:
           $ref: '#/x-responses/BadRequestResponse'
         '401':
           $ref: '#/x-responses/UnauthorizedResponse'
-        default:
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
           $ref: '#/x-responses/ErrorResponse'
       callbacks:
         onWithdrawalFinalized:
@@ -130,7 +136,9 @@ paths:
               responses:
                 '200':
                   description: Successful update.
-                default:
+                '4XX':
+                  $ref: '#/x-responses/ErrorResponse'
+                '5XX':
                   $ref: '#/x-responses/ErrorResponse'
 
 components:
