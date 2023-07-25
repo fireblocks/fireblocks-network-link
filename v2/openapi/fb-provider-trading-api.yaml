@@ -362,6 +362,8 @@ components:
       properties:
         id:
           type: string
+        description:
+          type: string
         baseAsset:
           $ref: '#/x-schemas/AssetReference'
         quoteAsset:
