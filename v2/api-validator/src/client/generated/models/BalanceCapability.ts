@@ -4,12 +4,9 @@
 /* eslint-disable */
 
 import type { AssetReference } from './AssetReference';
-import type { PositiveAmount } from './PositiveAmount';
 
-export type AssetBalance = {
+export type BalanceCapability = {
     id: string;
     asset: AssetReference;
-    availableAmount: PositiveAmount;
-    lockedAmount?: PositiveAmount;
 };
 
