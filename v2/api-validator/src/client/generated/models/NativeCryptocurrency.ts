@@ -4,12 +4,11 @@
 /* eslint-disable */
 
 import type { Blockchain } from './Blockchain';
-import type { Layer1Cryptocurrency } from './Layer1Cryptocurrency';
-import type { Layer2Cryptocurrency } from './Layer2Cryptocurrency';
+import type { CryptocurrencySymbol } from './CryptocurrencySymbol';
 
 export type NativeCryptocurrency = {
     blockchain?: Blockchain;
-    cryptocurrencySymbol: (Layer1Cryptocurrency | Layer2Cryptocurrency);
+    cryptocurrencySymbol: CryptocurrencySymbol;
     testAsset?: boolean;
 };
 
