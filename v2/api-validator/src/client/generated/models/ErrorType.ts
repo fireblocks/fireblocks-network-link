@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 export enum ErrorType {
-    UNEXPECTED_ERROR = 'unexpected-error',
+    INTERNAL_ERROR = 'internal-error',
     BAD_REQUEST = 'bad-request',
     NOT_FOUND = 'not-found',
 }

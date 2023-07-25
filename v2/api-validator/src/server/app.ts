@@ -1,9 +1,9 @@
 import config from '../config';
 import logger from '../logging';
 import { XComError } from '../error';
-import { OpenApiSchema, loadOpenApiSchema } from './schema';
 import { BadRequestError, RequestPart } from '../client/generated';
-import Fastify, { HTTPMethods, RouteOptions } from 'fastify';
+import { loadOpenApiSchema, OpenApiOperationDetails, OpenApiSchema } from './schema';
+import Fastify, { FastifyReply, FastifyRequest, HTTPMethods, RouteOptions } from 'fastify';
 import { FastifySchemaValidationError, SchemaErrorDataVar } from 'fastify/types/schema';
 import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
 import { nonceMiddleware } from './middlewares/nonce-middleware';
@@ -27,10 +27,26 @@ export class WebApp {
       logger: log.pinoLogger,
       schemaErrorFormatter,
     });
+
+    // For POST routes that do not define request body, allow any content type
+    // and ignore the body
+    const routesWithoutBodyContentParser = (req, body, done) => {
+      if (!req.routeSchema.body) {
+        done(null, {});
+      } else {
+        done(new ContentTypeError(req.headers.contentType), undefined);
+      }
+    };
+    this.app.addContentTypeParser(
+      'application/x-www-form-urlencoded',
+      routesWithoutBodyContentParser
+    );
+
     this.app.addHook('preHandler', verifySignatureMiddleware);
     this.app.addHook('preHandler', nonceMiddleware);
     this.app.addHook('preHandler', timestampMiddleware);
     this.app.addHook('preHandler', apiKeyMiddleware);
+    this.app.addHook('onSend', onSend);
   }
 
   public async start(): Promise<void> {
@@ -46,6 +62,52 @@ export class WebApp {
       schema: this.schema.getOperationSchema(method, url),
     });
   }
+
+  public getAllOperations(): OpenApiOperationDetails[] {
+    return this.schema.getAllOperations();
+  }
+}
+
+function shapeRequestForLog(request: FastifyRequest) {
+  return {
+    method: request.method,
+    url: request.url,
+    body: request.body,
+    params: request.params,
+    query: request.query,
+    headers: request.headers,
+    requestId: request.id,
+  };
+}
+
+function onSend(request: FastifyRequest, reply: FastifyReply, payload: string, done) {
+  if (reply.statusCode >= 400) {
+    const logData = {
+      statusCode: reply.statusCode,
+      request: shapeRequestForLog(request),
+      reply: {
+        statusCode: reply.statusCode,
+        payload: JSON.parse(payload),
+      },
+    };
+
+    if (reply.statusCode >= 500) {
+      log.error('Server error', logData);
+    } else {
+      log.info('Client error', logData);
+    }
+  }
+  done(null, payload);
+}
+
+class ContentTypeError extends XComError implements BadRequestError {
+  public readonly name = 'ContentTypeError';
+  public readonly errorType = BadRequestError.errorType.SCHEMA_ERROR;
+  public readonly requestPart = RequestPart.HEADERS;
+
+  constructor(contentType: string) {
+    super(`Wrong content type: ${contentType}`, { requestPart: RequestPart.HEADERS });
+  }
 }
 
 class SchemaError extends XComError implements BadRequestError {
@@ -54,7 +116,6 @@ class SchemaError extends XComError implements BadRequestError {
 
   constructor(public readonly message: string, public readonly requestPart: RequestPart) {
     super(message, { requestPart });
-    log.error('SchemaError', undefined, this);
   }
 }
 
@@ -68,7 +129,6 @@ class SchemaPropertyError extends XComError implements Required<BadRequestError>
     public readonly requestPart: RequestPart
   ) {
     super(message, { propertyName, requestPart });
-    log.error('SchemaPropertyError', undefined, this);
   }
 }
 

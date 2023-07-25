@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AssetReference } from '../models/AssetReference';
 import type { Balances } from '../models/Balances';
+import type { CryptocurrencySymbol } from '../models/CryptocurrencySymbol';
+import type { NationalCurrencyCode } from '../models/NationalCurrencyCode';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -26,7 +27,9 @@ export class BalancesService {
         limit = 10,
         startingAfter,
         endingBefore,
-        asset,
+        assetId,
+        nationalCurrencyCode,
+        cryptocurrencySymbol,
     }: {
         /**
          * API authentication key.
@@ -62,9 +65,17 @@ export class BalancesService {
          */
         endingBefore?: string,
         /**
-         * Limits the response to one asset.
+         * ID of one of the assets returned in get-additional-assets. Limits the response to one. Cannot be used in conjunction with cryptocurrencySymbol or nationalCurrencyCode
          */
-        asset?: AssetReference,
+        assetId?: string,
+        /**
+         * Limits the response to one asset with the provided NationalCurrencyCode Cannot be used in conjunction with cryptocurrencySymbol or assetId
+         */
+        nationalCurrencyCode?: NationalCurrencyCode,
+        /**
+         * Limits the response to one asset with the provided CryptocurrencySymbol Cannot be used in conjunction with nationalCurrencyCode or assetId
+         */
+        cryptocurrencySymbol?: CryptocurrencySymbol,
     }): CancelablePromise<{
         balances: Balances;
     }> {
@@ -84,7 +95,9 @@ export class BalancesService {
                 'limit': limit,
                 'startingAfter': startingAfter,
                 'endingBefore': endingBefore,
-                'asset': asset,
+                'assetId': assetId,
+                'nationalCurrencyCode': nationalCurrencyCode,
+                'cryptocurrencySymbol': cryptocurrencySymbol,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,

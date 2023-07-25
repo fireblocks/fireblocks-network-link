@@ -519,7 +519,7 @@ paths:
                   capabilities:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AssetReference'
+                      $ref: '#/components/schemas/BalanceCapability'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -607,7 +607,9 @@ paths:
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/AssetsQueryParam'
+        - $ref: '#/components/parameters/AssetIdQueryParam'
+        - $ref: '#/components/parameters/NationalCurrencyCodeQueryParam'
+        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
@@ -669,7 +671,9 @@ paths:
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/AssetsQueryParam'
+        - $ref: '#/components/parameters/AssetIdQueryParam'
+        - $ref: '#/components/parameters/NationalCurrencyCodeQueryParam'
+        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - name: time
           description: Time of the requested balances.
@@ -1908,6 +1912,24 @@ components:
       description: Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
       schema:
         type: string
+    AssetIdQueryParam:
+      name: assetId
+      description: ID of one of the assets returned in get-additional-assets. Limits the response to one. Cannot be used in conjunction with cryptocurrencySymbol or nationalCurrencyCode
+      in: query
+      schema:
+        type: string
+    NationalCurrencyCodeQueryParam:
+      name: nationalCurrencyCode
+      description: Limits the response to one asset with the provided NationalCurrencyCode Cannot be used in conjunction with cryptocurrencySymbol or assetId
+      in: query
+      schema:
+        $ref: '#/components/schemas/NationalCurrencyCode'
+    CryptocurrencySymbolQueryParam:
+      name: cryptocurrencySymbol
+      description: Limits the response to one asset with the provided CryptocurrencySymbol Cannot be used in conjunction with nationalCurrencyCode or assetId
+      in: query
+      schema:
+        $ref: '#/components/schemas/CryptocurrencySymbol'
     AssetsQueryParam:
       name: asset
       in: query
@@ -2014,7 +2036,7 @@ components:
     ErrorType:
       type: string
       enum:
-        - unexpected-error
+        - internal-error
         - bad-request
         - not-found
     Capabilities:
@@ -2095,12 +2117,25 @@ components:
       description: Maps balance assets to their balances.
       items:
         $ref: '#/components/schemas/AssetBalance'
+    BalanceCapability:
+      type: object
+      required:
+        - id
+        - asset
+      properties:
+        id:
+          type: string
+        asset:
+          $ref: '#/components/schemas/AssetReference'
     AssetBalance:
       type: object
       required:
+        - id
         - asset
         - availableAmount
       properties:
+        id:
+          type: string
         asset:
           $ref: '#/components/schemas/AssetReference'
         availableAmount:
@@ -2218,9 +2253,7 @@ components:
         blockchain:
           $ref: '#/components/schemas/Blockchain'
         cryptocurrencySymbol:
-          anyOf:
-            - $ref: '#/components/schemas/Layer1Cryptocurrency'
-            - $ref: '#/components/schemas/Layer2Cryptocurrency'
+          $ref: '#/components/schemas/CryptocurrencySymbol'
         testAsset:
           type: boolean
     OtherAssetReference:
@@ -2296,6 +2329,10 @@ components:
         - IMX
         - MATIC
         - SNX
+    CryptocurrencySymbol:
+      anyOf:
+        - $ref: '#/components/schemas/Layer1Cryptocurrency'
+        - $ref: '#/components/schemas/Layer2Cryptocurrency'
     NationalCurrencyCode:
       type: string
       description: National currency codes as defined in ISO 4217.

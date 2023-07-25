@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AssetDefinition } from '../models/AssetDefinition';
-import type { AssetReference } from '../models/AssetReference';
+import type { BalanceCapability } from '../models/BalanceCapability';
 import type { Capabilities } from '../models/Capabilities';
 import type { DepositCapability } from '../models/DepositCapability';
 import type { OrderBook } from '../models/OrderBook';
@@ -231,7 +231,7 @@ export class CapabilitiesService {
          */
         endingBefore?: string,
     }): CancelablePromise<{
-        capabilities?: Array<AssetReference>;
+        capabilities?: Array<BalanceCapability>;
     }> {
         return this.httpRequest.request({
             method: 'GET',

@@ -1,6 +1,7 @@
 import { JsonValue } from 'type-fest';
+import { fakeObject } from '../faker';
 import ApiClient from '../../src/client';
-import { JSONSchemaFaker } from 'json-schema-faker';
+import { AxiosRequestConfig } from 'axios';
 import { OpenApiOperationDetails } from '../../src/server/schema';
 import { createSecurityHeaders, SecurityHeaders } from '../../src/client/SecureClient';
 import {
@@ -9,7 +10,6 @@ import {
   RequestPart,
   UnauthorizedError,
 } from '../../src/client/generated';
-import { AxiosRequestConfig } from 'axios';
 
 type HeadersGenerator = (options: AxiosRequestConfig) => SecurityHeaders;
 
@@ -43,13 +43,16 @@ describe('Security header tests', () => {
         const client = new ApiClient(headersGenerator);
         const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
 
+        const params = fakeObject(schema.params);
+        const querystring = fakeObject(schema.querystring);
+
         let requestBody: JsonValue | undefined = undefined;
-        if (method === 'POST' && schema?.body) {
-          requestBody = await JSONSchemaFaker.resolve(schema.body);
+        if (method === 'POST') {
+          requestBody = fakeObject(schema.body);
         }
 
         try {
-          await operationFunction({ requestBody });
+          await operationFunction({ requestBody, ...params, ...querystring });
         } catch (err) {
           if (err instanceof ApiError) {
             return err;
