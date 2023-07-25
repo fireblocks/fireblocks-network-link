@@ -1,16 +1,13 @@
-import logger from '../../logging';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { AssetDefinition, EntityIdPathParam, ErrorType } from '../../client/generated';
 import { SUPPORTED_ASSETS } from './additional-assets-handler';
-
-const log = logger('handler:asset-details');
 
 const ASSET_NOT_FOUND_ERROR = {
   message: 'Asset not found',
   errorType: ErrorType.NOT_FOUND,
 };
 
-export async function handleGetAssetDetails(
+export async function getAssetDetails(
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<AssetDefinition | void> {

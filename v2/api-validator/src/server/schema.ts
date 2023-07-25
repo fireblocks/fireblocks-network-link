@@ -29,6 +29,10 @@ export class OpenApiSchema {
 
     return schema.schema;
   }
+
+  public getAllOperations(): OpenApiOperationDetails[] {
+    return this.schemas;
+  }
 }
 
 export class OpenApiSchemaNotFound extends XComError {

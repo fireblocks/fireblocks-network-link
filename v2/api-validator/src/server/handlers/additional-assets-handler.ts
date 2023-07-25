@@ -1,4 +1,3 @@
-import logger from '../../logging';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import {
   AssetDefinition,
@@ -9,12 +8,10 @@ import {
 } from '../../client/generated';
 import {
   ENDING_STARTING_COMBINATION_ERROR,
+  getPaginationResult,
   InvalidPaginationParamsCombinationError,
   PaginationParams,
-  getPaginationResult,
 } from '../controllers/pagination-controller';
-
-const log = logger('handler:additional-assets');
 
 export const SUPPORTED_ASSETS: AssetDefinition[] = [
   {
@@ -53,7 +50,7 @@ export const SUPPORTED_ASSETS: AssetDefinition[] = [
   },
 ];
 
-export async function handleGetAdditionalAssets(
+export async function getAdditionalAssets(
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<{ assets: AssetDefinition[] } | void> {
@@ -72,6 +69,6 @@ export async function handleGetAdditionalAssets(
     if (err instanceof InvalidPaginationParamsCombinationError) {
       return reply.code(400).send(ENDING_STARTING_COMBINATION_ERROR);
     }
-    return reply.code(500).send({ errorType: ErrorType.UNEXPECTED_ERROR });
+    return reply.code(500).send({ errorType: ErrorType.INTERNAL_ERROR });
   }
 }

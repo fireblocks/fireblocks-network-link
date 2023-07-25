@@ -138,6 +138,7 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
       return originalRequestMethod({
         ...axiosRequestConfig,
         headers: {
+          ...axiosRequestConfig.headers,
           'X-FBAPI-KEY': headers.xFbapiKey,
           'X-FBAPI-NONCE': headers.xFbapiNonce,
           'X-FBAPI-TIMESTAMP': headers.xFbapiTimestamp,
