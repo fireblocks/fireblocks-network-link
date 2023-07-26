@@ -1,11 +1,23 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { ErrorType, MarketEntry, MarketTrade, Order, OrderBook } from '../../client/generated';
+import { books } from '../controllers/books-controller';
+import { getPaginationResult, PaginationParams } from '../controllers/pagination-controller';
 
-export async function getBooks(request: FastifyRequest, reply: FastifyReply): Promise<OrderBook[]> {
-  return reply.code(404).send({
-    message: 'Entity not found',
-    errorType: ErrorType.NOT_FOUND,
-  });
+type GetBooksResponse = { books: OrderBook[] };
+
+export async function getBooks(
+  request: FastifyRequest,
+  reply: FastifyReply
+): Promise<GetBooksResponse> {
+  const { limit, startingAfter, endingBefore } = request.query as PaginationParams;
+
+  return {
+    books: getPaginationResult(limit, startingAfter, endingBefore, books, 'id'),
+  };
+  // return reply.code(404).send({
+  //   message: 'Entity not found',
+  //   errorType: ErrorType.NOT_FOUND,
+  // });
 }
 
 export async function getBookDetails(
