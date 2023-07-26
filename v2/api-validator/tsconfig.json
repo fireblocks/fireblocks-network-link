@@ -16,10 +16,10 @@
     "skipLibCheck": true /* Skip type checking of declaration files. */,
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
     "resolveJsonModule": true,
-    "types": ["jest", "node"],
+    "types": ["jest", "jest-extended", "node"],
     "outDir": "./dist"
   },
-  "include": ["./src", "./src/config/*.json", "./jest.config.ts"],
+  "include": ["./src", "./src/config/*.json", "./jest.config.ts", "./tests"],
   "exclude": ["node_modules"],
   "ts-node": {
     "files": true
