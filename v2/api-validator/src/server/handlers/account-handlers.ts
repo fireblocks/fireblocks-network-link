@@ -28,7 +28,7 @@ const ACCOUNT_NOT_FOUND_ERROR = {
 
 const BALANCES: Balances = [];
 
-const ACCOUNTS: Account[] = [
+export const ACCOUNTS: Account[] = [
   { id: '1', balances: BALANCES, status: AccountStatus.ACTIVE, title: '', description: '' },
   { id: '2', balances: BALANCES, status: AccountStatus.INACTIVE, title: '', description: '' },
   { id: '3', balances: BALANCES, status: AccountStatus.ACTIVE, title: '', description: '' },

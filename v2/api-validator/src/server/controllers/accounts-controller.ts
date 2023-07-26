@@ -1,4 +1,9 @@
 import { Account } from '../../client/generated';
+import { ACCOUNTS } from '../handlers/account-handlers';
+
+export function isKnownSubAccount(accountId: string): boolean {
+  return ACCOUNTS.some((account) => account.id === accountId);
+}
 
 export function omitBalancesFromAccountList(accounts: Account[]): Account[] {
   return accounts.map((account) => omitBalancesFromAccount(account));

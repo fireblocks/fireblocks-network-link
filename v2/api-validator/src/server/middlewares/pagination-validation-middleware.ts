@@ -10,7 +10,7 @@ const BAD_PAGINATION_ERROR: BadRequestError = {
 
 function endpointSupportsPagination(request: FastifyRequest): boolean {
   const schema = request.routeSchema.querystring as SomeJSONSchema;
-  return !!schema.properties.limit;
+  return !!schema?.properties?.limit;
 }
 
 export function paginationValidationMiddleware(

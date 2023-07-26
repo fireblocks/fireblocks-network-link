@@ -7,7 +7,6 @@ import {
   QuoteRequest,
   SubAccountIdPathParam,
 } from '../../client/generated';
-import { SUPPORTED_ASSETS } from './additional-assets-handler';
 import {
   ENDING_STARTING_COMBINATION_ERROR,
   InvalidPaginationParamsCombinationError,
@@ -15,16 +14,15 @@ import {
   getPaginationResult,
 } from '../controllers/pagination-controller';
 import {
+  InvalidQuoteRequestError,
+  QUOTE_CAPABILITIES,
   QuoteNotFoundError,
   addNewQuoteForUser,
   executeAccountQuote,
   quoteFromQuoteRequest,
+  validateQuoteRequest,
 } from '../controllers/liquidity-controller';
-
-const QUOTE_CAPABILITIES: QuoteCapability[] = [
-  { fromAsset: { assetId: SUPPORTED_ASSETS[0].id }, toAsset: { assetId: SUPPORTED_ASSETS[1].id } },
-  { fromAsset: { assetId: SUPPORTED_ASSETS[1].id }, toAsset: { assetId: SUPPORTED_ASSETS[0].id } },
-];
+import { isKnownSubAccount } from '../controllers/accounts-controller';
 
 const USERS_QUOTES_MAP: Map<string, Quote[]> = new Map();
 
@@ -39,19 +37,19 @@ export async function getQuotes(
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<{ quotes: Quote[] }> {
-  const paginationParams = request.query as PaginationParams;
-  const params = request.params as { accountId: SubAccountIdPathParam };
+  const { limit, startingAfter, endingBefore } = request.query as PaginationParams;
+  const { accountId } = request.params as { accountId: SubAccountIdPathParam };
+
+  if (!isKnownSubAccount(accountId)) {
+    return reply
+      .code(404)
+      .send({ message: 'Sub account not found', errorType: ErrorType.NOT_FOUND });
+  }
 
   try {
-    const userQuotes = USERS_QUOTES_MAP.get(params.accountId) ?? [];
+    const userQuotes = USERS_QUOTES_MAP.get(accountId) ?? [];
 
-    const result = getPaginationResult(
-      paginationParams.limit,
-      paginationParams.startingAfter,
-      paginationParams.endingBefore,
-      userQuotes,
-      'id'
-    );
+    const result = getPaginationResult(limit, startingAfter, endingBefore, userQuotes, 'id');
     return { quotes: result };
   } catch (err) {
     if (err instanceof InvalidPaginationParamsCombinationError) {
@@ -62,12 +60,32 @@ export async function getQuotes(
 }
 
 export async function createQuote(request: FastifyRequest, reply: FastifyReply): Promise<Quote> {
-  const params = request.params as { accountId: SubAccountIdPathParam };
+  const { accountId } = request.params as { accountId: SubAccountIdPathParam };
   const quoteRequest = request.body as QuoteRequest;
+
+  if (!isKnownSubAccount(accountId)) {
+    return reply
+      .code(404)
+      .send({ message: 'Sub account not found', errorType: ErrorType.NOT_FOUND });
+  }
+
+  try {
+    validateQuoteRequest(quoteRequest);
+  } catch (err) {
+    if (err instanceof InvalidQuoteRequestError) {
+      return reply.code(400).send({
+        message: err.message,
+        errorType: err.errorType,
+        requestPart: err.requestPart,
+        propertyName: err.propertyName,
+      });
+    }
+    return reply.code(500).send({ errorType: ErrorType.INTERNAL_ERROR });
+  }
 
   const quote = quoteFromQuoteRequest(quoteRequest);
 
-  addNewQuoteForUser(params.accountId, quote, USERS_QUOTES_MAP);
+  addNewQuoteForUser(accountId, quote, USERS_QUOTES_MAP);
 
   return quote;
 }
@@ -80,6 +98,12 @@ export async function getQuoteDetails(
     accountId: SubAccountIdPathParam;
     id: EntityIdPathParam;
   };
+
+  if (!isKnownSubAccount(accountId)) {
+    return reply
+      .code(404)
+      .send({ message: 'Sub account not found', errorType: ErrorType.NOT_FOUND });
+  }
 
   const accountQuotes = USERS_QUOTES_MAP.get(accountId) ?? [];
   const quote = accountQuotes.find((quote) => quote.id === quoteId);
@@ -99,6 +123,13 @@ export async function executeQuote(request: FastifyRequest, reply: FastifyReply)
     accountId: SubAccountIdPathParam;
     id: EntityIdPathParam;
   };
+
+  if (!isKnownSubAccount(accountId)) {
+    return reply
+      .code(404)
+      .send({ message: 'Sub account not found', errorType: ErrorType.NOT_FOUND });
+  }
+
   try {
     const executedQuote = executeAccountQuote(accountId, quoteId, USERS_QUOTES_MAP);
     return executedQuote;

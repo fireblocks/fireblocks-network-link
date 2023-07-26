@@ -51,7 +51,6 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
     let capability: QuoteCapability;
 
     beforeAll(() => {
-      console.log(capabilitiesResponse);
       capability = capabilitiesResponse.capabilities[0];
     });
 
@@ -125,7 +124,7 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
       expect(error.body.propertyName).toBe('toAsset');
     });
 
-    it('should failure when using a fromAsset and toAsset permutation which is not listed from quote capabilities', async () => {
+    it('should fail when using a fromAsset and toAsset permutation which is not listed from quote capabilities', async () => {
       const unsupportedPair: QuoteCapability = {
         fromAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
         toAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
@@ -146,7 +145,10 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
     let executedQuote: Quote;
 
     beforeAll(async () => {
-      const createdQuote = await client.liquidity.createQuote({ accountId: account.id });
+      const createdQuote = await client.liquidity.createQuote({
+        accountId: account.id,
+        requestBody: { ...capabilitiesResponse.capabilities[0], fromAmount: '1' },
+      });
       executedQuote = await client.liquidity.executeQuote({
         id: createdQuote.id,
         accountId: account.id,
@@ -157,8 +159,12 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
       expect([QuoteStatus.EXECUTED, QuoteStatus.EXECUTING]).toContain(executedQuote.status);
     });
 
-    it('should find quote on getQuoteDetails post execution', () => {
-      // TODO
+    it('should find quote on getQuoteDetails post execution', async () => {
+      const quote = await client.liquidity.getQuoteDetails({
+        accountId: account.id,
+        id: executedQuote.id,
+      });
+      expect(quote).toBeDefined();
     });
   });
 
@@ -178,6 +184,18 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
       for await (const quote of paginated(getQuotes)) {
         expect(quote.fromAsset).toSatisfy(isKnownAsset);
         expect(quote.toAsset).toSatisfy(isKnownAsset);
+      }
+    });
+
+    it('every returned quote should be found in getQuoteDetails', async () => {
+      for await (const quote of paginated(getQuotes)) {
+        const quoteDetails = await client.liquidity.getQuoteDetails({
+          accountId: account.id,
+          id: quote.id,
+        });
+
+        expect(quoteDetails).toBeDefined();
+        expect(quoteDetails.id).toBe(quote.id);
       }
     });
   });

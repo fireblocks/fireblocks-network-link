@@ -1,8 +1,65 @@
 import { randomUUID } from 'crypto';
-import { Quote, QuoteRequest, QuoteStatus } from '../../client/generated';
+import {
+  BadRequestError,
+  Quote,
+  QuoteCapability,
+  QuoteRequest,
+  QuoteStatus,
+  RequestPart,
+} from '../../client/generated';
 import { XComError } from '../../error';
+import { isKnownAsset } from './assets-controller';
+import { SUPPORTED_ASSETS } from '../handlers/additional-assets-handler';
+import _ from 'lodash';
 
 export class QuoteNotFoundError extends XComError {}
+export class InvalidQuoteRequestError extends XComError {
+  public requestPart = RequestPart.BODY;
+  constructor(
+    public message: string,
+    public errorType: BadRequestError.errorType,
+    public propertyName?: string
+  ) {
+    super(message);
+  }
+}
+
+export const QUOTE_CAPABILITIES: QuoteCapability[] = [
+  { fromAsset: { assetId: SUPPORTED_ASSETS[0].id }, toAsset: { assetId: SUPPORTED_ASSETS[1].id } },
+  { fromAsset: { assetId: SUPPORTED_ASSETS[1].id }, toAsset: { assetId: SUPPORTED_ASSETS[0].id } },
+];
+
+function isSupportedLiquidityCapability(capability: QuoteCapability) {
+  return QUOTE_CAPABILITIES.some((quoteCapability) => _.isEqual(quoteCapability, capability));
+}
+
+export function validateQuoteRequest(quoteRequest: QuoteRequest): void {
+  if (!isKnownAsset(quoteRequest.fromAsset)) {
+    throw new InvalidQuoteRequestError(
+      'fromAsset is not a reference to a supported asset',
+      BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
+      'fromAsset'
+    );
+  }
+  if (!isKnownAsset(quoteRequest.toAsset)) {
+    throw new InvalidQuoteRequestError(
+      'toAsset is not a reference to a supported asset',
+      BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
+      'toAsset'
+    );
+  }
+  if (
+    !isSupportedLiquidityCapability({
+      fromAsset: quoteRequest.fromAsset,
+      toAsset: quoteRequest.toAsset,
+    })
+  ) {
+    throw new InvalidQuoteRequestError(
+      `${quoteRequest.fromAsset}/${quoteRequest.toAsset} conversion is not supported`,
+      BadRequestError.errorType.SCHEMA_ERROR
+    );
+  }
+}
 
 export function quoteFromQuoteRequest(quoteRequest: QuoteRequest): Quote {
   const { fromAsset, toAsset } = quoteRequest;
