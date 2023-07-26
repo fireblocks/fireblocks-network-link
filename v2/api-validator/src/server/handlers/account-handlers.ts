@@ -17,6 +17,9 @@ import {
   omitBalancesFromAccount,
   omitBalancesFromAccountList,
 } from '../controllers/accounts-controller';
+import logger from '../../logging';
+
+const log = logger('handler:accounts');
 
 const ACCOUNT_NOT_FOUND_ERROR = {
   message: 'Account not found',
@@ -53,13 +56,12 @@ export async function getAccounts(
     if (!requestQuery.balances) {
       page = omitBalancesFromAccountList(page);
     }
-
     return { accounts: page };
   } catch (err) {
     if (err instanceof InvalidPaginationParamsCombinationError) {
       return reply.code(400).send(ENDING_STARTING_COMBINATION_ERROR);
     }
-    return reply.code(500).send({ errorType: ErrorType.UNEXPECTED_ERROR });
+    return reply.code(500).send({ errorType: ErrorType.INTERNAL_ERROR });
   }
 }
 

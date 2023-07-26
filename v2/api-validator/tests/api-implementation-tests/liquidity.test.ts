@@ -24,7 +24,13 @@ describeif(shouldTestLiquidity, 'Liquidity', () => {
 
   beforeAll(async () => {
     client = new Client();
-    capabilitiesResponse = await client.capabilities.getQuoteCapabilities({});
+    try {
+      account = await getLiquidityCapableAccount();
+      capabilitiesResponse = await client.capabilities.getQuoteCapabilities({});
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   });
 
   describe('Capabilities', () => {
@@ -42,7 +48,7 @@ describeif(shouldTestLiquidity, 'Liquidity', () => {
 
     it('every quote should be found on getQuoteDetails', async () => {
       for (const quote of allQuotes) {
-        expectValidQuote(account.id, quote);
+        expectExistingQuote(account.id, quote);
       }
     });
   });
@@ -100,6 +106,9 @@ describeif(shouldTestLiquidity, 'Liquidity', () => {
           });
         }).toThrow();
       });
+      it('should not work when using a fromAsset and toAsset permutation which is not listed from quote capabilities', () => {
+        // TODO
+      });
     });
   });
 
@@ -119,12 +128,12 @@ describeif(shouldTestLiquidity, 'Liquidity', () => {
     });
 
     it('should find quote on getQuoteDetails post execution', () => {
-      // TODO
+      expectExistingQuote(account.id, executedQuote);
     });
   });
 });
 
-async function isValidAssetReference(assetReference: AssetReference): Promise<boolean> {
+async function isExistingAssetReference(assetReference: AssetReference): Promise<boolean> {
   if ('nationalCurrencyCode' in assetReference) {
     return Object.values(NationalCurrencyCode).includes(assetReference.nationalCurrencyCode);
   }
@@ -149,30 +158,24 @@ async function expectValidQuoteCapabilitiesAssets(
   quoteCapabilities: QuoteCapabilities
 ): Promise<void> {
   for (const quoteCapability of quoteCapabilities.capabilities) {
-    if (!(await isValidAssetReference(quoteCapability.fromAsset))) {
-      expect().fail(
-        `Invalid fromAsset in quote capabilities: ${JSON.stringify(quoteCapability.fromAsset)}`
-      );
+    if (!(await isExistingAssetReference(quoteCapability.fromAsset))) {
+      fail(`Invalid fromAsset in quote capabilities: ${JSON.stringify(quoteCapability.fromAsset)}`);
     }
-    if (!(await isValidAssetReference(quoteCapability.toAsset))) {
-      expect().fail(
-        `Invalid fromAsset in quote capabilities: ${JSON.stringify(quoteCapability.toAsset)}`
-      );
+    if (!(await isExistingAssetReference(quoteCapability.toAsset))) {
+      fail(`Invalid fromAsset in quote capabilities: ${JSON.stringify(quoteCapability.toAsset)}`);
     }
   }
 }
 
-async function expectValidQuote(accountId: string, quote: Quote): Promise<void> {
+async function expectExistingQuote(accountId: string, quote: Quote): Promise<void> {
   const client = new Client();
   try {
     const quoteDetails = await client.liquidity.getQuoteDetails({ accountId, id: quote.id });
     if (!quoteDetails || quoteDetails.id !== quote.id) {
-      expect().fail(`Did not find quote ${quote.id} on server`);
+      fail(`Did not find quote ${quote.id} on server`);
     }
   } catch (err) {
-    expect().fail(
-      `Received error from server for getQuoteDetails with quote ${quote.id}: ${err.message}`
-    );
+    fail(`Received error from server for getQuoteDetails with quote ${quote.id}: ${err}`);
   }
 }
 
@@ -192,4 +195,17 @@ async function getAllQuotes(accountId: string): Promise<Quote[]> {
   }
 
   return result;
+}
+
+async function getLiquidityCapableAccount(): Promise<Account> {
+  const capabilitiesLiquidity = config.get('capabilities.components.liquidity');
+  const client = new Client();
+  let accountId: string;
+  if (Array.isArray(capabilitiesLiquidity)) {
+    accountId = capabilitiesLiquidity[0];
+  } else {
+    const accounts = await client.accounts.getAccounts({});
+    accountId = accounts.accounts[0].id;
+  }
+  return await client.accounts.getAccountDetails({ accountId });
 }

@@ -3,4 +3,11 @@ export { getAssetDetails } from './asset-details-handler';
 export { createOrder } from './trading-handlers';
 export { getCapabilities } from './capabilities-handler';
 export { createBlockchainWithdrawal } from './transfer-handlers';
-export { createQuote } from './liguidity-handlers';
+export { getAccounts, getAccountDetails } from './account-handlers';
+export {
+  getQuoteCapabilities,
+  getQuoteDetails,
+  getQuotes,
+  createQuote,
+  executeQuote,
+} from './liquidity-handlers';
