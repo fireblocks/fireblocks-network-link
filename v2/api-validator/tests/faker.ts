@@ -1,6 +1,8 @@
 import { JsonObject } from 'type-fest';
 import { JSONSchemaFaker } from 'json-schema-faker';
 
+JSONSchemaFaker.option('requiredOnly', true);
+
 /**
  * Create an object with its structure described by {@link schema} and
  * populate all the properties with random values.
