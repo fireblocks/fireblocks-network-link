@@ -3,7 +3,9 @@ export default {
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   setupFiles: ['./tests/setup/preload-schemas.ts'],
+  setupFilesAfterEnv: ['jest-extended/all'],
   reporters: [
+    'summary',
     'default',
     [
       'jest-html-reporters',
