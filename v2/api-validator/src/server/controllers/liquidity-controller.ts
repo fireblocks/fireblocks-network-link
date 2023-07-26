@@ -1,7 +1,8 @@
 import { randomUUID } from 'crypto';
 import { Quote, QuoteRequest, QuoteStatus } from '../../client/generated';
+import { XComError } from '../../error';
 
-export class QuoteNotFoundError extends Error {}
+export class QuoteNotFoundError extends XComError {}
 
 export function quoteFromQuoteRequest(quoteRequest: QuoteRequest): Quote {
   const { fromAsset, toAsset } = quoteRequest;
@@ -46,7 +47,7 @@ export function executeAccountQuote(
   const accountQuotes = usersQuotesMap.get(accountId) ?? [];
   const quoteIndex = accountQuotes.findIndex((quote) => quote.id === quoteId);
   if (quoteIndex === -1) {
-    throw new QuoteNotFoundError();
+    throw new QuoteNotFoundError('Requested quote to execute not found', { quoteId, accountId });
   }
 
   const executedQuote: Quote = { ...accountQuotes[quoteIndex], status: QuoteStatus.EXECUTED };

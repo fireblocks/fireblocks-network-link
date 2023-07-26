@@ -15,7 +15,8 @@
   },
   "scripts": {
     "start:server:dev": "NODE_ENV=development ts-node src/server/server.ts | pino-pretty",
-    "test": "NODE_ENV=test jest --verbose --json --outputFile=test-results.json",
+    "test": "NODE_ENV=test jest tests/self-tests --verbose --json",
+    "start": "NODE_ENV=test jest tests/api-implementation-tests --verbose --json --outputFile=test-results.json",
     "test:watch": "NODE_ENV=test jest --verbose --watch",
     "generate-rsa-key-pair": "ts-node generate-signing-keys.ts rsa",
     "generate-ecdsa-secp256k1-key-pair": "ts-node generate-signing-keys.ts ecdsa-secp256k1",

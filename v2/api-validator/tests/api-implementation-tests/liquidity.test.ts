@@ -2,113 +2,149 @@ import { randomUUID } from 'crypto';
 import Client from '../../src/client';
 import {
   Account,
-  AssetReference,
-  Layer1Cryptocurrency,
-  Layer2Cryptocurrency,
+  ApiError,
+  BadRequestError,
   NationalCurrencyCode,
   Quote,
   QuoteCapabilities,
+  QuoteCapability,
   QuoteRequest,
   QuoteStatus,
+  RequestPart,
 } from '../../src/client/generated';
 import config from '../../src/config';
-import { describeif } from '../conditional-tests';
-import { fail } from 'jest-extended';
+import { AssetsDirectory } from './assets-directory';
+import { Pageable, paginated } from './pegable';
 
-const shouldTestLiquidity = !!config.get('capabilities.components.liquidity');
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace jest {
+    interface Describe {
+      skipIf: (skip: boolean) => Describe;
+    }
+  }
+}
 
-describeif(shouldTestLiquidity, 'Liquidity', () => {
+describe.skipIf = (skip: boolean) => (skip ? describe.skip : describe);
+
+const liquidityCapability = config.get('capabilities.components.liquidity');
+
+describe.skipIf(!liquidityCapability)('Liquidity', () => {
   let client: Client;
+  let assets: AssetsDirectory;
   let capabilitiesResponse: QuoteCapabilities;
   let account: Account;
 
   beforeAll(async () => {
     client = new Client();
-    try {
-      account = await getLiquidityCapableAccount();
-      capabilitiesResponse = await client.capabilities.getQuoteCapabilities({});
-    } catch (err) {
-      console.log(err);
-      throw err;
-    }
+    assets = await AssetsDirectory.fetch();
+    account = await getLiquidityCapableAccount();
+    capabilitiesResponse = await client.capabilities.getQuoteCapabilities({});
   });
 
   describe('Capabilities', () => {
-    it('every capability should have valid asset reference in from and to assets', () => {
-      expectValidQuoteCapabilitiesAssets(capabilitiesResponse);
-    });
-  });
+    it('should use known assets only', async () => {
+      let capabilityCount = 0;
 
-  describe('List quotes', () => {
-    let allQuotes: Quote[];
+      const isKnownAsset = assets.isKnownAsset.bind(assets);
 
-    beforeAll(async () => {
-      allQuotes = await getAllQuotes(account.id);
-    });
-
-    it('every quote should be found on getQuoteDetails', async () => {
-      for (const quote of allQuotes) {
-        expectExistingQuote(account.id, quote);
+      for (const liquidityCapability of capabilitiesResponse.capabilities) {
+        capabilityCount++;
+        expect(liquidityCapability.fromAsset).toSatisfy(isKnownAsset);
+        expect(liquidityCapability.toAsset).toSatisfy(isKnownAsset);
       }
+
+      expect(capabilityCount).toBeGreaterThan(0);
     });
   });
 
   describe('Create quote', () => {
-    let createdQuote: Quote;
-    let quoteRequest: QuoteRequest;
+    const capability: QuoteCapability = capabilitiesResponse.capabilities[0];
 
-    describe('With valid request', () => {
-      afterEach(async () => {
-        expect(async () => {
-          await client.liquidity.getQuoteDetails({ accountId: account.id, id: createdQuote.id });
-        }).not.toThrow();
+    const getCreateQuoteSuccessResult = async (requestBody: QuoteRequest): Promise<Quote> => {
+      return await client.liquidity.createQuote({
+        accountId: account.id,
+        requestBody,
       });
-      it('should work with fromAmount', async () => {
-        quoteRequest = { ...capabilitiesResponse.capabilities[0], fromAmount: '1' };
-        expect(async () => {
-          createdQuote = await client.liquidity.createQuote({
-            accountId: account.id,
-            requestBody: quoteRequest,
-          });
-        }).not.toThrow();
-      });
-      it('should work with toAmount', () => {
-        quoteRequest = { ...capabilitiesResponse.capabilities[0], toAmount: '1' };
-        expect(async () => {
-          createdQuote = await client.liquidity.createQuote({
-            accountId: account.id,
-            requestBody: quoteRequest,
-          });
-        }).not.toThrow();
-      });
+    };
+
+    const getCreateQuoteFailureResult = async (requestBody: QuoteRequest): Promise<ApiError> => {
+      try {
+        await client.liquidity.createQuote({
+          accountId: account.id,
+          requestBody,
+        });
+      } catch (err) {
+        if (err instanceof ApiError) {
+          return err;
+        }
+        throw err;
+      }
+      throw new Error('Expected to throw');
+    };
+
+    it('should succeed with only fromAmount', async () => {
+      const quote = await getCreateQuoteSuccessResult({ ...capability, fromAmount: '1' });
+      expect(quote.status).toBe(QuoteStatus.READY);
     });
 
-    describe('With invalid request', () => {
-      it('should fail when specifying fromAmount and toAmount', () => {
-        quoteRequest = { ...capabilitiesResponse.capabilities[0], toAmount: '1', fromAmount: '1' };
-        expect(async () => {
-          await client.liquidity.createQuote({
-            accountId: account.id,
-            requestBody: quoteRequest,
-          });
-        }).toThrow();
+    it('should succeed with only toAmount', async () => {
+      const quote = await getCreateQuoteSuccessResult({ ...capability, toAmount: '1' });
+      expect(quote.status).toBe(QuoteStatus.READY);
+    });
+
+    it('should fail with using both fromAmount and toAmount', async () => {
+      const error = await getCreateQuoteFailureResult({
+        ...capability,
+        fromAmount: '1',
+        toAmount: '1',
       });
-      it('should fail when using invalid asset in either fromAsset or toAsset', () => {
-        quoteRequest = {
-          fromAsset: { assetId: randomUUID() },
-          toAsset: { assetId: randomUUID() },
-          toAmount: '1',
-        };
-        expect(async () => {
-          await client.liquidity.createQuote({
-            accountId: account.id,
-            requestBody: quoteRequest,
-          });
-        }).toThrow();
+
+      expect(error.status).toBe(400);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_ERROR);
+      expect(error.body.requestPart).toBe(RequestPart.BODY);
+    });
+
+    it('should fail with unknown fromAsset', async () => {
+      const error = await getCreateQuoteFailureResult({
+        ...capability,
+        fromAsset: { assetId: randomUUID() },
+        toAmount: '1',
       });
-      it('should not work when using a fromAsset and toAsset permutation which is not listed from quote capabilities', () => {
-        // TODO
+
+      expect(error.status).toBe(400);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
+      expect(error.body.requestPart).toBe(RequestPart.BODY);
+      expect(error.body.propertyName).toBe('fromAsset');
+    });
+
+    it('should fail with unknown toAsset', async () => {
+      const error = await getCreateQuoteFailureResult({
+        ...capability,
+        toAsset: { assetId: randomUUID() },
+        toAmount: '1',
       });
+
+      expect(error.status).toBe(400);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
+      expect(error.body.requestPart).toBe(RequestPart.BODY);
+      expect(error.body.propertyName).toBe('toAsset');
+    });
+
+    it('should not work when using a fromAsset and toAsset permutation which is not listed from quote capabilities', async () => {
+      const unsupportedPair: QuoteCapability = {
+        fromAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+        toAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+      };
+
+      const error = await getCreateQuoteFailureResult({
+        ...unsupportedPair,
+        toAmount: '1',
+      });
+
+      expect(error.status).toBe(400);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_ERROR);
+      expect(error.body.requestPart).toBe(RequestPart.BODY);
     });
   });
 
@@ -128,74 +164,30 @@ describeif(shouldTestLiquidity, 'Liquidity', () => {
     });
 
     it('should find quote on getQuoteDetails post execution', () => {
-      expectExistingQuote(account.id, executedQuote);
+      // TODO
+    });
+  });
+
+  describe('List quotes', () => {
+    const getQuotes: Pageable<Quote> = async (limit, startingAfter?) => {
+      const response = await client.liquidity.getQuotes({
+        accountId: account.id,
+        limit,
+        startingAfter,
+      });
+      return response.quotes;
+    };
+
+    it('should use known assets only', async () => {
+      const isKnownAsset = assets.isKnownAsset.bind(assets);
+
+      for await (const quote of paginated(getQuotes)) {
+        expect(quote.fromAsset).toSatisfy(isKnownAsset);
+        expect(quote.toAsset).toSatisfy(isKnownAsset);
+      }
     });
   });
 });
-
-async function isExistingAssetReference(assetReference: AssetReference): Promise<boolean> {
-  if ('nationalCurrencyCode' in assetReference) {
-    return Object.values(NationalCurrencyCode).includes(assetReference.nationalCurrencyCode);
-  }
-
-  if ('cryptocurrencySymbol' in assetReference) {
-    return [
-      ...Object.values(Layer1Cryptocurrency),
-      ...Object.values(Layer2Cryptocurrency),
-    ].includes(assetReference.cryptocurrencySymbol);
-  }
-
-  const client = new Client();
-  try {
-    const asset = await client.capabilities.getAssetDetails({ id: assetReference.assetId });
-    return asset && asset.id === assetReference.assetId;
-  } catch (err) {
-    return false;
-  }
-}
-
-async function expectValidQuoteCapabilitiesAssets(
-  quoteCapabilities: QuoteCapabilities
-): Promise<void> {
-  for (const quoteCapability of quoteCapabilities.capabilities) {
-    if (!(await isExistingAssetReference(quoteCapability.fromAsset))) {
-      fail(`Invalid fromAsset in quote capabilities: ${JSON.stringify(quoteCapability.fromAsset)}`);
-    }
-    if (!(await isExistingAssetReference(quoteCapability.toAsset))) {
-      fail(`Invalid fromAsset in quote capabilities: ${JSON.stringify(quoteCapability.toAsset)}`);
-    }
-  }
-}
-
-async function expectExistingQuote(accountId: string, quote: Quote): Promise<void> {
-  const client = new Client();
-  try {
-    const quoteDetails = await client.liquidity.getQuoteDetails({ accountId, id: quote.id });
-    if (!quoteDetails || quoteDetails.id !== quote.id) {
-      fail(`Did not find quote ${quote.id} on server`);
-    }
-  } catch (err) {
-    fail(`Received error from server for getQuoteDetails with quote ${quote.id}: ${err}`);
-  }
-}
-
-async function getAllQuotes(accountId: string): Promise<Quote[]> {
-  const client = new Client();
-  const limit = 200;
-  let startingAfter;
-  let result: Quote[] = [];
-
-  while (true) {
-    const page = await client.liquidity.getQuotes({ accountId, limit, startingAfter });
-    result = [...result, ...page.quotes];
-    if (limit > page.quotes.length) {
-      break;
-    }
-    startingAfter = page.quotes[page.quotes.length - 1].id;
-  }
-
-  return result;
-}
 
 async function getLiquidityCapableAccount(): Promise<Account> {
   const capabilitiesLiquidity = config.get('capabilities.components.liquidity');

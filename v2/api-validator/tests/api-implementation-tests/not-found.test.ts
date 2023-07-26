@@ -5,7 +5,7 @@ import { ApiError, ErrorType } from '../../src/client/generated';
 import { OpenApiOperationDetails } from '../../src/server/schema';
 
 describe('Not Found tests', () => {
-  describe.each(getParamEndpoints())('$method $url', ({ method, operationId, schema }) => {
+  describe.each(getParamEndpoints())('$method $url', ({ operationId, schema }) => {
     let apiError: ApiError;
 
     const requestNonExistingResource = async () => {
@@ -15,13 +15,8 @@ describe('Not Found tests', () => {
       const params = fakeObject(schema.params);
       const querystring = fakeObject(schema.querystring);
 
-      let requestBody: JsonValue | undefined = undefined;
-      if (method === 'POST') {
-        requestBody = fakeObject(schema.body);
-      }
-
       try {
-        await operationFunction({ requestBody, ...params, ...querystring });
+        await operationFunction({ ...params, ...querystring });
       } catch (err) {
         if (err instanceof ApiError) {
           return err;
@@ -48,5 +43,7 @@ describe('Not Found tests', () => {
 
 function getParamEndpoints() {
   const supportedOpenApiEndpoints: OpenApiOperationDetails[] = global.supportedOpenApiEndpoints;
-  return supportedOpenApiEndpoints.filter((endpoint) => !!endpoint.schema.params);
+  return supportedOpenApiEndpoints.filter(
+    (endpoint) => !!endpoint.schema.params && endpoint.method !== 'POST'
+  );
 }

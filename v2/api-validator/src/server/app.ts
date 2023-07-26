@@ -34,7 +34,7 @@ export class WebApp {
       if (!req.routeSchema.body) {
         done(null, {});
       } else {
-        done(new ContentTypeError(req.headers.contentType), undefined);
+        done(new ContentTypeError(req.headers['content-type']), undefined);
       }
     };
     this.app.addContentTypeParser(
