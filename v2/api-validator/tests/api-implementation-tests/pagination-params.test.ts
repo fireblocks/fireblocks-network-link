@@ -1,4 +1,5 @@
 import Client from '../../src/client';
+import { fakeObject } from '../faker';
 import { OpenApiOperationDetails } from '../../src/server/schema';
 import {
   ApiError,
@@ -23,8 +24,13 @@ describe('Pagination params tests', () => {
       const client = new Client();
       const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
 
+      // Will fake the required query params. Since pagination params are always
+      // optional, thay will never be faked here
+      const querystring = fakeObject(schema.querystring);
+      const params = fakeObject(schema.params);
+
       try {
-        await operationFunction(paginationParams);
+        await operationFunction({ ...params, ...querystring, ...paginationParams });
       } catch (err) {
         if (err instanceof ApiError) {
           return err;
