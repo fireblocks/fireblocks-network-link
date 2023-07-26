@@ -1,4 +1,5 @@
 import { BadRequestError, RequestPart } from '../../client/generated';
+import { XComError } from '../../error';
 
 export type PaginationParams = {
   limit: number;
@@ -12,7 +13,11 @@ export const ENDING_STARTING_COMBINATION_ERROR: BadRequestError = {
   requestPart: RequestPart.QUERYSTRING,
 };
 
-export class InvalidPaginationParamsCombinationError extends Error {}
+export class InvalidPaginationParamsCombinationError extends XComError {
+  constructor() {
+    super('Cannot specify both startingAfter and endingBefore');
+  }
+}
 
 export function getPaginationResult<T>(
   limit: number,

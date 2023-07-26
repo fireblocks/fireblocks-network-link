@@ -1,12 +1,9 @@
 import _ from 'lodash';
-import logger from '../../logging';
 import { JsonValue } from 'type-fest';
 import { IncomingHttpHeaders } from 'http';
 import { verifySignature } from '../../security';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import { BadRequestError, RequestPart } from '../../client/generated';
-
-const log = logger('middleware:verify-signature');
 
 const INVALID_SIGNATURE_ERROR: BadRequestError = {
   message: 'Provided signature is invalid',

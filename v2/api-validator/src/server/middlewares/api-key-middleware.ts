@@ -1,10 +1,7 @@
-import logger from '../../logging';
 import { IncomingHttpHeaders } from 'http';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import config from '../../config';
 import { UnauthorizedError } from '../../client/generated';
-
-const log = logger('middleware:api-key');
 
 const INVALID_API_KEY_ERROR: UnauthorizedError = {
   message: 'Provided API key is not authorized',

@@ -1,10 +1,7 @@
-import logger from '../../logging';
 import { IncomingHttpHeaders } from 'http';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import config from '../../config';
 import { BadRequestError, RequestPart } from '../../client/generated';
-
-const log = logger('middleware:timestamp');
 
 const EXPIRED_REQUEST_ERROR: BadRequestError = {
   message: 'Request timestamp header is too old',
