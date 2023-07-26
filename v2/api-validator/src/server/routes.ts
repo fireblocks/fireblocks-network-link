@@ -1,7 +1,7 @@
 import { WebApp } from './app';
 import logger from '../logging';
 import * as Handlers from './handlers';
-import { ErrorType } from '../client/generated';
+import * as ErrorFactory from './http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 const log = logger('app:routes');
@@ -11,10 +11,7 @@ async function alwaysReturns200(request: FastifyRequest, reply: FastifyReply): P
 }
 
 async function alwaysReturns404(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-  reply.code(404).send({
-    message: 'Entity not found',
-    errorType: ErrorType.NOT_FOUND,
-  });
+  return ErrorFactory.notFound(reply);
 }
 
 export function registerRoutes(app: WebApp): void {

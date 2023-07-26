@@ -1,27 +1,22 @@
+import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import {
   Account,
   AccountBalancesQueryParam,
   AccountStatus,
   Balances,
-  ErrorType,
   SubAccountIdPathParam,
 } from '../../client/generated';
 import {
   ENDING_STARTING_COMBINATION_ERROR,
+  getPaginationResult,
   InvalidPaginationParamsCombinationError,
   PaginationParams,
-  getPaginationResult,
 } from '../controllers/pagination-controller';
 import {
   omitBalancesFromAccount,
   omitBalancesFromAccountList,
 } from '../controllers/accounts-controller';
-
-const ACCOUNT_NOT_FOUND_ERROR = {
-  message: 'Account not found',
-  errorType: ErrorType.NOT_FOUND,
-};
 
 const BALANCES: Balances = [];
 
@@ -59,7 +54,7 @@ export async function getAccounts(
     if (err instanceof InvalidPaginationParamsCombinationError) {
       return reply.code(400).send(ENDING_STARTING_COMBINATION_ERROR);
     }
-    return reply.code(500).send({ errorType: ErrorType.UNEXPECTED_ERROR });
+    throw err;
   }
 }
 
@@ -72,7 +67,7 @@ export async function getAccountDetails(
   let account = ACCOUNTS.find((account) => account.id === params.accountId);
 
   if (!account) {
-    return reply.code(404).send(ACCOUNT_NOT_FOUND_ERROR);
+    return ErrorFactory.notFound(reply);
   }
 
   if (!query.balances) {
