@@ -20,7 +20,7 @@
     "generate-rsa-key-pair": "ts-node generate-signing-keys.ts rsa",
     "generate-ecdsa-secp256k1-key-pair": "ts-node generate-signing-keys.ts ecdsa-secp256k1",
     "generate-ecdsa-prime256v1-key-pair": "ts-node generate-signing-keys.ts ecdsa-prime256v1",
-    "generate-openapi-client": "NODE_ENV=development ts-node generate-openapi-client.ts",
+    "generate-openapi-client": "(cd ../openapi; ./lint-openapi.sh) && NODE_ENV=development ts-node generate-openapi-client.ts",
     "make-unified-openapi": "NODE_ENV=development ts-node make-unified-openapi.ts"
   },
   "dependencies": {
