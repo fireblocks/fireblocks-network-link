@@ -873,6 +873,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - books
                 properties:
                   books:
                     type: array
