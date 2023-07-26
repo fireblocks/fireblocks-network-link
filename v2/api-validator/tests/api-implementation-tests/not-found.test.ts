@@ -1,8 +1,8 @@
 import { JsonValue } from 'type-fest';
 import { fakeObject } from '../faker';
 import Client from '../../src/client';
-import { ApiError, ErrorType } from '../../src/client/generated';
 import { OpenApiOperationDetails } from '../../src/server/schema';
+import { ApiError, GeneralError } from '../../src/client/generated';
 
 describe('Not Found tests', () => {
   describe.each(getParamEndpoints())('$method $url', ({ method, operationId, schema }) => {
@@ -40,7 +40,7 @@ describe('Not Found tests', () => {
     });
 
     it('should respond with the correct error type in the response body', () => {
-      expect(apiError.body.errorType).toBe(ErrorType.NOT_FOUND);
+      expect(apiError.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
       expect(apiError.body.message).toBeDefined();
     });
   });
