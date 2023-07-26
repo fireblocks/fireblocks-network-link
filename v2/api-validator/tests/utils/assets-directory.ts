@@ -1,4 +1,5 @@
 import ApiClient from '../../src/client';
+import { Pageable, paginated } from './pagination';
 import {
   AssetDefinition,
   AssetReference,
@@ -6,8 +7,10 @@ import {
   Layer2Cryptocurrency,
   NationalCurrencyCode,
 } from '../../src/client/generated';
-import { Pageable, paginated } from './pegable';
 
+/**
+ * Answers questions about the assets supported by the server.
+ */
 export class AssetsDirectory {
   public static async fetch(): Promise<AssetsDirectory> {
     const client = new ApiClient();
@@ -24,6 +27,7 @@ export class AssetsDirectory {
 
     return new AssetsDirectory(assets);
   }
+
   constructor(private readonly assets: AssetDefinition[]) {}
 
   public isKnownAdditionalAsset(assetId: string): boolean {

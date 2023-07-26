@@ -343,7 +343,7 @@ export class CapabilitiesService {
          */
         endingBefore?: string,
     }): CancelablePromise<{
-        books?: Array<OrderBook>;
+        books: Array<OrderBook>;
     }> {
         return this.httpRequest.request({
             method: 'GET',

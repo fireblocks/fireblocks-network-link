@@ -2,7 +2,6 @@ import Client from '../../src/client';
 import config from '../../src/config';
 import { AssetDefinition, Capabilities, ErrorType } from '../../src/client/generated';
 import { isFoundInAccountDetails } from './account-validation';
-import { itif } from '../conditional-tests';
 
 const KNWON_API_VERSIONS = ['0.0.1'];
 
@@ -30,8 +29,7 @@ describe('Capabilities', () => {
     });
 
     describe.each(Object.entries(capabilitiesConfig.components))('%s', (key, component) => {
-      itif(
-        Array.isArray(component),
+      it.skipIf(!Array.isArray(component))(
         'should find each account in /accounts/:accountId',
         async () => {
           for (const accountId of component) {

@@ -9,6 +9,7 @@ import { verifySignatureMiddleware } from './middlewares/verify-signature-middle
 import { nonceMiddleware } from './middlewares/nonce-middleware';
 import { timestampMiddleware } from './middlewares/timestamp-middleware';
 import { apiKeyMiddleware } from './middlewares/api-key-middleware';
+import { paginationValidationMiddleware } from './middlewares/pagination-validation-middleware';
 
 const log = logger('app');
 
@@ -46,6 +47,7 @@ export class WebApp {
     this.app.addHook('preHandler', nonceMiddleware);
     this.app.addHook('preHandler', timestampMiddleware);
     this.app.addHook('preHandler', apiKeyMiddleware);
+    this.app.addHook('preHandler', paginationValidationMiddleware);
     this.app.addHook('onSend', onSend);
   }
 

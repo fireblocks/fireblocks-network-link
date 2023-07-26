@@ -59,6 +59,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ books ]
                 properties:
                   books:
                     type: array
@@ -361,6 +362,8 @@ components:
       required: [ id, baseAsset, quoteAsset ]
       properties:
         id:
+          type: string
+        description:
           type: string
         baseAsset:
           $ref: '#/x-schemas/AssetReference'

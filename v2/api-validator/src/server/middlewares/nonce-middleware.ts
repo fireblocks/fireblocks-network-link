@@ -1,9 +1,6 @@
-import logger from '../../logging';
 import { IncomingHttpHeaders } from 'http';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import { BadRequestError, RequestPart } from '../../client/generated';
-
-const log = logger('middleware:nonce');
 
 const usedNoncesForApiKeyMap = new Map<string, Set<string>>();
 

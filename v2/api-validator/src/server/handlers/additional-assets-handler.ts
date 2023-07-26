@@ -2,6 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import {
   AssetDefinition,
   Blockchain,
+  BucketAsset,
   Erc20Token,
   ErrorType,
   StellarToken,
@@ -47,6 +48,14 @@ export const SUPPORTED_ASSETS: AssetDefinition[] = [
     description:
       'USDC is a fully collateralized US Dollar stablecoin, based on the open source fiat stablecoin framework developed by Centre.',
     decimalPlaces: 2,
+  },
+  {
+    id: 'f0844d82-7097-4521-95bc-d843724a893e',
+    type: BucketAsset.type.BUCKET_ASSET,
+    name: 'USDC',
+    symbol: 'USDC',
+    description: 'Aggregation of all USDC token over the different blockchains.',
+    decimalPlaces: 6,
   },
 ];
 

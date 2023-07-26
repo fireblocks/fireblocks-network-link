@@ -875,6 +875,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - books
                 properties:
                   books:
                     type: array
@@ -2714,6 +2716,8 @@ components:
         - quoteAsset
       properties:
         id:
+          type: string
+        description:
           type: string
         baseAsset:
           $ref: '#/components/schemas/AssetReference'

@@ -13,19 +13,8 @@ import {
   RequestPart,
 } from '../../src/client/generated';
 import config from '../../src/config';
-import { AssetsDirectory } from './assets-directory';
-import { Pageable, paginated } from './pegable';
-
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace jest {
-    interface Describe {
-      skipIf: (skip: boolean) => Describe;
-    }
-  }
-}
-
-describe.skipIf = (skip: boolean) => (skip ? describe.skip : describe);
+import { AssetsDirectory } from '../utils/assets-directory';
+import { Pageable, paginated } from '../utils/pagination';
 
 const liquidityCapability = config.get('capabilities.components.liquidity');
 
@@ -59,7 +48,12 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
   });
 
   describe('Create quote', () => {
-    const capability: QuoteCapability = capabilitiesResponse.capabilities[0];
+    let capability: QuoteCapability;
+
+    beforeAll(() => {
+      console.log(capabilitiesResponse);
+      capability = capabilitiesResponse.capabilities[0];
+    });
 
     const getCreateQuoteSuccessResult = async (requestBody: QuoteRequest): Promise<Quote> => {
       return await client.liquidity.createQuote({
@@ -131,7 +125,7 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
       expect(error.body.propertyName).toBe('toAsset');
     });
 
-    it('should not work when using a fromAsset and toAsset permutation which is not listed from quote capabilities', async () => {
+    it('should failure when using a fromAsset and toAsset permutation which is not listed from quote capabilities', async () => {
       const unsupportedPair: QuoteCapability = {
         fromAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
         toAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
