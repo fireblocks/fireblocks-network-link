@@ -741,6 +741,8 @@ paths:
   /v1/supportedAssets:
     get:
       summary: Fetch the assets supported by the exchanges
+      description: >
+        *NOTE*: If the third party is a sandbox third party, only coinClass=`BASE` assets will be supported.
       operationId: GET /supportedAssets
       parameters:
         - name: X-FBAPI-KEY
