@@ -628,7 +628,8 @@ paths:
                   summary: National currency balance
                   value:
                     balances:
-                      - asset:
+                      - id: 4ff63424-7e09-4cdf-b7f1-da7b7c65eabe
+                        asset:
                           nationalCurrencyCode: USD
                         availableAmount: '1743.43'
                         lockedAmount: '0'
@@ -636,7 +637,8 @@ paths:
                   summary: Blockchain native currency balance
                   value:
                     balances:
-                      - asset:
+                      - id: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
+                        asset:
                           blockchain: Bitcoin
                           cryptocurrencySymbol: BTC
                         availableAmount: '7.00008214'
@@ -646,7 +648,8 @@ paths:
                   description: '`assetId` must be one of the IDs returned by `GET /capabilities/assets`. The ID in this example is the ID of the USDC bucket defined in the example responses of `GET /capabilities/assets`.'
                   value:
                     balances:
-                      - asset:
+                      - id: 6f572d77-2f8d-4962-adf4-de4a62bc236b
+                        asset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
                         availableAmount: '95.03'
         '400':
@@ -1932,14 +1935,6 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/CryptocurrencySymbol'
-    AssetsQueryParam:
-      name: asset
-      in: query
-      description: Limits the response to one asset.
-      style: form
-      explode: true
-      schema:
-        $ref: '#/components/schemas/AssetReference'
     AccountBalancesQueryParam:
       name: balances
       in: query
@@ -1979,12 +1974,18 @@ components:
   schemas:
     GeneralError:
       description: Should be returned only if there in no more specific object.
+      type: object
+      required:
+        - message
+        - errorType
       properties:
         message:
           description: Description of the error.
           type: string
         errorType:
-          $ref: '#/components/schemas/ErrorType'
+          enum:
+            - internal-error
+            - not-found
     BadRequestError:
       description: |-
         Request could not be processed due to a client error.
@@ -2035,12 +2036,6 @@ components:
         - body
         - querystring
         - headers
-    ErrorType:
-      type: string
-      enum:
-        - internal-error
-        - bad-request
-        - not-found
     Capabilities:
       type: object
       required:

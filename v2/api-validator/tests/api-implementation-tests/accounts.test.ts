@@ -8,7 +8,7 @@ describe('Accounts', () => {
 
   beforeAll(async () => {
     client = new Client();
-    accountsResponse = (await client.accounts.getAccounts({})) as { accounts: Account[] };
+    accountsResponse = await client.accounts.getAccounts({});
   });
 
   describe('/accounts', () => {
@@ -75,10 +75,10 @@ describe('Accounts', () => {
       let accountDetailsWithoutBalances: Account;
 
       beforeAll(async () => {
-        accountDetailsWithoutBalances = (await client.accounts.getAccountDetails({
+        accountDetailsWithoutBalances = await client.accounts.getAccountDetails({
           accountId,
           balances: true,
-        })) as Account;
+        });
       });
 
       it('should have account balances in response', () => {

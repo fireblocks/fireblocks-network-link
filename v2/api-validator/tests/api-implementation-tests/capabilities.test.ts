@@ -1,6 +1,6 @@
 import Client from '../../src/client';
 import config from '../../src/config';
-import { AssetDefinition, Capabilities, ErrorType } from '../../src/client/generated';
+import { ApiError, AssetDefinition, Capabilities, GeneralError } from '../../src/client/generated';
 import { isFoundInAccountDetails } from './account-validation';
 import { itif } from '../conditional-tests';
 
@@ -53,15 +53,10 @@ describe('Capabilities', () => {
     describe('Interaction with /capabilities/assets/:id', () => {
       const isListedAsset = async (assetId: string): Promise<boolean> => {
         try {
-          const asset = (await client.capabilities.getAssetDetails({
-            id: assetId,
-          })) as AssetDefinition;
-          if (!asset || asset.id !== assetId) {
-            return false;
-          }
-          return true;
+          const asset = await client.capabilities.getAssetDetails({ id: assetId });
+          return asset?.id === assetId;
         } catch (err) {
-          if ((err as any).body?.errorType === ErrorType.NOT_FOUND) {
+          if (err instanceof ApiError && err.body?.errorType === GeneralError.errorType.NOT_FOUND) {
             return false;
           }
           throw err;

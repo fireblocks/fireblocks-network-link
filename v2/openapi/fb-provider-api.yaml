@@ -632,6 +632,7 @@ paths:
                   value: {
                     "balances": [
                       {
+                        "id": "4ff63424-7e09-4cdf-b7f1-da7b7c65eabe",
                         "asset": {
                           "nationalCurrencyCode": "USD"
                         },
@@ -645,6 +646,7 @@ paths:
                   value: {
                     "balances": [
                       {
+                        "id": "76a33ed9-8aa2-4781-93f8-d2369c0c2b14",
                         "asset": {
                           "blockchain": "Bitcoin",
                           "cryptocurrencySymbol": "BTC"
@@ -663,6 +665,7 @@ paths:
                   value: {
                     "balances": [
                       {
+                        "id": "6f572d77-2f8d-4962-adf4-de4a62bc236b",
                         "asset": {
                           "assetId": "f0844d82-7097-4521-95bc-d843724a893e"
                         },
@@ -851,15 +854,6 @@ components:
       schema:
         $ref: '#/components/schemas/CryptocurrencySymbol'
 
-    AssetsQueryParam:
-      name: asset
-      in: query
-      description: Limits the response to one asset.
-      style: form
-      explode: true
-      schema:
-        $ref: '#/components/schemas/AssetReference'
-
     AccountBalancesQueryParam:
       name: balances
       in: query
@@ -895,12 +889,16 @@ components:
     GeneralError:
       description: >-
         Should be returned only if there in no more specific object.
+      type: object
+      required: [ message, errorType ]
       properties:
         message:
           description: Description of the error.
           type: string
         errorType:
-          $ref: '#/components/schemas/ErrorType'
+          enum:
+            - internal-error
+            - not-found
 
     BadRequestError:
       description: >-
@@ -912,7 +910,7 @@ components:
         schema errors, the error type should be `schema-error` and `requestPart` must
         be specified. For all the other cases the error type should be `bad-request`.
       type: object
-      required: [message, errorType]
+      required: [ message, errorType ]
       properties:
         message:
           description: Description of the error.
@@ -932,7 +930,7 @@ components:
       description: >-
         Request is unauthorized
       type: object
-      required: [message, errorType]
+      required: [ message, errorType ]
       properties:
         message:
           description: Description of the error.
@@ -956,13 +954,6 @@ components:
         - body
         - querystring
         - headers
-
-    ErrorType:
-      type: string
-      enum:
-        - internal-error
-        - bad-request
-        - not-found
 
     Capabilities:
       type: object

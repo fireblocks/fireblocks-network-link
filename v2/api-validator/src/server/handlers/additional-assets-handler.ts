@@ -4,7 +4,6 @@ import {
   Blockchain,
   BucketAsset,
   Erc20Token,
-  ErrorType,
   StellarToken,
 } from '../../client/generated';
 import {
@@ -78,6 +77,6 @@ export async function getAdditionalAssets(
     if (err instanceof InvalidPaginationParamsCombinationError) {
       return reply.code(400).send(ENDING_STARTING_COMBINATION_ERROR);
     }
-    return reply.code(500).send({ errorType: ErrorType.INTERNAL_ERROR });
+    throw err;
   }
 }
