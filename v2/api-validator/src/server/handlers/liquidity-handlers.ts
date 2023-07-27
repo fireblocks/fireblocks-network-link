@@ -19,12 +19,11 @@ import {
   QuoteNotFoundError,
   addNewQuoteForUser,
   executeAccountQuote,
+  getUserQuotes,
   quoteFromQuoteRequest,
   validateQuoteRequest,
 } from '../controllers/liquidity-controller';
 import { isKnownSubAccount } from '../controllers/accounts-controller';
-
-const USERS_QUOTES_MAP: Map<string, Quote[]> = new Map();
 
 export async function getQuoteCapabilities(
   request: FastifyRequest,
@@ -47,7 +46,7 @@ export async function getQuotes(
   }
 
   try {
-    const userQuotes = USERS_QUOTES_MAP.get(accountId) ?? [];
+    const userQuotes = getUserQuotes(accountId);
 
     const result = getPaginationResult(limit, startingAfter, endingBefore, userQuotes, 'id');
     return { quotes: result };
@@ -55,7 +54,7 @@ export async function getQuotes(
     if (err instanceof InvalidPaginationParamsCombinationError) {
       return reply.code(400).send(ENDING_STARTING_COMBINATION_ERROR);
     }
-    return reply.code(500).send({ errorType: ErrorType.INTERNAL_ERROR });
+    throw err;
   }
 }
 
@@ -80,12 +79,12 @@ export async function createQuote(request: FastifyRequest, reply: FastifyReply):
         propertyName: err.propertyName,
       });
     }
-    return reply.code(500).send({ errorType: ErrorType.INTERNAL_ERROR });
+    throw err;
   }
 
   const quote = quoteFromQuoteRequest(quoteRequest);
 
-  addNewQuoteForUser(accountId, quote, USERS_QUOTES_MAP);
+  addNewQuoteForUser(accountId, quote);
 
   return quote;
 }
@@ -105,7 +104,7 @@ export async function getQuoteDetails(
       .send({ message: 'Sub account not found', errorType: ErrorType.NOT_FOUND });
   }
 
-  const accountQuotes = USERS_QUOTES_MAP.get(accountId) ?? [];
+  const accountQuotes = getUserQuotes(accountId);
   const quote = accountQuotes.find((quote) => quote.id === quoteId);
 
   if (!quote) {
@@ -131,7 +130,7 @@ export async function executeQuote(request: FastifyRequest, reply: FastifyReply)
   }
 
   try {
-    const executedQuote = executeAccountQuote(accountId, quoteId, USERS_QUOTES_MAP);
+    const executedQuote = executeAccountQuote(accountId, quoteId);
     return executedQuote;
   } catch (err) {
     if (err instanceof QuoteNotFoundError) {
@@ -140,6 +139,6 @@ export async function executeQuote(request: FastifyRequest, reply: FastifyReply)
         errorType: ErrorType.NOT_FOUND,
       });
     }
-    return reply.code(500).send({ errorType: ErrorType.INTERNAL_ERROR });
+    throw err;
   }
 }

@@ -8,8 +8,7 @@ import {
   RequestPart,
 } from '../../client/generated';
 import { XComError } from '../../error';
-import { isKnownAsset } from './assets-controller';
-import { SUPPORTED_ASSETS } from '../handlers/additional-assets-handler';
+import { SUPPORTED_ASSETS, isKnownAsset } from './assets-controller';
 import _ from 'lodash';
 
 export class QuoteNotFoundError extends XComError {}
@@ -23,6 +22,8 @@ export class InvalidQuoteRequestError extends XComError {
     super(message);
   }
 }
+
+const USERS_QUOTES_MAP: Map<string, Quote[]> = new Map();
 
 export const QUOTE_CAPABILITIES: QuoteCapability[] = [
   { fromAsset: { assetId: SUPPORTED_ASSETS[0].id }, toAsset: { assetId: SUPPORTED_ASSETS[1].id } },
@@ -85,10 +86,17 @@ export function quoteFromQuoteRequest(quoteRequest: QuoteRequest): Quote {
   };
 }
 
+export function getUserQuotes(
+  accountId: string,
+  usersQuotesMap: Map<string, Quote[]> = USERS_QUOTES_MAP
+): Quote[] {
+  return usersQuotesMap.get(accountId) ?? [];
+}
+
 export function addNewQuoteForUser(
   accountId: string,
   quote: Quote,
-  usersQuotesMap: Map<string, Quote[]>
+  usersQuotesMap: Map<string, Quote[]> = USERS_QUOTES_MAP
 ): void {
   const accountQuotes = usersQuotesMap.get(accountId) ?? [];
   accountQuotes.push(quote);
@@ -99,7 +107,7 @@ export function addNewQuoteForUser(
 export function executeAccountQuote(
   accountId: string,
   quoteId: string,
-  usersQuotesMap: Map<string, Quote[]>
+  usersQuotesMap: Map<string, Quote[]> = USERS_QUOTES_MAP
 ): Quote {
   const accountQuotes = usersQuotesMap.get(accountId) ?? [];
   const quoteIndex = accountQuotes.findIndex((quote) => quote.id === quoteId);
