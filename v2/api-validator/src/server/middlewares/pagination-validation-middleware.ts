@@ -9,7 +9,7 @@ const BAD_PAGINATION_ERROR: BadRequestError = {
 };
 
 function endpointSupportsPagination(request: FastifyRequest): boolean {
-  const schema = request.routeSchema.querystring as SomeJSONSchema;
+  const schema = request.routeSchema.querystring as SomeJSONSchema | undefined;
   return !!schema?.properties?.limit;
 }
 

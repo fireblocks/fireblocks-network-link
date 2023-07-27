@@ -1,18 +1,14 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import * as ErrorFactory from '../http-error-factory';
+import { isKnownSubAccount } from '../controllers/accounts-controller';
 import {
   EntityIdPathParam,
-  ErrorType,
   Quote,
   QuoteCapability,
   QuoteRequest,
   SubAccountIdPathParam,
 } from '../../client/generated';
-import {
-  ENDING_STARTING_COMBINATION_ERROR,
-  InvalidPaginationParamsCombinationError,
-  PaginationParams,
-  getPaginationResult,
-} from '../controllers/pagination-controller';
+import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import {
   InvalidQuoteRequestError,
   QUOTE_CAPABILITIES,
@@ -23,7 +19,6 @@ import {
   quoteFromQuoteRequest,
   validateQuoteRequest,
 } from '../controllers/liquidity-controller';
-import { isKnownSubAccount } from '../controllers/accounts-controller';
 
 export async function getQuoteCapabilities(
   request: FastifyRequest,
@@ -40,22 +35,13 @@ export async function getQuotes(
   const { accountId } = request.params as { accountId: SubAccountIdPathParam };
 
   if (!isKnownSubAccount(accountId)) {
-    return reply
-      .code(404)
-      .send({ message: 'Sub account not found', errorType: ErrorType.NOT_FOUND });
+    return ErrorFactory.notFound(reply);
   }
 
-  try {
-    const userQuotes = getUserQuotes(accountId);
+  const userQuotes = getUserQuotes(accountId);
 
-    const result = getPaginationResult(limit, startingAfter, endingBefore, userQuotes, 'id');
-    return { quotes: result };
-  } catch (err) {
-    if (err instanceof InvalidPaginationParamsCombinationError) {
-      return reply.code(400).send(ENDING_STARTING_COMBINATION_ERROR);
-    }
-    throw err;
-  }
+  const result = getPaginationResult(limit, startingAfter, endingBefore, userQuotes, 'id');
+  return { quotes: result };
 }
 
 export async function createQuote(request: FastifyRequest, reply: FastifyReply): Promise<Quote> {
@@ -63,9 +49,7 @@ export async function createQuote(request: FastifyRequest, reply: FastifyReply):
   const quoteRequest = request.body as QuoteRequest;
 
   if (!isKnownSubAccount(accountId)) {
-    return reply
-      .code(404)
-      .send({ message: 'Sub account not found', errorType: ErrorType.NOT_FOUND });
+    return ErrorFactory.notFound(reply);
   }
 
   try {
@@ -99,19 +83,14 @@ export async function getQuoteDetails(
   };
 
   if (!isKnownSubAccount(accountId)) {
-    return reply
-      .code(404)
-      .send({ message: 'Sub account not found', errorType: ErrorType.NOT_FOUND });
+    return ErrorFactory.notFound(reply);
   }
 
   const accountQuotes = getUserQuotes(accountId);
   const quote = accountQuotes.find((quote) => quote.id === quoteId);
 
   if (!quote) {
-    return reply.code(404).send({
-      message: 'Quote not found',
-      errorType: ErrorType.NOT_FOUND,
-    });
+    return ErrorFactory.notFound(reply);
   }
 
   return quote;
@@ -124,9 +103,7 @@ export async function executeQuote(request: FastifyRequest, reply: FastifyReply)
   };
 
   if (!isKnownSubAccount(accountId)) {
-    return reply
-      .code(404)
-      .send({ message: 'Sub account not found', errorType: ErrorType.NOT_FOUND });
+    return ErrorFactory.notFound(reply);
   }
 
   try {
@@ -134,10 +111,7 @@ export async function executeQuote(request: FastifyRequest, reply: FastifyReply)
     return executedQuote;
   } catch (err) {
     if (err instanceof QuoteNotFoundError) {
-      return reply.code(404).send({
-        message: 'Quote not found',
-        errorType: ErrorType.NOT_FOUND,
-      });
+      return ErrorFactory.notFound(reply);
     }
     throw err;
   }

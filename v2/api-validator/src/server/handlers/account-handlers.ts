@@ -1,16 +1,7 @@
+import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import {
-  Account,
-  AccountBalancesQueryParam,
-  ErrorType,
-  SubAccountIdPathParam,
-} from '../../client/generated';
-import {
-  ENDING_STARTING_COMBINATION_ERROR,
-  InvalidPaginationParamsCombinationError,
-  PaginationParams,
-  getPaginationResult,
-} from '../controllers/pagination-controller';
+import { Account, AccountBalancesQueryParam, SubAccountIdPathParam } from '../../client/generated';
+import { getPaginationResult, PaginationParams } from '../controllers/pagination-controller';
 import {
   ACCOUNTS,
   getSubAccount,
@@ -21,38 +12,20 @@ import logger from '../../logging';
 
 const log = logger('handler:accounts');
 
-const ACCOUNT_NOT_FOUND_ERROR = {
-  message: 'Account not found',
-  errorType: ErrorType.NOT_FOUND,
-};
-
 export async function getAccounts(
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<{ accounts: Partial<Account>[] }> {
-  const requestQuery = request.query as PaginationParams & {
+  const { limit, startingAfter, endingBefore, balances } = request.query as PaginationParams & {
     balances?: AccountBalancesQueryParam;
   };
 
-  try {
-    let page = getPaginationResult(
-      requestQuery.limit,
-      requestQuery.startingAfter,
-      requestQuery.endingBefore,
-      ACCOUNTS,
-      'id'
-    );
+  let page = getPaginationResult(limit, startingAfter, endingBefore, ACCOUNTS, 'id');
 
-    if (!requestQuery.balances) {
-      page = omitBalancesFromAccountList(page);
-    }
-    return { accounts: page };
-  } catch (err) {
-    if (err instanceof InvalidPaginationParamsCombinationError) {
-      return reply.code(400).send(ENDING_STARTING_COMBINATION_ERROR);
-    }
-    throw err;
+  if (!balances) {
+    page = omitBalancesFromAccountList(page);
   }
+  return { accounts: page };
 }
 
 export async function getAccountDetails(
@@ -64,7 +37,7 @@ export async function getAccountDetails(
   let account = getSubAccount(accountId);
 
   if (!account) {
-    return reply.code(404).send(ACCOUNT_NOT_FOUND_ERROR);
+    return ErrorFactory.notFound(reply);
   }
 
   if (!query.balances) {
