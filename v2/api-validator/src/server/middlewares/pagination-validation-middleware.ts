@@ -20,6 +20,7 @@ export function paginationValidationMiddleware(
 ): void {
   if (!endpointSupportsPagination(request)) {
     done();
+    return;
   }
 
   const { startingAfter, endingBefore } = request.query as any;

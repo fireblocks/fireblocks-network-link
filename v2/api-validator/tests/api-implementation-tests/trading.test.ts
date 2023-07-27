@@ -14,7 +14,7 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
     assets = await AssetsDirectory.fetch();
   });
 
-  describe('getBooks', () => {
+  describe('getBooks, getBookDetails', () => {
     const getBooks: Pageable<OrderBook> = async (limit, startingAfter?) => {
       const response = await client.capabilities.getBooks({ limit, startingAfter });
       return response.books;
@@ -32,6 +32,14 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
       }
 
       expect(booksCount).toBeGreaterThan(0);
+    });
+
+    it('same books should be accessible both in the list of books and separately', async () => {
+      for await (const listedBook of paginated(getBooks)) {
+        const id = encodeURIComponent(listedBook.id);
+        const book = await client.trading.getBookDetails({ id });
+        expect(book).toEqual(listedBook);
+      }
     });
   });
 });

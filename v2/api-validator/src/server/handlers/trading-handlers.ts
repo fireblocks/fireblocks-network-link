@@ -2,23 +2,31 @@ import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { books } from '../controllers/books-controller';
 import { MarketEntry, MarketTrade, Order, OrderBook } from '../../client/generated';
-import { getPaginationResult, PaginationParams } from '../controllers/pagination-controller';
+import { getPaginationResult } from '../controllers/pagination-controller';
+import { EntityIdPathParam, PaginationQuerystring } from './request-types';
 
 type GetBooksResponse = { books: OrderBook[] };
 
-export async function getBooks(request: FastifyRequest): Promise<GetBooksResponse> {
-  const { limit, startingAfter, endingBefore } = request.query as PaginationParams;
-
+export async function getBooks({
+  query,
+}: FastifyRequest<PaginationQuerystring>): Promise<GetBooksResponse> {
+  const { limit, startingAfter, endingBefore } = query;
   return {
     books: getPaginationResult(limit, startingAfter, endingBefore, books, 'id'),
   };
 }
 
 export async function getBookDetails(
-  request: FastifyRequest,
+  { params }: FastifyRequest<EntityIdPathParam>,
   reply: FastifyReply
 ): Promise<OrderBook> {
-  return ErrorFactory.notFound(reply);
+  const id = decodeURIComponent(params.id);
+  const book = books.find((b) => b.id === id);
+  if (!book) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  return book;
 }
 
 export async function getBookAsks(
