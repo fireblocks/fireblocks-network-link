@@ -22,11 +22,9 @@ describe('Accounts', () => {
       let balanceExcludedResponse: { accounts: Account[] };
 
       beforeAll(async () => {
-        balanceExcludedResponse = (await client.accounts.getAccounts({
+        balanceExcludedResponse = await client.accounts.getAccounts({
           balances: true,
-        })) as {
-          accounts: Account[];
-        };
+        });
       });
 
       it('should respond with accounts balances', () => {
@@ -61,9 +59,9 @@ describe('Accounts', () => {
       let accountDetailsWithBalances: Account;
 
       beforeAll(async () => {
-        accountDetailsWithBalances = (await client.accounts.getAccountDetails({
+        accountDetailsWithBalances = await client.accounts.getAccountDetails({
           accountId,
-        })) as Account;
+        });
       });
 
       it('should not have account balances in response', () => {

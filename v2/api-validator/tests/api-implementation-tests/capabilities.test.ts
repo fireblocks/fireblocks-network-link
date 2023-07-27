@@ -2,7 +2,6 @@ import Client from '../../src/client';
 import config from '../../src/config';
 import { ApiError, AssetDefinition, Capabilities, GeneralError } from '../../src/client/generated';
 import { isFoundInAccountDetails } from './account-validation';
-import { itif } from '../conditional-tests';
 
 const KNWON_API_VERSIONS = ['0.0.1'];
 
@@ -18,7 +17,7 @@ describe('Capabilities', () => {
     let capabilitiesResponse: Capabilities;
 
     beforeAll(async () => {
-      capabilitiesResponse = (await client.capabilities.getCapabilities({})) as Capabilities;
+      capabilitiesResponse = await client.capabilities.getCapabilities({});
     });
 
     it('should match config capabilities', () => {
@@ -30,8 +29,7 @@ describe('Capabilities', () => {
     });
 
     describe.each(Object.entries(capabilitiesConfig.components))('%s', (key, component) => {
-      itif(
-        Array.isArray(component),
+      it.skipIf(!Array.isArray(component))(
         'should find each account in /accounts/:accountId',
         async () => {
           for (const accountId of component) {
@@ -47,7 +45,7 @@ describe('Capabilities', () => {
     let result: { assets: AssetDefinition[] };
 
     beforeAll(async () => {
-      result = (await client.capabilities.getAdditionalAssets({})) as { assets: AssetDefinition[] };
+      result = await client.capabilities.getAdditionalAssets({});
     });
 
     describe('Interaction with /capabilities/assets/:id', () => {

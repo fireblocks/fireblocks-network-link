@@ -19,7 +19,7 @@ export function paginationValidationMiddleware(
   done: HookHandlerDoneFunction
 ): void {
   if (!endpointSupportsPagination(request)) {
-    done();
+    return done();
   }
 
   const { startingAfter, endingBefore } = request.query as any;

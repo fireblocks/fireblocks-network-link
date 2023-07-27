@@ -786,8 +786,10 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - quotes
                 properties:
-                  withdrawals:
+                  quotes:
                     type: array
                     items:
                       $ref: '#/components/schemas/Quote'
@@ -2003,6 +2005,9 @@ components:
             - schema-error
             - schema-property-error
             - bad-request
+            - unknown-asset
+            - unsupported-conversion
+            - quote-not-ready
         propertyName:
           description: Name of property that caused the error.
           type: string
