@@ -8,6 +8,7 @@ import {
 } from '../../client/generated';
 import { SUPPORTED_ASSETS } from './assets-controller';
 import { ACCOUNTS } from './accounts-controller';
+import { XComError } from '../../error';
 
 const capabilitiesFromSupportedAssets = SUPPORTED_ASSETS.map((asset) => ({
   asset: { assetId: asset.id },
@@ -27,6 +28,26 @@ export const BALANCE_CAPABILITIES: BalanceCapability[] = [
   ...cryptocurrencyBalanceCapabilities,
 ];
 
+export class InvalidAssetQueryCombinationError extends XComError {
+  constructor() {
+    super('assetId, nationalCurrencyCode and cryptocurrencySymbol can not be used in conjunction');
+  }
+}
+
 export function getSubAccountBalances(accountId: string): Balances {
   return ACCOUNTS.find((account) => account.id === accountId)?.balances ?? [];
+}
+
+function isUpToOneParameterDefined(...params) {
+  return params.filter((param) => !!param).length <= 1;
+}
+
+export function validateAssetQueryParams(
+  assetId: string | undefined,
+  nationalCurrencyCode: NationalCurrencyCode | undefined,
+  cryptocurrencySymbol: Layer1Cryptocurrency | Layer2Cryptocurrency | undefined
+): void {
+  if (!isUpToOneParameterDefined(assetId, nationalCurrencyCode, cryptocurrencySymbol)) {
+    throw new InvalidAssetQueryCombinationError();
+  }
 }

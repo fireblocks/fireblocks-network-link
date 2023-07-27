@@ -1,8 +1,13 @@
 import {
   Account,
+  ApiError,
   AssetBalance,
   AssetReference,
+  BadRequestError,
   BalanceCapability,
+  Layer1Cryptocurrency,
+  Layer2Cryptocurrency,
+  NationalCurrencyCode,
 } from '../../src/client/generated';
 import { AssetsDirectory } from '../utils/assets-directory';
 import Client from '../../src/client';
@@ -49,6 +54,27 @@ describe('Balances', () => {
   describe('List balances', () => {
     const accountBalances: AssetBalance[] = [];
 
+    const getFailedBalancesResult = async (
+      assetId?: string,
+      nationalCurrencyCode?: NationalCurrencyCode,
+      cryptocurrencySymbol?: Layer1Cryptocurrency | Layer2Cryptocurrency
+    ): Promise<ApiError> => {
+      try {
+        await client.balances.getBalances({
+          accountId: account.id,
+          assetId,
+          nationalCurrencyCode,
+          cryptocurrencySymbol,
+        });
+      } catch (err) {
+        if (err instanceof ApiError) {
+          return err;
+        }
+        throw err;
+      }
+      throw new Error('Expected to throw');
+    };
+
     const getBalances: Pageable<AssetBalance> = async (limit, startingAfter?) => {
       const response = await client.balances.getBalances({
         accountId: account.id,
@@ -62,6 +88,28 @@ describe('Balances', () => {
       for await (const balance of paginated(getBalances)) {
         accountBalances.push(balance);
       }
+    });
+
+    describe('Asset query params', () => {
+      const invalidCombinationsPermutations = [
+        {
+          assetId: undefined,
+          nationalCurrencyCode: NationalCurrencyCode.USD,
+          cryptocurrencyCode: Layer1Cryptocurrency.ETH,
+        },
+      ];
+      it.each(invalidCombinationsPermutations)(
+        'should fail when more than one of the query params is defined',
+        async (assetId, nationalCurrencyCode, cryptocurrencyCode) => {
+          const error = await getFailedBalancesResult(
+            assetId,
+            nationalCurrencyCode,
+            cryptocurrencyCode
+          );
+          expect(error.status).toBe(400);
+          expect(error.body.errorType).toBe(BadRequestError.errorType.BAD_REQUEST);
+        }
+      );
     });
 
     it('should return only known assets in balances', () => {

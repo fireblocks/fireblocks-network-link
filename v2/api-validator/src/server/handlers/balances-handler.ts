@@ -1,9 +1,22 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { isKnownSubAccount } from '../controllers/accounts-controller';
-import { BalanceCapability, Balances, EntityIdPathParam } from '../../client/generated';
+import {
+  AssetIdQueryParam,
+  BadRequestError,
+  BalanceCapability,
+  Balances,
+  CryptocurrencySymbolQueryParam,
+  EntityIdPathParam,
+  NationalCurrencyCodeQueryParam,
+} from '../../client/generated';
 import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
-import { BALANCE_CAPABILITIES, getSubAccountBalances } from '../controllers/balances-controller';
+import {
+  BALANCE_CAPABILITIES,
+  InvalidAssetQueryCombinationError,
+  getSubAccountBalances,
+  validateAssetQueryParams,
+} from '../controllers/balances-controller';
 
 export async function getBalanceAssets(
   request: FastifyRequest,
@@ -27,10 +40,33 @@ export async function getBalances(
   reply: FastifyReply
 ): Promise<{ balances: Balances }> {
   const { accountId } = request.params as { accountId: EntityIdPathParam };
-  const { limit, startingAfter, endingBefore } = request.query as PaginationParams;
+  const {
+    limit,
+    startingAfter,
+    endingBefore,
+    assetId,
+    nationalCurrencyCode,
+    cryptocurrencySymbol,
+  } = request.query as PaginationParams & {
+    assetId: AssetIdQueryParam;
+    nationalCurrencyCode: NationalCurrencyCodeQueryParam;
+    cryptocurrencySymbol: CryptocurrencySymbolQueryParam;
+  };
 
   if (!isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
+  }
+
+  try {
+    validateAssetQueryParams(assetId, nationalCurrencyCode, cryptocurrencySymbol);
+  } catch (err) {
+    if (err instanceof InvalidAssetQueryCombinationError) {
+      ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.BAD_REQUEST,
+      });
+    }
+    throw err;
   }
 
   return {
