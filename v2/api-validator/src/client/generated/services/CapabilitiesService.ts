@@ -231,7 +231,7 @@ export class CapabilitiesService {
          */
         endingBefore?: string,
     }): CancelablePromise<{
-        capabilities?: Array<BalanceCapability>;
+        capabilities: Array<BalanceCapability>;
     }> {
         return this.httpRequest.request({
             method: 'GET',

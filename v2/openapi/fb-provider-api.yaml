@@ -520,6 +520,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ capabilities ]
                 properties:
                   capabilities:
                     type: array
