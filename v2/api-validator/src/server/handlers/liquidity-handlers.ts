@@ -2,20 +2,25 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import * as ErrorFactory from '../http-error-factory';
 import { isKnownSubAccount } from '../controllers/accounts-controller';
 import {
+  BadRequestError,
   EntityIdPathParam,
   Quote,
   QuoteCapability,
   QuoteRequest,
+  RequestPart,
   SubAccountIdPathParam,
 } from '../../client/generated';
 import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import {
-  InvalidQuoteRequestError,
   QUOTE_CAPABILITIES,
   QuoteNotFoundError,
-  addNewQuoteForUser,
+  QuoteNotReadyError,
+  UnknownFromAssetError,
+  UnknownQuoteCapabilityError,
+  UnknownToAssetError,
+  addNewQuoteForAccount,
   executeAccountQuote,
-  getUserQuotes,
+  getAccountQuotes,
   quoteFromQuoteRequest,
   validateQuoteRequest,
 } from '../controllers/liquidity-controller';
@@ -38,9 +43,9 @@ export async function getQuotes(
     return ErrorFactory.notFound(reply);
   }
 
-  const userQuotes = getUserQuotes(accountId);
+  const accountQuotes = getAccountQuotes(accountId);
 
-  const result = getPaginationResult(limit, startingAfter, endingBefore, userQuotes, 'id');
+  const result = getPaginationResult(limit, startingAfter, endingBefore, accountQuotes, 'id');
   return { quotes: result };
 }
 
@@ -55,12 +60,27 @@ export async function createQuote(request: FastifyRequest, reply: FastifyReply):
   try {
     validateQuoteRequest(quoteRequest);
   } catch (err) {
-    if (err instanceof InvalidQuoteRequestError) {
-      return reply.code(400).send({
+    if (err instanceof UnknownFromAssetError) {
+      return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: err.errorType,
-        requestPart: err.requestPart,
-        propertyName: err.propertyName,
+        errorType: BadRequestError.errorType.UNKNOWN_ASSET,
+        requestPart: RequestPart.BODY,
+        propertyName: 'fromAsset',
+      });
+    }
+    if (err instanceof UnknownToAssetError) {
+      return ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.UNKNOWN_ASSET,
+        requestPart: RequestPart.BODY,
+        propertyName: 'toAsset',
+      });
+    }
+    if (err instanceof UnknownQuoteCapabilityError) {
+      return ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.UNSUPPORTED_CONVERSION,
+        requestPart: RequestPart.BODY,
       });
     }
     throw err;
@@ -68,7 +88,7 @@ export async function createQuote(request: FastifyRequest, reply: FastifyReply):
 
   const quote = quoteFromQuoteRequest(quoteRequest);
 
-  addNewQuoteForUser(accountId, quote);
+  addNewQuoteForAccount(accountId, quote);
 
   return quote;
 }
@@ -86,7 +106,7 @@ export async function getQuoteDetails(
     return ErrorFactory.notFound(reply);
   }
 
-  const accountQuotes = getUserQuotes(accountId);
+  const accountQuotes = getAccountQuotes(accountId);
   const quote = accountQuotes.find((quote) => quote.id === quoteId);
 
   if (!quote) {
@@ -112,6 +132,12 @@ export async function executeQuote(request: FastifyRequest, reply: FastifyReply)
   } catch (err) {
     if (err instanceof QuoteNotFoundError) {
       return ErrorFactory.notFound(reply);
+    }
+    if (err instanceof QuoteNotReadyError) {
+      return ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.QUOTE_NOT_READY,
+      });
     }
     throw err;
   }

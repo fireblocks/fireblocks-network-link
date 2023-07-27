@@ -2005,6 +2005,9 @@ components:
             - schema-error
             - schema-property-error
             - bad-request
+            - unknown-asset
+            - unsupported-conversion
+            - quote-not-ready
         propertyName:
           description: Name of property that caused the error.
           type: string

@@ -106,7 +106,7 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
       });
 
       expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.UNKNOWN_ASSET);
       expect(error.body.requestPart).toBe(RequestPart.BODY);
       expect(error.body.propertyName).toBe('fromAsset');
     });
@@ -119,7 +119,7 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
       });
 
       expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.UNKNOWN_ASSET);
       expect(error.body.requestPart).toBe(RequestPart.BODY);
       expect(error.body.propertyName).toBe('toAsset');
     });
@@ -136,13 +136,30 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
       });
 
       expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_ERROR);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_CONVERSION);
       expect(error.body.requestPart).toBe(RequestPart.BODY);
     });
   });
 
   describe('Execute quote', () => {
     let executedQuote: Quote;
+    const getExecuteQuoteFailureResult = async (
+      accountId: string,
+      id: string
+    ): Promise<ApiError> => {
+      try {
+        await client.liquidity.executeQuote({
+          accountId,
+          id,
+        });
+      } catch (err) {
+        if (err instanceof ApiError) {
+          return err;
+        }
+        throw err;
+      }
+      throw new Error('Expected to throw');
+    };
 
     beforeAll(async () => {
       const createdQuote = await client.liquidity.createQuote({
@@ -165,6 +182,12 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
         id: executedQuote.id,
       });
       expect(quote).toBeDefined();
+    });
+
+    it('should fail executing quote with non ready status', async () => {
+      const error = await getExecuteQuoteFailureResult(account.id, executedQuote.id);
+      expect(error.status).toBe(400);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.QUOTE_NOT_READY);
     });
   });
 

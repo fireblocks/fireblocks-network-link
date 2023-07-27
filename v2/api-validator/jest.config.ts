@@ -5,7 +5,6 @@ export default {
   setupFiles: ['./tests/setup/preload-schemas.ts'],
   setupFilesAfterEnv: ['jest-extended/all', './tests/setup/conditional-tests.ts'],
   reporters: [
-    'summary',
     'default',
     [
       'jest-html-reporters',

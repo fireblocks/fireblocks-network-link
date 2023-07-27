@@ -1,7 +1,7 @@
 import { AssetReference, Quote, QuoteRequest, QuoteStatus } from '../../src/client/generated';
 import {
   QuoteNotFoundError,
-  addNewQuoteForUser,
+  addNewQuoteForAccount,
   executeAccountQuote,
   quoteFromQuoteRequest,
 } from '../../src/server/controllers/liquidity-controller';
@@ -54,7 +54,7 @@ describe('Liquidity Controller', () => {
 
   describe('addNewQuoteForUser', () => {
     beforeEach(() => {
-      addNewQuoteForUser(accountId, defaultQuote, usersQuotesMapping);
+      addNewQuoteForAccount(accountId, defaultQuote, usersQuotesMapping);
     });
 
     describe('With empty mapping', () => {
