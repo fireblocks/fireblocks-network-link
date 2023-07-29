@@ -924,6 +924,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderBook'
+              examples:
+                btcUsdc:
+                  summary: BTC/USDC book
+                  value:
+                    id: BTC/USDC
+                    description: Bitcoin book
+                    baseAsset:
+                      blockchain: Bitcoin
+                      cryptocurrencySymbol: BTC
+                    quoteAsset:
+                      assetId: f0844d82-7097-4521-95bc-d843724a893e
+                gbpUsdc:
+                  summary: GBP/USDC book
+                  value:
+                    id: GBP/USDC
+                    baseAsset:
+                      nationalCurrencyCode: GBP
+                    quoteAsset:
+                      assetId: f0844d82-7097-4521-95bc-d843724a893e
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
