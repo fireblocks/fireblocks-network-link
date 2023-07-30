@@ -10,6 +10,7 @@ import type { TransferCapability } from './TransferCapability';
  * Capability to deposit to a balance asset using a specific transfer capability.
  */
 export type DepositCapability = {
+    id: string;
     deposit: TransferCapability;
     balanceAsset: AssetReference;
 };

@@ -49,7 +49,7 @@ x-responses:
 
 paths:
 
-  /capabilities/transfers/withdrawals:
+  /accounts/{accountId}/capabilities/transfers/withdrawals:
     get:
       operationId: getWithdrawalMethods
       summary: Get list of supported withdrawal methods
@@ -62,6 +62,7 @@ paths:
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
         '200':
           description: List of withdrawal methods for account.
@@ -69,6 +70,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ capabilities ]
                 properties:
                   capabilities:
                     type: array
@@ -87,32 +89,38 @@ paths:
                     `GET /capabilities/assets`.
                   value:
                     capabilities:
-                      - withdrawal:
+                      - id: "16b8b2c3-bd61-4745-9c48-3d30c2bc6907"
+                        withdrawal:
                           asset: { assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - withdrawal:
+                      - id: "55f184db-9860-4ed7-9db7-7cded54ef0f4"
+                        withdrawal:
                           asset: { assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - withdrawal:
+                      - id: "68fb13d5-48ff-42d8-8273-1658a9b49082"
+                        withdrawal:
                           asset: { assetId: "4386cf4d-83b2-4410-96da-0d3919a45506" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - withdrawal:
+                      - id: "d625f8e7-f8aa-4288-9f39-54fecf024c9a"
+                        withdrawal:
                           asset: { assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: "f0844d82-7097-4521-95bc-d843724a893e"
-                      - withdrawal:
+                      - id: "e1fb5c58-c4c5-4358-9781-1c52edf1f2f7"
+                        withdrawal:
                           asset: { assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: "f0844d82-7097-4521-95bc-d843724a893e"
-                      - withdrawal:
+                      - id: "19e6770f-71a9-483b-9d9f-7054ea2dc832"
+                        withdrawal:
                           asset: { assetId: "4386cf4d-83b2-4410-96da-0d3919a45506" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
@@ -126,7 +134,7 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
-  /capabilities/transfers/deposits:
+  /accounts/{accountId}/capabilities/transfers/deposits:
     get:
       operationId: getDepositMethods
       summary: Get list of supported deposit methods
@@ -139,6 +147,7 @@ paths:
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
         '200':
           description: List of deposit methods for account.
@@ -146,6 +155,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ capabilities ]
                 properties:
                   capabilities:
                     type: array
@@ -165,32 +175,38 @@ paths:
                     `GET /capabilities/assets`.
                   value:
                     capabilities:
-                      - deposit:
+                      - id: "29d7d25a-ed05-479a-9cde-d50b8203d3ec"
+                        deposit:
                           asset: { assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - deposit:
+                      - id: "adfc2457-1bb7-40d0-9d46-3cfa2dd3a7e1"
+                        deposit:
                           asset: { assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - deposit:
+                      - id: "eda3dbb8-ef94-400e-8a6b-2a38302b9505"
+                        deposit:
                           asset: { assetId: "4386cf4d-83b2-4410-96da-0d3919a45506" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - deposit:
+                      - id: "b9f471f0-4920-464f-9c6a-97929cc31950"
+                        deposit:
                           asset: { assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: "f0844d82-7097-4521-95bc-d843724a893e"
-                      - deposit:
+                      - id: "53a36de2-f36f-4301-8292-a0ecc1c32cda"
+                        deposit:
                           asset: { assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: "f0844d82-7097-4521-95bc-d843724a893e"
-                      - deposit:
+                      - id: "dd59e6d1-c8ca-4499-8b3f-786ce417ed17"
+                        deposit:
                           asset: { assetId: "4386cf4d-83b2-4410-96da-0d3919a45506" }
                           transferMethod: PublicBlockchain
                         balanceAsset:
@@ -963,8 +979,10 @@ components:
       type: object
       description: >-
         Capability to deposit to a balance asset using a specific transfer capability.
-      required: [ deposit, balanceAsset ]
+      required: [ id, deposit, balanceAsset ]
       properties:
+        id:
+          type: string
         deposit:
           $ref: '#/components/schemas/TransferCapability'
         balanceAsset:
@@ -1002,8 +1020,10 @@ components:
       type: object
       description: >-
         Capability to withdraw a balance asset using a specific transfer capability.
-      required: [ withdrawal, balanceAsset ]
+      required: [ id, withdrawal, balanceAsset ]
       properties:
+        id:
+          type: string
         withdrawal:
           $ref: '#/components/schemas/TransferCapability'
         balanceAsset:
@@ -1011,12 +1031,14 @@ components:
 
     WithdrawalRequestCommonProperties:
       type: object
-      required: [ idempotencyKey, balanceAsset, balanceAmount ]
+      required: [ idempotencyKey, balanceId, balanceAmount ]
       properties:
         idempotencyKey:
           type: string
-        balanceAsset:
-          $ref: '#/x-schemas/AssetReference'
+        balanceId:
+          type: string
+          description: >-
+            AssetBalance identifier returned from /accounts/{accountId}/balances
         balanceAmount:
           $ref: '#/x-schemas/PositiveAmount'
 

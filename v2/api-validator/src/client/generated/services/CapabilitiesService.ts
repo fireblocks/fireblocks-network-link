@@ -308,6 +308,7 @@ export class CapabilitiesService {
         xFbapiNonce,
         xFbapiSignature,
         xFbapiTimestamp,
+        accountId,
         limit = 10,
         startingAfter,
         endingBefore,
@@ -330,6 +331,10 @@ export class CapabilitiesService {
          */
         xFbapiTimestamp: number,
         /**
+         * Sub-account identifier.
+         */
+        accountId: string,
+        /**
          * Maximum number of returned items.
          */
         limit?: number,
@@ -342,11 +347,14 @@ export class CapabilitiesService {
          */
         endingBefore?: string,
     }): CancelablePromise<{
-        capabilities?: Array<WithdrawalCapability>;
+        capabilities: Array<WithdrawalCapability>;
     }> {
         return this.httpRequest.request({
             method: 'GET',
-            url: '/capabilities/transfers/withdrawals',
+            url: '/accounts/{accountId}/capabilities/transfers/withdrawals',
+            path: {
+                'accountId': accountId,
+            },
             headers: {
                 'X-FBAPI-KEY': xFbapiKey,
                 'X-FBAPI-NONCE': xFbapiNonce,
@@ -375,6 +383,7 @@ export class CapabilitiesService {
         xFbapiNonce,
         xFbapiSignature,
         xFbapiTimestamp,
+        accountId,
         limit = 10,
         startingAfter,
         endingBefore,
@@ -397,6 +406,10 @@ export class CapabilitiesService {
          */
         xFbapiTimestamp: number,
         /**
+         * Sub-account identifier.
+         */
+        accountId: string,
+        /**
          * Maximum number of returned items.
          */
         limit?: number,
@@ -409,11 +422,14 @@ export class CapabilitiesService {
          */
         endingBefore?: string,
     }): CancelablePromise<{
-        capabilities?: Array<DepositCapability>;
+        capabilities: Array<DepositCapability>;
     }> {
         return this.httpRequest.request({
             method: 'GET',
-            url: '/capabilities/transfers/deposits',
+            url: '/accounts/{accountId}/capabilities/transfers/deposits',
+            path: {
+                'accountId': accountId,
+            },
             headers: {
                 'X-FBAPI-KEY': xFbapiKey,
                 'X-FBAPI-NONCE': xFbapiNonce,

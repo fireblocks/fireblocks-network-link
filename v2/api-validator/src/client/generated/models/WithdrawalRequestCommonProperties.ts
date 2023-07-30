@@ -3,12 +3,14 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { AssetReference } from './AssetReference';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type WithdrawalRequestCommonProperties = {
     idempotencyKey: string;
-    balanceAsset: AssetReference;
+    /**
+     * AssetBalance identifier returned from /accounts/{accountId}/balances
+     */
+    balanceId: string;
     balanceAmount: PositiveAmount;
 };
 
