@@ -4,7 +4,6 @@ import { isKnownSubAccount } from '../controllers/accounts-controller';
 import {
   AssetIdQueryParam,
   BadRequestError,
-  BalanceCapability,
   Balances,
   CryptocurrencySymbolQueryParam,
   EntityIdPathParam,
@@ -13,30 +12,12 @@ import {
 } from '../../client/generated';
 import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import {
-  BALANCE_CAPABILITIES,
   InvalidAssetQueryCombinationError,
   getSingleAssetBalance,
   getSubAccountBalances,
   validateAssetQueryParams,
 } from '../controllers/balances-controller';
 import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
-
-export async function getBalanceAssets(
-  request: FastifyRequest,
-  reply: FastifyReply
-): Promise<{ capabilities: BalanceCapability[] }> {
-  const { limit, startingAfter, endingBefore } = request.query as PaginationParams;
-
-  return {
-    capabilities: getPaginationResult(
-      limit,
-      startingAfter,
-      endingBefore,
-      BALANCE_CAPABILITIES,
-      'id'
-    ),
-  };
-}
 
 export async function getBalances(
   request: FastifyRequest,

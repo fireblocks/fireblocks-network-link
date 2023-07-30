@@ -9,7 +9,6 @@ import {
   AssetBalance,
   AssetReference,
   BadRequestError,
-  BalanceCapability,
   Balances,
   Layer1Cryptocurrency,
   Layer2Cryptocurrency,
@@ -41,17 +40,7 @@ describe('Balances', () => {
   let client: Client;
   let assets: AssetsDirectory;
   const accounts: Account[] = [];
-  const capabilitesResponse: BalanceCapability[] = [];
   let isKnownAsset: (asset: AssetReference) => boolean;
-
-  const isBalanceCapableAsset = (asset: AssetReference) => {
-    return capabilitesResponse.some((capability) => _.isEqual(capability.asset, asset));
-  };
-
-  const getCapabilities: Pageable<BalanceCapability> = async (limit, startingAfter?) => {
-    const response = await client.capabilities.getBalanceAssets({ limit, startingAfter });
-    return response.capabilities;
-  };
 
   const getAccounts: Pageable<Account> = async (limit, startingAfter?) => {
     const response = await client.accounts.getAccounts({ limit, startingAfter });
@@ -64,20 +53,7 @@ describe('Balances', () => {
     for await (const account of paginated(getAccounts)) {
       accounts.push(account);
     }
-    for await (const balanceCapability of paginated(getCapabilities)) {
-      capabilitesResponse.push(balanceCapability);
-    }
     isKnownAsset = assets.isKnownAsset.bind(assets);
-  });
-
-  describe('Capabilities', () => {
-    it('every asset reference in response should be known by the server', async () => {
-      expect(capabilitesResponse.length).toBeGreaterThan(0);
-
-      for (const capability of capabilitesResponse) {
-        expect(capability.asset).toSatisfy(isKnownAsset);
-      }
-    });
   });
 
   describe('List balances', () => {
@@ -147,14 +123,6 @@ describe('Balances', () => {
       for (const accountBalances of accountBalancesMap.values()) {
         for (const balance of accountBalances) {
           expect(balance.asset).toSatisfy(isKnownAsset);
-        }
-      }
-    });
-
-    it('should return only asset balances listed in capabilities', () => {
-      for (const accountBalances of accountBalancesMap.values()) {
-        for (const balance of accountBalances) {
-          expect(balance.asset).toSatisfy(isBalanceCapableAsset);
         }
       }
     });
@@ -274,14 +242,6 @@ describe('Balances', () => {
       for (const accountBalances of accountBalancesMap.values()) {
         for (const balance of accountBalances) {
           expect(balance.asset).toSatisfy(isKnownAsset);
-        }
-      }
-    });
-
-    it('should return only asset balances listed in capabilities', () => {
-      for (const accountBalances of accountBalancesMap.values()) {
-        for (const balance of accountBalances) {
-          expect(balance.asset).toSatisfy(isBalanceCapableAsset);
         }
       }
     });

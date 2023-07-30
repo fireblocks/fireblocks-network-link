@@ -1,38 +1,14 @@
-import { randomUUID } from 'crypto';
 import {
   AssetReference,
-  BalanceCapability,
   Balances,
   Layer1Cryptocurrency,
   Layer2Cryptocurrency,
   NationalCurrencyCode,
 } from '../../client/generated';
-import {
-  SUPPORTED_ASSETS,
-  UnknownAdditionalAssetError,
-  isKnownAdditionalAsset,
-} from './assets-controller';
+import { UnknownAdditionalAssetError, isKnownAdditionalAsset } from './assets-controller';
 import { ACCOUNTS } from './accounts-controller';
 import { XComError } from '../../error';
 import _ from 'lodash';
-
-const capabilitiesFromSupportedAssets = SUPPORTED_ASSETS.map((asset) => ({
-  asset: { assetId: asset.id },
-  id: randomUUID(),
-}));
-const nationalCorrencyBalanceCapabilities = Object.values(NationalCurrencyCode).map(
-  (nationalCurrencyCode) => ({ id: randomUUID(), asset: { nationalCurrencyCode } })
-);
-const cryptocurrencyBalanceCapabilities = [
-  ...Object.values(Layer1Cryptocurrency),
-  ...Object.values(Layer2Cryptocurrency),
-].map((cryptocurrencySymbol) => ({ id: randomUUID(), asset: { cryptocurrencySymbol } }));
-
-export const BALANCE_CAPABILITIES: BalanceCapability[] = [
-  ...capabilitiesFromSupportedAssets,
-  ...nationalCorrencyBalanceCapabilities,
-  ...cryptocurrencyBalanceCapabilities,
-];
 
 export class InvalidAssetQueryCombinationError extends XComError {
   constructor() {

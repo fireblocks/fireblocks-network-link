@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AssetDefinition } from '../models/AssetDefinition';
-import type { BalanceCapability } from '../models/BalanceCapability';
 import type { Capabilities } from '../models/Capabilities';
 import type { DepositCapability } from '../models/DepositCapability';
 import type { OrderBook } from '../models/OrderBook';
@@ -179,73 +178,6 @@ export class CapabilitiesService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
-            },
-            errors: {
-                400: `Request could not be processed due to a client error.`,
-                401: `Request is unauthorized`,
-            },
-        });
-    }
-
-    /**
-     * Get list of supported balance assets
-     * @returns any List of balance assets
-     * @throws ApiError
-     */
-    public getBalanceAssets({
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiTimestamp,
-        xFbapiSignature,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-    }: {
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<{
-        capabilities: Array<BalanceCapability>;
-    }> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/capabilities/balances',
-            headers: {
-                'X-FBAPI-KEY': xFbapiKey,
-                'X-FBAPI-NONCE': xFbapiNonce,
-                'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
-                'X-FBAPI-SIGNATURE': xFbapiSignature,
-            },
-            query: {
-                'limit': limit,
-                'startingAfter': startingAfter,
-                'endingBefore': endingBefore,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
