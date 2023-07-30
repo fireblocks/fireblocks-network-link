@@ -494,40 +494,6 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /capabilities/balances:
-    get:
-      operationId: getBalanceAssets
-      summary: Get list of supported balance assets
-      tags:
-        - capabilities
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-      responses:
-        '200':
-          description: List of balance assets
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  capabilities:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/BalanceCapability'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
   /accounts:
     get:
       operationId: getAccounts
@@ -2137,16 +2103,6 @@ components:
       description: Maps balance assets to their balances.
       items:
         $ref: '#/components/schemas/AssetBalance'
-    BalanceCapability:
-      type: object
-      required:
-        - id
-        - asset
-      properties:
-        id:
-          type: string
-        asset:
-          $ref: '#/components/schemas/AssetReference'
     AssetBalance:
       type: object
       required:

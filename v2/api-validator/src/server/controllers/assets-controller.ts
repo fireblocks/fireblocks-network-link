@@ -9,6 +9,7 @@ import {
   NationalCurrencyCode,
   StellarToken,
 } from '../../client/generated';
+import { XComError } from '../../error';
 
 export const SUPPORTED_ASSETS: AssetDefinition[] = [
   {
@@ -54,6 +55,12 @@ export const SUPPORTED_ASSETS: AssetDefinition[] = [
     decimalPlaces: 6,
   },
 ];
+
+export class UnknownAdditionalAssetError extends XComError {
+  constructor() {
+    super('assetId does not reference a known additional asset');
+  }
+}
 
 export function getSupportedAsset(assetId: string): AssetDefinition | undefined {
   return SUPPORTED_ASSETS.find((asset) => asset.id === assetId);
