@@ -1,11 +1,13 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { books } from '../controllers/books-controller';
+import { asks, bids, books } from '../controllers/books-controller';
 import { MarketEntry, MarketTrade, Order, OrderBook } from '../../client/generated';
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { EntityIdPathParam, PaginationQuerystring } from './request-types';
 
 type GetBooksResponse = { books: OrderBook[] };
+type GetBookAsksResponse = { asks: MarketEntry[] };
+type GetBookBidsResponse = { bids: MarketEntry[] };
 
 export async function getBooks({
   query,
@@ -30,17 +32,45 @@ export async function getBookDetails(
 }
 
 export async function getBookAsks(
-  request: FastifyRequest,
+  { params, query }: FastifyRequest<EntityIdPathParam & PaginationQuerystring>,
   reply: FastifyReply
-): Promise<MarketEntry[]> {
-  return ErrorFactory.notFound(reply);
+): Promise<GetBookAsksResponse> {
+  const id = decodeURIComponent(params.id);
+  const book = books.find((b) => b.id === id);
+  if (!book) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  const bookAsks = asks[id];
+  if (!bookAsks) {
+    return { asks: [] };
+  }
+
+  const { limit, startingAfter, endingBefore } = query;
+  return {
+    asks: getPaginationResult(limit, startingAfter, endingBefore, bookAsks, 'id'),
+  };
 }
 
 export async function getBookBids(
-  request: FastifyRequest,
+  { params, query }: FastifyRequest<EntityIdPathParam & PaginationQuerystring>,
   reply: FastifyReply
-): Promise<MarketEntry[]> {
-  return ErrorFactory.notFound(reply);
+): Promise<GetBookBidsResponse> {
+  const id = decodeURIComponent(params.id);
+  const book = books.find((b) => b.id === id);
+  if (!book) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  const bookBids = bids[id];
+  if (!bookBids) {
+    return { bids: [] };
+  }
+
+  const { limit, startingAfter, endingBefore } = query;
+  return {
+    bids: getPaginationResult(limit, startingAfter, endingBefore, bookBids, 'id'),
+  };
 }
 
 export async function getBookOrderHistory(
