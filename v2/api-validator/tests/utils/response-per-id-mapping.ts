@@ -9,7 +9,7 @@ export async function getResponsePerIdMapping<T>(
   const responsePerAccountMap = new Map<string, T[]>();
 
   for (const id of idList) {
-    const pageableMethod: Pageable<T> = async (limit, startingAfter?) => {
+    const pageableMethod: Pageable<T> = async (limit, startingAfter?): Promise<T[]> => {
       return await method(id, limit, startingAfter);
     };
 

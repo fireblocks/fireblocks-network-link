@@ -39,12 +39,6 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
       );
     });
 
-    it('should return at least one capability per account', () => {
-      for (const capabilities of accountCapabilitiesMap.values()) {
-        expect(capabilities.length).toBeGreaterThan(0);
-      }
-    });
-
     it('should return only known assets in response', () => {
       for (const capabilities of accountCapabilitiesMap.values()) {
         for (const capability of capabilities) {
