@@ -9,14 +9,17 @@ import {
   CryptocurrencySymbolQueryParam,
   EntityIdPathParam,
   NationalCurrencyCodeQueryParam,
+  RequestPart,
 } from '../../client/generated';
 import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import {
   BALANCE_CAPABILITIES,
   InvalidAssetQueryCombinationError,
+  getSingleAssetBalance,
   getSubAccountBalances,
   validateAssetQueryParams,
 } from '../controllers/balances-controller';
+import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
 
 export async function getBalanceAssets(
   request: FastifyRequest,
@@ -48,9 +51,9 @@ export async function getBalances(
     nationalCurrencyCode,
     cryptocurrencySymbol,
   } = request.query as PaginationParams & {
-    assetId: AssetIdQueryParam;
-    nationalCurrencyCode: NationalCurrencyCodeQueryParam;
-    cryptocurrencySymbol: CryptocurrencySymbolQueryParam;
+    assetId?: AssetIdQueryParam;
+    nationalCurrencyCode?: NationalCurrencyCodeQueryParam;
+    cryptocurrencySymbol?: CryptocurrencySymbolQueryParam;
   };
 
   if (!isKnownSubAccount(accountId)) {
@@ -59,11 +62,29 @@ export async function getBalances(
 
   try {
     validateAssetQueryParams(assetId, nationalCurrencyCode, cryptocurrencySymbol);
+
+    if (assetId) {
+      return { balances: getSingleAssetBalance(accountId, { assetId }) };
+    }
+    if (nationalCurrencyCode) {
+      return { balances: getSingleAssetBalance(accountId, { nationalCurrencyCode }) };
+    }
+    if (cryptocurrencySymbol) {
+      return { balances: getSingleAssetBalance(accountId, { cryptocurrencySymbol }) };
+    }
   } catch (err) {
     if (err instanceof InvalidAssetQueryCombinationError) {
       ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestError.errorType.BAD_REQUEST,
+        errorType: BadRequestError.errorType.SCHEMA_ERROR,
+        requestPart: RequestPart.QUERYSTRING,
+      });
+    }
+    if (err instanceof UnknownAdditionalAssetError) {
+      ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.UNKNOWN_ASSET,
+        requestPart: RequestPart.QUERYSTRING,
       });
     }
     throw err;

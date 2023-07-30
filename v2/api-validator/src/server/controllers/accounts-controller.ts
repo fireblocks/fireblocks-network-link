@@ -30,10 +30,58 @@ export const ACCOUNTS: Account[] = [
     title: '',
     description: '',
   },
-  { id: '2', balances: [], status: AccountStatus.INACTIVE, title: '', description: '' },
-  { id: '3', balances: [], status: AccountStatus.ACTIVE, title: '', description: '' },
-  { id: '4', balances: [], status: AccountStatus.ACTIVE, title: '', description: '' },
-  { id: '5', balances: [], status: AccountStatus.ACTIVE, title: '', description: '' },
+  {
+    id: '2',
+    balances: [
+      {
+        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+        availableAmount: '1',
+        id: '1',
+      },
+    ],
+    status: AccountStatus.INACTIVE,
+    title: '',
+    description: '',
+  },
+  {
+    id: '3',
+    balances: [
+      {
+        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+        availableAmount: '1',
+        id: '1',
+      },
+    ],
+    status: AccountStatus.ACTIVE,
+    title: '',
+    description: '',
+  },
+  {
+    id: '4',
+    balances: [
+      {
+        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+        availableAmount: '1',
+        id: '1',
+      },
+    ],
+    status: AccountStatus.ACTIVE,
+    title: '',
+    description: '',
+  },
+  {
+    id: '5',
+    balances: [
+      {
+        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+        availableAmount: '1',
+        id: '1',
+      },
+    ],
+    status: AccountStatus.ACTIVE,
+    title: '',
+    description: '',
+  },
 ];
 
 export function getSubAccount(accountId: string): Account | undefined {
