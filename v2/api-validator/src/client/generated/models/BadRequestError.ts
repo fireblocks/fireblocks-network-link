@@ -28,6 +28,9 @@ export namespace BadRequestError {
         SCHEMA_ERROR = 'schema-error',
         SCHEMA_PROPERTY_ERROR = 'schema-property-error',
         BAD_REQUEST = 'bad-request',
+        UNKNOWN_ASSET = 'unknown-asset',
+        UNSUPPORTED_CONVERSION = 'unsupported-conversion',
+        QUOTE_NOT_READY = 'quote-not-ready',
     }
 
 

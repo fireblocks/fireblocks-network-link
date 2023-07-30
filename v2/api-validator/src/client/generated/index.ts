@@ -22,7 +22,6 @@ export type { AssetDefinition } from './models/AssetDefinition';
 export type { AssetIdQueryParam } from './models/AssetIdQueryParam';
 export type { AssetReference } from './models/AssetReference';
 export { BadRequestError } from './models/BadRequestError';
-export type { BalanceCapability } from './models/BalanceCapability';
 export type { Balances } from './models/Balances';
 export type { BaseAssetRequest } from './models/BaseAssetRequest';
 export { Bep20Token } from './models/Bep20Token';

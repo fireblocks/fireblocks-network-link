@@ -124,7 +124,7 @@ export class LiquidityService {
          */
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
-        withdrawals?: Array<Quote>;
+        quotes: Array<Quote>;
     }> {
         return this.httpRequest.request({
             method: 'GET',
