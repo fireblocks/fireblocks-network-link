@@ -120,9 +120,11 @@ describe('Balances', () => {
     });
 
     it('should return only known assets in balances', () => {
-      for (const accountBalances of accountBalancesMap.values()) {
-        for (const balance of accountBalances) {
-          expect(balance.asset).toSatisfy(isKnownAsset);
+      for (const [accountId, balances] of accountBalancesMap.entries()) {
+        for (const balance of balances) {
+          expect(balance.asset, `unknown asset received for account ${accountId}`).toSatisfy(
+            isKnownAsset
+          );
         }
       }
     });
