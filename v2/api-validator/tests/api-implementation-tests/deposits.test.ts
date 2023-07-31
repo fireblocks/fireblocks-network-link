@@ -10,6 +10,7 @@ import {
   BadRequestError,
   DepositAddress,
   DepositAddressCreationRequest,
+  DepositAddressStatus,
   DepositCapability,
   IbanCapability,
   PublicBlockchainCapability,
@@ -91,10 +92,14 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
 
           for (const capability of depositAddressCapabilities) {
             try {
-              await client.transfers.createDepositAddress({
+              const depositAddress = await client.transfers.createDepositAddress({
                 accountId,
                 requestBody: { idempotencyKey: randomUUID(), transferMethod: capability.deposit },
               });
+              expect(
+                depositAddress.status,
+                'Created deposit address status should be enabled'
+              ).toBe(DepositAddressStatus.ENABLED);
             } catch (err) {
               if (err instanceof ApiError) {
                 expect({}).fail(
@@ -216,11 +221,42 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
     });
 
     describe('Get list of existing deposit addresses', () => {
-      // TODO
-    });
+      let accountDepositAddressesMap: Map<string, DepositAddress[]>;
+      const getDepositAddresses = async (accountId, limit, startingAfter?) => {
+        const response = await client.transfers.getDepositAddresses({
+          accountId,
+          limit,
+          startingAfter,
+        });
+        return response.addresses;
+      };
+      beforeAll(async () => {
+        accountDepositAddressesMap = await getResponsePerIdMapping(
+          getDepositAddresses,
+          accounts.map((account) => account.id)
+        );
+      });
 
-    describe('Get details of a deposit address', () => {
-      // TODO
+      it('should return only known assets', () => {
+        for (const depositAddresses of accountDepositAddressesMap.values()) {
+          for (const depositAddress of depositAddresses) {
+            expect(depositAddress.destination.asset).toSatisfy(isKnownAsset);
+          }
+        }
+      });
+
+      it('should find each deposit address on getDepositAddressDetails', async () => {
+        for (const [accountId, depositAddresses] of accountDepositAddressesMap.entries()) {
+          for (const { id } of depositAddresses) {
+            const depositAddressDetails = await client.transfers.getDepositAddressDetails({
+              accountId,
+              id,
+            });
+            expect(depositAddressDetails).toBeDefined();
+            expect(depositAddressDetails.id).toBe(id);
+          }
+        }
+      });
     });
 
     describe('Disable a deposit address', () => {

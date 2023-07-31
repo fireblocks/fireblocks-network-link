@@ -4,6 +4,7 @@ import {
   DepositAddress,
   DepositAddressCreationRequest,
   DepositCapability,
+  EntityIdPathParam,
   GeneralError,
   RequestPart,
   SubAccountIdPathParam,
@@ -20,6 +21,7 @@ import { isUsedIdempotencyKey } from '../controllers/deposit-controller';
 import { getIdempotencyResponseForKey } from '../controllers/deposit-controller';
 import { registerCreateDepositAddressIdempotencyResponse } from '../controllers/deposit-controller';
 import _ from 'lodash';
+import { getAccountDepositAddresses } from '../controllers/deposit-controller';
 
 type AccountParam = { accountId: SubAccountIdPathParam };
 
@@ -96,6 +98,52 @@ export async function createDepositAddress(
     requestBody: request.body,
     responseBody: depositAddress,
   });
+
+  return depositAddress;
+}
+
+export async function getDepositAddresses(
+  request: FastifyRequest<{ Querystring: PaginationParams; Params: AccountParam }>,
+  reply: FastifyReply
+): Promise<{ addresses: DepositAddress[] }> {
+  const { accountId } = request.params;
+  const { limit, startingAfter, endingBefore } = request.query;
+
+  if (!isKnownSubAccount(accountId)) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  const accountDepositAddresses = getAccountDepositAddresses(accountId);
+
+  return {
+    addresses: getPaginationResult(
+      limit,
+      startingAfter,
+      endingBefore,
+      accountDepositAddresses,
+      'id'
+    ),
+  };
+}
+
+export async function getDepositAddressDetails(
+  request: FastifyRequest<{ Params: AccountParam & { id: EntityIdPathParam } }>,
+  reply: FastifyReply
+): Promise<DepositAddress> {
+  const { accountId, id: depositAddressId } = request.params;
+
+  if (!isKnownSubAccount(accountId)) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  const accountDepositAddresses = getAccountDepositAddresses(accountId);
+  const depositAddress = accountDepositAddresses.find(
+    (depositAddress) => depositAddress.id === depositAddressId
+  );
+
+  if (!depositAddress) {
+    return ErrorFactory.notFound(reply);
+  }
 
   return depositAddress;
 }

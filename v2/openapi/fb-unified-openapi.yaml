@@ -1761,6 +1761,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - addresses
                 properties:
                   addresses:
                     type: array

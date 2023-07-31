@@ -394,7 +394,7 @@ export class TransfersService {
          */
         endingBefore?: string,
     }): CancelablePromise<{
-        addresses?: Array<DepositAddress>;
+        addresses: Array<DepositAddress>;
     }> {
         return this.httpRequest.request({
             method: 'GET',

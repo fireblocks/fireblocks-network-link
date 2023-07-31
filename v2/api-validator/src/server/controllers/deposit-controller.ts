@@ -115,6 +115,10 @@ export function addNewDepositAddressForAccount(
   accountDepositAddressesMap.set(accountId, accountDepositAddresses);
 }
 
+export function getAccountDepositAddresses(accountId: string): DepositAddress[] {
+  return ACCOUNT_DEPOSIT_ADDRESS_MAP.get(accountId) ?? [];
+}
+
 export function registerCreateDepositAddressIdempotencyResponse(
   idempotencyKey: string,
   response: Response,
