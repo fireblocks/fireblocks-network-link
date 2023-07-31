@@ -48,4 +48,42 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
       }
     });
   });
+
+  describe('Deposit addresses', () => {
+    describe('Create new deposit address', () => {
+      it('should succeed with every listed capability', () => {
+        // TODO
+      });
+
+      it('should fail when using transfer capability which is not listed', () => {
+        // TODO
+      });
+
+      it('should fail when using an unknown asset', () => {
+        // TODO
+      });
+
+      describe('Using the same idempotency key', () => {
+        it('should return the original successful request', () => {
+          // TODO
+        });
+
+        it('should return the original failed request', () => {
+          // TODO
+        });
+      });
+    });
+
+    describe('Get list of existing deposit addresses', () => {
+      // TODO
+    });
+
+    describe('Get details of a deposit address', () => {
+      // TODO
+    });
+
+    describe('Disable a deposit address', () => {
+      // TODO
+    });
+  });
 });
