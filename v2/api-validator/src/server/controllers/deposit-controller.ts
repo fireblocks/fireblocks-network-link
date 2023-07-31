@@ -1,4 +1,4 @@
-import { SUPPORTED_ASSETS } from './assets-controller';
+import { SUPPORTED_ASSETS, UnknownAdditionalAssetError, isKnownAsset } from './assets-controller';
 import {
   CrossAccountTransferCapability,
   DepositAddress,
@@ -14,7 +14,6 @@ import {
   SwiftCapability,
 } from '../../client/generated';
 import { randomUUID } from 'crypto';
-import { XComError } from '../../error';
 import RandExp from 'randexp';
 
 export const DEPOSIT_METHODS: DepositCapability[] = [
@@ -52,15 +51,17 @@ export const DEPOSIT_METHODS: DepositCapability[] = [
   },
 ];
 
-export class UnknownDepositAddressTransferMethod extends XComError {
-  constructor(transferMethod: string) {
-    super(`Unknown deposit address transfer method: ${transferMethod}`);
-  }
-}
-
 const ACCOUNT_DEPOSIT_ADDRESS_MAP = new Map<string, DepositAddress[]>();
 const swipftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
 const ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
+
+export function validateDepositAddressCreationRequest(
+  depositAddressRequest: DepositAddressCreationRequest
+): void {
+  if (!isKnownAsset(depositAddressRequest.transferMethod.asset)) {
+    throw new UnknownAdditionalAssetError();
+  }
+}
 
 export function depositAddressFromDepositAddressRequest(
   depositAddressRequest: DepositAddressCreationRequest
@@ -93,7 +94,7 @@ export function depositAddressFromDepositAddressRequest(
       };
       break;
     default:
-      throw new UnknownDepositAddressTransferMethod(transferMethod.transferMethod);
+      throw new Error(`Unknown deposit address transfer method: ${transferMethod.transferMethod}`);
   }
 
   return { id, status, destination };

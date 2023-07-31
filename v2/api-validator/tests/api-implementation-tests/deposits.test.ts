@@ -5,10 +5,14 @@ import { getCapableAccounts } from '../utils/capable-accounts';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 import {
   Account,
+  ApiError,
   AssetReference,
+  BadRequestError,
+  DepositAddressCreationRequest,
   DepositCapability,
   IbanCapability,
   PublicBlockchainCapability,
+  RequestPart,
   SwiftCapability,
 } from '../../src/client/generated';
 import { randomUUID } from 'crypto';
@@ -59,6 +63,24 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
   });
 
   describe('Deposit addresses', () => {
+    const getCreateDepositAddressFailureResult = async (
+      accountId: string,
+      requestBody: DepositAddressCreationRequest
+    ): Promise<ApiError> => {
+      try {
+        await client.transfers.createDepositAddress({
+          accountId,
+          requestBody,
+        });
+      } catch (err) {
+        if (err instanceof ApiError) {
+          return err;
+        }
+        throw err;
+      }
+      throw new Error('Expected to throw');
+    };
+
     describe('Create new deposit address', () => {
       it('should succeed with every listed capability', async () => {
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
@@ -73,10 +95,13 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
                 requestBody: { idempotencyKey: randomUUID(), transferMethod: capability.deposit },
               });
             } catch (err) {
+              if (err instanceof ApiError) {
+                expect({}).fail(
+                  `Valid deposit address creation request for account ${accountId} failed: ${err.message}`
+                );
+              }
               expect({}).fail(
-                `Valid deposit address creation request failed with the following error:\n ${JSON.stringify(
-                  err
-                )}`
+                `Unexpected error in valid deposit address creation request for account ${accountId}`
               );
             }
           }
@@ -87,16 +112,30 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
         expect({}).fail('TODO');
       });
 
-      it('should fail when using an unknown asset', () => {
-        expect({}).fail('TODO');
+      it('should fail when using an unknown asset', async () => {
+        const requestBody: DepositAddressCreationRequest = {
+          idempotencyKey: randomUUID(),
+          transferMethod: {
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+            asset: { assetId: randomUUID() },
+          },
+        };
+        for (const { id: accountId } of accounts) {
+          const error = await getCreateDepositAddressFailureResult(accountId, requestBody);
+
+          expect(error.status).toBe(400);
+          expect(error.body.errorType).toBe(BadRequestError.errorType.UNKNOWN_ASSET);
+          expect(error.body.requestPart).toBe(RequestPart.BODY);
+          expect(error.body.propertyName).toBe('/destination/asset/assetId');
+        }
       });
 
       describe('Using the same idempotency key', () => {
-        it('should return the original successful request', () => {
+        it("should return the original successful request's response", () => {
           expect({}).fail('TODO');
         });
 
-        it('should return the original failed request', () => {
+        it("should return the original failed request's response", () => {
           expect({}).fail('TODO');
         });
       });
