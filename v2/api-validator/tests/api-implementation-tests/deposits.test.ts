@@ -41,6 +41,15 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
     });
     return response.capabilities;
   };
+  const findFirstAccountCapability = ():
+    | { accountId: string; capability: DepositCapability }
+    | undefined => {
+    for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+      if (capabilities.length) {
+        return { accountId, capability: capabilities[0] };
+      }
+    }
+  };
 
   beforeAll(async () => {
     client = new Client();
@@ -98,7 +107,7 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
               });
               expect(
                 depositAddress.status,
-                'Created deposit address status should be enabled'
+                `Created deposit address ${depositAddress.id} status should be enabled`
               ).toBe(DepositAddressStatus.ENABLED);
             } catch (err) {
               if (err instanceof ApiError) {
@@ -133,29 +142,25 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
       });
 
       describe('Using the same idempotency key', () => {
-        let accountIdForRequest: string;
+        let accountId: string;
         let successBody: DepositAddressCreationRequest;
         let failureBody: DepositAddressCreationRequest;
         let successResponse: DepositAddress;
         let failureResponse: ApiError;
 
         beforeAll(async () => {
-          // Searching for account with deposit capabilities
-          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
-            if (capabilities.length) {
-              accountIdForRequest = accountId;
-              successBody = {
-                idempotencyKey: randomUUID(),
-                transferMethod: { ...capabilities[0].deposit },
-              };
-              break;
-            }
-          }
+          const accountCapability = findFirstAccountCapability();
 
           // Accounting for the possible scenario where there aren't any deposit capabilities for any account
-          if (!accountIdForRequest) {
+          if (!accountCapability) {
             return;
           }
+
+          accountId = accountCapability.accountId;
+          successBody = {
+            idempotencyKey: randomUUID(),
+            transferMethod: accountCapability.capability.deposit,
+          };
 
           failureBody = {
             idempotencyKey: randomUUID(),
@@ -166,23 +171,20 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
           };
 
           successResponse = await client.transfers.createDepositAddress({
-            accountId: accountIdForRequest,
+            accountId,
             requestBody: successBody,
           });
-          failureResponse = await getCreateDepositAddressFailureResult(
-            accountIdForRequest,
-            failureBody
-          );
+          failureResponse = await getCreateDepositAddressFailureResult(accountId, failureBody);
         });
 
         it("should return the original successful request's response", async () => {
-          if (!accountIdForRequest) {
+          if (!accountId) {
             expect({}).pass('No deposit capabilities found, passing');
             return;
           }
 
           const response = await client.transfers.createDepositAddress({
-            accountId: accountIdForRequest,
+            accountId: accountId,
             requestBody: successBody,
           });
 
@@ -190,26 +192,23 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
         });
 
         it("should return the original failed request's response", async () => {
-          if (!accountIdForRequest) {
+          if (!accountId) {
             expect({}).pass('No deposit capabilities found, passing');
             return;
           }
 
-          const response = await getCreateDepositAddressFailureResult(
-            accountIdForRequest,
-            failureBody
-          );
+          const response = await getCreateDepositAddressFailureResult(accountId, failureBody);
 
           expect(response).toEqual(failureResponse);
         });
 
         it('should fail when sending different request body', async () => {
-          if (!accountIdForRequest) {
+          if (!accountId) {
             expect({}).pass('No deposit capabilities found, passing');
             return;
           }
 
-          const error = await getCreateDepositAddressFailureResult(accountIdForRequest, {
+          const error = await getCreateDepositAddressFailureResult(accountId, {
             idempotencyKey: successBody.idempotencyKey,
             transferMethod: failureBody.transferMethod,
           });
@@ -260,7 +259,87 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
     });
 
     describe('Disable a deposit address', () => {
-      // TODO
+      let accountId;
+      let disabledDepositAddress: DepositAddress;
+
+      const getDisableDepositAddressFailureResult = async (
+        accountId: string,
+        depositAddressId: string
+      ): Promise<ApiError> => {
+        try {
+          await client.transfers.disableDepositAddress({
+            accountId,
+            id: depositAddressId,
+          });
+        } catch (err) {
+          if (err instanceof ApiError) {
+            return err;
+          }
+          throw err;
+        }
+        throw new Error('Expected to throw');
+      };
+
+      beforeAll(async () => {
+        const accountCapability = findFirstAccountCapability();
+
+        if (!accountCapability?.accountId) {
+          return;
+        }
+
+        accountId = accountCapability.accountId;
+        const requestBody = {
+          idempotencyKey: randomUUID(),
+          transferMethod: accountCapability.capability.deposit,
+        };
+
+        const { id } = await client.transfers.createDepositAddress({
+          accountId,
+          requestBody,
+        });
+
+        disabledDepositAddress = await client.transfers.disableDepositAddress({
+          accountId,
+          id,
+        });
+      });
+
+      it('should have deposit address status changed to disabled', () => {
+        if (!accountId) {
+          expect({}).pass('No deposit capabilities found, passing');
+          return;
+        }
+
+        expect(disabledDepositAddress.status).toBe(DepositAddressStatus.DISABLED);
+      });
+
+      it('should find deposit address on getDepositAddressDetails post disable', async () => {
+        if (!accountId) {
+          expect({}).pass('No deposit capabilities found, passing');
+          return;
+        }
+
+        const response = await client.transfers.getDepositAddressDetails({
+          accountId,
+          id: disabledDepositAddress.id,
+        });
+        expect(response.id).toBe(disabledDepositAddress.id);
+        expect(response.status).toBe(disabledDepositAddress.status);
+      });
+
+      it('should fail to disable an already disabled address', async () => {
+        if (!accountId) {
+          expect({}).pass('No deposit capabilities found, passing');
+          return;
+        }
+
+        const error = await getDisableDepositAddressFailureResult(
+          accountId,
+          disabledDepositAddress.id
+        );
+        expect(error.status).toBe(400);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.DEPOSIT_ADDRESS_DISABLED);
+      });
     });
   });
 });

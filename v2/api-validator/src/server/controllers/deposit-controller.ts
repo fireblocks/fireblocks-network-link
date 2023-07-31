@@ -16,6 +16,7 @@ import {
 import { randomUUID } from 'crypto';
 import RandExp from 'randexp';
 import { JsonValue } from 'type-fest';
+import { XComError } from '../../error';
 
 export const DEPOSIT_METHODS: DepositCapability[] = [
   {
@@ -51,6 +52,18 @@ export const DEPOSIT_METHODS: DepositCapability[] = [
     },
   },
 ];
+
+export class DepositAddressNotFoundError extends XComError {
+  constructor() {
+    super('Deposit address not found');
+  }
+}
+
+export class DepositAddressDisabledError extends XComError {
+  constructor(id: string) {
+    super(`Deposit address ${id} is disabled`);
+  }
+}
 
 type Response = { status: number; requestBody: JsonValue; responseBody: JsonValue };
 
@@ -117,6 +130,34 @@ export function addNewDepositAddressForAccount(
 
 export function getAccountDepositAddresses(accountId: string): DepositAddress[] {
   return ACCOUNT_DEPOSIT_ADDRESS_MAP.get(accountId) ?? [];
+}
+
+export function disableAccountDepositAddress(
+  accountId: string,
+  depositAddressId: string
+): DepositAddress {
+  const accountDepositAddresses = getAccountDepositAddresses(accountId);
+  const depositAddressIndex = accountDepositAddresses.findIndex(
+    (depositAddress) => depositAddress.id === depositAddressId
+  );
+
+  if (depositAddressIndex === -1) {
+    throw new DepositAddressNotFoundError();
+  }
+
+  if (accountDepositAddresses[depositAddressIndex].status === DepositAddressStatus.DISABLED) {
+    throw new DepositAddressDisabledError(depositAddressId);
+  }
+
+  const disabledDepositAddress = {
+    ...accountDepositAddresses[depositAddressIndex],
+    status: DepositAddressStatus.DISABLED,
+  };
+
+  accountDepositAddresses[depositAddressIndex] = disabledDepositAddress;
+  ACCOUNT_DEPOSIT_ADDRESS_MAP.set(accountId, accountDepositAddresses);
+
+  return disabledDepositAddress;
 }
 
 export function registerCreateDepositAddressIdempotencyResponse(

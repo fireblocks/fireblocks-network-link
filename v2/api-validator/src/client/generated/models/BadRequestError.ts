@@ -32,6 +32,7 @@ export namespace BadRequestError {
         UNSUPPORTED_CONVERSION = 'unsupported-conversion',
         QUOTE_NOT_READY = 'quote-not-ready',
         USED_IDEMPOTENCY_KEY = 'used-idempotency-key',
+        DEPOSIT_ADDRESS_DISABLED = 'deposit-address-disabled',
     }
 
 

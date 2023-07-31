@@ -890,6 +890,7 @@ components:
             - unsupported-conversion
             - quote-not-ready
             - used-idempotency-key
+            - deposit-address-disabled
         propertyName:
           description: Name of property that caused the error.
           type: string

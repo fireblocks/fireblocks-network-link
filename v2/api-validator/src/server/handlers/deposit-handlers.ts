@@ -22,6 +22,9 @@ import { getIdempotencyResponseForKey } from '../controllers/deposit-controller'
 import { registerCreateDepositAddressIdempotencyResponse } from '../controllers/deposit-controller';
 import _ from 'lodash';
 import { getAccountDepositAddresses } from '../controllers/deposit-controller';
+import { disableAccountDepositAddress } from '../controllers/deposit-controller';
+import { DepositAddressNotFoundError } from '../controllers/deposit-controller';
+import { DepositAddressDisabledError } from '../controllers/deposit-controller';
 
 type AccountParam = { accountId: SubAccountIdPathParam };
 
@@ -146,4 +149,30 @@ export async function getDepositAddressDetails(
   }
 
   return depositAddress;
+}
+
+export async function disableDepositAddress(
+  request: FastifyRequest<{ Params: AccountParam & { id: EntityIdPathParam } }>,
+  reply: FastifyReply
+): Promise<DepositAddress> {
+  const { accountId, id: depositAddressId } = request.params;
+
+  if (!isKnownSubAccount(accountId)) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  try {
+    return disableAccountDepositAddress(accountId, depositAddressId);
+  } catch (err) {
+    if (err instanceof DepositAddressNotFoundError) {
+      return ErrorFactory.notFound(reply);
+    }
+    if (err instanceof DepositAddressDisabledError) {
+      return ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.DEPOSIT_ADDRESS_DISABLED,
+      });
+    }
+    throw err;
+  }
 }
