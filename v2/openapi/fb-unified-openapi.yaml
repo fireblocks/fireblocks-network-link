@@ -1992,6 +1992,7 @@ components:
             - unknown-asset
             - unsupported-conversion
             - quote-not-ready
+            - used-idempotency-key
         propertyName:
           description: Name of property that caused the error.
           type: string

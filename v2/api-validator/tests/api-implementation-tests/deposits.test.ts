@@ -8,6 +8,7 @@ import {
   ApiError,
   AssetReference,
   BadRequestError,
+  DepositAddress,
   DepositAddressCreationRequest,
   DepositCapability,
   IbanCapability,
@@ -108,10 +109,6 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
         }
       });
 
-      it('should fail when using transfer capability which is not listed', () => {
-        expect({}).fail('TODO');
-      });
-
       it('should fail when using an unknown asset', async () => {
         const requestBody: DepositAddressCreationRequest = {
           idempotencyKey: randomUUID(),
@@ -131,12 +128,89 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
       });
 
       describe('Using the same idempotency key', () => {
-        it("should return the original successful request's response", () => {
-          expect({}).fail('TODO');
+        let accountIdForRequest: string;
+        let successBody: DepositAddressCreationRequest;
+        let failureBody: DepositAddressCreationRequest;
+        let successResponse: DepositAddress;
+        let failureResponse: ApiError;
+
+        beforeAll(async () => {
+          // Searching for account with deposit capabilities
+          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+            if (capabilities.length) {
+              accountIdForRequest = accountId;
+              successBody = {
+                idempotencyKey: randomUUID(),
+                transferMethod: { ...capabilities[0].deposit },
+              };
+              break;
+            }
+          }
+
+          // Accounting for the possible scenario where there aren't any deposit capabilities for any account
+          if (!accountIdForRequest) {
+            return;
+          }
+
+          failureBody = {
+            idempotencyKey: randomUUID(),
+            transferMethod: {
+              transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+              asset: { assetId: randomUUID() },
+            },
+          };
+
+          successResponse = await client.transfers.createDepositAddress({
+            accountId: accountIdForRequest,
+            requestBody: successBody,
+          });
+          failureResponse = await getCreateDepositAddressFailureResult(
+            accountIdForRequest,
+            failureBody
+          );
         });
 
-        it("should return the original failed request's response", () => {
-          expect({}).fail('TODO');
+        it("should return the original successful request's response", async () => {
+          if (!accountIdForRequest) {
+            expect({}).pass('No deposit capabilities found, passing');
+            return;
+          }
+
+          const response = await client.transfers.createDepositAddress({
+            accountId: accountIdForRequest,
+            requestBody: successBody,
+          });
+
+          expect(response).toEqual(successResponse);
+        });
+
+        it("should return the original failed request's response", async () => {
+          if (!accountIdForRequest) {
+            expect({}).pass('No deposit capabilities found, passing');
+            return;
+          }
+
+          const response = await getCreateDepositAddressFailureResult(
+            accountIdForRequest,
+            failureBody
+          );
+
+          expect(response).toEqual(failureResponse);
+        });
+
+        it('should fail when sending different request body', async () => {
+          if (!accountIdForRequest) {
+            expect({}).pass('No deposit capabilities found, passing');
+            return;
+          }
+
+          const error = await getCreateDepositAddressFailureResult(accountIdForRequest, {
+            idempotencyKey: successBody.idempotencyKey,
+            transferMethod: failureBody.transferMethod,
+          });
+
+          expect(error.status).toBe(400);
+          expect(error.body.errorType).toBe(BadRequestError.errorType.USED_IDEMPOTENCY_KEY);
         });
       });
     });

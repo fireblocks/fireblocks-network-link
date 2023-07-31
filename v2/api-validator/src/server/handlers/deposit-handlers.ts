@@ -4,6 +4,7 @@ import {
   DepositAddress,
   DepositAddressCreationRequest,
   DepositCapability,
+  GeneralError,
   RequestPart,
   SubAccountIdPathParam,
 } from '../../client/generated';
@@ -15,6 +16,10 @@ import { depositAddressFromDepositAddressRequest } from '../controllers/deposit-
 import { addNewDepositAddressForAccount } from '../controllers/deposit-controller';
 import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
 import { validateDepositAddressCreationRequest } from '../controllers/deposit-controller';
+import { isUsedIdempotencyKey } from '../controllers/deposit-controller';
+import { getIdempotencyResponseForKey } from '../controllers/deposit-controller';
+import { registerCreateDepositAddressIdempotencyResponse } from '../controllers/deposit-controller';
+import _ from 'lodash';
 
 type AccountParam = { accountId: SubAccountIdPathParam };
 
@@ -44,23 +49,53 @@ export async function createDepositAddress(
     return ErrorFactory.notFound(reply);
   }
 
+  if (isUsedIdempotencyKey(request.body.idempotencyKey)) {
+    const idempotencyResponse = getIdempotencyResponseForKey(request.body.idempotencyKey);
+    if (!_.isEqual(request.body, idempotencyResponse.requestBody)) {
+      return ErrorFactory.badRequest(reply, {
+        message: 'Idempotency key was used in a previous request',
+        errorType: BadRequestError.errorType.USED_IDEMPOTENCY_KEY,
+      });
+    }
+    return reply.code(idempotencyResponse.status).send(idempotencyResponse.responseBody);
+  }
+
   try {
     validateDepositAddressCreationRequest(request.body);
   } catch (err) {
     if (err instanceof UnknownAdditionalAssetError) {
-      return ErrorFactory.badRequest(reply, {
+      const response = {
         message: err.message,
         errorType: BadRequestError.errorType.UNKNOWN_ASSET,
         requestPart: RequestPart.BODY,
         propertyName: '/destination/asset/assetId',
+      };
+      registerCreateDepositAddressIdempotencyResponse(request.body.idempotencyKey, {
+        status: 400,
+        requestBody: request.body,
+        responseBody: response,
       });
+      return ErrorFactory.badRequest(reply, response);
     }
-    throw err;
+    const response = {
+      errorType: GeneralError.errorType.INTERNAL_ERROR,
+    };
+    registerCreateDepositAddressIdempotencyResponse(request.body.idempotencyKey, {
+      status: 500,
+      requestBody: request.body,
+      responseBody: response,
+    });
+    return reply.code(500).send(response);
   }
 
   const depositAddress = depositAddressFromDepositAddressRequest(request.body);
 
   addNewDepositAddressForAccount(accountId, depositAddress);
+  registerCreateDepositAddressIdempotencyResponse(request.body.idempotencyKey, {
+    status: 200,
+    requestBody: request.body,
+    responseBody: depositAddress,
+  });
 
   return depositAddress;
 }

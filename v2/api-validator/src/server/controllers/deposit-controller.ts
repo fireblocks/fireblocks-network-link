@@ -15,6 +15,7 @@ import {
 } from '../../client/generated';
 import { randomUUID } from 'crypto';
 import RandExp from 'randexp';
+import { JsonValue } from 'type-fest';
 
 export const DEPOSIT_METHODS: DepositCapability[] = [
   {
@@ -51,7 +52,10 @@ export const DEPOSIT_METHODS: DepositCapability[] = [
   },
 ];
 
+type Response = { status: number; requestBody: JsonValue; responseBody: JsonValue };
+
 const ACCOUNT_DEPOSIT_ADDRESS_MAP = new Map<string, DepositAddress[]>();
+const CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP = new Map<string, Response>();
 const swipftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
 const ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
 
@@ -109,4 +113,30 @@ export function addNewDepositAddressForAccount(
   accountDepositAddresses.push(depositAddress);
 
   accountDepositAddressesMap.set(accountId, accountDepositAddresses);
+}
+
+export function registerCreateDepositAddressIdempotencyResponse(
+  idempotencyKey: string,
+  response: Response,
+  idempotencyResponseMap: Map<string, Response> = CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP
+): void {
+  idempotencyResponseMap.set(idempotencyKey, response);
+}
+
+export function getIdempotencyResponseForKey(
+  idempotencyKey: string,
+  idempotencyResponseMap: Map<string, Response> = CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP
+): Response {
+  const response = idempotencyResponseMap.get(idempotencyKey);
+  if (!response) {
+    throw new Error(`Idempotency key ${idempotencyKey} was not used!`);
+  }
+  return response;
+}
+
+export function isUsedIdempotencyKey(
+  idempotencyKey: string,
+  idempotencyResponseMap: Map<string, JsonValue> = CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP
+): boolean {
+  return idempotencyResponseMap.has(idempotencyKey);
 }
