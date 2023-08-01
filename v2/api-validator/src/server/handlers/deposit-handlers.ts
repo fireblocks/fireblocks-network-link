@@ -1,4 +1,9 @@
+import { JsonValue } from 'type-fest';
+import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { isKnownSubAccount } from '../controllers/accounts-controller';
+import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
+import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import {
   BadRequestError,
   DepositAddress,
@@ -9,22 +14,19 @@ import {
   RequestPart,
   SubAccountIdPathParam,
 } from '../../client/generated';
-import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
-import { DEPOSIT_METHODS } from '../controllers/deposit-controller';
-import { isKnownSubAccount } from '../controllers/accounts-controller';
-import * as ErrorFactory from '../http-error-factory';
-import { depositAddressFromDepositAddressRequest } from '../controllers/deposit-controller';
-import { addNewDepositAddressForAccount } from '../controllers/deposit-controller';
-import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
-import { validateDepositAddressCreationRequest } from '../controllers/deposit-controller';
-import { isUsedIdempotencyKey } from '../controllers/deposit-controller';
-import { getIdempotencyResponseForKey } from '../controllers/deposit-controller';
-import { registerCreateDepositAddressIdempotencyResponse } from '../controllers/deposit-controller';
-import _ from 'lodash';
-import { getAccountDepositAddresses } from '../controllers/deposit-controller';
-import { disableAccountDepositAddress } from '../controllers/deposit-controller';
-import { DepositAddressNotFoundError } from '../controllers/deposit-controller';
-import { DepositAddressDisabledError } from '../controllers/deposit-controller';
+import {
+  DEPOSIT_METHODS,
+  getAccountDepositAddresses,
+  DepositAddressNotFoundError,
+  registerIdempotencyResponse,
+  DepositAddressDisabledError,
+  disableAccountDepositAddress,
+  addNewDepositAddressForAccount,
+  validateDepositAddressCreationRequest,
+  depositAddressFromDepositAddressRequest,
+  IdempotencyKeyUsedError,
+  IdempotencyRequestError,
+} from '../controllers/deposit-controller';
 
 type AccountParam = { accountId: SubAccountIdPathParam };
 
@@ -50,59 +52,48 @@ export async function createDepositAddress(
 ): Promise<DepositAddress> {
   const { accountId } = request.params;
 
+  const saveAndSendIdempotentResponse = (responseStatus: number, responseBody: JsonValue) => {
+    registerIdempotencyResponse(request.body.idempotencyKey, {
+      requestBody: request.body,
+      responseStatus,
+      responseBody,
+    });
+    return reply.code(responseStatus).send(responseBody);
+  };
+
   if (!isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
-  }
-
-  if (isUsedIdempotencyKey(request.body.idempotencyKey)) {
-    const idempotencyResponse = getIdempotencyResponseForKey(request.body.idempotencyKey);
-    if (!_.isEqual(request.body, idempotencyResponse.requestBody)) {
-      return ErrorFactory.badRequest(reply, {
-        message: 'Idempotency key was used in a previous request',
-        errorType: BadRequestError.errorType.USED_IDEMPOTENCY_KEY,
-      });
-    }
-    return reply.code(idempotencyResponse.status).send(idempotencyResponse.responseBody);
   }
 
   try {
     validateDepositAddressCreationRequest(request.body);
   } catch (err) {
     if (err instanceof UnknownAdditionalAssetError) {
-      const response = {
+      return saveAndSendIdempotentResponse(400, {
         message: err.message,
         errorType: BadRequestError.errorType.UNKNOWN_ASSET,
         requestPart: RequestPart.BODY,
         propertyName: '/destination/asset/assetId',
-      };
-      registerCreateDepositAddressIdempotencyResponse(request.body.idempotencyKey, {
-        status: 400,
-        requestBody: request.body,
-        responseBody: response,
       });
-      return ErrorFactory.badRequest(reply, response);
     }
-    const response = {
+    if (err instanceof IdempotencyKeyUsedError) {
+      return ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.USED_IDEMPOTENCY_KEY,
+      });
+    }
+    if (err instanceof IdempotencyRequestError) {
+      return reply.code(err.metadata.responseStatus).send(err.metadata.responseBody);
+    }
+    return saveAndSendIdempotentResponse(500, {
       errorType: GeneralError.errorType.INTERNAL_ERROR,
-    };
-    registerCreateDepositAddressIdempotencyResponse(request.body.idempotencyKey, {
-      status: 500,
-      requestBody: request.body,
-      responseBody: response,
     });
-    return reply.code(500).send(response);
   }
 
   const depositAddress = depositAddressFromDepositAddressRequest(request.body);
 
   addNewDepositAddressForAccount(accountId, depositAddress);
-  registerCreateDepositAddressIdempotencyResponse(request.body.idempotencyKey, {
-    status: 200,
-    requestBody: request.body,
-    responseBody: depositAddress,
-  });
-
-  return depositAddress;
+  return saveAndSendIdempotentResponse(200, depositAddress);
 }
 
 export async function getDepositAddresses(

@@ -15,8 +15,9 @@ import {
 } from '../../client/generated';
 import { randomUUID } from 'crypto';
 import RandExp from 'randexp';
-import { JsonValue } from 'type-fest';
 import { XComError } from '../../error';
+import { JsonValue } from 'type-fest';
+import _ from 'lodash';
 
 export const DEPOSIT_METHODS: DepositCapability[] = [
   {
@@ -65,16 +66,56 @@ export class DepositAddressDisabledError extends XComError {
   }
 }
 
-type Response = { status: number; requestBody: JsonValue; responseBody: JsonValue };
+export class IdempotencyKeyUsedError extends XComError {
+  constructor(idempotencyKey: string) {
+    super(`Idempotency key ${idempotencyKey} was used in a previous request`);
+  }
+}
 
+export class IdempotencyRequestError extends XComError {
+  constructor(public metadata: IdempotencyMetadata) {
+    super("Idempotent request, will return original request's response");
+  }
+}
+
+type IdempotencyMetadata = {
+  requestBody: JsonValue;
+  responseBody: JsonValue;
+  responseStatus: number;
+};
+
+const CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP = new Map<string, IdempotencyMetadata>();
 const ACCOUNT_DEPOSIT_ADDRESS_MAP = new Map<string, DepositAddress[]>();
-const CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP = new Map<string, Response>();
 const swipftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
 const ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
+
+function isUsedIdempotencyKey(key: string) {
+  return CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP.has(key);
+}
+
+function getIdempotencyResponseForKey(key: string): IdempotencyMetadata {
+  const metadata = CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP.get(key);
+  if (!metadata) {
+    throw new Error('Idempotency key missing from map');
+  }
+
+  return metadata;
+}
+
+export function registerIdempotencyResponse(key: string, metadata: IdempotencyMetadata): void {
+  CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP.set(key, metadata);
+}
 
 export function validateDepositAddressCreationRequest(
   depositAddressRequest: DepositAddressCreationRequest
 ): void {
+  if (isUsedIdempotencyKey(depositAddressRequest.idempotencyKey)) {
+    const metadata = getIdempotencyResponseForKey(depositAddressRequest.idempotencyKey);
+    if (!_.isEqual(depositAddressRequest, metadata.requestBody)) {
+      throw new IdempotencyKeyUsedError(depositAddressRequest.idempotencyKey);
+    }
+    throw new IdempotencyRequestError(metadata);
+  }
   if (!isKnownAsset(depositAddressRequest.transferMethod.asset)) {
     throw new UnknownAdditionalAssetError();
   }
@@ -128,15 +169,19 @@ export function addNewDepositAddressForAccount(
   accountDepositAddressesMap.set(accountId, accountDepositAddresses);
 }
 
-export function getAccountDepositAddresses(accountId: string): DepositAddress[] {
-  return ACCOUNT_DEPOSIT_ADDRESS_MAP.get(accountId) ?? [];
+export function getAccountDepositAddresses(
+  accountId: string,
+  accountDepositAddressesMap: Map<string, DepositAddress[]> = ACCOUNT_DEPOSIT_ADDRESS_MAP
+): DepositAddress[] {
+  return accountDepositAddressesMap.get(accountId) ?? [];
 }
 
 export function disableAccountDepositAddress(
   accountId: string,
-  depositAddressId: string
+  depositAddressId: string,
+  accountDepositAddressesMap: Map<string, DepositAddress[]> = ACCOUNT_DEPOSIT_ADDRESS_MAP
 ): DepositAddress {
-  const accountDepositAddresses = getAccountDepositAddresses(accountId);
+  const accountDepositAddresses = getAccountDepositAddresses(accountId, accountDepositAddressesMap);
   const depositAddressIndex = accountDepositAddresses.findIndex(
     (depositAddress) => depositAddress.id === depositAddressId
   );
@@ -155,33 +200,7 @@ export function disableAccountDepositAddress(
   };
 
   accountDepositAddresses[depositAddressIndex] = disabledDepositAddress;
-  ACCOUNT_DEPOSIT_ADDRESS_MAP.set(accountId, accountDepositAddresses);
+  accountDepositAddressesMap.set(accountId, accountDepositAddresses);
 
   return disabledDepositAddress;
-}
-
-export function registerCreateDepositAddressIdempotencyResponse(
-  idempotencyKey: string,
-  response: Response,
-  idempotencyResponseMap: Map<string, Response> = CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP
-): void {
-  idempotencyResponseMap.set(idempotencyKey, response);
-}
-
-export function getIdempotencyResponseForKey(
-  idempotencyKey: string,
-  idempotencyResponseMap: Map<string, Response> = CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP
-): Response {
-  const response = idempotencyResponseMap.get(idempotencyKey);
-  if (!response) {
-    throw new Error(`Idempotency key ${idempotencyKey} was not used!`);
-  }
-  return response;
-}
-
-export function isUsedIdempotencyKey(
-  idempotencyKey: string,
-  idempotencyResponseMap: Map<string, JsonValue> = CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP
-): boolean {
-  return idempotencyResponseMap.has(idempotencyKey);
 }
