@@ -1,11 +1,18 @@
+import _ from 'lodash';
+import RandExp from 'randexp';
+import { randomUUID } from 'crypto';
+import { JsonValue } from 'type-fest';
+import { XComError } from '../../error';
 import { SUPPORTED_ASSETS, UnknownAdditionalAssetError, isKnownAsset } from './assets-controller';
 import {
   CrossAccountTransferCapability,
+  Deposit,
   DepositAddress,
   DepositAddressCreationRequest,
   DepositAddressStatus,
   DepositCapability,
   DepositDestination,
+  DepositStatus,
   IbanCapability,
   Layer1Cryptocurrency,
   Layer2Cryptocurrency,
@@ -13,11 +20,12 @@ import {
   PublicBlockchainCapability,
   SwiftCapability,
 } from '../../client/generated';
-import { randomUUID } from 'crypto';
-import RandExp from 'randexp';
-import { XComError } from '../../error';
-import { JsonValue } from 'type-fest';
-import _ from 'lodash';
+
+const swiftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
+const ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
+
+const CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP = new Map<string, IdempotencyMetadata>();
+const ACCOUNT_DEPOSIT_ADDRESS_MAP = new Map<string, DepositAddress[]>();
 
 export const DEPOSIT_METHODS: DepositCapability[] = [
   {
@@ -54,6 +62,23 @@ export const DEPOSIT_METHODS: DepositCapability[] = [
   },
 ];
 
+export const DEPOSITS: Deposit[] = [
+  {
+    balanceAmount: '1',
+    balanceAsset: { nationalCurrencyCode: NationalCurrencyCode.MXN },
+    createdAt: new Date(Date.now()).toISOString(),
+    id: randomUUID(),
+    source: {
+      accountHolder: { name: randomUUID() },
+      amount: '1',
+      asset: { nationalCurrencyCode: NationalCurrencyCode.MXN },
+      transferMethod: IbanCapability.transferMethod.IBAN,
+      iban: new RandExp(ibanRegexp).gen(),
+    },
+    status: DepositStatus.PENDING,
+  },
+];
+
 export class DepositAddressNotFoundError extends XComError {
   constructor() {
     super('Deposit address not found');
@@ -83,11 +108,6 @@ type IdempotencyMetadata = {
   responseBody: JsonValue;
   responseStatus: number;
 };
-
-const CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP = new Map<string, IdempotencyMetadata>();
-const ACCOUNT_DEPOSIT_ADDRESS_MAP = new Map<string, DepositAddress[]>();
-const swipftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
-const ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
 
 function isUsedIdempotencyKey(key: string) {
   return CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP.has(key);
@@ -141,7 +161,7 @@ export function depositAddressFromDepositAddressRequest(
       destination = {
         ...transferMethod,
         accountHolder: { name: randomUUID() },
-        swiftCode: new RandExp(swipftCodeRegexp).gen(),
+        swiftCode: new RandExp(swiftCodeRegexp).gen(),
         routingNumber: randomUUID(),
       };
       break;

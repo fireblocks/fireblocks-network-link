@@ -8,6 +8,7 @@ import {
   ApiError,
   AssetReference,
   BadRequestError,
+  Deposit,
   DepositAddress,
   DepositAddressCreationRequest,
   DepositAddressStatus,
@@ -340,6 +341,49 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
         expect(error.status).toBe(400);
         expect(error.body.errorType).toBe(BadRequestError.errorType.DEPOSIT_ADDRESS_DISABLED);
       });
+    });
+  });
+
+  describe('Deposits', () => {
+    let accountDepositsMap: Map<string, Deposit[]>;
+    const getDeposits = async (accountId: string, limit: number, startingAfter?: string) => {
+      const response = await client.transfers.getDeposits({ accountId, limit, startingAfter });
+      return response.deposits;
+    };
+
+    beforeAll(async () => {
+      accountDepositsMap = await getResponsePerIdMapping(
+        getDeposits,
+        accounts.map((account) => account.id)
+      );
+    });
+
+    it('should find each returned deposit on getDepositDetails', async () => {
+      for (const [accountId, deposits] of accountDepositsMap.entries()) {
+        for (const { id } of deposits) {
+          try {
+            const depositDetails = await client.transfers.getDepositDetails({ accountId, id });
+            expect(depositDetails.id).toBe(id);
+          } catch (err) {
+            if (err instanceof ApiError) {
+              expect({}).fail(
+                `Received server error getting deposit ${id} of account ${accountId} failed: ${err.message}`
+              );
+            }
+            expect({}).fail(
+              `Unexpected error getDepositDetails for deposit ${id} of account ${accountId}`
+            );
+          }
+        }
+      }
+    });
+
+    it('should return only known assets in response', () => {
+      for (const deposits of accountDepositsMap.values()) {
+        for (const { balanceAsset } of deposits) {
+          expect(balanceAsset).toSatisfy(isKnownAsset);
+        }
+      }
     });
   });
 });

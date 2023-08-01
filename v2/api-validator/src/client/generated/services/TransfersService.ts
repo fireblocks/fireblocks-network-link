@@ -203,7 +203,7 @@ export class TransfersService {
          */
         endingBefore?: string,
     }): CancelablePromise<{
-        deposits?: Array<Deposit>;
+        deposits: Array<Deposit>;
     }> {
         return this.httpRequest.request({
             method: 'GET',
