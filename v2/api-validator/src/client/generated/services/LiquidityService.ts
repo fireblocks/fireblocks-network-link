@@ -47,6 +47,9 @@ export class LiquidityService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Details of the quote request
+         */
         requestBody?: QuoteRequest,
     }): CancelablePromise<Quote> {
         return this.httpRequest.request({

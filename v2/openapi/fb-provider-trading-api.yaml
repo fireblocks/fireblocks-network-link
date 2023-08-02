@@ -400,6 +400,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
+        description: Order details
         content:
           application/json:
             schema:

@@ -1,4 +1,7 @@
 openapi: 3.0.0
+servers:
+  - description: Local server
+    url: http://0.0.0.0:8000
 info:
   title: '[Draft] Fireblocks Provider Connectivity API'
   version: 0.0.1
@@ -890,6 +893,7 @@ components:
             - unsupported-conversion
             - quote-not-ready
             - order-not-trading
+            - idempotency-key-reuse
         propertyName:
           description: Name of property that caused the error.
           type: string

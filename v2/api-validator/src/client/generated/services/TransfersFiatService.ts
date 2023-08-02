@@ -128,6 +128,9 @@ export class TransfersFiatService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Withdrawal details
+         */
         requestBody: FiatWithdrawalRequest,
     }): CancelablePromise<FiatWithdrawal> {
         return this.httpRequest.request({

@@ -128,6 +128,9 @@ export class TransfersBlockchainService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Withdrawal details
+         */
         requestBody: BlockchainWithdrawalRequest,
     }): CancelablePromise<BlockchainWithdrawal> {
         return this.httpRequest.request({

@@ -322,6 +322,9 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Deposit address details
+         */
         requestBody: DepositAddressCreationRequest,
     }): CancelablePromise<DepositAddress> {
         return this.httpRequest.request({

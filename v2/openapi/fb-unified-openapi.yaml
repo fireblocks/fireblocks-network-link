@@ -1,4 +1,7 @@
 openapi: 3.0.0
+servers:
+  - description: Local server
+    url: http://0.0.0.0:8000
 info:
   title: '[Draft] Fireblocks Provider Connectivity API'
   version: 0.0.1
@@ -711,6 +714,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Details of the quote request
         content:
           application/json:
             schema:
@@ -1154,6 +1158,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Order details
         content:
           application/json:
             schema:
@@ -1534,6 +1539,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1603,6 +1609,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1672,6 +1679,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1741,6 +1749,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1837,6 +1846,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Deposit address details
         required: true
         content:
           application/json:
@@ -2110,6 +2120,7 @@ components:
             - unsupported-conversion
             - quote-not-ready
             - order-not-trading
+            - idempotency-key-reuse
         propertyName:
           description: Name of property that caused the error.
           type: string

@@ -407,6 +407,9 @@ export class TradingService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Order details
+         */
         requestBody?: OrderRequest,
     }): CancelablePromise<Order> {
         return this.httpRequest.request({
