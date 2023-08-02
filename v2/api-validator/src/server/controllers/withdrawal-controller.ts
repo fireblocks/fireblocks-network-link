@@ -7,6 +7,7 @@ import {
   NationalCurrencyCode,
   PublicBlockchainCapability,
   SwiftCapability,
+  Withdrawal,
   WithdrawalCapability,
 } from '../../client/generated';
 
@@ -44,3 +45,5 @@ export const WITHDRAWAL_METHODS: WithdrawalCapability[] = [
     },
   },
 ];
+
+const WITHDRAWALS: Withdrawal[] = [];
