@@ -20,6 +20,7 @@ import {
   PublicBlockchainCapability,
   SwiftCapability,
 } from '../../client/generated';
+import { IdempotencyKeyReuseError } from './orders-controller';
 
 const swiftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
 const ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
@@ -132,13 +133,7 @@ export class DepositAddressDisabledError extends XComError {
   }
 }
 
-export class IdempotencyKeyUsedError extends XComError {
-  constructor(idempotencyKey: string) {
-    super(`Idempotency key ${idempotencyKey} was used in a previous request`);
-  }
-}
-
-export class IdempotencyRequestError extends XComError {
+export class IdempotencyRequest extends XComError {
   constructor(public metadata: IdempotencyMetadata) {
     super("Idempotent request, will return original request's response");
   }
@@ -173,9 +168,9 @@ export function validateDepositAddressCreationRequest(
   if (isUsedIdempotencyKey(depositAddressRequest.idempotencyKey)) {
     const metadata = getIdempotencyResponseForKey(depositAddressRequest.idempotencyKey);
     if (!_.isEqual(depositAddressRequest, metadata.requestBody)) {
-      throw new IdempotencyKeyUsedError(depositAddressRequest.idempotencyKey);
+      throw new IdempotencyKeyReuseError(depositAddressRequest.idempotencyKey);
     }
-    throw new IdempotencyRequestError(metadata);
+    throw new IdempotencyRequest(metadata);
   }
   if (!isKnownAsset(depositAddressRequest.transferMethod.asset)) {
     throw new UnknownAdditionalAssetError();

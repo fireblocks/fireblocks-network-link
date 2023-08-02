@@ -2,6 +2,7 @@ import { JsonValue } from 'type-fest';
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { isKnownSubAccount } from '../controllers/accounts-controller';
+import { IdempotencyKeyReuseError } from '../controllers/orders-controller';
 import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
 import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import {
@@ -25,8 +26,7 @@ import {
   addNewDepositAddressForAccount,
   validateDepositAddressCreationRequest,
   depositAddressFromDepositAddressRequest,
-  IdempotencyKeyUsedError,
-  IdempotencyRequestError,
+  IdempotencyRequest,
   DEPOSITS,
 } from '../controllers/deposit-controller';
 
@@ -78,13 +78,13 @@ export async function createDepositAddress(
         propertyName: '/destination/asset/assetId',
       });
     }
-    if (err instanceof IdempotencyKeyUsedError) {
+    if (err instanceof IdempotencyKeyReuseError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
         errorType: BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE,
       });
     }
-    if (err instanceof IdempotencyRequestError) {
+    if (err instanceof IdempotencyRequest) {
       return reply.code(err.metadata.responseStatus).send(err.metadata.responseBody);
     }
     return saveAndSendIdempotentResponse(500, {
