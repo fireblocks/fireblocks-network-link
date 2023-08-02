@@ -1,13 +1,19 @@
 openapi: 3.0.0
+servers:
+  - description: Local server
+    url: http://0.0.0.0:8000
 info:
   title: '[Draft] Fireblocks Provider Connectivity API'
-  version: 0.0.1
+  version: 0.1.0
   x-logo:
     url: https://drive.google.com/uc?id=1sseKokeIoh7hnUpV8skWYF_VzncF3slT
     altText: Fireblocks logo
   contact:
     name: Fireblocks
     url: https://fireblocks.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
   description: |
     Fireblocks Provider Connectivity API defines the interface for integration of third-party
     providers into Fireblocks platform.
@@ -109,11 +115,11 @@ info:
 
       * #### Using HMAC
         1. Create a prehash string `{timestamp+nonce+method+endpoint+body}`
-        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
+        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
             
             [The request body is a JSON string and needs to be the same with the parameters passed by the API]
         3. Use `SECRET` to sign the string with HMAC (Internal hash function is configurable: `SHA512`, `SHA3_256`, `SHA256`)
-        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
+        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
 
       * #### Using RSA
 
@@ -121,11 +127,11 @@ info:
         
         `SECRET` is defined to be the Private RSA PEM.
         1. Create a prehash string `{timestamp+nonce+method+endpoint+body}`
-        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
+        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
             
             [The request body is a JSON string and needs to be the same with the parameters passed by the API]
         3. Use `SECRET` to sign the string with RSA (Internal hash function is configurable: `SHA512`, `SHA3_256`, `SHA256`)
-        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
+        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
 
       * #### Using ECDSA
 
@@ -134,11 +140,11 @@ info:
         `SECRET` is defined to be the Private ECDSA PEM. ECDSA result signature has an ASN1.DER format.
 
         1. Create a prehash string `{timestamp+nonce+method+endpoint+body}`
-        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
+        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
 
             [The request body is a JSON string and needs to be the same as the parameters passed by the API]
         3. Use `SECRET` to sign the string with ECDSA (The internal hash function is not configurable and is set to `SHA256`)
-        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`).
+        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`).
 
     # Capabilities
 
@@ -302,28 +308,42 @@ info:
     Example: MXN              MXN                                  USD               USDC
     ```
 tags:
-  - name: Capabilities
-  - name: Accounts
-  - name: Balances
-  - name: Historic Balances
-  - name: Liquidity
-  - name: Trading
-  - name: Transfers
-  - name: Transfers (Blockchain)
-  - name: Transfers (Fiat)
-  - name: Transfers (Peer Accounts)
+  - name: capabilities
+    description: Server capabilities discovery operations.
+  - name: accounts
+    description: User accounts management operations.
+  - name: balances
+    description: Balances management operations.
+  - name: historicBalances
+    description: Historic balances operations.
+  - name: liquidity
+    description: Liquidity operations
+  - name: trading
+    description: Order book trading operations.
+  - name: transfers
+    description: Fund transfers management operations.
+  - name: transfersBlockchain
+    description: Fund transfers over public blockchains.
+  - name: transfersFiat
+    description: National currency fund transfers.
+  - name: transfersPeerAccounts
+    description: Transfers to a peer account managed by the same provider.
 paths:
   /capabilities:
     get:
+      operationId: getCapabilities
       summary: Describe server capabilities
       description: |-
         Returns the API version and all the capabilities that the server supports.  
           
         The capabilities are specified as a map. The map keys are the capability names and the values are lists of account IDs. If all the accounts support a capability, an asterisk could be used, instead of listing all the accounts.
       tags:
-        - Capabilities
+        - capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
       responses:
         '200':
           description: Server capability details.
@@ -366,19 +386,29 @@ paths:
                       transfersFiat:
                         - 6cd2fe1e-d0bc-4fad-a9ba-9384e0fdfdc0
                         - 7885a47b-0719-4448-b59e-3b8497cd1685
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets:
     get:
-      operationId: get-additional-assets
+      operationId: getAdditionalAssets
       summary: Get list of supported additional assets
       description: Returns assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
       tags:
-        - Capabilities
+        - capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
-        - $ref: '#/components/parameters/AssetsQueryParam'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
       responses:
         '200':
           description: List of additional assets.
@@ -434,19 +464,27 @@ paths:
                         symbol: USDC
                         description: Aggregation of all USDC token over the different blockchains.
                         decimalPlaces: 6
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/assets/{id}:
     get:
+      operationId: getAssetDetails
       summary: Get details of a supported additional asset.
       description: Returns the details of an assets, supported in addition to the predefined national currencies and the native cryptocurrencies.
       tags:
-        - Capabilities
+        - capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/EntityIdPathParam'
-        - $ref: '#/components/parameters/PaginationQueryParams'
-        - $ref: '#/components/parameters/AssetsQueryParam'
       responses:
         '200':
           description: List of additional assets.
@@ -454,39 +492,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AssetDefinition'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
           $ref: '#/components/responses/ErrorResponse'
-  /capabilities/balances:
-    get:
-      summary: Get list of supported balance assets
-      tags:
-        - Capabilities
-      parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
-      responses:
-        '200':
-          description: List of balance assets
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  capabilities:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/AssetReference'
-        default:
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts:
     get:
+      operationId: getAccounts
       summary: Get list of sub-accounts
       tags:
-        - Accounts
+        - accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
-        - $ref: '#/components/parameters/AccountPropertiesQueryParam'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: '#/components/parameters/AccountBalancesQueryParam'
       responses:
         '200':
           description: List of sub-accounts.
@@ -494,21 +522,33 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - accounts
                 properties:
-                  withdrawals:
+                  accounts:
                     type: array
                     items:
                       $ref: '#/components/schemas/Account'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}:
     get:
+      operationId: getAccountDetails
       summary: Get sub-account details
       tags:
-        - Accounts
+        - accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/AccountPropertiesQueryParam'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/AccountBalancesQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
@@ -517,17 +557,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Account'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/balances:
     get:
+      operationId: getBalances
       summary: Get current balances
       tags:
-        - Balances
+        - balances
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
-        - $ref: '#/components/parameters/AssetsQueryParam'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: '#/components/parameters/AssetIdQueryParam'
+        - $ref: '#/components/parameters/NationalCurrencyCodeQueryParam'
+        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
@@ -546,7 +600,8 @@ paths:
                   summary: National currency balance
                   value:
                     balances:
-                      - asset:
+                      - id: 4ff63424-7e09-4cdf-b7f1-da7b7c65eabe
+                        asset:
                           nationalCurrencyCode: USD
                         availableAmount: '1743.43'
                         lockedAmount: '0'
@@ -554,7 +609,8 @@ paths:
                   summary: Blockchain native currency balance
                   value:
                     balances:
-                      - asset:
+                      - id: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
+                        asset:
                           blockchain: Bitcoin
                           cryptocurrencySymbol: BTC
                         availableAmount: '7.00008214'
@@ -564,20 +620,35 @@ paths:
                   description: '`assetId` must be one of the IDs returned by `GET /capabilities/assets`. The ID in this example is the ID of the USDC bucket defined in the example responses of `GET /capabilities/assets`.'
                   value:
                     balances:
-                      - asset:
+                      - id: 6f572d77-2f8d-4962-adf4-de4a62bc236b
+                        asset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
                         availableAmount: '95.03'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/historic-balances:
     get:
+      operationId: getHistoricBalances
       summary: Get balances at specific time in the past
       tags:
-        - Historic Balances
+        - historicBalances
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
-        - $ref: '#/components/parameters/AssetsQueryParam'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: '#/components/parameters/AssetIdQueryParam'
+        - $ref: '#/components/parameters/NationalCurrencyCodeQueryParam'
+        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - name: time
           description: Time of the requested balances.
@@ -598,15 +669,25 @@ paths:
                 properties:
                   balances:
                     $ref: '#/components/schemas/Balances'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/liquidity/quotes:
     get:
+      operationId: getQuoteCapabilities
       summary: List possible asset conversions
       tags:
-        - Capabilities
+        - capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
       responses:
         '200':
           description: List of possible asset conversions.
@@ -614,18 +695,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QuoteCapabilities'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes:
     post:
+      operationId: createQuote
       summary: Quote creation request
       description: Either `fromAmount` or `toAmount` must be specified, while the unspecified amount will be populated by the server and returned in the response.
       tags:
-        - Liquidity
+        - liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Details of the quote request
         content:
           application/json:
             schema:
@@ -637,15 +729,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Quote'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     get:
+      operationId: getQuotes
       summary: Get list of quotes sorted by creation time
       tags:
-        - Liquidity
+        - liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -655,20 +759,32 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - quotes
                 properties:
-                  withdrawals:
+                  quotes:
                     type: array
                     items:
                       $ref: '#/components/schemas/Quote'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}:
     get:
+      operationId: getQuoteDetails
       summary: Get quote details
       tags:
-        - Liquidity
+        - liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -678,15 +794,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Quote'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/liquidity/quotes/{id}/execute:
     post:
+      operationId: executeQuote
       summary: Execute quote
       tags:
-        - Liquidity
+        - liquidity
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -696,38 +822,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Quote'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /capabilities/trading/books:
     get:
+      operationId: getBooks
       summary: List order books
       tags:
-        - Capabilities
+        - capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
-      responses:
-        '200':
-          description: List of order books
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  books:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/OrderBook'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-  /trading/books:
-    get:
-      summary: List order books
-      tags:
-        - Trading
-      parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
       responses:
         '200':
           description: List of order books
@@ -742,15 +858,39 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/OrderBook'
-        default:
+              example:
+                books:
+                  - id: BTC/USDC
+                    description: Bitcoin book
+                    baseAsset:
+                      blockchain: Bitcoin
+                      cryptocurrencySymbol: BTC
+                    quoteAsset:
+                      assetId: f0844d82-7097-4521-95bc-d843724a893e
+                  - id: GBP/USDC
+                    baseAsset:
+                      nationalCurrencyCode: GBP
+                    quoteAsset:
+                      assetId: f0844d82-7097-4521-95bc-d843724a893e
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}:
     get:
+      operationId: getBookDetails
       summary: Get details of an order book
       tags:
-        - Trading
+        - trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
         '200':
@@ -759,17 +899,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderBook'
-        default:
+              examples:
+                btcUsdc:
+                  summary: BTC/USDC book
+                  value:
+                    id: BTC/USDC
+                    description: Bitcoin book
+                    baseAsset:
+                      blockchain: Bitcoin
+                      cryptocurrencySymbol: BTC
+                    quoteAsset:
+                      assetId: f0844d82-7097-4521-95bc-d843724a893e
+                gbpUsdc:
+                  summary: GBP/USDC book
+                  value:
+                    id: GBP/USDC
+                    baseAsset:
+                      nationalCurrencyCode: GBP
+                    quoteAsset:
+                      assetId: f0844d82-7097-4521-95bc-d843724a893e
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/asks:
     get:
+      operationId: getBookAsks
       summary: Get active sell orders in an order book
       description: List active sell orders in an order book, sorted ascending by the sell price.
       tags:
-        - Trading
+        - trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
         '200':
@@ -785,17 +956,64 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/MarketEntry'
-        default:
+              examples:
+                btcUsdc:
+                  summary: Asks for the BTC/USDC book
+                  value:
+                    asks:
+                      - id: EADAC726-414B-4C5B-B26A-8A616446BDB0
+                        price: '29312.03'
+                        amount: '9.21634'
+                        totalPrice: '270149.63'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: 23631CE5-123B-4163-A6CD-6BF3CE5521C6
+                        price: '29315.97'
+                        amount: '22.33346'
+                        totalPrice: '654727.04'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: 375C2D0A-2874-4FCE-A860-068856D05A87
+                        price: '29316.95'
+                        amount: '9.30764'
+                        totalPrice: '272871.62'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: E577CE57-57BE-49F4-ACA9-DA8EA0F560BD
+                        price: '29317.14'
+                        amount: '7.56552'
+                        totalPrice: '221799.41'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: E776FAF0-B9BB-414B-8519-CB01D088FAC2
+                        price: '29317.38'
+                        amount: '9.87465'
+                        totalPrice: '289498.87'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/bids:
     get:
+      operationId: getBookBids
       summary: Get active buy orders in an order book
       description: List active buy orders in an order book, sorted descending by the buy price.
       tags:
-        - Trading
+        - trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
         '200':
@@ -811,17 +1029,64 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/MarketEntry'
-        default:
+              examples:
+                btcUsdc:
+                  summary: Bids for the BTC/USDC book
+                  value:
+                    bids:
+                      - id: 92946569-74FE-42BD-9898-CBD03A5D407B
+                        price: '29312.03'
+                        amount: '9.21634'
+                        totalPrice: '270149.63'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: F69C17BB-9E2A-4159-8938-8B142F55B4BE
+                        price: '29310.42'
+                        amount: '0.00091'
+                        totalPrice: '26.67'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: E7042B8A-D467-4144-AC53-92C4A96C2A84
+                        price: '29310.35'
+                        amount: '0.027'
+                        totalPrice: '791.38'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: 6A3444BC-34D1-411B-B505-ADE557307C62
+                        price: '29310.34'
+                        amount: '0.4275'
+                        totalPrice: '12530.17'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: 27C49660-AC51-409D-A6C9-5E5BB0FFFACE
+                        price: '29310.27'
+                        amount: '0.01412'
+                        totalPrice: '413.86'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /trading/books/{id}/history:
     get:
+      operationId: getBookOrderHistory
       summary: List fulfilled orders in an order book
       description: List fulfilled orders in an order book, sorted descending by the fulfillment time.
       tags:
-        - Trading
+        - trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
         '200':
@@ -837,17 +1102,29 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/MarketTrade'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders:
     get:
+      operationId: getOrders
       summary: List trading orders
       description: List trading orders sorted descending by the creation time.
       tags:
-        - Trading
+        - trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
@@ -863,28 +1140,71 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Order'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: createOrder
       summary: Create a new trading order
+      description: Either `baseAssetQuantity` or `quoteAssetQuantity` must always be specified. `quoteAssetPrice` must be specified for limit orders, but cannot be used in market orders.
       tags:
-        - Trading
+        - trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Order details
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/OrderRequest'
-            example:
-              idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
-              bookId: BTC_ETH
-              side: BUY
-              orderType: LIMIT
-              timeInForce: GOOD_TILL_CANCELED
-              baseAssetQuantity: 10
-              baseAssetPrice: '0.0003'
+            examples:
+              limitSellOrder:
+                summary: Sell 10 BTC for 20,000 USDC each, at most
+                value:
+                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
+                  bookId: BTC_USDC
+                  side: SELL
+                  orderType: LIMIT
+                  timeInForce: GOOD_TILL_CANCELED
+                  baseAssetQuantity: '10'
+                  quoteAssetPrice: '20000'
+              limitBuyOrder:
+                summary: Buy BTC for at most 20,000 USDC each, up to 200,000 USDC in total
+                value:
+                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
+                  bookId: BTC_USDC
+                  side: BUY
+                  orderType: LIMIT
+                  timeInForce: GOOD_TILL_CANCELED
+                  quoteAssetPrice: '20000'
+                  quoteAssetQuantity: '200000'
+              marketBuyOrder:
+                summary: Buy BTC at the market price for 200,000 USDC in total
+                value:
+                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
+                  bookId: BTC_USDC
+                  side: BUY
+                  orderType: MARKET
+                  timeInForce: GOOD_TILL_CANCELED
+                  quoteAssetQuantity: '200000'
+              marketSellOrder:
+                summary: Sell 10 BTC at the market
+                value:
+                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
+                  bookId: BTC_USDC
+                  side: SELL
+                  orderType: MARKET
+                  timeInForce: GOOD_TILL_CANCELED
+                  baseAssetQuantity: '10'
       responses:
         '200':
           description: Newly created book order details
@@ -895,23 +1215,33 @@ paths:
               example:
                 id: cf091554-f2b8-4cea-9783-2a7e5065b549
                 status: TRADING
-                bookId: BTC_ETH
-                side: BUY
+                bookId: BTC_USDC
+                side: SELL
                 orderType: LIMIT
                 timeInForce: GOOD_TILL_CANCELED
-                baseAssetQuantity: 10
-                baseAssetPrice: '0.0003'
+                baseAssetQuantity: '10'
+                quoteAssetPrice: '20000'
                 createdAt: 2023-06-02T19:45:26.550Z
                 trades: []
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/trading/orders/{id}:
     get:
+      operationId: getOrderDetails
       summary: Get trading order details
       tags:
-        - Trading
+        - trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
@@ -921,29 +1251,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Order'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     delete:
+      operationId: cancelOrder
       summary: Cancel an active trading order
       tags:
-        - Trading
+        - trading
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
         '200':
           description: Order canceled.
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
           $ref: '#/components/responses/ErrorResponse'
-  /capabilities/transfers/withdrawals:
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/capabilities/transfers/withdrawals:
     get:
+      operationId: getWithdrawalMethods
       summary: Get list of supported withdrawal methods
       tags:
-        - Capabilities
+        - capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
           description: List of withdrawal methods for account.
@@ -951,6 +1304,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - capabilities
                 properties:
                   capabilities:
                     type: array
@@ -964,52 +1319,71 @@ paths:
                     The asset IDs in this example are the same IDs used in the examples of `GET /capabilities/assets`.
                   value:
                     capabilities:
-                      - withdrawal:
+                      - id: 16b8b2c3-bd61-4745-9c48-3d30c2bc6907
+                        withdrawal:
                           asset:
                             assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - withdrawal:
+                      - id: 55f184db-9860-4ed7-9db7-7cded54ef0f4
+                        withdrawal:
                           asset:
                             assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - withdrawal:
+                      - id: 68fb13d5-48ff-42d8-8273-1658a9b49082
+                        withdrawal:
                           asset:
                             assetId: 4386cf4d-83b2-4410-96da-0d3919a45506
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - withdrawal:
+                      - id: d625f8e7-f8aa-4288-9f39-54fecf024c9a
+                        withdrawal:
                           asset:
                             assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
-                      - withdrawal:
+                      - id: e1fb5c58-c4c5-4358-9781-1c52edf1f2f7
+                        withdrawal:
                           asset:
                             assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
-                      - withdrawal:
+                      - id: 19e6770f-71a9-483b-9d9f-7054ea2dc832
+                        withdrawal:
                           asset:
                             assetId: 4386cf4d-83b2-4410-96da-0d3919a45506
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
           $ref: '#/components/responses/ErrorResponse'
-  /capabilities/transfers/deposits:
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/capabilities/transfers/deposits:
     get:
+      operationId: getDepositMethods
       summary: Get list of supported deposit methods
       tags:
-        - Capabilities
+        - capabilities
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
           description: List of deposit methods for account.
@@ -1017,6 +1391,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - capabilities
                 properties:
                   capabilities:
                     type: array
@@ -1030,66 +1406,94 @@ paths:
                     The asset IDs in this example are the same IDs used in the examples of `GET /capabilities/assets`.
                   value:
                     capabilities:
-                      - deposit:
+                      - id: 29d7d25a-ed05-479a-9cde-d50b8203d3ec
+                        deposit:
                           asset:
                             assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - deposit:
+                      - id: adfc2457-1bb7-40d0-9d46-3cfa2dd3a7e1
+                        deposit:
                           asset:
                             assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - deposit:
+                      - id: eda3dbb8-ef94-400e-8a6b-2a38302b9505
+                        deposit:
                           asset:
                             assetId: 4386cf4d-83b2-4410-96da-0d3919a45506
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
-                      - deposit:
+                      - id: b9f471f0-4920-464f-9c6a-97929cc31950
+                        deposit:
                           asset:
                             assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
-                      - deposit:
+                      - id: 53a36de2-f36f-4301-8292-a0ecc1c32cda
+                        deposit:
                           asset:
                             assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
-                      - deposit:
+                      - id: dd59e6d1-c8ca-4499-8b3f-786ce417ed17
+                        deposit:
                           asset:
                             assetId: 4386cf4d-83b2-4410-96da-0d3919a45506
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals:
     get:
+      operationId: getWithdrawals
       summary: Get list of withdrawals sorted by creation time
       tags:
-        - Transfers
+        - transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
           $ref: '#/components/responses/WithdrawalsResponse'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/{id}:
     get:
+      operationId: getWithdrawalDetails
       summary: Get withdrawal details
       tags:
-        - Transfers
+        - transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1099,16 +1503,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Withdrawal'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/blockchain:
     get:
+      operationId: getBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
       tags:
-        - Transfers (Blockchain)
+        - transfersBlockchain
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1123,17 +1539,28 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/BlockchainWithdrawal'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: createBlockchainWithdrawal
       summary: Create new withdrawal over public blockchain
       description: Should reject any non blockchain withdrawal request.
       tags:
-        - Transfers (Blockchain)
+        - transfersBlockchain
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1146,16 +1573,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BlockchainWithdrawal'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/fiat:
     get:
+      operationId: getFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
       tags:
-        - Transfers (Fiat)
+        - transfersFiat
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1170,17 +1609,28 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/FiatWithdrawal'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: createFiatWithdrawal
       summary: Create new fiat withdrawal
       description: Should reject any non fiat withdrawal request.
       tags:
-        - Transfers (Fiat)
+        - transfersFiat
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1193,16 +1643,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FiatWithdrawal'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/peeraccount:
     get:
+      operationId: getPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
       tags:
-        - Transfers (Peer Accounts)
+        - transfersPeerAccounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1217,17 +1679,28 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/CrossAccountWithdrawal'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: createPeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
       description: Should reject any non peer acount withdrawal request.
       tags:
-        - Transfers (Peer Accounts)
+        - transfersPeerAccounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1240,16 +1713,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrossAccountWithdrawal'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/withdrawals/subaccount:
     get:
+      operationId: getSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
       tags:
-        - Accounts
+        - accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/ListOrderQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1264,17 +1749,28 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/CrossAccountWithdrawal'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     post:
+      operationId: createSubAccountWithdrawal
       summary: Create new transfer to another sub-account
       description: Transfers assets between different sub-accounts of the same user. Should reject any withdrawals that are not sub-account transfers.
       tags:
-        - Accounts
+        - accounts
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1287,16 +1783,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CrossAccountWithdrawal'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits:
     get:
+      operationId: getDeposits
       summary: Get list of deposits sorted by creation time
       tags:
-        - Transfers
+        - transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
@@ -1305,20 +1813,32 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - deposits
                 properties:
                   deposits:
                     type: array
                     items:
                       $ref: '#/components/schemas/Deposit'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/{id}:
     get:
+      operationId: getDepositDetails
       summary: Get deposit details
       tags:
-        - Transfers
+        - transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1328,17 +1848,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Deposit'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses:
     post:
+      operationId: createDepositAddress
       summary: Create new deposit address
       tags:
-        - Transfers
+        - transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Deposit address details
         required: true
         content:
           application/json:
@@ -1351,15 +1882,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DepositAddress'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     get:
+      operationId: getDepositAddresses
       summary: Get list of existing deposit addresses
       tags:
-        - Transfers
+        - transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
-        - $ref: '#/components/parameters/PaginationQueryParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
@@ -1368,20 +1911,32 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - addresses
                 properties:
                   addresses:
                     type: array
                     items:
                       $ref: '#/components/schemas/DepositAddress'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/transfers/deposits/addresses/{id}:
     get:
+      operationId: getDepositAddressDetails
       summary: Get details of a deposit address
       tags:
-        - Transfers
+        - transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1391,45 +1946,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DepositAddress'
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
     delete:
+      operationId: disableDepositAddress
       summary: Disable a deposit address
       tags:
-        - Transfers
+        - transfers
       parameters:
-        - $ref: '#/components/parameters/SecurityHeaderParams'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
           description: Deposit address disabled.
-        default:
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
           $ref: '#/components/responses/ErrorResponse'
 components:
   parameters:
-    SecurityHeaderParams:
-      name: security
+    X-FBAPI-KEY:
+      name: X-FBAPI-KEY
       in: header
-      explode: true
       required: true
-      description: Mandatory security parameters.
+      description: API authentication key.
       schema:
-        type: object
-        properties:
-          X-FBAPI-KEY:
-            type: string
-          X-FBAPI-TIMESTAMP:
-            type: number
-            description: Milliseconds since Unix epoch.
-          X-FBAPI-NONCE:
-            type: string
-            description: Unique identifier of the request.
-          X-FBAPI-SIGNATURE:
-            type: string
-            description: |-
-              Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-              - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+        type: string
+    X-FBAPI-TIMESTAMP:
+      name: X-FBAPI-TIMESTAMP
+      in: header
+      required: true
+      description: Request timestamp in milliseconds since Unix epoch.
+      schema:
+        type: number
+    X-FBAPI-NONCE:
+      name: X-FBAPI-NONCE
+      in: header
+      required: true
+      description: Unique identifier of the request.
+      schema:
+        type: string
+    X-FBAPI-SIGNATURE:
+      name: X-FBAPI-SIGNATURE
+      in: header
+      required: true
+      description: |-
+        Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+        - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+      schema:
+        type: string
     EntityIdPathParam:
       name: id
       in: path
@@ -1437,7 +2016,6 @@ components:
       description: Entity unique identifier.
       schema:
         type: string
-        format: uuid
     SubAccountIdPathParam:
       name: accountId
       in: path
@@ -1456,63 +2034,70 @@ components:
           - asc
           - desc
         default: desc
-    PaginationQueryParams:
-      name: pagination
+    PaginationLimit:
+      name: limit
       in: query
-      description: Parameters controlling list pagination.
-      style: form
-      explode: true
+      description: Maximum number of returned items.
       schema:
-        type: object
-        properties:
-          limit:
-            description: Maximum number of returned items.
-            type: integer
-            minimum: 1
-            maximum: 200
-            default: 10
-          startingAfter:
-            description: Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
-            type: string
-          endingBefore:
-            description: Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
-            type: string
-    AssetsQueryParam:
-      name: asset
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 10
+    PaginationStartingAfter:
+      name: startingAfter
       in: query
-      description: Limits the response to one asset.
-      style: form
-      explode: true
+      description: Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
       schema:
-        $ref: '#/components/schemas/AssetReference'
-    AccountPropertiesQueryParam:
-      name: assets
+        type: string
+    PaginationEndingBefore:
+      name: endingBefore
       in: query
-      description: Array of account property names. Indicates which account properties should be returned. All properties by default. Account ID is always returned.
-      style: form
-      explode: true
+      description: Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
       schema:
-        type: array
-        items:
-          type: string
-      examples:
-        two-assets:
-          summary: Request to return the ID, the title, and the balances.
-          value:
-            - title
-            - balances
+        type: string
+    AssetIdQueryParam:
+      name: assetId
+      description: ID of one of the assets returned in get-additional-assets. Limits the response to one. Cannot be used in conjunction with cryptocurrencySymbol or nationalCurrencyCode
+      in: query
+      schema:
+        type: string
+    NationalCurrencyCodeQueryParam:
+      name: nationalCurrencyCode
+      description: Limits the response to one asset with the provided NationalCurrencyCode Cannot be used in conjunction with cryptocurrencySymbol or assetId
+      in: query
+      schema:
+        $ref: '#/components/schemas/NationalCurrencyCode'
+    CryptocurrencySymbolQueryParam:
+      name: cryptocurrencySymbol
+      description: Limits the response to one asset with the provided CryptocurrencySymbol Cannot be used in conjunction with nationalCurrencyCode or assetId
+      in: query
+      schema:
+        $ref: '#/components/schemas/CryptocurrencySymbol'
+    AccountBalancesQueryParam:
+      name: balances
+      in: query
+      description: Flag to include the account balances in the response. Balances are not returned by default for account endpoints.
+      schema:
+        type: boolean
   responses:
+    BadRequestResponse:
+      description: Request could not be processed due to a client error.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BadRequestError'
+    UnauthorizedResponse:
+      description: Request is unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnauthorizedError'
     ErrorResponse:
       description: Failed to process request.
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              errorCode:
-                $ref: '#/components/schemas/ErrorCode'
-              description:
-                type: string
+            $ref: '#/components/schemas/GeneralError'
     WithdrawalsResponse:
       description: List of withdrawals.
       content:
@@ -1525,12 +2110,76 @@ components:
                 items:
                   $ref: '#/components/schemas/Withdrawal'
   schemas:
-    ErrorCode:
-      type: string
+    GeneralError:
+      description: Should be returned only if there in no more specific object.
+      type: object
+      required:
+        - message
+        - errorType
+      properties:
+        message:
+          description: Description of the error.
+          type: string
+        errorType:
+          enum:
+            - internal-error
+            - not-found
+    BadRequestError:
+      description: |-
+        Request could not be processed due to a client error.
+        If the error is caused by a missing or wrong property in the request, `errorType` must have the value `schema-property-error` and the properties  `propertyName` and `requestPart` must be specified. For more general schema errors, the error type should be `schema-error` and `requestPart` must be specified. For all the other cases the error type should be `bad-request`.
+      type: object
+      required:
+        - message
+        - errorType
+      properties:
+        message:
+          description: Description of the error.
+          type: string
+        errorType:
+          enum:
+            - schema-error
+            - schema-property-error
+            - bad-request
+            - unknown-asset
+            - unsupported-conversion
+            - quote-not-ready
+            - deposit-address-disabled
+            - order-not-trading
+            - idempotency-key-reuse
+        propertyName:
+          description: Name of property that caused the error.
+          type: string
+        requestPart:
+          $ref: '#/components/schemas/RequestPart'
+    UnauthorizedError:
+      description: Request is unauthorized
+      type: object
+      required:
+        - message
+        - errorType
+      properties:
+        message:
+          description: Description of the error.
+          type: string
+        errorType:
+          enum:
+            - unauthorized
+        propertyName:
+          description: Name of property that caused the error.
+          enum:
+            - X-FBAPI-KEY
+        requestPart:
+          description: Request part where the error occurred.
+          enum:
+            - headers
+    RequestPart:
+      description: Request part where the error occurred.
       enum:
-        - unexpected-error
-        - bad-amount-format
-        - unknown-asset
+        - params
+        - body
+        - querystring
+        - headers
     Capabilities:
       type: object
       required:
@@ -1592,7 +2241,6 @@ components:
       required:
         - id
         - title
-        - balances
         - status
       properties:
         id:
@@ -1613,9 +2261,12 @@ components:
     AssetBalance:
       type: object
       required:
+        - id
         - asset
         - availableAmount
       properties:
+        id:
+          type: string
         asset:
           $ref: '#/components/schemas/AssetReference'
         availableAmount:
@@ -1643,7 +2294,6 @@ components:
           type: integer
         testAsset:
           type: boolean
-          default: false
     BucketAsset:
       allOf:
         - $ref: '#/components/schemas/AssetCommonProperties'
@@ -1726,7 +2376,6 @@ components:
           $ref: '#/components/schemas/NationalCurrencyCode'
         testAsset:
           type: boolean
-          default: false
     NativeCryptocurrency:
       type: object
       required:
@@ -1735,12 +2384,9 @@ components:
         blockchain:
           $ref: '#/components/schemas/Blockchain'
         cryptocurrencySymbol:
-          anyOf:
-            - $ref: '#/components/schemas/Layer1Cryptocurrency'
-            - $ref: '#/components/schemas/Layer2Cryptocurrency'
+          $ref: '#/components/schemas/CryptocurrencySymbol'
         testAsset:
           type: boolean
-          default: false
     OtherAssetReference:
       type: object
       required:
@@ -1749,6 +2395,10 @@ components:
         assetId:
           description: ID of one of the assets returned in get-additional-assets.
           type: string
+    CryptocurrencyReference:
+      oneOf:
+        - $ref: '#/components/schemas/NativeCryptocurrency'
+        - $ref: '#/components/schemas/OtherAssetReference'
     AssetReference:
       oneOf:
         - $ref: '#/components/schemas/NationalCurrency'
@@ -1810,6 +2460,10 @@ components:
         - IMX
         - MATIC
         - SNX
+    CryptocurrencySymbol:
+      anyOf:
+        - $ref: '#/components/schemas/Layer1Cryptocurrency'
+        - $ref: '#/components/schemas/Layer2Cryptocurrency'
     NationalCurrencyCode:
       type: string
       description: National currency codes as defined in ISO 4217.
@@ -2190,6 +2844,8 @@ components:
       properties:
         id:
           type: string
+        description:
+          type: string
         baseAsset:
           $ref: '#/components/schemas/AssetReference'
         quoteAsset:
@@ -2197,11 +2853,14 @@ components:
     MarketEntry:
       type: object
       required:
+        - id
         - amount
         - price
         - totalPrice
         - asset
       properties:
+        id:
+          type: string
         amount:
           $ref: '#/components/schemas/PositiveAmount'
         price:
@@ -2211,6 +2870,7 @@ components:
         asset:
           $ref: '#/components/schemas/AssetReference'
     MarketTrade:
+      type: object
       allOf:
         - $ref: '#/components/schemas/MarketEntry'
         - type: object
@@ -2221,13 +2881,12 @@ components:
               description: Time when the trade was finalized.
               type: string
               format: date-time
-    OrderData:
+    OrderCommonProperties:
       allOf:
         - type: object
           required:
             - bookId
             - side
-            - orderType
             - timeInForce
           properties:
             bookId:
@@ -2235,47 +2894,59 @@ components:
               type: string
             side:
               $ref: '#/components/schemas/OrderSide'
-            orderType:
-              $ref: '#/components/schemas/OrderType'
             timeInForce:
               $ref: '#/components/schemas/OrderTimeInForce'
         - oneOf:
-            - $ref: '#/components/schemas/BaseAssetRequest'
-            - $ref: '#/components/schemas/QuoteAssetRequest'
-    BaseAssetRequest:
-      type: object
-      required:
-        - baseAssetQuantity
-        - baseAssetPrice
-      properties:
-        baseAssetQuantity:
-          type: integer
-        baseAssetPrice:
-          $ref: '#/components/schemas/PositiveAmount'
-    QuoteAssetRequest:
-      type: object
-      required:
-        - quoteAssetQuantity
-        - quoteAssetPrice
-      properties:
-        quoteAssetQuantity:
-          type: integer
-        quoteAssetPrice:
-          $ref: '#/components/schemas/PositiveAmount'
+            - type: object
+              required:
+                - baseAssetQuantity
+              properties:
+                baseAssetQuantity:
+                  $ref: '#/components/schemas/PositiveAmount'
+            - type: object
+              required:
+                - quoteAssetQuantity
+              properties:
+                quoteAssetQuantity:
+                  $ref: '#/components/schemas/PositiveAmount'
     OrderSide:
       enum:
         - SELL
         - BUY
-    OrderType:
-      enum:
-        - MARKET
-        - LIMIT
     OrderTimeInForce:
       enum:
         - GOOD_TILL_CANCELED
         - FILL_OR_KILL
         - IMMEDIATE_OR_CANCEL
+    LimitOrderData:
+      allOf:
+        - $ref: '#/components/schemas/OrderCommonProperties'
+        - type: object
+          required:
+            - orderType
+            - quoteAssetPrice
+          properties:
+            orderType:
+              enum:
+                - LIMIT
+            quoteAssetPrice:
+              $ref: '#/components/schemas/PositiveAmount'
+    MarketOrderData:
+      allOf:
+        - $ref: '#/components/schemas/OrderCommonProperties'
+        - type: object
+          required:
+            - orderType
+          properties:
+            orderType:
+              enum:
+                - MARKET
+    OrderData:
+      oneOf:
+        - $ref: '#/components/schemas/LimitOrderData'
+        - $ref: '#/components/schemas/MarketOrderData'
     OrderRequest:
+      type: object
       allOf:
         - $ref: '#/components/schemas/OrderData'
         - type: object
@@ -2296,7 +2967,6 @@ components:
           properties:
             id:
               type: string
-              format: uuid
             status:
               $ref: '#/components/schemas/OrderStatus'
             trades:
@@ -2434,7 +3104,7 @@ components:
         - transferMethod
       properties:
         asset:
-          $ref: '#/components/schemas/AssetReference'
+          $ref: '#/components/schemas/CryptocurrencyReference'
         transferMethod:
           enum:
             - PublicBlockchain
@@ -2553,9 +3223,12 @@ components:
       type: object
       description: Capability to deposit to a balance asset using a specific transfer capability.
       required:
+        - id
         - deposit
         - balanceAsset
       properties:
+        id:
+          type: string
         deposit:
           $ref: '#/components/schemas/TransferCapability'
         balanceAsset:
@@ -2597,9 +3270,12 @@ components:
       type: object
       description: Capability to withdraw a balance asset using a specific transfer capability.
       required:
+        - id
         - withdrawal
         - balanceAsset
       properties:
+        id:
+          type: string
         withdrawal:
           $ref: '#/components/schemas/TransferCapability'
         balanceAsset:

@@ -1,0 +1,1163 @@
+openapi: 3.0.0
+info:
+  title: '[Draft] Fireblocks Provider Transfer API'
+  version: 0.0.1
+
+  contact:
+    name: Fireblocks
+    url: https://fireblocks.com
+
+tags:
+  - name: capabilities
+    description: Server capabilities discovery operations.
+  - name: transfers
+    description: Fund transfers management operations.
+  - name: transfersBlockchain
+    description: Fund transfers over public blockchains.
+  - name: transfersFiat
+    description: National currency fund transfers.
+  - name: transfersPeerAccounts
+    description: Transfers to a peer account managed by the same provider.
+
+x-path-params:
+  EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
+  SubAccountIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/SubAccountIdPathParam' }
+
+x-query-params:
+  PaginationLimit: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationLimit' }
+  PaginationStartingAfter: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationStartingAfter' }
+  PaginationEndingBefore: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationEndingBefore' }
+  ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
+
+x-header-params:
+  X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
+  X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
+  X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
+  X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
+
+x-schemas:
+  PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
+  AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference'}
+  CryptocurrencyReference: { $ref: './fb-provider-api.yaml#/components/schemas/CryptocurrencyReference'}
+  Blockchain: { $ref: './fb-provider-api.yaml#/components/schemas/Blockchain'}
+  NationalCurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrency' }
+
+x-responses:
+  BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
+  ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
+
+paths:
+
+  /accounts/{accountId}/capabilities/transfers/withdrawals:
+    get:
+      operationId: getWithdrawalMethods
+      summary: Get list of supported withdrawal methods
+      tags: [ capabilities ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of withdrawal methods for account.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ capabilities ]
+                properties:
+                  capabilities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WithdrawalCapability'
+              examples:
+                allUsdcToBucket:
+                  summary: USDCs withdrawals
+                  description: >-
+                    This response indicates that all USD and USDC bucket balances could be
+                    withdrawn using the USDC tokens on the various blockchains. The USD balance 
+                    can be specified directly while token and bucket balances must be defined 
+                    in `GET /capabilities/assets` and referenced using their IDs.
+
+                    The asset IDs in this example are the same IDs used in the examples of
+                    `GET /capabilities/assets`.
+                  value:
+                    capabilities:
+                      - id: "16b8b2c3-bd61-4745-9c48-3d30c2bc6907"
+                        withdrawal:
+                          asset: { assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - id: "55f184db-9860-4ed7-9db7-7cded54ef0f4"
+                        withdrawal:
+                          asset: { assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - id: "68fb13d5-48ff-42d8-8273-1658a9b49082"
+                        withdrawal:
+                          asset: { assetId: "4386cf4d-83b2-4410-96da-0d3919a45506" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - id: "d625f8e7-f8aa-4288-9f39-54fecf024c9a"
+                        withdrawal:
+                          asset: { assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: "f0844d82-7097-4521-95bc-d843724a893e"
+                      - id: "e1fb5c58-c4c5-4358-9781-1c52edf1f2f7"
+                        withdrawal:
+                          asset: { assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: "f0844d82-7097-4521-95bc-d843724a893e"
+                      - id: "19e6770f-71a9-483b-9d9f-7054ea2dc832"
+                        withdrawal:
+                          asset: { assetId: "4386cf4d-83b2-4410-96da-0d3919a45506" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: "f0844d82-7097-4521-95bc-d843724a893e"
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/capabilities/transfers/deposits:
+    get:
+      operationId: getDepositMethods
+      summary: Get list of supported deposit methods
+      tags: [ capabilities ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of deposit methods for account.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ capabilities ]
+                properties:
+                  capabilities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DepositCapability'
+              examples:
+                allUsdcToBucket:
+                  summary: USDCs deposit into a bucket or USD
+                  description: >- 
+                    This response indicates that all USDC token on the various blockchains
+                    could be deposited either into the USDC bucket balance or into the USD
+                    balance. The USD balance can be specified directly while token and
+                    bucket balances must be defined in `GET /capabilities/assets` and
+                    referenced using their IDs.
+                    
+                    The asset IDs in this example are the same IDs used in the examples of
+                    `GET /capabilities/assets`.
+                  value:
+                    capabilities:
+                      - id: "29d7d25a-ed05-479a-9cde-d50b8203d3ec"
+                        deposit:
+                          asset: { assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - id: "adfc2457-1bb7-40d0-9d46-3cfa2dd3a7e1"
+                        deposit:
+                          asset: { assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - id: "eda3dbb8-ef94-400e-8a6b-2a38302b9505"
+                        deposit:
+                          asset: { assetId: "4386cf4d-83b2-4410-96da-0d3919a45506" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          nationalCurrencyCode: USD
+                      - id: "b9f471f0-4920-464f-9c6a-97929cc31950"
+                        deposit:
+                          asset: { assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: "f0844d82-7097-4521-95bc-d843724a893e"
+                      - id: "53a36de2-f36f-4301-8292-a0ecc1c32cda"
+                        deposit:
+                          asset: { assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: "f0844d82-7097-4521-95bc-d843724a893e"
+                      - id: "dd59e6d1-c8ca-4499-8b3f-786ce417ed17"
+                        deposit:
+                          asset: { assetId: "4386cf4d-83b2-4410-96da-0d3919a45506" }
+                          transferMethod: PublicBlockchain
+                        balanceAsset:
+                          assetId: "f0844d82-7097-4521-95bc-d843724a893e"
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/transfers/withdrawals:
+    get:
+      operationId: getWithdrawals
+      summary: Get list of withdrawals sorted by creation time
+      tags: [ transfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-query-params/ListOrderQueryParam'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/WithdrawalsResponse'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/transfers/withdrawals/{id}:
+    get:
+      operationId: getWithdrawalDetails
+      summary: Get withdrawal details
+      tags: [ transfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Withdrawals details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Withdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/transfers/withdrawals/blockchain:
+    get:
+      operationId: getBlockchainWithdrawals
+      summary: Get list of withdrawals over public blockchains sorted by creation time
+      tags: [ transfersBlockchain ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-query-params/ListOrderQueryParam'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of withdrawals.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BlockchainWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    post:
+      operationId: createBlockchainWithdrawal
+      summary: Create new withdrawal over public blockchain
+      description: Should reject any non blockchain withdrawal request.
+      tags: [ transfersBlockchain ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      requestBody:
+        description: Withdrawal details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlockchainWithdrawalRequest'
+      responses:
+        '201':
+          description: New withdrawal has been successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockchainWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/transfers/withdrawals/fiat:
+    get:
+      operationId: getFiatWithdrawals
+      summary: Get list of fiat withdrawals sorted by creation time
+      tags: [ transfersFiat ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-query-params/ListOrderQueryParam'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of withdrawals.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FiatWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    post:
+      operationId: createFiatWithdrawal
+      summary: Create new fiat withdrawal
+      description: Should reject any non fiat withdrawal request.
+      tags: [ transfersFiat ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      requestBody:
+        description: Withdrawal details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FiatWithdrawalRequest'
+      responses:
+        '201':
+          description: New withdrawal has been successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FiatWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/transfers/withdrawals/peeraccount:
+    get:
+      operationId: getPeerAccountWithdrawals
+      summary: Get list of withdrawals to peer accounts, sorted by creation time
+      tags: [ transfersPeerAccounts ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-query-params/ListOrderQueryParam'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of withdrawals.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CrossAccountWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+    post:
+      operationId: createPeerAccountWithdrawal
+      summary: Create new withdrawal to a peer account
+      description: Should reject any non peer acount withdrawal request.
+      tags: [ transfersPeerAccounts ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      requestBody:
+        description: Withdrawal details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrossAccountWithdrawalRequest'
+      responses:
+        '201':
+          description: New withdrawal has been successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrossAccountWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+
+  /accounts/{accountId}/transfers/withdrawals/subaccount:
+    get:
+      operationId: getSubAccountWithdrawals
+      summary: Get list of withdrawals to sub-accounts, sorted by creation time
+      tags: [ accounts ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-query-params/ListOrderQueryParam'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of withdrawals.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CrossAccountWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    post:
+      operationId: createSubAccountWithdrawal
+      summary: Create new transfer to another sub-account
+      description: >- 
+        Transfers assets between different sub-accounts of the same user.
+        Should reject any withdrawals that are not sub-account transfers.
+      tags: [ accounts ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      requestBody:
+        description: Withdrawal details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CrossAccountWithdrawalRequest'
+      responses:
+        '201':
+          description: New withdrawal has been successfully created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrossAccountWithdrawal'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/transfers/deposits:
+    get:
+      operationId: getDeposits
+      summary: Get list of deposits sorted by creation time
+      tags: [ transfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Deposits details.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ deposits ]
+                properties:
+                  deposits:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Deposit'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/transfers/deposits/{id}:
+    get:
+      operationId: getDepositDetails
+      summary: Get deposit details
+      tags: [ transfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of deposits.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deposit'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/transfers/deposits/addresses:
+    post:
+      operationId: createDepositAddress
+      summary: Create new deposit address
+      tags: [ transfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      requestBody:
+        description: Deposit address details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DepositAddressCreationRequest'
+      responses:
+        '200':
+          description: New deposit address created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepositAddress'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    get:
+      operationId: getDepositAddresses
+      summary: Get list of existing deposit addresses
+      tags: [ transfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: List of existing deposit addresses.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ addresses ]
+                properties:
+                  addresses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DepositAddress'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/transfers/deposits/addresses/{id}:
+    get:
+      operationId: getDepositAddressDetails
+      summary: Get details of a deposit address
+      tags: [ transfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: New deposit address created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DepositAddress'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+    delete:
+      operationId: disableDepositAddress
+      summary: Disable a deposit address
+      tags: [ transfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Deposit address disabled.
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+components:
+  responses:
+    WithdrawalsResponse:
+      description: List of withdrawals.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              withdrawals:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Withdrawal'
+
+  schemas:
+    AccountHolderDetails:
+      type: object
+      required: [ name ]
+      properties:
+        name:
+          description: Full name of the account holder.
+          type: string
+        city:
+          type: string
+        country:
+          description: Country code, as specified in ISO 3166-1 alpha-2.
+          type: string
+        subdivision:
+          description: Country administrative subdivision, as specified in ISO 3166-2.
+          type: string
+        address:
+          description: Account holder street address.
+          type: string
+        postalCode:
+          type: string
+
+    Iban:
+      type: string
+      pattern: ^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$
+
+    IbanCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          enum: [ Iban ]
+
+    IbanAddress:
+      allOf:
+        - $ref: '#/components/schemas/IbanCapability'
+        - type: object
+          required: [ accountHolder, iban ]
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            iban:
+              $ref: '#/components/schemas/Iban'
+
+    IbanTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/IbanAddress'
+        - type: object
+          required: [ amount ]
+          properties:
+            amount:
+              $ref: '#/x-schemas/PositiveAmount'
+
+    IbanTransfer:
+      allOf:
+        - $ref: '#/components/schemas/IbanTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+
+    SwiftCode:
+      type: string
+      pattern: ^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$
+
+    SwiftCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          enum: [ Swift ]
+
+    SwiftAddress:
+      allOf:
+        - $ref: '#/components/schemas/SwiftCapability'
+        - type: object
+          required: [ accountHolder, swiftCode, routingNumber ]
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            swiftCode:
+              $ref: '#/components/schemas/SwiftCode'
+            routingNumber:
+              type: string
+              description: Routing number identifying the bank account.
+
+    SwiftTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/SwiftAddress'
+        - type: object
+          required: [ amount ]
+          properties:
+            amount:
+              $ref: '#/x-schemas/PositiveAmount'
+
+    SwiftTransfer:
+      allOf:
+        - $ref: '#/components/schemas/SwiftTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+
+    PublicBlockchainCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/CryptocurrencyReference'
+        transferMethod:
+          enum: [ PublicBlockchain ]
+
+    PublicBlockchainAddress:
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainCapability'
+        - type: object
+          required: [ address ]
+          properties:
+            address:
+              type: string
+            addressTag:
+              type: string
+
+    PublicBlockchainTransactionDestination:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainAddress'
+        - type: object
+          required: [ amount ]
+          properties:
+            amount:
+              $ref: '#/x-schemas/PositiveAmount'
+
+    PublicBlockchainTransaction:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
+        - type: object
+          properties:
+            blockchainTxId:
+              type: string
+
+    CrossAccountTransferCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/AssetReference'
+        transferMethod:
+          enum:
+            - InternalTransfer
+            - PeerAccountTransfer
+
+    CrossAccountTransferDestination:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/CrossAccountTransferCapability'
+        - type: object
+          required: [ accountId, amount ]
+          properties:
+            accountId:
+              type: string
+            amount:
+              $ref: '#/x-schemas/PositiveAmount'
+
+    CrossAccountTransfer:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/CrossAccountTransferDestination'
+
+    TransferCapability:
+      oneOf:
+        - $ref: '#/components/schemas/CrossAccountTransferCapability'
+        - $ref: '#/components/schemas/PublicBlockchainCapability'
+        - $ref: '#/components/schemas/IbanCapability'
+        - $ref: '#/components/schemas/SwiftCapability'
+
+    FiatTransferDestination:
+      oneOf:
+        - $ref: '#/components/schemas/IbanTransferDestination'
+        - $ref: '#/components/schemas/SwiftTransferDestination'
+
+    FiatTransfer:
+      oneOf:
+        - $ref: '#/components/schemas/IbanTransfer'
+        - $ref: '#/components/schemas/SwiftTransfer'
+
+    Transfer:
+      oneOf:
+        - $ref: '#/components/schemas/CrossAccountTransfer'
+        - $ref: '#/components/schemas/PublicBlockchainTransaction'
+        - $ref: '#/components/schemas/IbanTransfer'
+        - $ref: '#/components/schemas/SwiftTransfer'
+
+    DepositDestination:
+      oneOf:
+        - $ref: '#/components/schemas/PublicBlockchainAddress'
+        - $ref: '#/components/schemas/IbanAddress'
+        - $ref: '#/components/schemas/SwiftAddress'
+
+    DepositAddressStatus:
+      enum:
+        - enabled
+        - disabled
+
+    DepositAddress:
+      type: object
+      required: [ id, destination, status ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        destination:
+          $ref: '#/components/schemas/DepositDestination'
+        status:
+          $ref: '#/components/schemas/DepositAddressStatus'
+
+    DepositAddressCreationRequest:
+      type: object
+      required: [ idempotencyKey, transferMethod ]
+      properties:
+        idempotencyKey:
+          type: string
+        transferMethod:
+          $ref: '#/components/schemas/TransferCapability'
+
+    DepositCapability:
+      type: object
+      description: >-
+        Capability to deposit to a balance asset using a specific transfer capability.
+      required: [ id, deposit, balanceAsset ]
+      properties:
+        id:
+          type: string
+        deposit:
+          $ref: '#/components/schemas/TransferCapability'
+        balanceAsset:
+          $ref: '#/x-schemas/AssetReference'
+
+    Deposit:
+      type: object
+      required: [ id, balanceAsset, balanceAmount, source, status, createdAt ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        balanceAsset:
+          $ref: '#/x-schemas/AssetReference'
+        balanceAmount:
+          $ref: '#/x-schemas/PositiveAmount'
+        source:
+          $ref: '#/components/schemas/Transfer'
+        depositAddressId:
+          type: string
+          format: uuid
+          description: ID of the deposit address, created by posting /transfers/deposits/addresses
+        status:
+          $ref: '#/components/schemas/DepositStatus'
+        createdAt:
+          description: Time when the deposit was created.
+          type: string
+          format: date-time
+        finalizedAt:
+          description: Time when the deposit reached a final state.
+          type: string
+          format: date-time
+
+    WithdrawalCapability:
+      type: object
+      description: >-
+        Capability to withdraw a balance asset using a specific transfer capability.
+      required: [ id, withdrawal, balanceAsset ]
+      properties:
+        id:
+          type: string
+        withdrawal:
+          $ref: '#/components/schemas/TransferCapability'
+        balanceAsset:
+          $ref: '#/x-schemas/AssetReference'
+
+    WithdrawalRequestCommonProperties:
+      type: object
+      required: [ idempotencyKey, balanceAsset, balanceAmount ]
+      properties:
+        idempotencyKey:
+          type: string
+        balanceAsset:
+          $ref: '#/x-schemas/AssetReference'
+        balanceAmount:
+          $ref: '#/x-schemas/PositiveAmount'
+
+    FiatWithdrawalRequest:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
+        - type: object
+          required: [ destination ]
+          properties:
+            destination:
+              $ref: '#/components/schemas/FiatTransferDestination'
+
+    BlockchainWithdrawalRequest:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
+        - type: object
+          required: [ destination ]
+          properties:
+            destination:
+              $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
+
+    CrossAccountWithdrawalRequest:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
+        - type: object
+          required: [ destination ]
+          properties:
+            destination:
+              $ref: '#/components/schemas/CrossAccountTransferDestination'
+
+    WithdrawalCommonProperties:
+      type: object
+      required: [ id, balanceAsset, balanceAmount, status, createdAt ]
+      properties:
+        id:
+          type: string
+          format: uuid
+        balanceAsset:
+          $ref: '#/x-schemas/AssetReference'
+        balanceAmount:
+          $ref: '#/x-schemas/PositiveAmount'
+        status:
+          $ref: '#/components/schemas/WithdrawalStatus'
+        createdAt:
+          description: Time when the withdrawal was created.
+          type: string
+          format: date-time
+        finalizedAt:
+          description: Time when the withdrawal reached a final state.
+          type: string
+          format: date-time
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/WithdrawalEvent'
+
+    FiatWithdrawal:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalCommonProperties'
+        - type: object
+          required: [ destination ]
+          properties:
+            destination:
+              $ref: '#/components/schemas/FiatTransfer'
+
+    BlockchainWithdrawal:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalCommonProperties'
+        - type: object
+          required: [ destination ]
+          properties:
+            destination:
+              $ref: '#/components/schemas/PublicBlockchainTransaction'
+
+    CrossAccountWithdrawal:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalCommonProperties'
+        - type: object
+          required: [ destination ]
+          properties:
+            destination:
+              $ref: '#/components/schemas/CrossAccountTransfer'
+
+    Withdrawal:
+      oneOf:
+        - $ref: '#/components/schemas/CrossAccountWithdrawal'
+        - $ref: '#/components/schemas/BlockchainWithdrawal'
+        - $ref: '#/components/schemas/FiatWithdrawal'
+
+    WithdrawalEvent:
+      type: object
+      description: >-
+        Describes an event during withdrawal processing.
+        The granularity and verbosity of the events it at the discretion
+        of the API implementor.
+      required: [ status, message, createdAt ]
+      properties:
+        status:
+          $ref: '#/components/schemas/WithdrawalStatus'
+        message:
+          type: string
+        createdAt:
+          description: Time when the withdrawal was created.
+          type: string
+          format: date-time
+
+    DepositStatus:
+      enum:
+        - pending
+        - succeeded
+        - failed
+
+    WithdrawalStatus:
+      enum:
+        - pending
+        - succeeded
+        - failed

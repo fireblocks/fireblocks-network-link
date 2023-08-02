@@ -1,0 +1,670 @@
+openapi: 3.0.0
+info:
+  title: '[Draft] Fireblocks Provider Trading API'
+  version: 0.0.1
+
+  contact:
+    name: Fireblocks
+    url: https://fireblocks.com
+
+tags:
+  - name: trading
+    description: Order book trading operations.
+  - name: capabilities
+    description: Server capabilities discovery operations.
+
+x-path-params:
+  EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
+  SubAccountIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/SubAccountIdPathParam' }
+
+x-query-params:
+  PaginationLimit: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationLimit' }
+  PaginationStartingAfter: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationStartingAfter' }
+  PaginationEndingBefore: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationEndingBefore' }
+  ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
+
+x-header-params:
+  X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
+  X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
+  X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
+  X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
+
+x-schemas:
+  PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
+  AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference'}
+
+x-responses:
+  BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
+  ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
+
+paths:
+  /capabilities/trading/books:
+    get:
+      operationId: getBooks
+      summary: List order books
+      tags: [ capabilities ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+      responses:
+        '200':
+          description: List of order books
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ books ]
+                properties:
+                  books:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderBook'
+              example:
+                books: [
+                  {
+                    id: 'BTC/USDC',
+                    description: 'Bitcoin book',
+                    baseAsset: {
+                      blockchain: 'Bitcoin',
+                      cryptocurrencySymbol: 'BTC',
+                    },
+                    quoteAsset: {
+                      assetId: 'f0844d82-7097-4521-95bc-d843724a893e',
+                    }
+                  },
+                  {
+                    id: 'GBP/USDC',
+                    baseAsset: {
+                      nationalCurrencyCode: 'GBP',
+                    },
+                    quoteAsset: {
+                      assetId: 'f0844d82-7097-4521-95bc-d843724a893e',
+                    }
+                  }
+                ]
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /trading/books/{id}:
+    get:
+      operationId: getBookDetails
+      summary: Get details of an order book
+      tags: [ trading ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: The specified trading book if it exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderBook'
+              examples:
+                btcUsdc:
+                  summary: BTC/USDC book
+                  value: {
+                    id: 'BTC/USDC',
+                    description: 'Bitcoin book',
+                    baseAsset: {
+                      blockchain: 'Bitcoin',
+                      cryptocurrencySymbol: 'BTC',
+                    },
+                    quoteAsset: {
+                      assetId: 'f0844d82-7097-4521-95bc-d843724a893e',
+                    }
+                  }
+                gbpUsdc:
+                  summary: GBP/USDC book
+                  value: {
+                    id: 'GBP/USDC',
+                    baseAsset: {
+                      nationalCurrencyCode: 'GBP',
+                    },
+                    quoteAsset: {
+                      assetId: 'f0844d82-7097-4521-95bc-d843724a893e',
+                    }
+                  }
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /trading/books/{id}/asks:
+    get:
+      operationId: getBookAsks
+      summary: Get active sell orders in an order book
+      description: >-
+        List active sell orders in an order book, sorted ascending
+        by the sell price.
+      tags: [ trading ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: Active sell orders.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ asks ]
+                properties:
+                  asks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MarketEntry'
+              examples:
+                btcUsdc:
+                  summary: Asks for the BTC/USDC book
+                  value:
+                    asks: [
+                      {
+                        id: 'EADAC726-414B-4C5B-B26A-8A616446BDB0',
+                        price: '29312.03',
+                        amount: '9.21634',
+                        totalPrice: '270149.63',
+                        asset: { assetId: 'f0844d82-7097-4521-95bc-d843724a893e' }
+                      },
+                      {
+                        id: '23631CE5-123B-4163-A6CD-6BF3CE5521C6',
+                        price: '29315.97',
+                        amount: '22.33346',
+                        totalPrice: '654727.04',
+                        asset: { assetId: 'f0844d82-7097-4521-95bc-d843724a893e' }
+                      },
+                      {
+                        id: '375C2D0A-2874-4FCE-A860-068856D05A87',
+                        price: '29316.95',
+                        amount: '9.30764',
+                        totalPrice: '272871.62',
+                        asset: { assetId: 'f0844d82-7097-4521-95bc-d843724a893e' }
+                      },
+                      {
+                        id: 'E577CE57-57BE-49F4-ACA9-DA8EA0F560BD',
+                        price: '29317.14',
+                        amount: '7.56552',
+                        totalPrice: '221799.41',
+                        asset: { assetId: 'f0844d82-7097-4521-95bc-d843724a893e' }
+                      },
+                      {
+                        id: 'E776FAF0-B9BB-414B-8519-CB01D088FAC2',
+                        price: '29317.38',
+                        amount: '9.87465',
+                        totalPrice: '289498.87',
+                        asset: { assetId: 'f0844d82-7097-4521-95bc-d843724a893e' }
+                      }
+                    ]
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /trading/books/{id}/bids:
+    get:
+      operationId: getBookBids
+      summary: Get active buy orders in an order book
+      description: >-
+        List active buy orders in an order book, sorted descending
+        by the buy price.
+      tags: [ trading ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: Active buy orders.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ bids ]
+                properties:
+                  bids:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MarketEntry'
+              examples:
+                btcUsdc:
+                  summary: Bids for the BTC/USDC book
+                  value:
+                    bids: [
+                      {
+                        id: '92946569-74FE-42BD-9898-CBD03A5D407B',
+                        price: '29312.03',
+                        amount: '9.21634',
+                        totalPrice: '270149.63',
+                        asset: { assetId: 'f0844d82-7097-4521-95bc-d843724a893e' }
+                      },
+                      {
+                        id: 'F69C17BB-9E2A-4159-8938-8B142F55B4BE',
+                        price: '29310.42',
+                        amount: '0.00091',
+                        totalPrice: '26.67',
+                        asset: { assetId: 'f0844d82-7097-4521-95bc-d843724a893e' }
+                      },
+                      {
+                        id: 'E7042B8A-D467-4144-AC53-92C4A96C2A84',
+                        price: '29310.35',
+                        amount: '0.027',
+                        totalPrice: '791.38',
+                        asset: { assetId: 'f0844d82-7097-4521-95bc-d843724a893e' }
+                      },
+                      {
+                        id: '6A3444BC-34D1-411B-B505-ADE557307C62',
+                        price: '29310.34',
+                        amount: '0.4275',
+                        totalPrice: '12530.17',
+                        asset: { assetId: 'f0844d82-7097-4521-95bc-d843724a893e' }
+                      },
+                      {
+                        id: '27C49660-AC51-409D-A6C9-5E5BB0FFFACE',
+                        price: '29310.27',
+                        amount: '0.01412',
+                        totalPrice: '413.86',
+                        asset: { assetId: 'f0844d82-7097-4521-95bc-d843724a893e' }
+                      }
+                    ]
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /trading/books/{id}/history:
+    get:
+      operationId: getBookOrderHistory
+      summary: List fulfilled orders in an order book
+      description: >-
+        List fulfilled orders in an order book, sorted descending
+        by the fulfillment time.
+      tags: [ trading ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: List of fulfilled trades.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ trades ]
+                properties:
+                  trades:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MarketTrade'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/trading/orders:
+    get:
+      operationId: getOrders
+      summary: List trading orders
+      description: >-
+        List trading orders sorted descending by the creation time.
+      tags: [ trading ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ orders ]
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    post:
+      operationId: createOrder
+      summary: Create a new trading order
+      description: >-
+        Either `baseAssetQuantity` or `quoteAssetQuantity` must always be specified.
+        `quoteAssetPrice` must be specified for limit orders, but cannot be used in
+        market orders.
+      tags: [ trading ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      requestBody:
+        description: Order details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderRequest'
+            examples:
+              limitSellOrder:
+                summary: Sell 10 BTC for 20,000 USDC each, at most
+                value:
+                  idempotencyKey: '03449d61-0966-481e-b12c-df651451c258'
+                  bookId: BTC_USDC
+                  side: SELL
+                  orderType: LIMIT
+                  timeInForce: GOOD_TILL_CANCELED
+                  baseAssetQuantity: '10'
+                  quoteAssetPrice: '20000'
+              limitBuyOrder:
+                summary: Buy BTC for at most 20,000 USDC each, up to 200,000 USDC in total
+                value:
+                  idempotencyKey: '03449d61-0966-481e-b12c-df651451c258'
+                  bookId: BTC_USDC
+                  side: BUY
+                  orderType: LIMIT
+                  timeInForce: GOOD_TILL_CANCELED
+                  quoteAssetPrice: '20000'
+                  quoteAssetQuantity: '200000'
+              marketBuyOrder:
+                summary: Buy BTC at the market price for 200,000 USDC in total
+                value:
+                  idempotencyKey: '03449d61-0966-481e-b12c-df651451c258'
+                  bookId: BTC_USDC
+                  side: BUY
+                  orderType: MARKET
+                  timeInForce: GOOD_TILL_CANCELED
+                  quoteAssetQuantity: '200000'
+              marketSellOrder:
+                summary: Sell 10 BTC at the market
+                value:
+                  idempotencyKey: '03449d61-0966-481e-b12c-df651451c258'
+                  bookId: BTC_USDC
+                  side: SELL
+                  orderType: MARKET
+                  timeInForce: GOOD_TILL_CANCELED
+                  baseAssetQuantity: '10'
+      responses:
+        '200':
+          description: Newly created book order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              example:
+                id: cf091554-f2b8-4cea-9783-2a7e5065b549
+                status: TRADING
+                bookId: BTC_USDC
+                side: SELL
+                orderType: LIMIT
+                timeInForce: GOOD_TILL_CANCELED
+                baseAssetQuantity: '10'
+                quoteAssetPrice: '20000'
+                createdAt: 2023-06-02T19:45:26.550Z
+                trades: []
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/trading/orders/{id}:
+    get:
+      operationId: getOrderDetails
+      summary: Get trading order details
+      tags: [ trading ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: Book order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    delete:
+      operationId: cancelOrder
+      summary: Cancel an active trading order
+      tags: [ trading ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/x-path-params/EntityIdPathParam'
+      responses:
+        '200':
+          description: Order canceled.
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+components:
+  schemas:
+    OrderBook:
+      type: object
+      required: [ id, baseAsset, quoteAsset ]
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        baseAsset:
+          $ref: '#/x-schemas/AssetReference'
+        quoteAsset:
+          $ref: '#/x-schemas/AssetReference'
+
+    MarketEntry:
+      type: object
+      required: [ id, amount, price, totalPrice, asset ]
+      properties:
+        id:
+          type: string
+        amount:
+          $ref: '#/x-schemas/PositiveAmount'
+        price:
+          $ref: '#/x-schemas/PositiveAmount'
+        totalPrice:
+          $ref: '#/x-schemas/PositiveAmount'
+        asset:
+          $ref: '#/x-schemas/AssetReference'
+
+    MarketTrade:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/MarketEntry'
+        - type: object
+          required: [ finalizedAt ]
+          properties:
+            finalizedAt:
+              description: Time when the trade was finalized.
+              type: string
+              format: date-time
+
+    OrderCommonProperties:
+      allOf:
+        - type: object
+          required:
+            - bookId
+            - side
+            - timeInForce
+          properties:
+            bookId:
+              description: ID of the order book.
+              type: string
+            side:
+              $ref: '#/components/schemas/OrderSide'
+            timeInForce:
+              $ref: '#/components/schemas/OrderTimeInForce'
+        - oneOf:
+            - type: object
+              required: [ baseAssetQuantity ]
+              properties:
+                baseAssetQuantity:
+                  $ref: '#/x-schemas/PositiveAmount'
+            - type: object
+              required: [ quoteAssetQuantity ]
+              properties:
+                quoteAssetQuantity:
+                  $ref: '#/x-schemas/PositiveAmount'
+
+    OrderSide:
+      enum:
+        - SELL
+        - BUY
+
+    OrderTimeInForce:
+      enum:
+        - GOOD_TILL_CANCELED
+        - FILL_OR_KILL
+        - IMMEDIATE_OR_CANCEL
+
+    LimitOrderData:
+      allOf:
+        - $ref: '#/components/schemas/OrderCommonProperties'
+        - type: object
+          required: [ orderType, quoteAssetPrice ]
+          properties:
+            orderType:
+              enum:
+                - LIMIT
+            quoteAssetPrice:
+              $ref: '#/x-schemas/PositiveAmount'
+
+    MarketOrderData:
+      allOf:
+        - $ref: '#/components/schemas/OrderCommonProperties'
+        - type: object
+          required: [ orderType ]
+          properties:
+            orderType:
+              enum:
+                - MARKET
+
+    OrderData:
+      oneOf:
+        - $ref: '#/components/schemas/LimitOrderData'
+        - $ref: '#/components/schemas/MarketOrderData'
+
+    OrderRequest:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/OrderData'
+        - type: object
+          required: [ idempotencyKey ]
+          properties:
+            idempotencyKey:
+              type: string
+
+    Order:
+      allOf:
+        - $ref: '#/components/schemas/OrderData'
+        - type: object
+          required: [ id, status, trades, createdAt ]
+          properties:
+            id:
+              type: string
+            status:
+              $ref: '#/components/schemas/OrderStatus'
+            trades:
+              type: array
+              items:
+                $ref: '#/components/schemas/MarketTrade'
+            createdAt:
+              description: Time when the order was created.
+              type: string
+              format: date-time
+            finalizedAt:
+              description: Time when the order was finalized.
+              type: string
+              format: date-time
+
+    OrderStatus:
+      enum:
+        - TRADING
+        - CANCELED
+        - REJECTED
+        - PARTIALLY_FILLED
+        - FULFILLED

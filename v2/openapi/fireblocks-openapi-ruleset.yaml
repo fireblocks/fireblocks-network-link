@@ -1,0 +1,125 @@
+extends: [[spectral:oas, all]]
+rules:
+  operation-description: off
+
+  oas3-api-servers: off
+  info-license: off
+  license-url: off
+  contact-properties: off
+  openapi-tags-alphabetical: off
+
+  fb-response-only-objects:
+    description: Responses must be objects.
+    severity: error
+    given: "$.paths.*.*.responses.*.content.application/json.schema"
+    then:
+      field: type
+      function: pattern
+      functionOptions:
+        match: "^object$"
+
+  fb-no-readonly-properties:
+    description: Read-only properties are not allowed.
+    severity: error
+    given: "$.components.schemas..properties.*.readOnly"
+    then:
+      function: falsy
+
+  fb-no-writeonly-properties:
+    description: Write-only properties are not allowed.
+    severity: error
+    given: "$.components.schemas..properties.*.writeOnly"
+    then:
+      function: falsy
+
+  fb-no-object-path-parameters:
+    description: Path parameters that are objects are not allowed.
+    severity: error
+    given:
+      - "$.components.parameters.*.schema"
+      - "$.paths.*.*.parameters[*].schema"
+    then:
+      field: type
+      function: pattern
+      functionOptions:
+        notMatch: "^object$"
+
+  fb-header-api-key:
+    description: Path must define X-FBAPI-KEY header parameter.
+    severity: error
+    given: "$.paths.*.*.parameters"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: array
+          contains:
+            required: [name]
+            properties:
+              name:
+                const: X-FBAPI-KEY
+
+  fb-header-timestamp:
+    description: Path must define X-FBAPI-TIMESTAMP header parameter.
+    severity: error
+    given: "$.paths.*.*.parameters"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: array
+          contains:
+            required: [name]
+            properties:
+              name:
+                const: X-FBAPI-TIMESTAMP
+
+  fb-header-nonce:
+    description: Path must define X-FBAPI-NONCE header parameter.
+    severity: error
+    given: "$.paths.*.*.parameters"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: array
+          contains:
+            required: [name]
+            properties:
+              name:
+                const: X-FBAPI-NONCE
+
+  fb-header-signature:
+    description: Path must define X-FBAPI-SIGNATURE header parameter.
+    severity: error
+    given: "$.paths.*.*.parameters"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: array
+          contains:
+            required: [name]
+            properties:
+              name:
+                const: X-FBAPI-SIGNATURE
+
+  fb-tags-camelcase:
+    description: All tag names must be camelCase.
+    severity: error
+    given: "$.tags[*].name"
+    then:
+      function: casing
+      functionOptions:
+        type: camel
+    message: "{{description}} But {{path}}: \"{{value}}\""
+
+  fb-operation-ids-camelcase:
+    description: All operation IDs must be camelCase.
+    severity: error
+    given: "$.paths.*.*.operationId"
+    then:
+      function: casing
+      functionOptions:
+        type: camel
+    message: "{{description}} But {{property}}: \"{{value}}\""
