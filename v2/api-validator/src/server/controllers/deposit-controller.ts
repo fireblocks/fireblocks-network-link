@@ -77,6 +77,47 @@ export const DEPOSITS: Deposit[] = [
     },
     status: DepositStatus.PENDING,
   },
+  {
+    balanceAmount: '153',
+    balanceAsset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
+    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+    id: randomUUID(),
+    source: {
+      asset: { cryptocurrencySymbol: Layer2Cryptocurrency.ARB },
+      transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+      amount: '999',
+      address: randomUUID(),
+    },
+    status: DepositStatus.SUCCEEDED,
+  },
+  {
+    balanceAmount: '1000',
+    balanceAsset: { assetId: SUPPORTED_ASSETS[0].id },
+    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    id: randomUUID(),
+    source: {
+      asset: { assetId: SUPPORTED_ASSETS[0].id },
+      transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+      amount: '1000',
+      address: randomUUID(),
+    },
+    status: DepositStatus.FAILED,
+  },
+  {
+    balanceAmount: '255',
+    balanceAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+    createdAt: new Date(Date.now()).toISOString(),
+    id: randomUUID(),
+    source: {
+      asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+      transferMethod: SwiftCapability.transferMethod.SWIFT,
+      accountHolder: { name: randomUUID() },
+      routingNumber: randomUUID(),
+      swiftCode: new RandExp(swiftCodeRegexp).gen(),
+      amount: '255',
+    },
+    status: DepositStatus.SUCCEEDED,
+  },
 ];
 
 export class DepositAddressNotFoundError extends XComError {
