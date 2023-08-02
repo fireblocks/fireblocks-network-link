@@ -576,6 +576,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ deposits ]
                 properties:
                   deposits:
                     type: array
@@ -671,6 +672,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ addresses ]
                 properties:
                   addresses:
                     type: array
@@ -1036,14 +1038,12 @@ components:
 
     WithdrawalRequestCommonProperties:
       type: object
-      required: [ idempotencyKey, balanceId, balanceAmount ]
+      required: [ idempotencyKey, balanceAsset, balanceAmount ]
       properties:
         idempotencyKey:
           type: string
-        balanceId:
-          type: string
-          description: >-
-            AssetBalance identifier returned from /accounts/{accountId}/balances
+        balanceAsset:
+          $ref: '#/x-schemas/AssetReference'
         balanceAmount:
           $ref: '#/x-schemas/PositiveAmount'
 

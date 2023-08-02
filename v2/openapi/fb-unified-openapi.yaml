@@ -1810,6 +1810,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - deposits
                 properties:
                   deposits:
                     type: array
@@ -1906,6 +1908,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - addresses
                 properties:
                   addresses:
                     type: array
@@ -2137,6 +2141,7 @@ components:
             - unknown-asset
             - unsupported-conversion
             - quote-not-ready
+            - deposit-address-disabled
             - order-not-trading
             - idempotency-key-reuse
         propertyName:
@@ -3276,14 +3281,13 @@ components:
       type: object
       required:
         - idempotencyKey
-        - balanceId
+        - balanceAsset
         - balanceAmount
       properties:
         idempotencyKey:
           type: string
-        balanceId:
-          type: string
-          description: AssetBalance identifier returned from /accounts/{accountId}/balances
+        balanceAsset:
+          $ref: '#/components/schemas/AssetReference'
         balanceAmount:
           $ref: '#/components/schemas/PositiveAmount'
     FiatWithdrawalRequest:

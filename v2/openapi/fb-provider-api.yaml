@@ -892,6 +892,7 @@ components:
             - unknown-asset
             - unsupported-conversion
             - quote-not-ready
+            - deposit-address-disabled
             - order-not-trading
             - idempotency-key-reuse
         propertyName:
