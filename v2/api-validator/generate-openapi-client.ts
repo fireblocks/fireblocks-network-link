@@ -17,6 +17,8 @@ async function generateClient() {
   });
 }
 
+console.log('\n🧸 Generating API client');
+
 generateClient()
   .then(() => console.log('✅ API client generated successfully'))
   .catch((e) => console.error('❌ API client failed to generate', e));

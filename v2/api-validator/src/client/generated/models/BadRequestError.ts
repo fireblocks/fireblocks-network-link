@@ -31,6 +31,7 @@ export namespace BadRequestError {
         UNKNOWN_ASSET = 'unknown-asset',
         UNSUPPORTED_CONVERSION = 'unsupported-conversion',
         QUOTE_NOT_READY = 'quote-not-ready',
+        ORDER_NOT_TRADING = 'order-not-trading',
     }
 
 
