@@ -6,6 +6,7 @@ import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
 import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import {
   BadRequestError,
+  Deposit,
   DepositAddress,
   DepositAddressCreationRequest,
   DepositCapability,
@@ -26,6 +27,7 @@ import {
   depositAddressFromDepositAddressRequest,
   IdempotencyKeyUsedError,
   IdempotencyRequestError,
+  DEPOSITS,
 } from '../controllers/deposit-controller';
 
 type AccountParam = { accountId: SubAccountIdPathParam };
@@ -166,4 +168,39 @@ export async function disableDepositAddress(
     }
     throw err;
   }
+}
+
+export async function getDeposits(
+  request: FastifyRequest<{ Querystring: PaginationParams; Params: AccountParam }>,
+  reply: FastifyReply
+): Promise<{ deposits: Deposit[] }> {
+  const { accountId } = request.params;
+  const { limit, startingAfter, endingBefore } = request.query;
+
+  if (!isKnownSubAccount(accountId)) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  return {
+    deposits: getPaginationResult(limit, startingAfter, endingBefore, DEPOSITS, 'id'),
+  };
+}
+
+export async function getDepositDetails(
+  request: FastifyRequest<{ Params: AccountParam & { id: EntityIdPathParam } }>,
+  reply: FastifyReply
+): Promise<Deposit> {
+  const { accountId, id: depositId } = request.params;
+
+  if (!isKnownSubAccount(accountId)) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  const deposit = DEPOSITS.find((deposit) => deposit.id === depositId);
+
+  if (!deposit) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  return deposit;
 }

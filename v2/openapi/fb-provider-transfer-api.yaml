@@ -572,6 +572,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ deposits ]
                 properties:
                   deposits:
                     type: array

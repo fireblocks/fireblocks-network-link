@@ -1,11 +1,18 @@
+import _ from 'lodash';
+import RandExp from 'randexp';
+import { randomUUID } from 'crypto';
+import { JsonValue } from 'type-fest';
+import { XComError } from '../../error';
 import { SUPPORTED_ASSETS, UnknownAdditionalAssetError, isKnownAsset } from './assets-controller';
 import {
   CrossAccountTransferCapability,
+  Deposit,
   DepositAddress,
   DepositAddressCreationRequest,
   DepositAddressStatus,
   DepositCapability,
   DepositDestination,
+  DepositStatus,
   IbanCapability,
   Layer1Cryptocurrency,
   Layer2Cryptocurrency,
@@ -13,11 +20,12 @@ import {
   PublicBlockchainCapability,
   SwiftCapability,
 } from '../../client/generated';
-import { randomUUID } from 'crypto';
-import RandExp from 'randexp';
-import { XComError } from '../../error';
-import { JsonValue } from 'type-fest';
-import _ from 'lodash';
+
+const swiftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
+const ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
+
+const CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP = new Map<string, IdempotencyMetadata>();
+const ACCOUNT_DEPOSIT_ADDRESS_MAP = new Map<string, DepositAddress[]>();
 
 export const DEPOSIT_METHODS: DepositCapability[] = [
   {
@@ -54,6 +62,64 @@ export const DEPOSIT_METHODS: DepositCapability[] = [
   },
 ];
 
+export const DEPOSITS: Deposit[] = [
+  {
+    balanceAmount: '1',
+    balanceAsset: { nationalCurrencyCode: NationalCurrencyCode.MXN },
+    createdAt: new Date(Date.now()).toISOString(),
+    id: randomUUID(),
+    source: {
+      accountHolder: { name: randomUUID() },
+      amount: '1',
+      asset: { nationalCurrencyCode: NationalCurrencyCode.MXN },
+      transferMethod: IbanCapability.transferMethod.IBAN,
+      iban: new RandExp(ibanRegexp).gen(),
+    },
+    status: DepositStatus.PENDING,
+  },
+  {
+    balanceAmount: '153',
+    balanceAsset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
+    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
+    id: randomUUID(),
+    source: {
+      asset: { cryptocurrencySymbol: Layer2Cryptocurrency.ARB },
+      transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+      amount: '999',
+      address: randomUUID(),
+    },
+    status: DepositStatus.SUCCEEDED,
+  },
+  {
+    balanceAmount: '1000',
+    balanceAsset: { assetId: SUPPORTED_ASSETS[0].id },
+    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    id: randomUUID(),
+    source: {
+      asset: { assetId: SUPPORTED_ASSETS[0].id },
+      transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+      amount: '1000',
+      address: randomUUID(),
+    },
+    status: DepositStatus.FAILED,
+  },
+  {
+    balanceAmount: '255',
+    balanceAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+    createdAt: new Date(Date.now()).toISOString(),
+    id: randomUUID(),
+    source: {
+      asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+      transferMethod: SwiftCapability.transferMethod.SWIFT,
+      accountHolder: { name: randomUUID() },
+      routingNumber: randomUUID(),
+      swiftCode: new RandExp(swiftCodeRegexp).gen(),
+      amount: '255',
+    },
+    status: DepositStatus.SUCCEEDED,
+  },
+];
+
 export class DepositAddressNotFoundError extends XComError {
   constructor() {
     super('Deposit address not found');
@@ -83,11 +149,6 @@ type IdempotencyMetadata = {
   responseBody: JsonValue;
   responseStatus: number;
 };
-
-const CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP = new Map<string, IdempotencyMetadata>();
-const ACCOUNT_DEPOSIT_ADDRESS_MAP = new Map<string, DepositAddress[]>();
-const swipftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
-const ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
 
 function isUsedIdempotencyKey(key: string) {
   return CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP.has(key);
@@ -141,7 +202,7 @@ export function depositAddressFromDepositAddressRequest(
       destination = {
         ...transferMethod,
         accountHolder: { name: randomUUID() },
-        swiftCode: new RandExp(swipftCodeRegexp).gen(),
+        swiftCode: new RandExp(swiftCodeRegexp).gen(),
         routingNumber: randomUUID(),
       };
       break;
