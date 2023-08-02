@@ -5,7 +5,7 @@ import {
   Layer2Cryptocurrency,
   NationalCurrencyCode,
 } from '../../client/generated';
-import { UnknownAdditionalAssetError, isKnownAdditionalAsset } from './assets-controller';
+import { isKnownAdditionalAsset, UnknownAdditionalAssetError } from './assets-controller';
 import { ACCOUNTS } from './accounts-controller';
 import { XComError } from '../../error';
 import _ from 'lodash';
@@ -23,7 +23,7 @@ export function getSubAccountBalances(accountId: string): Balances {
 export function getSingleAssetBalance(accountId: string, asset: AssetReference): Balances {
   const accountBalances = getSubAccountBalances(accountId);
 
-  const assetBalance = accountBalances.find((balance) => _.isEqual(balance.asset, asset));
+  const assetBalance = accountBalances.find((balance) => _.isMatch(balance.asset, asset));
 
   if (!assetBalance) {
     return [];

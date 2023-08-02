@@ -1,4 +1,7 @@
 openapi: 3.0.0
+servers:
+  - description: Local server
+    url: http://0.0.0.0:8000
 info:
   title: '[Draft] Fireblocks Provider Connectivity API'
   version: 0.0.1
@@ -711,6 +714,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Details of the quote request
         content:
           application/json:
             schema:
@@ -851,6 +855,20 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/OrderBook'
+              example:
+                books:
+                  - id: BTC/USDC
+                    description: Bitcoin book
+                    baseAsset:
+                      blockchain: Bitcoin
+                      cryptocurrencySymbol: BTC
+                    quoteAsset:
+                      assetId: f0844d82-7097-4521-95bc-d843724a893e
+                  - id: GBP/USDC
+                    baseAsset:
+                      nationalCurrencyCode: GBP
+                    quoteAsset:
+                      assetId: f0844d82-7097-4521-95bc-d843724a893e
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -878,6 +896,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OrderBook'
+              examples:
+                btcUsdc:
+                  summary: BTC/USDC book
+                  value:
+                    id: BTC/USDC
+                    description: Bitcoin book
+                    baseAsset:
+                      blockchain: Bitcoin
+                      cryptocurrencySymbol: BTC
+                    quoteAsset:
+                      assetId: f0844d82-7097-4521-95bc-d843724a893e
+                gbpUsdc:
+                  summary: GBP/USDC book
+                  value:
+                    id: GBP/USDC
+                    baseAsset:
+                      nationalCurrencyCode: GBP
+                    quoteAsset:
+                      assetId: f0844d82-7097-4521-95bc-d843724a893e
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -916,6 +953,41 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/MarketEntry'
+              examples:
+                btcUsdc:
+                  summary: Asks for the BTC/USDC book
+                  value:
+                    asks:
+                      - id: EADAC726-414B-4C5B-B26A-8A616446BDB0
+                        price: '29312.03'
+                        amount: '9.21634'
+                        totalPrice: '270149.63'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: 23631CE5-123B-4163-A6CD-6BF3CE5521C6
+                        price: '29315.97'
+                        amount: '22.33346'
+                        totalPrice: '654727.04'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: 375C2D0A-2874-4FCE-A860-068856D05A87
+                        price: '29316.95'
+                        amount: '9.30764'
+                        totalPrice: '272871.62'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: E577CE57-57BE-49F4-ACA9-DA8EA0F560BD
+                        price: '29317.14'
+                        amount: '7.56552'
+                        totalPrice: '221799.41'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: E776FAF0-B9BB-414B-8519-CB01D088FAC2
+                        price: '29317.38'
+                        amount: '9.87465'
+                        totalPrice: '289498.87'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -954,6 +1026,41 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/MarketEntry'
+              examples:
+                btcUsdc:
+                  summary: Bids for the BTC/USDC book
+                  value:
+                    bids:
+                      - id: 92946569-74FE-42BD-9898-CBD03A5D407B
+                        price: '29312.03'
+                        amount: '9.21634'
+                        totalPrice: '270149.63'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: F69C17BB-9E2A-4159-8938-8B142F55B4BE
+                        price: '29310.42'
+                        amount: '0.00091'
+                        totalPrice: '26.67'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: E7042B8A-D467-4144-AC53-92C4A96C2A84
+                        price: '29310.35'
+                        amount: '0.027'
+                        totalPrice: '791.38'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: 6A3444BC-34D1-411B-B505-ADE557307C62
+                        price: '29310.34'
+                        amount: '0.4275'
+                        totalPrice: '12530.17'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
+                      - id: 27C49660-AC51-409D-A6C9-5E5BB0FFFACE
+                        price: '29310.27'
+                        amount: '0.01412'
+                        totalPrice: '413.86'
+                        asset:
+                          assetId: f0844d82-7097-4521-95bc-d843724a893e
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -1041,6 +1148,7 @@ paths:
     post:
       operationId: createOrder
       summary: Create a new trading order
+      description: Either `baseAssetQuantity` or `quoteAssetQuantity` must always be specified. `quoteAssetPrice` must be specified for limit orders, but cannot be used in market orders.
       tags:
         - trading
       parameters:
@@ -1050,18 +1158,50 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Order details
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/OrderRequest'
-            example:
-              idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
-              bookId: BTC_ETH
-              side: BUY
-              orderType: LIMIT
-              timeInForce: GOOD_TILL_CANCELED
-              baseAssetQuantity: 10
-              baseAssetPrice: '0.0003'
+            examples:
+              limitSellOrder:
+                summary: Sell 10 BTC for 20,000 USDC each, at most
+                value:
+                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
+                  bookId: BTC_USDC
+                  side: SELL
+                  orderType: LIMIT
+                  timeInForce: GOOD_TILL_CANCELED
+                  baseAssetQuantity: '10'
+                  quoteAssetPrice: '20000'
+              limitBuyOrder:
+                summary: Buy BTC for at most 20,000 USDC each, up to 200,000 USDC in total
+                value:
+                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
+                  bookId: BTC_USDC
+                  side: BUY
+                  orderType: LIMIT
+                  timeInForce: GOOD_TILL_CANCELED
+                  quoteAssetPrice: '20000'
+                  quoteAssetQuantity: '200000'
+              marketBuyOrder:
+                summary: Buy BTC at the market price for 200,000 USDC in total
+                value:
+                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
+                  bookId: BTC_USDC
+                  side: BUY
+                  orderType: MARKET
+                  timeInForce: GOOD_TILL_CANCELED
+                  quoteAssetQuantity: '200000'
+              marketSellOrder:
+                summary: Sell 10 BTC at the market
+                value:
+                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
+                  bookId: BTC_USDC
+                  side: SELL
+                  orderType: MARKET
+                  timeInForce: GOOD_TILL_CANCELED
+                  baseAssetQuantity: '10'
       responses:
         '200':
           description: Newly created book order details
@@ -1072,12 +1212,12 @@ paths:
               example:
                 id: cf091554-f2b8-4cea-9783-2a7e5065b549
                 status: TRADING
-                bookId: BTC_ETH
-                side: BUY
+                bookId: BTC_USDC
+                side: SELL
                 orderType: LIMIT
                 timeInForce: GOOD_TILL_CANCELED
-                baseAssetQuantity: 10
-                baseAssetPrice: '0.0003'
+                baseAssetQuantity: '10'
+                quoteAssetPrice: '20000'
                 createdAt: 2023-06-02T19:45:26.550Z
                 trades: []
         '400':
@@ -1417,6 +1557,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1486,6 +1627,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1555,6 +1697,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1624,6 +1767,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -1720,6 +1864,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
+        description: Deposit address details
         required: true
         content:
           application/json:
@@ -1992,6 +2137,8 @@ components:
             - unknown-asset
             - unsupported-conversion
             - quote-not-ready
+            - order-not-trading
+            - idempotency-key-reuse
         propertyName:
           description: Name of property that caused the error.
           type: string
@@ -2698,11 +2845,14 @@ components:
     MarketEntry:
       type: object
       required:
+        - id
         - amount
         - price
         - totalPrice
         - asset
       properties:
+        id:
+          type: string
         amount:
           $ref: '#/components/schemas/PositiveAmount'
         price:
@@ -2712,6 +2862,7 @@ components:
         asset:
           $ref: '#/components/schemas/AssetReference'
     MarketTrade:
+      type: object
       allOf:
         - $ref: '#/components/schemas/MarketEntry'
         - type: object
@@ -2722,13 +2873,12 @@ components:
               description: Time when the trade was finalized.
               type: string
               format: date-time
-    OrderData:
+    OrderCommonProperties:
       allOf:
         - type: object
           required:
             - bookId
             - side
-            - orderType
             - timeInForce
           properties:
             bookId:
@@ -2736,47 +2886,59 @@ components:
               type: string
             side:
               $ref: '#/components/schemas/OrderSide'
-            orderType:
-              $ref: '#/components/schemas/OrderType'
             timeInForce:
               $ref: '#/components/schemas/OrderTimeInForce'
         - oneOf:
-            - $ref: '#/components/schemas/BaseAssetRequest'
-            - $ref: '#/components/schemas/QuoteAssetRequest'
-    BaseAssetRequest:
-      type: object
-      required:
-        - baseAssetQuantity
-        - baseAssetPrice
-      properties:
-        baseAssetQuantity:
-          type: integer
-        baseAssetPrice:
-          $ref: '#/components/schemas/PositiveAmount'
-    QuoteAssetRequest:
-      type: object
-      required:
-        - quoteAssetQuantity
-        - quoteAssetPrice
-      properties:
-        quoteAssetQuantity:
-          type: integer
-        quoteAssetPrice:
-          $ref: '#/components/schemas/PositiveAmount'
+            - type: object
+              required:
+                - baseAssetQuantity
+              properties:
+                baseAssetQuantity:
+                  $ref: '#/components/schemas/PositiveAmount'
+            - type: object
+              required:
+                - quoteAssetQuantity
+              properties:
+                quoteAssetQuantity:
+                  $ref: '#/components/schemas/PositiveAmount'
     OrderSide:
       enum:
         - SELL
         - BUY
-    OrderType:
-      enum:
-        - MARKET
-        - LIMIT
     OrderTimeInForce:
       enum:
         - GOOD_TILL_CANCELED
         - FILL_OR_KILL
         - IMMEDIATE_OR_CANCEL
+    LimitOrderData:
+      allOf:
+        - $ref: '#/components/schemas/OrderCommonProperties'
+        - type: object
+          required:
+            - orderType
+            - quoteAssetPrice
+          properties:
+            orderType:
+              enum:
+                - LIMIT
+            quoteAssetPrice:
+              $ref: '#/components/schemas/PositiveAmount'
+    MarketOrderData:
+      allOf:
+        - $ref: '#/components/schemas/OrderCommonProperties'
+        - type: object
+          required:
+            - orderType
+          properties:
+            orderType:
+              enum:
+                - MARKET
+    OrderData:
+      oneOf:
+        - $ref: '#/components/schemas/LimitOrderData'
+        - $ref: '#/components/schemas/MarketOrderData'
     OrderRequest:
+      type: object
       allOf:
         - $ref: '#/components/schemas/OrderData'
         - type: object
@@ -2797,7 +2959,6 @@ components:
           properties:
             id:
               type: string
-              format: uuid
             status:
               $ref: '#/components/schemas/OrderStatus'
             trades:

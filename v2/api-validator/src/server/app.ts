@@ -1,15 +1,24 @@
 import config from '../config';
 import logger from '../logging';
-import { XComError } from '../error';
-import { BadRequestError, RequestPart } from '../client/generated';
+import addFormats from 'ajv-formats';
+import Ajv, { ValidateFunction } from 'ajv';
+import { FastifyError } from '@fastify/error';
+import { FastifyBaseLogger } from 'fastify/types/logger';
+import { BadRequestError, GeneralError, RequestPart } from '../client/generated';
 import { loadOpenApiSchema, OpenApiOperationDetails, OpenApiSchema } from './schema';
-import Fastify, { FastifyReply, FastifyRequest, HTTPMethods, RouteOptions } from 'fastify';
-import { FastifySchemaValidationError, SchemaErrorDataVar } from 'fastify/types/schema';
 import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
 import { nonceMiddleware } from './middlewares/nonce-middleware';
 import { timestampMiddleware } from './middlewares/timestamp-middleware';
 import { apiKeyMiddleware } from './middlewares/api-key-middleware';
+import { ResponseSchemaValidationFailed, SchemaCompilationError, XComError } from '../error';
 import { paginationValidationMiddleware } from './middlewares/pagination-validation-middleware';
+import Fastify, {
+  FastifyInstance,
+  FastifyReply,
+  FastifyRequest,
+  HTTPMethods,
+  RouteOptions,
+} from 'fastify';
 
 const log = logger('app');
 
@@ -21,12 +30,17 @@ export async function createWebApp(): Promise<WebApp> {
 }
 
 export class WebApp {
-  private readonly app: ReturnType<typeof Fastify>;
+  private readonly app: FastifyInstance;
+  private readonly ajv = new Ajv({ strictSchema: false });
 
   constructor(private readonly schema: OpenApiSchema) {
+    const loggerForFastify: FastifyBaseLogger = log.pinoLogger;
+
+    addFormats(this.ajv);
+
     this.app = Fastify({
-      logger: log.pinoLogger,
-      schemaErrorFormatter,
+      logger: loggerForFastify,
+      // schemaErrorFormatter,
     });
 
     // For POST routes that do not define request body, allow any content type
@@ -42,13 +56,32 @@ export class WebApp {
       'application/x-www-form-urlencoded',
       routesWithoutBodyContentParser
     );
+    this.app.setErrorHandler(errorHandler);
 
     this.app.addHook('preHandler', verifySignatureMiddleware);
     this.app.addHook('preHandler', nonceMiddleware);
     this.app.addHook('preHandler', timestampMiddleware);
     this.app.addHook('preHandler', apiKeyMiddleware);
     this.app.addHook('preHandler', paginationValidationMiddleware);
-    this.app.addHook('onSend', onSend);
+
+    // Override the default serializer. Some of the schemas are not serialized properly by the default serializer
+    // due to a bug in the Fastify serialization library: https://github.com/fastify/fast-json-stringify/issues/290
+    this.app.setSerializerCompiler(({ schema, method, url }) => {
+      let validate: ValidateFunction;
+      try {
+        validate = this.ajv.compile(schema);
+      } catch (err: any) {
+        throw new SchemaCompilationError(err.toString(), method, url);
+      }
+
+      return (data) => {
+        const success = validate(data);
+        if (!success) {
+          throw new ResponseSchemaValidationFailed(method, url, data, validate.errors?.[0]);
+        }
+        return JSON.stringify(data);
+      };
+    });
   }
 
   public async start(): Promise<void> {
@@ -82,26 +115,6 @@ function shapeRequestForLog(request: FastifyRequest) {
   };
 }
 
-function onSend(request: FastifyRequest, reply: FastifyReply, payload: string, done) {
-  if (reply.statusCode >= 400) {
-    const logData = {
-      statusCode: reply.statusCode,
-      request: shapeRequestForLog(request),
-      reply: {
-        statusCode: reply.statusCode,
-        payload: JSON.parse(payload),
-      },
-    };
-
-    if (reply.statusCode >= 500) {
-      log.error('Server error', logData);
-    } else {
-      log.info('Client error', logData);
-    }
-  }
-  done(null, payload);
-}
-
 class ContentTypeError extends XComError implements BadRequestError {
   public readonly name = 'ContentTypeError';
   public readonly errorType = BadRequestError.errorType.SCHEMA_ERROR;
@@ -112,43 +125,51 @@ class ContentTypeError extends XComError implements BadRequestError {
   }
 }
 
-class SchemaError extends XComError implements BadRequestError {
-  public readonly name = 'SchemaError';
-  public readonly errorType = BadRequestError.errorType.SCHEMA_ERROR;
+function errorHandler(error: FastifyError, request: FastifyRequest, reply: FastifyReply) {
+  if (error.code === 'FST_ERR_VALIDATION') {
+    sendValidationError(error, reply);
+  } else {
+    log.error('Unexpected server error', { error, request: shapeRequestForLog(request) });
 
-  constructor(public readonly message: string, public readonly requestPart: RequestPart) {
-    super(message, { requestPart });
+    const serverError: GeneralError = {
+      message: 'Unexpected server error',
+      errorType: GeneralError.errorType.INTERNAL_ERROR,
+    };
+    reply.status(500).send(serverError);
   }
 }
 
-class SchemaPropertyError extends XComError implements Required<BadRequestError> {
-  public readonly name = 'SchemaPropertyError';
-  public readonly errorType = BadRequestError.errorType.SCHEMA_PROPERTY_ERROR;
-
-  constructor(
-    public readonly message: string,
-    public readonly propertyName: string,
-    public readonly requestPart: RequestPart
-  ) {
-    super(message, { propertyName, requestPart });
+function sendValidationError(error: FastifyError, reply: FastifyReply) {
+  if (!error.validation || !error.validationContext) {
+    log.error('Unexpected error', { error });
+    return reply.status(error.statusCode ?? 500).send(error.message);
   }
-}
 
-function schemaErrorFormatter(errors: FastifySchemaValidationError[], dataVar: SchemaErrorDataVar) {
-  const error = errors[0];
-  const message = `Request schema validation error: ${error.message}`;
+  const validation = error.validation[0];
+  const message = `Request schema validation error: ${validation.message}`;
   let erroneousProperty = '';
 
-  if (error.instancePath) {
-    erroneousProperty = error.instancePath;
+  if (validation.instancePath) {
+    erroneousProperty = validation.instancePath;
   }
-  if (error.keyword === 'required') {
-    erroneousProperty += `/${error.params.missingProperty}`;
+  if (validation.keyword === 'required') {
+    erroneousProperty += `/${validation.params.missingProperty}`;
   }
 
   if (erroneousProperty) {
-    return new SchemaPropertyError(message, erroneousProperty, RequestPart[dataVar.toUpperCase()]);
+    const badRequest: BadRequestError = {
+      message,
+      propertyName: erroneousProperty,
+      requestPart: RequestPart[error.validationContext.toUpperCase()],
+      errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
+    };
+    reply.status(400).send(badRequest);
   } else {
-    return new SchemaError(message, RequestPart[dataVar.toUpperCase()]);
+    const badRequest: BadRequestError = {
+      message,
+      requestPart: RequestPart[error.validationContext.toUpperCase()],
+      errorType: BadRequestError.errorType.SCHEMA_ERROR,
+    };
+    reply.status(400).send(badRequest);
   }
 }

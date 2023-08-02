@@ -322,6 +322,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -390,6 +391,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -459,6 +461,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -530,6 +533,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
+        description: Withdrawal details
         required: true
         content:
           application/json:
@@ -626,6 +630,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
+        description: Deposit address details
         required: true
         content:
           application/json:

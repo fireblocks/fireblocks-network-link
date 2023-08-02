@@ -82,6 +82,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
+        description: Details of the quote request
         content:
           application/json:
             schema:
