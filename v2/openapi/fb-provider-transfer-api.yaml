@@ -297,6 +297,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array
@@ -365,6 +366,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array
@@ -433,6 +435,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array
@@ -739,6 +742,7 @@ components:
         application/json:
           schema:
             type: object
+            required: [ withdrawals ]
             properties:
               withdrawals:
                 type: array

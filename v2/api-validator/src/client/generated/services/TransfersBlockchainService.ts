@@ -66,7 +66,7 @@ export class TransfersBlockchainService {
          */
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
-        withdrawals?: Array<BlockchainWithdrawal>;
+        withdrawals: Array<BlockchainWithdrawal>;
     }> {
         return this.httpRequest.request({
             method: 'GET',

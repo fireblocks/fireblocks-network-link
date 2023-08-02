@@ -66,7 +66,7 @@ export class TransfersFiatService {
          */
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
-        withdrawals?: Array<FiatWithdrawal>;
+        withdrawals: Array<FiatWithdrawal>;
     }> {
         return this.httpRequest.request({
             method: 'GET',
