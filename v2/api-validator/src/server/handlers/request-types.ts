@@ -4,6 +4,12 @@ export type EntityIdPathParam = {
   };
 };
 
+export type AccountIdPathParam = {
+  Params: {
+    accountId: string;
+  };
+};
+
 export type PaginationQuerystring = {
   Querystring: {
     limit: number;

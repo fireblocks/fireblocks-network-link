@@ -3,6 +3,9 @@ import { XComError } from '../../error';
 import { books } from './books-controller';
 import { Order, OrderData, OrderRequest, OrderStatus } from '../../client/generated';
 import _ from 'lodash';
+import logger from '../../logging';
+
+const log = logger('server');
 
 type StoredOrder = { order: Order; idempotencyKey: string };
 
@@ -27,15 +30,17 @@ export class OrdersController {
       }
     }
 
-    const o: Order = {
+    const newOrder: Order = {
       ...orderData,
       id: randomUUID(),
       status: OrderStatus.TRADING,
       trades: [],
       createdAt: new Date().toISOString(),
     };
-    this.orders.push({ order: o, idempotencyKey: order.idempotencyKey });
-    return o;
+    this.orders.push({ order: newOrder, idempotencyKey: order.idempotencyKey });
+
+    log.info('New order', { order: newOrder });
+    return newOrder;
   }
 
   public getOrdersCount(): number {
@@ -43,6 +48,7 @@ export class OrdersController {
   }
 
   public findOrder(orderId: string): Order | undefined {
+    log.warn('All orders', { orders: this.orders });
     const stored = this.orders.find((o) => o.order.id === orderId);
     return stored?.order;
   }

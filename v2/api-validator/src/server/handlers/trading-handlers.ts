@@ -1,13 +1,26 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { OrdersController } from '../controllers/orders-controller';
 import { asks, bids, books } from '../controllers/books-controller';
-import { MarketEntry, MarketTrade, Order, OrderBook } from '../../client/generated';
+import { isKnownSubAccount } from '../controllers/accounts-controller';
 import { getPaginationResult } from '../controllers/pagination-controller';
-import { EntityIdPathParam, PaginationQuerystring } from './request-types';
+import { AccountIdPathParam, EntityIdPathParam, PaginationQuerystring } from './request-types';
+import {
+  MarketEntry,
+  MarketTrade,
+  Order,
+  OrderBook,
+  OrderRequest,
+  OrderStatus,
+} from '../../client/generated';
 
 type GetBooksResponse = { books: OrderBook[] };
 type GetBookAsksResponse = { asks: MarketEntry[] };
 type GetBookBidsResponse = { bids: MarketEntry[] };
+
+type CreateOrderRequest = { Body: OrderRequest };
+
+const ordersController = new OrdersController();
 
 export async function getBooks({
   query,
@@ -84,17 +97,50 @@ export async function getOrders(request: FastifyRequest, reply: FastifyReply): P
   return ErrorFactory.notFound(reply);
 }
 
-export async function createOrder(request: FastifyRequest, reply: FastifyReply): Promise<Order> {
-  return ErrorFactory.notFound(reply);
+export async function createOrder(
+  { params, body }: FastifyRequest<AccountIdPathParam & CreateOrderRequest>,
+  reply: FastifyReply
+): Promise<Order> {
+  const { accountId } = params;
+
+  if (!isKnownSubAccount(accountId)) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  return ordersController.createOrder(body);
 }
 
 export async function getOrderDetails(
-  request: FastifyRequest,
+  { params }: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
   reply: FastifyReply
 ): Promise<Order> {
-  return ErrorFactory.notFound(reply);
+  if (!isKnownSubAccount(params.accountId)) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  const order = ordersController.findOrder(params.id);
+  if (!order) {
+    return ErrorFactory.notFound(reply);
+  }
+  return order;
 }
 
-export async function cancelOrder(request: FastifyRequest, reply: FastifyReply): Promise<void> {
-  return ErrorFactory.notFound(reply);
+export async function cancelOrder(
+  { params }: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
+  reply: FastifyReply
+): Promise<void> {
+  if (!isKnownSubAccount(params.accountId)) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  const order = ordersController.findOrder(params.id);
+  if (!order) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  if (order.status !== OrderStatus.TRADING) {
+    return ErrorFactory.orderNotTrading(reply);
+  }
+
+  ordersController.cancelOrder(params.id);
 }

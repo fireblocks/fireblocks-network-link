@@ -3,8 +3,8 @@ import addFormats from 'ajv-formats';
 import { HTTPMethods } from 'fastify';
 import { ErrorObject } from 'ajv/lib/types';
 import Ajv, { Schema, ValidateFunction } from 'ajv';
+import { SchemaCompilationError, XComError } from '../error';
 import { OpenApiOperationDetails, parseOpenApiYaml } from '../server/schema';
-import { XComError } from '../error';
 
 type ResponseSchemas = Record<string, Schema>;
 
@@ -99,12 +99,6 @@ function compileResponseSchemas(schemas: OpenApiOperationDetails[]): ValidatorsD
 
 function openApiUrlToFastifyUrl(url: string): string {
   return url.replace(/{(\w+)}/g, ':$1');
-}
-
-export class SchemaCompilationError extends XComError {
-  constructor(message: string, method: string, url: string) {
-    super(message, { method, url });
-  }
 }
 
 export class SchemaValidationError extends XComError {

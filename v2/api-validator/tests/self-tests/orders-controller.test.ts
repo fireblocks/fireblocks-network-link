@@ -8,12 +8,12 @@ import {
   UnknownOrderError,
 } from '../../src/server/controllers/orders-controller';
 import {
+  LimitOrderData,
   Order,
   OrderData,
   OrderSide,
   OrderStatus,
   OrderTimeInForce,
-  OrderType,
 } from '../../src/client/generated';
 
 const book = books[0];
@@ -21,10 +21,10 @@ const book = books[0];
 const orderDetails: OrderData = {
   bookId: book.id,
   side: OrderSide.BUY,
-  orderType: OrderType.LIMIT,
+  orderType: LimitOrderData.orderType.LIMIT,
   timeInForce: OrderTimeInForce.GOOD_TILL_CANCELED,
-  baseAssetPrice: '1.2',
-  baseAssetQuantity: 10,
+  quoteAssetPrice: '1.2',
+  baseAssetQuantity: '10',
 };
 
 describe('Create order', () => {
