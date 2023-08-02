@@ -215,7 +215,7 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
           });
 
           expect(error.status).toBe(400);
-          expect(error.body.errorType).toBe(BadRequestError.errorType.USED_IDEMPOTENCY_KEY);
+          expect(error.body.errorType).toBe(BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE);
         });
       });
     });

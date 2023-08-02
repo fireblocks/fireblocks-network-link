@@ -81,7 +81,7 @@ export async function createDepositAddress(
     if (err instanceof IdempotencyKeyUsedError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestError.errorType.USED_IDEMPOTENCY_KEY,
+        errorType: BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE,
       });
     }
     if (err instanceof IdempotencyRequestError) {

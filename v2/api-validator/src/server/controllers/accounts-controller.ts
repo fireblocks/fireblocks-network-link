@@ -1,6 +1,7 @@
 import {
   Account,
   AccountStatus,
+  Blockchain,
   Layer1Cryptocurrency,
   NationalCurrencyCode,
 } from '../../client/generated';
@@ -12,18 +13,26 @@ export const ACCOUNTS: Account[] = [
     balances: [
       {
         asset: { assetId: SUPPORTED_ASSETS[0].id },
-        availableAmount: '1',
+        availableAmount: '100',
         id: '1',
       },
       {
         asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        availableAmount: '1',
+        availableAmount: '100',
         id: '2',
       },
       {
-        asset: { cryptocurrencySymbol: Layer1Cryptocurrency.ETH },
-        availableAmount: '1',
+        asset: {
+          blockchain: Blockchain.BITCOIN,
+          cryptocurrencySymbol: Layer1Cryptocurrency.BTC,
+        },
+        availableAmount: '100',
         id: '3',
+      },
+      {
+        asset: { assetId: SUPPORTED_ASSETS[3].id },
+        availableAmount: '100',
+        id: '4',
       },
     ],
     status: AccountStatus.ACTIVE,

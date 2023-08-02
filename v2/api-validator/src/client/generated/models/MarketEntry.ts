@@ -7,6 +7,7 @@ import type { AssetReference } from './AssetReference';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type MarketEntry = {
+    id: string;
     amount: PositiveAmount;
     price: PositiveAmount;
     totalPrice: PositiveAmount;
