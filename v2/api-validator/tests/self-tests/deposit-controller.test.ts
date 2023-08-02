@@ -1,4 +1,6 @@
 import { randomUUID } from 'crypto';
+import { UnknownAdditionalAssetError } from '../../src/server/controllers/assets-controller';
+import { IdempotencyKeyReuseError } from '../../src/server/controllers/orders-controller';
 import {
   DepositAddress,
   DepositAddressStatus,
@@ -6,16 +8,14 @@ import {
   PublicBlockchainCapability,
 } from '../../src/client/generated';
 import {
-  DepositAddressDisabledError,
-  IdempotencyKeyUsedError,
-  IdempotencyRequestError,
   addNewDepositAddressForAccount,
+  DepositAddressDisabledError,
   disableAccountDepositAddress,
   getAccountDepositAddresses,
+  IdempotencyRequestError,
   registerIdempotencyResponse,
   validateDepositAddressCreationRequest,
 } from '../../src/server/controllers/deposit-controller';
-import { UnknownAdditionalAssetError } from '../../src/server/controllers/assets-controller';
 
 describe('Deposit controller', () => {
   describe('Deposit addresses', () => {
@@ -134,7 +134,7 @@ describe('Deposit controller', () => {
             idempotencyKey,
             transferMethod: unknownAssetTransferCapability,
           });
-        }).toThrow(IdempotencyKeyUsedError);
+        }).toThrow(IdempotencyKeyReuseError);
       });
     });
   });

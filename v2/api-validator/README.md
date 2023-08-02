@@ -1,6 +1,6 @@
-# Fireblocks Partner Connectivity API Validator
+# Fireblocks Network Link v2 API Validator
 
-This project contains the Fireblocks Partner Connectivity API validation tool.
+This project contains the Fireblocks Network Link v2 API validation tool.
 The tool is built to be executed as a stand-alone application that sends various 
 HTTP requests to the system under test to validate the correctness of the API
 implementation.
@@ -26,7 +26,7 @@ npm install
 Run the mock server:
 
 ```shell
-npm run start:server:dev
+npm run server
 ```
 
 In a separate shell:
@@ -35,12 +35,20 @@ In a separate shell:
 npm run test
 ```
 
+The tests generate report files in the validation tool root directory in JSON and HTML formats.
 
 ### Use your own server
 
 ```shell
 SERVER="my-server-base-url" npm run test
 ```
+
+When testing your own server, you will usually need to configure the credentials of the user
+connecting to the server and the request signing method the server uses. All these parameters
+could be configured using the environment variables. Make a copy of `env.example`, rename it
+to `.env` and edit the values. `src/config/index.ts` contains all the environment variable
+definitions and the possible values.
+
 
 ## Design
 

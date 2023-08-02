@@ -3,7 +3,7 @@ import RandExp from 'randexp';
 import { randomUUID } from 'crypto';
 import { JsonValue } from 'type-fest';
 import { XComError } from '../../error';
-import { SUPPORTED_ASSETS, UnknownAdditionalAssetError, isKnownAsset } from './assets-controller';
+import { isKnownAsset, SUPPORTED_ASSETS, UnknownAdditionalAssetError } from './assets-controller';
 import {
   CrossAccountTransferCapability,
   Deposit,
@@ -133,7 +133,7 @@ export class DepositAddressDisabledError extends XComError {
   }
 }
 
-export class IdempotencyRequest extends XComError {
+export class IdempotencyRequestError extends XComError {
   constructor(public metadata: IdempotencyMetadata) {
     super("Idempotent request, will return original request's response");
   }
@@ -170,7 +170,7 @@ export function validateDepositAddressCreationRequest(
     if (!_.isEqual(depositAddressRequest, metadata.requestBody)) {
       throw new IdempotencyKeyReuseError(depositAddressRequest.idempotencyKey);
     }
-    throw new IdempotencyRequest(metadata);
+    throw new IdempotencyRequestError(metadata);
   }
   if (!isKnownAsset(depositAddressRequest.transferMethod.asset)) {
     throw new UnknownAdditionalAssetError();

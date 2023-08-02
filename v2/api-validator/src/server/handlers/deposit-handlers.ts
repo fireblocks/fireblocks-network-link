@@ -4,7 +4,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { isKnownSubAccount } from '../controllers/accounts-controller';
 import { IdempotencyKeyReuseError } from '../controllers/orders-controller';
 import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
-import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
+import { getPaginationResult, PaginationParams } from '../controllers/pagination-controller';
 import {
   BadRequestError,
   Deposit,
@@ -17,17 +17,17 @@ import {
   SubAccountIdPathParam,
 } from '../../client/generated';
 import {
-  DEPOSIT_METHODS,
-  getAccountDepositAddresses,
-  DepositAddressNotFoundError,
-  registerIdempotencyResponse,
-  DepositAddressDisabledError,
-  disableAccountDepositAddress,
   addNewDepositAddressForAccount,
-  validateDepositAddressCreationRequest,
+  DEPOSIT_METHODS,
+  DepositAddressDisabledError,
   depositAddressFromDepositAddressRequest,
-  IdempotencyRequest,
+  DepositAddressNotFoundError,
   DEPOSITS,
+  disableAccountDepositAddress,
+  getAccountDepositAddresses,
+  IdempotencyRequestError,
+  registerIdempotencyResponse,
+  validateDepositAddressCreationRequest,
 } from '../controllers/deposit-controller';
 
 type AccountParam = { accountId: SubAccountIdPathParam };
@@ -84,7 +84,7 @@ export async function createDepositAddress(
         errorType: BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE,
       });
     }
-    if (err instanceof IdempotencyRequest) {
+    if (err instanceof IdempotencyRequestError) {
       return reply.code(err.metadata.responseStatus).send(err.metadata.responseBody);
     }
     return saveAndSendIdempotentResponse(500, {

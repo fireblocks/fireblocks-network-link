@@ -4,13 +4,16 @@ servers:
     url: http://0.0.0.0:8000
 info:
   title: '[Draft] Fireblocks Provider Connectivity API'
-  version: 0.0.1
+  version: 0.1.0
   x-logo:
     url: https://drive.google.com/uc?id=1sseKokeIoh7hnUpV8skWYF_VzncF3slT
     altText: Fireblocks logo
   contact:
     name: Fireblocks
     url: https://fireblocks.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
   description: |
     Fireblocks Provider Connectivity API defines the interface for integration of third-party
     providers into Fireblocks platform.
@@ -112,11 +115,11 @@ info:
 
       * #### Using HMAC
         1. Create a prehash string `{timestamp+nonce+method+endpoint+body}`
-        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
+        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
             
             [The request body is a JSON string and needs to be the same with the parameters passed by the API]
         3. Use `SECRET` to sign the string with HMAC (Internal hash function is configurable: `SHA512`, `SHA3_256`, `SHA256`)
-        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
+        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
 
       * #### Using RSA
 
@@ -124,11 +127,11 @@ info:
         
         `SECRET` is defined to be the Private RSA PEM.
         1. Create a prehash string `{timestamp+nonce+method+endpoint+body}`
-        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
+        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
             
             [The request body is a JSON string and needs to be the same with the parameters passed by the API]
         3. Use `SECRET` to sign the string with RSA (Internal hash function is configurable: `SHA512`, `SHA3_256`, `SHA256`)
-        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
+        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
 
       * #### Using ECDSA
 
@@ -137,11 +140,11 @@ info:
         `SECRET` is defined to be the Private ECDSA PEM. ECDSA result signature has an ASN1.DER format.
 
         1. Create a prehash string `{timestamp+nonce+method+endpoint+body}`
-        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
+        2. Apply an encoding onto the prehash string (Pre-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`)
 
             [The request body is a JSON string and needs to be the same as the parameters passed by the API]
         3. Use `SECRET` to sign the string with ECDSA (The internal hash function is not configurable and is set to `SHA256`)
-        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `PLAIN`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`).
+        4. Apply an additional encoding onto the signature result (Post-encoding is configurable: `URL-ENCODED`, `BASE64`, `HEXSTR`, `BASE58`, `BASE32`).
 
     # Capabilities
 

@@ -1,13 +1,13 @@
 {
-  "name": "fireblocks-xcom-api-validator",
-  "version": "0.0.0",
-  "description": "Fireblocks Partner Connectivity API validator",
+  "name": "fireblocks-netlink-v2-api-validator",
+  "version": "0.1.0",
+  "description": "Fireblocks Network Link v2 API Validator",
   "author": "Fireblocks",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "homepage": "",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/fireblocks/fireblocks-network-link"
   },
   "main": "dist",
   "engines": {
