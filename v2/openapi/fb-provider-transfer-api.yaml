@@ -506,6 +506,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array

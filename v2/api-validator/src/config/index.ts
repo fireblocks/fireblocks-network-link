@@ -96,6 +96,75 @@ const config = convict({
       },
     },
   },
+  withdrawal: {
+    peerAccount: {
+      env: 'WITHDRAWAL_PEER_ACCOUNT',
+    },
+    subAccount: {
+      env: 'WITHDRAWAL_SUB_ACCOUNT',
+    },
+    blockchain: {
+      address: {
+        env: 'WITHDRAWAL_BLOCKCHAIN_ADDRESS',
+      },
+      addressTag: {
+        env: 'WITHDRAWAL_BLOCKCHAIN_ADDRESS_TAG',
+      },
+    },
+    iban: {
+      accountHolder: {
+        name: {
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_NAME',
+        },
+        city: {
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_CITY',
+        },
+        country: {
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      iban: {
+        env: 'WITHDRAWAL_IBAN_IBAN',
+      },
+    },
+    swift: {
+      accountHolder: {
+        name: {
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_NAME',
+        },
+        city: {
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_CITY',
+        },
+        country: {
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      swiftCode: {
+        env: 'WITHDRAWAL_SWIFT_CODE',
+      },
+      routingNumber: {
+        env: 'WITHDRAWAL_SWIFT_ROUTING_NUMBER',
+      },
+    },
+  },
   authentication: {
     apiKey: {
       doc: 'API key used for identification',

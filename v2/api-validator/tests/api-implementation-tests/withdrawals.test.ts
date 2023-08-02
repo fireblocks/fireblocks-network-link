@@ -5,11 +5,21 @@ import { getCapableAccounts } from '../utils/capable-accounts';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 import {
   Account,
+  AssetBalance,
   AssetReference,
+  BlockchainWithdrawalRequest,
+  CrossAccountTransferCapability,
+  CrossAccountWithdrawalRequest,
+  FiatWithdrawalRequest,
+  IbanCapability,
+  PublicBlockchainCapability,
+  SwiftCapability,
   Withdrawal,
   WithdrawalCapability,
 } from '../../src/client/generated';
+import { Pageable, paginated } from '../utils/pagination';
 import _ from 'lodash';
+import { randomUUID } from 'crypto';
 
 const transfersCapability = config.get('capabilities.components.transfers');
 const transfersBlockchainCapability = config.get('capabilities.components.transfersBlockchain');
@@ -23,6 +33,17 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
   let blockchainTransfersCapableAccounts: Account[];
   let fiatTransfersCapableAccounts: Account[];
   let peerAccountTransfersCapableAccounts: Account[];
+  let accountCapabilitiesMap: Map<string, WithdrawalCapability[]>;
+
+  const getCapabilities = async (accountId: string, limit: number, startingAfter?) => {
+    const response = await client.capabilities.getWithdrawalMethods({
+      accountId,
+      limit,
+      startingAfter,
+    });
+    return response.capabilities;
+  };
+
   let isKnownAsset: (assetId: AssetReference) => boolean;
 
   beforeAll(async () => {
@@ -38,28 +59,14 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
     peerAccountTransfersCapableAccounts = transfersPeerAccountsCapability
       ? await getCapableAccounts(transfersPeerAccountsCapability)
       : [];
+    accountCapabilitiesMap = await getResponsePerIdMapping(
+      getCapabilities,
+      transfersCapableAccounts.map((account) => account.id)
+    );
     isKnownAsset = assets.isKnownAsset.bind(assets);
   });
 
   describe('Capabilities', () => {
-    let accountCapabilitiesMap: Map<string, WithdrawalCapability[]>;
-
-    const getCapabilities = async (accountId: string, limit: number, startingAfter?) => {
-      const response = await client.capabilities.getWithdrawalMethods({
-        accountId,
-        limit,
-        startingAfter,
-      });
-      return response.capabilities;
-    };
-
-    beforeAll(async () => {
-      accountCapabilitiesMap = await getResponsePerIdMapping(
-        getCapabilities,
-        transfersCapableAccounts.map((account) => account.id)
-      );
-    });
-
     it('should return only known assets in response', () => {
       for (const capabilities of accountCapabilitiesMap.values()) {
         for (const capability of capabilities) {
@@ -75,9 +82,23 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
     let accountFiatWithdrawalsMap: Map<string, Withdrawal[]>;
     let accountBlockchainWithdrawalsMap: Map<string, Withdrawal[]>;
     let accountPeerAccountWithdrawalsMap: Map<string, Withdrawal[]>;
+    let accountSubAccountWithdrawalsMap: Map<string, Withdrawal[]>;
 
     const getWithdrawals = async (accountId: string, limit: number, startingAfter?: string) => {
       const response = await client.transfers.getWithdrawals({ accountId, limit, startingAfter });
+      return response.withdrawals;
+    };
+
+    const getSubAccountWithdrawals = async (
+      accountId: string,
+      limit: number,
+      startingAfter?: string
+    ) => {
+      const response = await client.accounts.getSubAccountWithdrawals({
+        accountId,
+        limit,
+        startingAfter,
+      });
       return response.withdrawals;
     };
 
@@ -133,6 +154,10 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
         getPeerAccountWithdrawals,
         peerAccountTransfersCapableAccounts.map((account) => account.id)
       );
+      accountSubAccountWithdrawalsMap = await getResponsePerIdMapping(
+        getSubAccountWithdrawals,
+        transfersCapableAccounts.map((account) => account.id)
+      );
     });
 
     it('should be sorted by creation time', () => {
@@ -143,16 +168,16 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
         ...accountPeerAccountWithdrawalsMap.values(),
       ];
 
-      const isSortedByCreationDate = (withdrawals: Withdrawal[]) => {
-        const withdrawalsCreationDates = withdrawals.map((withdrawal) => withdrawal.createdAt);
+      const isSortedByCreationTime = (withdrawals: Withdrawal[]) => {
+        const withdrawalsCreationTimes = withdrawals.map((withdrawal) => withdrawal.createdAt);
         return (
-          JSON.stringify(withdrawalsCreationDates) ==
-          JSON.stringify(withdrawalsCreationDates.sort())
+          JSON.stringify(withdrawalsCreationTimes) ==
+          JSON.stringify(withdrawalsCreationTimes.sort())
         );
       };
 
       for (const withdrawals of allWithdrawalResponses) {
-        expect(withdrawals).toSatisfy(isSortedByCreationDate);
+        expect(withdrawals).toSatisfy(isSortedByCreationTime);
       }
     });
 
@@ -164,6 +189,19 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             id: withdrawal.id,
           });
           expect(withdrawalDetails.id).toBe(withdrawal.id);
+        }
+      }
+    });
+
+    it('should find every listed peer account withdrawal in list peer account withdrawals', () => {
+      for (const [accountId, withdrawals] of accountWithdrawalsMap.entries()) {
+        const existsInSubAccountWithdrawals = (withdrawal: Withdrawal): boolean =>
+          !!accountSubAccountWithdrawalsMap
+            .get(accountId)
+            ?.find((subAccountWithdrawal) => subAccountWithdrawal.id === withdrawal.id);
+
+        for (const withdrawal of withdrawals) {
+          expect(withdrawal).toSatisfy(existsInSubAccountWithdrawals);
         }
       }
     });
@@ -217,27 +255,193 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
     );
   });
 
-  describe('Subaccount withdrawals', () => {
-    it('should succeed making withdrawal for every capability that the account has sufficient balance for', () => {
-      expect({}).fail('TODO');
-    });
-  });
+  describe('Create withdrawal', () => {
+    let accountBalancesMap: Map<string, AssetBalance[]>;
 
-  describe.skipIf(!transfersBlockchainCapability)('Blockchain withdrawals', () => {
-    it('should succeed making withdrawal for every capability that the account has sufficient balance for', () => {
-      expect({}).fail('TODO');
-    });
-  });
+    const getAccounts: Pageable<Account> = async (limit, startingAfter?) => {
+      const response = await client.accounts.getAccounts({ limit, startingAfter });
+      return response.accounts;
+    };
 
-  describe.skipIf(!transfersFiatCapability)('Fiat withdrawals', () => {
-    it('should succeed making withdrawal for every capability that the account has sufficient balance for', () => {
-      expect({}).fail('TODO');
-    });
-  });
+    const getBalances = async (accountId, limit, startingAfter?) => {
+      const response = await client.balances.getBalances({
+        accountId,
+        limit,
+        startingAfter,
+      });
+      return response.balances;
+    };
 
-  describe.skipIf(!transfersPeerAccountsCapability)('Peer account withdrawals', () => {
-    it('should succeed making withdrawal for every capability that the account has sufficient balance for', () => {
-      expect({}).fail('TODO');
+    beforeAll(async () => {
+      const allAccounts: string[] = [];
+      for await (const { id } of paginated(getAccounts)) {
+        allAccounts.push(id);
+      }
+      accountBalancesMap = await getResponsePerIdMapping(getBalances, allAccounts);
+    });
+
+    describe('Subaccount withdrawal', () => {
+      it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
+        const subAccountDestinationConfig = config.get('withdrawal.subAccount');
+
+        for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+          const subAccountCapabilities = capabilities.filter(
+            (capability) =>
+              capability.withdrawal.transferMethod ===
+              CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER
+          );
+
+          for (const capability of subAccountCapabilities) {
+            const assetBalance = accountBalancesMap
+              .get(accountId)
+              ?.find((balance) => _.isEqual(balance.asset, capability.balanceAsset));
+
+            if (assetBalance && Number(assetBalance.availableAmount) > 0) {
+              const requestBody: CrossAccountWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: assetBalance.availableAmount,
+                balanceId: assetBalance.id,
+                destination: {
+                  accountId: subAccountDestinationConfig,
+                  amount: assetBalance.availableAmount,
+                  asset: assetBalance.asset,
+                  transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,
+                },
+              };
+              const withdrawal = await client.accounts.createSubAccountWithdrawal({
+                accountId,
+                requestBody,
+              });
+              expect(withdrawal).toBeDefined();
+            }
+          }
+        }
+      });
+    });
+
+    describe.skipIf(!transfersBlockchainCapability)('Blockchain withdrawal', () => {
+      it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
+        const blockchainDestinationConfig = config.get('withdrawal.blockchain');
+
+        for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+          const subAccountCapabilities = capabilities.filter(
+            (capability) =>
+              capability.withdrawal.transferMethod ===
+              PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+          );
+
+          for (const capability of subAccountCapabilities) {
+            const assetBalance = accountBalancesMap
+              .get(accountId)
+              ?.find((balance) => _.isEqual(balance.asset, capability.balanceAsset));
+
+            if (assetBalance && Number(assetBalance.availableAmount) > 0) {
+              const requestBody: BlockchainWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: assetBalance.availableAmount,
+                balanceId: assetBalance.id,
+                destination: {
+                  ...blockchainDestinationConfig,
+                  amount: assetBalance.availableAmount,
+                  asset: assetBalance.asset,
+                  transferMethod: capability.withdrawal.transferMethod,
+                },
+              };
+              const withdrawal = await client.transfersBlockchain.createBlockchainWithdrawal({
+                accountId,
+                requestBody,
+              });
+              expect(withdrawal).toBeDefined();
+            }
+          }
+        }
+      });
+    });
+
+    describe.skipIf(!transfersFiatCapability)('Fiat withdrawal', () => {
+      it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
+        const swiftDestinationConfig = config.get('withdrawal.swift');
+        const ibanDestinationConfig = config.get('withdrawal.iban');
+        const fiatTransferMethods: string[] = [
+          IbanCapability.transferMethod.IBAN,
+          SwiftCapability.transferMethod.SWIFT,
+        ];
+
+        for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+          const subAccountCapabilities = capabilities.filter((capability) =>
+            fiatTransferMethods.includes(capability.withdrawal.transferMethod)
+          );
+
+          for (const capability of subAccountCapabilities) {
+            const assetBalance = accountBalancesMap
+              .get(accountId)
+              ?.find((balance) => _.isEqual(balance.asset, capability.balanceAsset));
+
+            if (assetBalance && Number(assetBalance.availableAmount) > 0) {
+              const destinationAddress =
+                capability.withdrawal.transferMethod === IbanCapability.transferMethod.IBAN
+                  ? ibanDestinationConfig
+                  : swiftDestinationConfig;
+              const requestBody: FiatWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: assetBalance.availableAmount,
+                balanceId: assetBalance.id,
+                destination: {
+                  ...destinationAddress,
+                  amount: assetBalance.availableAmount,
+                  asset: assetBalance.asset,
+                  transferMethod: capability.withdrawal.transferMethod,
+                },
+              };
+              const withdrawal = await client.transfersFiat.createFiatWithdrawal({
+                accountId,
+                requestBody,
+              });
+              expect(withdrawal).toBeDefined();
+            }
+          }
+        }
+      });
+    });
+
+    describe.skipIf(!transfersPeerAccountsCapability)('Peer account withdrawal', () => {
+      it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
+        const peerAccountDestinationConfig = config.get('withdrawal.subAccount');
+
+        for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+          const subAccountCapabilities = capabilities.filter(
+            (capability) =>
+              capability.withdrawal.transferMethod ===
+              CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
+          );
+
+          for (const capability of subAccountCapabilities) {
+            const assetBalance = accountBalancesMap
+              .get(accountId)
+              ?.find((balance) => _.isEqual(balance.asset, capability.balanceAsset));
+
+            if (assetBalance && Number(assetBalance.availableAmount) > 0) {
+              const requestBody: CrossAccountWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: assetBalance.availableAmount,
+                balanceId: assetBalance.id,
+                destination: {
+                  accountId: peerAccountDestinationConfig,
+                  amount: assetBalance.availableAmount,
+                  asset: assetBalance.asset,
+                  transferMethod:
+                    CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER,
+                },
+              };
+              const withdrawal = await client.transfersPeerAccounts.createPeerAccountWithdrawal({
+                accountId,
+                requestBody,
+              });
+              expect(withdrawal).toBeDefined();
+            }
+          }
+        }
+      });
     });
   });
 });

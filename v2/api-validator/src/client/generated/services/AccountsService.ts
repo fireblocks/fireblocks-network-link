@@ -201,7 +201,7 @@ export class AccountsService {
          */
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
-        withdrawals?: Array<CrossAccountWithdrawal>;
+        withdrawals: Array<CrossAccountWithdrawal>;
     }> {
         return this.httpRequest.request({
             method: 'GET',
