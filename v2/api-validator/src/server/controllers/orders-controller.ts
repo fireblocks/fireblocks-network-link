@@ -48,7 +48,6 @@ export class OrdersController {
   }
 
   public findOrder(orderId: string): Order | undefined {
-    log.warn('All orders', { orders: this.orders });
     const stored = this.orders.find((o) => o.order.id === orderId);
     return stored?.order;
   }

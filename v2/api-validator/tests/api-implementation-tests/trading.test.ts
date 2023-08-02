@@ -183,6 +183,35 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
         expect(order1.id).toEqual(order2.id);
       });
 
+      it('should fail then reusing idempotency key for different request', async () => {
+        const requestBody1: OrderRequest = { ...orderData, idempotencyKey: randomUUID() };
+        const order1 = await client.trading.createOrder({ accountId, requestBody: requestBody1 });
+        expect(order1).toMatchObject(orderData);
+
+        const findOtherTimeInForce = (timeInForce: OrderTimeInForce): OrderTimeInForce => {
+          for (const x of Object.keys(OrderTimeInForce)) {
+            if (timeInForce !== OrderTimeInForce[x]) return OrderTimeInForce[x];
+          }
+          throw new Error('Inconceivable!');
+        };
+
+        const requestBody2 = {
+          ...requestBody1,
+          timeInForce: findOtherTimeInForce(requestBody1.timeInForce),
+        };
+
+        let error: ApiError | undefined;
+        try {
+          await client.trading.createOrder({ accountId, requestBody: requestBody2 });
+        } catch (e) {
+          if (e instanceof ApiError) {
+            error = e;
+          }
+        }
+        expect(error?.status).toEqual(400);
+        expect(error?.body?.errorType).toEqual(BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE);
+      });
+
       it('should be able to cancel a trading order only once', async () => {
         const requestBody: OrderRequest = { ...orderData, idempotencyKey: randomUUID() };
         const order1 = await client.trading.createOrder({ accountId, requestBody });

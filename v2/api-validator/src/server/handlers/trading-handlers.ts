@@ -1,6 +1,6 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { OrdersController } from '../controllers/orders-controller';
+import { IdempotencyKeyReuseError, OrdersController } from '../controllers/orders-controller';
 import { asks, bids, books } from '../controllers/books-controller';
 import { isKnownSubAccount } from '../controllers/accounts-controller';
 import { getPaginationResult } from '../controllers/pagination-controller';
@@ -107,7 +107,14 @@ export async function createOrder(
     return ErrorFactory.notFound(reply);
   }
 
-  return ordersController.createOrder(body);
+  try {
+    return ordersController.createOrder(body);
+  } catch (err) {
+    if (err instanceof IdempotencyKeyReuseError) {
+      return ErrorFactory.idempotencyKeyReuse(reply);
+    }
+    throw err;
+  }
 }
 
 export async function getOrderDetails(

@@ -20,3 +20,11 @@ export function orderNotTrading(reply: FastifyReply): FastifyReply {
   };
   return reply.code(400).send(errorData);
 }
+
+export function idempotencyKeyReuse(reply: FastifyReply): FastifyReply {
+  const errorData: BadRequestError = {
+    message: 'Idempotency key has already been used for a different request',
+    errorType: BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE,
+  };
+  return reply.code(400).send(errorData);
+}
