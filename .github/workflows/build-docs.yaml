@@ -13,10 +13,10 @@ jobs:
     - name: Build redoc
       run: npx @redocly/cli build-docs openapi.yaml --output index.html
     - name: Build redoc for v2
-      run:  npx @redocly/cli build-docs v2/fb-xcom-unified-openapi.yaml --output v2/docs.html
+      run:  npx @redocly/cli build-docs v2/openapi/fb-unified-openapi.yaml --output v2/docs.html
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: .
-        exclude_assets: '.github,openapi.yaml,v2/fb-xcom-unified-openapi.yaml,assets,README.md'
+        exclude_assets: '.github,openapi.yaml,v2/openapi,v2/api-validator,assets,README.md'
