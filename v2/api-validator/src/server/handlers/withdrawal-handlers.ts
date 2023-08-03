@@ -15,7 +15,6 @@ import {
 } from '../../client/generated';
 import {
   WITHDRAWAL_METHODS,
-  WithdrawalRequest,
   createAccountBlockchainWithdrawal,
   createAccountFiatWithdrawal,
   createAccountPeerAccountWithdrawal,

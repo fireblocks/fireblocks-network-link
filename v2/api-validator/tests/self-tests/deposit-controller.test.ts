@@ -12,7 +12,7 @@ import {
   DepositAddressDisabledError,
   disableAccountDepositAddress,
   getAccountDepositAddresses,
-  IdempotencyRequestError,
+  IdempotencyRequest,
   registerIdempotencyResponse,
   validateDepositAddressCreationRequest,
 } from '../../src/server/controllers/deposit-controller';
@@ -125,7 +125,7 @@ describe('Deposit controller', () => {
             idempotencyKey,
             transferMethod: validTransferCapability,
           });
-        }).toThrow(IdempotencyRequestError);
+        }).toThrow(IdempotencyRequest);
       });
 
       it('should throw idempotency key used error when the same key is sent with a different request body', () => {

@@ -39,7 +39,7 @@ export const WITHDRAWAL_METHODS: WithdrawalCapability[] = [
   },
   {
     id: 'fdd88a6d-e9d7-4e30-a495-a8867839f83b',
-    balanceAsset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
+    balanceAsset: { nationalCurrencyCode: NationalCurrencyCode.MXN },
     withdrawal: {
       asset: { nationalCurrencyCode: NationalCurrencyCode.MXN },
       transferMethod: SwiftCapability.transferMethod.SWIFT,
@@ -47,7 +47,7 @@ export const WITHDRAWAL_METHODS: WithdrawalCapability[] = [
   },
   {
     id: '4ae61af1-1c23-43ec-8ff6-8892789a266c',
-    balanceAsset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
+    balanceAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
     withdrawal: {
       asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
       transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,

@@ -323,7 +323,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           for (const capability of subAccountCapabilities) {
             const assetBalance = accountBalancesMap
               .get(accountId)
-              ?.find((balance) => _.isEqual(balance.asset, capability.balanceAsset));
+              ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
 
             if (assetBalance && Number(assetBalance.availableAmount) > 0) {
               const requestBody: CrossAccountWithdrawalRequest = {
@@ -362,7 +362,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           for (const capability of subAccountCapabilities) {
             const assetBalance = accountBalancesMap
               .get(accountId)
-              ?.find((balance) => _.isEqual(balance.asset, capability.balanceAsset));
+              ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
 
             if (assetBalance && Number(assetBalance.availableAmount) > 0) {
               const requestBody: BlockchainWithdrawalRequest = {
@@ -400,7 +400,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           for (const capability of fiatCapabilities) {
             const assetBalance = accountBalancesMap
               .get(accountId)
-              ?.find((balance) => _.isEqual(balance.asset, capability.balanceAsset));
+              ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
 
             if (assetBalance && Number(assetBalance.availableAmount) > 0) {
               const destinationAddress =
@@ -443,7 +443,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           for (const capability of subAccountCapabilities) {
             const assetBalance = accountBalancesMap
               .get(accountId)
-              ?.find((balance) => _.isEqual(balance.asset, capability.balanceAsset));
+              ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
 
             if (assetBalance && Number(assetBalance.availableAmount) > 0) {
               const requestBody: CrossAccountWithdrawalRequest = {
