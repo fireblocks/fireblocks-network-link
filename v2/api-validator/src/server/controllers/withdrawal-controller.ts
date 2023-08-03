@@ -36,6 +36,7 @@ export const WITHDRAWAL_METHODS: WithdrawalCapability[] = [
       asset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
       transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
     },
+    minWithdrawalAmount: '1',
   },
   {
     id: 'fdd88a6d-e9d7-4e30-a495-a8867839f83b',

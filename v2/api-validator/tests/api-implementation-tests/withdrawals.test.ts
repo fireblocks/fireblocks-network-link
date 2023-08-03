@@ -20,7 +20,6 @@ import {
 import { Pageable, paginated } from '../utils/pagination';
 import _ from 'lodash';
 import { randomUUID } from 'crypto';
-import { inspect } from 'util';
 
 const transfersCapability = config.get('capabilities.components.transfers');
 const transfersBlockchainCapability = config.get('capabilities.components.transfersBlockchain');
@@ -321,11 +320,15 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           );
 
           for (const capability of subAccountCapabilities) {
+            const minWithdrawalAmount = capability.minWithdrawalAmount ?? 0;
             const assetBalance = accountBalancesMap
               .get(accountId)
               ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
 
-            if (assetBalance && Number(assetBalance.availableAmount) > 0) {
+            if (
+              assetBalance &&
+              Number(assetBalance.availableAmount) > Number(minWithdrawalAmount)
+            ) {
               const requestBody: CrossAccountWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
                 balanceAmount: assetBalance.availableAmount,
@@ -360,11 +363,15 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           );
 
           for (const capability of subAccountCapabilities) {
+            const minWithdrawalAmount = capability.minWithdrawalAmount ?? 0;
             const assetBalance = accountBalancesMap
               .get(accountId)
               ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
 
-            if (assetBalance && Number(assetBalance.availableAmount) > 0) {
+            if (
+              assetBalance &&
+              Number(assetBalance.availableAmount) > Number(minWithdrawalAmount)
+            ) {
               const requestBody: BlockchainWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
                 balanceAmount: assetBalance.availableAmount,
@@ -398,11 +405,15 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           );
 
           for (const capability of fiatCapabilities) {
+            const minWithdrawalAmount = capability.minWithdrawalAmount ?? 0;
             const assetBalance = accountBalancesMap
               .get(accountId)
               ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
 
-            if (assetBalance && Number(assetBalance.availableAmount) > 0) {
+            if (
+              assetBalance &&
+              Number(assetBalance.availableAmount) > Number(minWithdrawalAmount)
+            ) {
               const destinationAddress =
                 capability.withdrawal.transferMethod === IbanCapability.transferMethod.IBAN
                   ? ibanDestinationConfig
@@ -441,11 +452,15 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           );
 
           for (const capability of subAccountCapabilities) {
+            const minWithdrawalAmount = capability.minWithdrawalAmount ?? 0;
             const assetBalance = accountBalancesMap
               .get(accountId)
               ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
 
-            if (assetBalance && Number(assetBalance.availableAmount) > 0) {
+            if (
+              assetBalance &&
+              Number(assetBalance.availableAmount) > Number(minWithdrawalAmount)
+            ) {
               const requestBody: CrossAccountWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
                 balanceAmount: assetBalance.availableAmount,
