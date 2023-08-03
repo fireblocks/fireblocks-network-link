@@ -3,7 +3,7 @@ servers:
   - description: Local server
     url: http://0.0.0.0:8000
 info:
-  title: '[Draft] Fireblocks Provider Connectivity API'
+  title: Fireblocks Provider Connectivity API v2
   version: 0.1.0
   x-logo:
     url: https://drive.google.com/uc?id=1sseKokeIoh7hnUpV8skWYF_VzncF3slT
@@ -3268,7 +3268,7 @@ components:
           format: date-time
     WithdrawalCapability:
       type: object
-      description: Capability to withdraw a balance asset using a specific transfer capability.
+      description: Capability to withdraw a balance asset using a specific transfer capability. `minWithdrawalAmount` is the minimum amount of the balance currency that can be withdrawn using this capability. If `minWithdrawalAmount` is not specified, it will be assumed that the minimum withdrawal amount is zero.
       required:
         - id
         - withdrawal
@@ -3280,6 +3280,8 @@ components:
           $ref: '#/components/schemas/TransferCapability'
         balanceAsset:
           $ref: '#/components/schemas/AssetReference'
+        minWithdrawalAmount:
+          $ref: '#/components/schemas/PositiveAmount'
     WithdrawalRequestCommonProperties:
       type: object
       required:
