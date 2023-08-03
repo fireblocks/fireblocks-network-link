@@ -133,13 +133,13 @@ export class DepositAddressDisabledError extends XComError {
   }
 }
 
-export class IdempotencyRequestError extends XComError {
+export class IdempotencyRequest extends XComError {
   constructor(public metadata: IdempotencyMetadata) {
     super("Idempotent request, will return original request's response");
   }
 }
 
-type IdempotencyMetadata = {
+export type IdempotencyMetadata = {
   requestBody: JsonValue;
   responseBody: JsonValue;
   responseStatus: number;
@@ -170,7 +170,7 @@ export function validateDepositAddressCreationRequest(
     if (!_.isEqual(depositAddressRequest, metadata.requestBody)) {
       throw new IdempotencyKeyReuseError(depositAddressRequest.idempotencyKey);
     }
-    throw new IdempotencyRequestError(metadata);
+    throw new IdempotencyRequest(metadata);
   }
   if (!isKnownAsset(depositAddressRequest.transferMethod.asset)) {
     throw new UnknownAdditionalAssetError();

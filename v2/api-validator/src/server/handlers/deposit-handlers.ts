@@ -25,7 +25,7 @@ import {
   DEPOSITS,
   disableAccountDepositAddress,
   getAccountDepositAddresses,
-  IdempotencyRequestError,
+  IdempotencyRequest,
   registerIdempotencyResponse,
   validateDepositAddressCreationRequest,
 } from '../controllers/deposit-controller';
@@ -84,7 +84,7 @@ export async function createDepositAddress(
         errorType: BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE,
       });
     }
-    if (err instanceof IdempotencyRequestError) {
+    if (err instanceof IdempotencyRequest) {
       return reply.code(err.metadata.responseStatus).send(err.metadata.responseBody);
     }
     return saveAndSendIdempotentResponse(500, {

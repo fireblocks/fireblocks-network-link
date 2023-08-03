@@ -4,5 +4,25 @@
   },
   "authentication": {
     "apiKey": "d6a4ca60-471f-4280-bd20-e71934efc423"
+  },
+  "withdrawal": {
+    "swift": {
+      "accountHolder": {
+        "name": "John Doe"
+      },
+      "swiftCode": "KPKUJWXMLDB",
+      "routingNumber": "8d73hc7sj8"
+    },
+    "iban": {
+      "accountHolder": {
+        "name": "John Doe"
+      },
+      "iban": "LO16MVPcSq8"
+    },
+    "blockchain": {
+      "address": "0x91b9e7bc95f8ef6f4e08ea10aaaac84b6c54203b"
+    },
+    "subAccount": "c5bb0880-523c-4c1c-bfe7-bcf2941517a0",
+    "peerAccount": "be5ff76b-6cc8-4a39-af40-fc71aea1865c"
   }
 }

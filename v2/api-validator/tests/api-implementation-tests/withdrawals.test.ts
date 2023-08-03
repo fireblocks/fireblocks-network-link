@@ -20,6 +20,7 @@ import {
 import { Pageable, paginated } from '../utils/pagination';
 import _ from 'lodash';
 import { randomUUID } from 'crypto';
+import { inspect } from 'util';
 
 const transfersCapability = config.get('capabilities.components.transfers');
 const transfersBlockchainCapability = config.get('capabilities.components.transfersBlockchain');
@@ -138,7 +139,6 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
         limit,
         startingAfter,
       });
-      console.log(response);
       return response.withdrawals;
     };
 
@@ -393,11 +393,11 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
         const ibanDestinationConfig = config.get('withdrawal.iban');
 
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
-          const subAccountCapabilities = capabilities.filter((capability) =>
+          const fiatCapabilities = capabilities.filter((capability) =>
             fiatTransferMethods.includes(capability.withdrawal.transferMethod)
           );
 
-          for (const capability of subAccountCapabilities) {
+          for (const capability of fiatCapabilities) {
             const assetBalance = accountBalancesMap
               .get(accountId)
               ?.find((balance) => _.isEqual(balance.asset, capability.balanceAsset));
