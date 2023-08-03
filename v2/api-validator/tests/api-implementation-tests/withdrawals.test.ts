@@ -34,6 +34,10 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
   let fiatTransfersCapableAccounts: Account[];
   let peerAccountTransfersCapableAccounts: Account[];
   let accountCapabilitiesMap: Map<string, WithdrawalCapability[]>;
+  const fiatTransferMethods: string[] = [
+    IbanCapability.transferMethod.IBAN,
+    SwiftCapability.transferMethod.SWIFT,
+  ];
 
   const getCapabilities = async (accountId: string, limit: number, startingAfter?) => {
     const response = await client.capabilities.getWithdrawalMethods({
@@ -134,6 +138,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
         limit,
         startingAfter,
       });
+      console.log(response);
       return response.withdrawals;
     };
 
@@ -160,7 +165,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
       );
     });
 
-    it('should be sorted by creation time', () => {
+    it('should be sorted by creation time in a decending order', () => {
       const allWithdrawalResponses = [
         ...accountWithdrawalsMap.values(),
         ...accountFiatWithdrawalsMap.values(),
@@ -168,16 +173,16 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
         ...accountPeerAccountWithdrawalsMap.values(),
       ];
 
-      const isSortedByCreationTime = (withdrawals: Withdrawal[]) => {
+      const isSortedByDecendingCreationTime = (withdrawals: Withdrawal[]) => {
         const withdrawalsCreationTimes = withdrawals.map((withdrawal) => withdrawal.createdAt);
         return (
           JSON.stringify(withdrawalsCreationTimes) ==
-          JSON.stringify(withdrawalsCreationTimes.sort())
+          JSON.stringify(withdrawalsCreationTimes.sort((a, b) => (a <= b ? 1 : -1)))
         );
       };
 
       for (const withdrawals of allWithdrawalResponses) {
-        expect(withdrawals).toSatisfy(isSortedByCreationTime);
+        expect(withdrawals).toSatisfy(isSortedByDecendingCreationTime);
       }
     });
 
@@ -193,7 +198,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
       }
     });
 
-    it('should find every listed peer account withdrawal in list peer account withdrawals', () => {
+    it('should find every listed sub account withdrawal in list sub account withdrawals', () => {
       for (const [accountId, withdrawals] of accountWithdrawalsMap.entries()) {
         const existsInSubAccountWithdrawals = (withdrawal: Withdrawal): boolean =>
           !!accountSubAccountWithdrawalsMap
@@ -201,7 +206,14 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             ?.find((subAccountWithdrawal) => subAccountWithdrawal.id === withdrawal.id);
 
         for (const withdrawal of withdrawals) {
-          expect(withdrawal).toSatisfy(existsInSubAccountWithdrawals);
+          if (
+            withdrawal.destination.transferMethod ===
+            CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER
+          ) {
+            expect(withdrawal).toSatisfy(existsInSubAccountWithdrawals);
+          } else {
+            expect(withdrawal).not.toSatisfy(existsInSubAccountWithdrawals);
+          }
         }
       }
     });
@@ -216,7 +228,14 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
               ?.find((blockchainWithdrawal) => blockchainWithdrawal.id === withdrawal.id);
 
           for (const withdrawal of withdrawals) {
-            expect(withdrawal).toSatisfy(existsInBlockchainWithdrawals);
+            if (
+              withdrawal.destination.transferMethod ===
+              PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            ) {
+              expect(withdrawal).toSatisfy(existsInBlockchainWithdrawals);
+            } else {
+              expect(withdrawal).not.toSatisfy(existsInBlockchainWithdrawals);
+            }
           }
         }
       }
@@ -230,9 +249,12 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             !!accountFiatWithdrawalsMap
               .get(accountId)
               ?.find((fiatWithdrawal) => fiatWithdrawal.id === withdrawal.id);
-
           for (const withdrawal of withdrawals) {
-            expect(withdrawal).toSatisfy(existsInFiatWithdrawals);
+            if (fiatTransferMethods.includes(withdrawal.destination.transferMethod)) {
+              expect(withdrawal).toSatisfy(existsInFiatWithdrawals);
+            } else {
+              expect(withdrawal).not.toSatisfy(existsInFiatWithdrawals);
+            }
           }
         }
       }
@@ -248,7 +270,14 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
               ?.find((peerAccountWithdrawal) => peerAccountWithdrawal.id === withdrawal.id);
 
           for (const withdrawal of withdrawals) {
-            expect(withdrawal).toSatisfy(existsInPeerAccountWithdrawals);
+            if (
+              withdrawal.destination.transferMethod ===
+              CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
+            ) {
+              expect(withdrawal).toSatisfy(existsInPeerAccountWithdrawals);
+            } else {
+              expect(withdrawal).not.toSatisfy(existsInPeerAccountWithdrawals);
+            }
           }
         }
       }
@@ -362,10 +391,6 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
       it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
         const swiftDestinationConfig = config.get('withdrawal.swift');
         const ibanDestinationConfig = config.get('withdrawal.iban');
-        const fiatTransferMethods: string[] = [
-          IbanCapability.transferMethod.IBAN,
-          SwiftCapability.transferMethod.SWIFT,
-        ];
 
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
           const subAccountCapabilities = capabilities.filter((capability) =>

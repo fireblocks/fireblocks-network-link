@@ -79,7 +79,7 @@ const WITHDRAWALS: Withdrawal[] = [
     finalizedAt: '2020-03-09T09:12:45.463Z',
   },
   {
-    id: '0f824bd8-d8ff-4f90-85df-d27089e0e3c0',
+    id: 'f54a2975-36dc-4013-a96d-be2ee5caf882',
     balanceAmount: '0.1',
     balanceAsset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
     createdAt: '2022-03-09T12:36:38.357Z',
