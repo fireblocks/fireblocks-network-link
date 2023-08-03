@@ -300,7 +300,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
               const requestBody: CrossAccountWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
                 balanceAmount: assetBalance.availableAmount,
-                balanceId: assetBalance.id,
+                balanceAsset: assetBalance.asset,
                 destination: {
                   accountId: subAccountDestinationConfig,
                   amount: assetBalance.availableAmount,
@@ -339,7 +339,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
               const requestBody: BlockchainWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
                 balanceAmount: assetBalance.availableAmount,
-                balanceId: assetBalance.id,
+                balanceAsset: assetBalance.asset,
                 destination: {
                   ...blockchainDestinationConfig,
                   amount: assetBalance.availableAmount,
@@ -385,7 +385,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
               const requestBody: FiatWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
                 balanceAmount: assetBalance.availableAmount,
-                balanceId: assetBalance.id,
+                balanceAsset: assetBalance.asset,
                 destination: {
                   ...destinationAddress,
                   amount: assetBalance.availableAmount,
@@ -424,7 +424,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
               const requestBody: CrossAccountWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
                 balanceAmount: assetBalance.availableAmount,
-                balanceId: assetBalance.id,
+                balanceAsset: assetBalance.asset,
                 destination: {
                   accountId: peerAccountDestinationConfig,
                   amount: assetBalance.availableAmount,

@@ -3125,14 +3125,13 @@ components:
       type: object
       required:
         - idempotencyKey
-        - balanceId
+        - balanceAsset
         - balanceAmount
       properties:
         idempotencyKey:
           type: string
-        balanceId:
-          type: string
-          description: AssetBalance identifier returned from /accounts/{accountId}/balances
+        balanceAsset:
+          $ref: '#/components/schemas/AssetReference'
         balanceAmount:
           $ref: '#/components/schemas/PositiveAmount'
     FiatWithdrawalRequest:
