@@ -128,6 +128,9 @@ export class TransfersPeerAccountsService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Withdrawal details
+         */
         requestBody: CrossAccountWithdrawalRequest,
     }): CancelablePromise<CrossAccountWithdrawal> {
         return this.httpRequest.request({

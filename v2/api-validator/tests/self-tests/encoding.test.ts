@@ -12,7 +12,7 @@ describe('Encoding methods', () => {
 
   describe('Encoding payload', () => {
     it('should match encoding examples', () => {
-      expect(encoderFactory('url-encoding').encode(data)).toBe(urlEncoded);
+      expect(encoderFactory('url-encoded').encode(data)).toBe(urlEncoded);
       expect(encoderFactory('base32').encode(data)).toBe(base32Encoded);
       expect(encoderFactory('base58').encode(data)).toBe(base58Encoded);
       expect(encoderFactory('base64').encode(data)).toBe(base64Encoded);
@@ -22,7 +22,7 @@ describe('Encoding methods', () => {
 
   describe('Decoding encoded examples', () => {
     it('should match payload', () => {
-      expect(encoderFactory('url-encoding').decode(urlEncoded)).toBe(data);
+      expect(encoderFactory('url-encoded').decode(urlEncoded)).toBe(data);
       expect(encoderFactory('base32').decode(base32Encoded)).toBe(data);
       expect(encoderFactory('base58').decode(base58Encoded)).toBe(data);
       expect(encoderFactory('base64').decode(base64Encoded)).toBe(data);

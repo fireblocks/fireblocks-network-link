@@ -1,7 +1,6 @@
 import config from '../config';
 import { randomUUID } from 'crypto';
-import { XComError } from '../error';
-import { ErrorObject } from 'ajv/lib/types';
+import { ResponseSchemaValidationFailed } from '../error';
 import { buildRequestSignature } from '../security';
 import { ResponseSchemaValidator } from './response-schema-validator';
 import { request as requestInternal } from './generated/core/request';
@@ -170,12 +169,6 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
 
   public override request<T>(options: ApiRequestOptions): CancelablePromise<T> {
     return this.requestWithValidation<T>(options) as CancelablePromise<T>;
-  }
-}
-
-class ResponseSchemaValidationFailed extends XComError {
-  constructor(method: Method, url: string, response: any, error?: ErrorObject) {
-    super('Schema validation failed', { method, url, response, error });
   }
 }
 

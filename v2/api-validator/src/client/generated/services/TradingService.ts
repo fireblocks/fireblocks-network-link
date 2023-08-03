@@ -374,6 +374,7 @@ export class TradingService {
 
     /**
      * Create a new trading order
+     * Either `baseAssetQuantity` or `quoteAssetQuantity` must always be specified. `quoteAssetPrice` must be specified for limit orders, but cannot be used in market orders.
      * @returns Order Newly created book order details
      * @throws ApiError
      */
@@ -406,6 +407,9 @@ export class TradingService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Order details
+         */
         requestBody?: OrderRequest,
     }): CancelablePromise<Order> {
         return this.httpRequest.request({

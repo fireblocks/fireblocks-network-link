@@ -17,3 +17,11 @@ export async function* paginated<T>(f: Pageable<T>, idPropName = 'id'): AsyncGen
     page = await f(LIMIT, startingAfter);
   }
 }
+
+export async function arrayFromAsyncGenerator<T>(generator: AsyncGenerator<T>): Promise<Array<T>> {
+  const array: Array<T> = [];
+  for await (const x of generator) {
+    array.push(x);
+  }
+  return array;
+}

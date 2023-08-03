@@ -3,7 +3,7 @@ import * as base32 from 'hi-base32';
 
 export class UnsupportedEncodingFormatError extends Error {}
 
-export type Encoding = 'url-encoding' | 'base64' | 'hexstr' | 'base32' | 'base58';
+export type Encoding = 'url-encoded' | 'base64' | 'hexstr' | 'base32' | 'base58';
 
 export interface Encoder {
   encode(payload: string): string;
@@ -57,7 +57,7 @@ export class Base58 implements Encoder {
 
 export function encoderFactory(encoding: Encoding): Encoder {
   switch (encoding) {
-    case 'url-encoding':
+    case 'url-encoded':
       return new URL();
     case 'base32':
       return new Base32();
