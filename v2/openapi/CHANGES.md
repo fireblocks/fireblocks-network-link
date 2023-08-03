@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1 - 2023-08-03
+
+### Minor improvements
+
+- Optional property `minWithdrawalAmount` was added to the withdrawal
+  capabilities object.
+
+-----
 ## 0.1.0 - 2023-08-02
 
 ### Semantically equivalent changes
@@ -39,5 +47,3 @@ introduce non backward compatible changes.
 1. `GET /capabilities/balances`  
    Clients should rely on `GET /accounts/{accountId}/balances` for the same
    functionality.
-
------
