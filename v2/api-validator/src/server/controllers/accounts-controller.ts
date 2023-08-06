@@ -97,8 +97,8 @@ export const ACCOUNTS: Account[] = [
 export class AccountsController {
   private readonly repository = new Repository<Account>();
 
-  constructor() {
-    for (const account of ACCOUNTS) {
+  constructor(accounts: Account[]) {
+    for (const account of accounts) {
       this.repository.create(account);
     }
   }
@@ -126,4 +126,4 @@ export class AccountsController {
   }
 }
 
-export const accountsController = new AccountsController();
+export const accountsController = new AccountsController(ACCOUNTS);

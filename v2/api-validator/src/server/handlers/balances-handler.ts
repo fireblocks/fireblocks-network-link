@@ -1,6 +1,6 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { isKnownSubAccount } from '../controllers/accounts-controller';
+import { accountsController } from '../controllers/accounts-controller';
 import {
   AssetIdQueryParam,
   BadRequestError,
@@ -37,7 +37,7 @@ export async function getBalances(
     cryptocurrencySymbol?: CryptocurrencySymbolQueryParam;
   };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
