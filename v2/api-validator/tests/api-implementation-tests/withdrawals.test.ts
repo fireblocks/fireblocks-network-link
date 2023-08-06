@@ -1,5 +1,7 @@
-import Client from '../../src/client';
+import { randomUUID } from 'crypto';
 import config from '../../src/config';
+import Client from '../../src/client';
+import { Pageable, paginated } from '../utils/pagination';
 import { AssetsDirectory } from '../utils/assets-directory';
 import { getCapableAccounts } from '../utils/capable-accounts';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
@@ -17,9 +19,6 @@ import {
   Withdrawal,
   WithdrawalCapability,
 } from '../../src/client/generated';
-import { Pageable, paginated } from '../utils/pagination';
-import _ from 'lodash';
-import { randomUUID } from 'crypto';
 
 const transfersCapability = config.get('capabilities.components.transfers');
 const transfersBlockchainCapability = config.get('capabilities.components.transfersBlockchain');
@@ -284,20 +283,25 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
   });
 
   describe('Create withdrawal', () => {
-    let accountBalancesMap: Map<string, AssetBalance[]>;
-
     const getAccounts: Pageable<Account> = async (limit, startingAfter?) => {
       const response = await client.accounts.getAccounts({ limit, startingAfter });
       return response.accounts;
     };
 
-    const getBalances = async (accountId, limit, startingAfter?) => {
-      const response = await client.balances.getBalances({
+    const getCapabilityAssetBalance = async (
+      accountId: string,
+      capability: WithdrawalCapability
+    ): Promise<AssetBalance | undefined> => {
+      const { balances } = await client.balances.getBalances({
         accountId,
-        limit,
-        startingAfter,
+        ...capability.balanceAsset,
       });
-      return response.balances;
+
+      if (balances.length !== 1) {
+        return;
+      }
+
+      return balances[0];
     };
 
     beforeAll(async () => {
@@ -305,7 +309,6 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
       for await (const { id } of paginated(getAccounts)) {
         allAccounts.push(id);
       }
-      accountBalancesMap = await getResponsePerIdMapping(getBalances, allAccounts);
     });
 
     describe('Subaccount withdrawal', () => {
@@ -321,9 +324,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
 
           for (const capability of subAccountCapabilities) {
             const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
-            const assetBalance = accountBalancesMap
-              .get(accountId)
-              ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
+            const assetBalance = await getCapabilityAssetBalance(accountId, capability);
 
             if (
               assetBalance &&
@@ -334,7 +335,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
                 balanceAmount: minWithdrawalAmount,
                 balanceAsset: assetBalance.asset,
                 destination: {
-                  accountId: subAccountDestinationConfig,
+                  ...subAccountDestinationConfig,
                   amount: minWithdrawalAmount,
                   asset: assetBalance.asset,
                   transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,
@@ -364,9 +365,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
 
           for (const capability of subAccountCapabilities) {
             const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
-            const assetBalance = accountBalancesMap
-              .get(accountId)
-              ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
+            const assetBalance = await getCapabilityAssetBalance(accountId, capability);
 
             if (
               assetBalance &&
@@ -406,9 +405,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
 
           for (const capability of fiatCapabilities) {
             const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
-            const assetBalance = accountBalancesMap
-              .get(accountId)
-              ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
+            const assetBalance = await getCapabilityAssetBalance(accountId, capability);
 
             if (
               assetBalance &&
@@ -453,9 +450,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
 
           for (const capability of subAccountCapabilities) {
             const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
-            const assetBalance = accountBalancesMap
-              .get(accountId)
-              ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
+            const assetBalance = await getCapabilityAssetBalance(accountId, capability);
 
             if (
               assetBalance &&
@@ -466,7 +461,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
                 balanceAmount: minWithdrawalAmount,
                 balanceAsset: assetBalance.asset,
                 destination: {
-                  accountId: peerAccountDestinationConfig,
+                  ...peerAccountDestinationConfig,
                   amount: minWithdrawalAmount,
                   asset: assetBalance.asset,
                   transferMethod:

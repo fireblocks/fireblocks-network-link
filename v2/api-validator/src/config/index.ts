@@ -99,14 +99,18 @@ const config = convict({
   },
   withdrawal: {
     peerAccount: {
-      format: String,
-      default: '',
-      env: 'WITHDRAWAL_PEER_ACCOUNT',
+      accountId: {
+        format: String,
+        default: '',
+        env: 'WITHDRAWAL_PEER_ACCOUNT',
+      },
     },
     subAccount: {
-      format: String,
-      default: '',
-      env: 'WITHDRAWAL_SUB_ACCOUNT',
+      accountId: {
+        format: String,
+        default: '',
+        env: 'WITHDRAWAL_SUB_ACCOUNT',
+      },
     },
     blockchain: {
       address: {
