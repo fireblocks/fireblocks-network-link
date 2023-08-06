@@ -7,13 +7,17 @@ import { getCapableAccounts } from '../utils/capable-accounts';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 import {
   Account,
+  ApiError,
   AssetBalance,
   AssetReference,
+  BadRequestError,
   BlockchainWithdrawalRequest,
   CrossAccountTransferCapability,
   CrossAccountWithdrawalRequest,
   FiatWithdrawalRequest,
   IbanCapability,
+  Layer1Cryptocurrency,
+  NationalCurrencyCode,
   PublicBlockchainCapability,
   SwiftCapability,
   Withdrawal,
@@ -283,6 +287,12 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
   });
 
   describe('Create withdrawal', () => {
+    const subAccountDestinationConfig = config.get('withdrawal.subAccount');
+    const peerAccountDestinationConfig = config.get('withdrawal.peerAccount');
+    const blockchainDestinationConfig = config.get('withdrawal.blockchain');
+    const swiftDestinationConfig = config.get('withdrawal.swift');
+    const ibanDestinationConfig = config.get('withdrawal.iban');
+
     const getAccounts: Pageable<Account> = async (limit, startingAfter?) => {
       const response = await client.accounts.getAccounts({ limit, startingAfter });
       return response.accounts;
@@ -313,8 +323,6 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
 
     describe('Subaccount withdrawal', () => {
       it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
-        const subAccountDestinationConfig = config.get('withdrawal.subAccount');
-
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
           const subAccountCapabilities = capabilities.filter(
             (capability) =>
@@ -327,35 +335,95 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             const assetBalance = await getCapabilityAssetBalance(accountId, capability);
 
             if (
-              assetBalance &&
-              Number(assetBalance.availableAmount) > Number(minWithdrawalAmount)
+              !assetBalance ||
+              Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
             ) {
-              const requestBody: CrossAccountWithdrawalRequest = {
-                idempotencyKey: randomUUID(),
-                balanceAmount: minWithdrawalAmount,
-                balanceAsset: assetBalance.asset,
-                destination: {
-                  ...subAccountDestinationConfig,
-                  amount: minWithdrawalAmount,
-                  asset: assetBalance.asset,
-                  transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,
-                },
-              };
-              const withdrawal = await client.accounts.createSubAccountWithdrawal({
-                accountId,
-                requestBody,
-              });
-              expect(withdrawal).toBeDefined();
+              continue;
             }
+
+            const requestBody: CrossAccountWithdrawalRequest = {
+              idempotencyKey: randomUUID(),
+              balanceAmount: minWithdrawalAmount,
+              balanceAsset: assetBalance.asset,
+              destination: {
+                ...subAccountDestinationConfig,
+                amount: minWithdrawalAmount,
+                asset: assetBalance.asset,
+                transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,
+              },
+            };
+            const withdrawal = await client.accounts.createSubAccountWithdrawal({
+              accountId,
+              requestBody,
+            });
+            expect(withdrawal).toBeDefined();
           }
         }
+      });
+
+      describe('Idempotency', () => {
+        let accountId: string;
+        let withdrawalRequest: CrossAccountWithdrawalRequest;
+        let withdrawalResponse: Withdrawal | ApiError;
+
+        const getSubAccountWithdrawalResponse = async (
+          requestBody: CrossAccountWithdrawalRequest
+        ): Promise<Withdrawal | ApiError> => {
+          try {
+            return await client.accounts.createSubAccountWithdrawal({
+              accountId,
+              requestBody,
+            });
+          } catch (err) {
+            if (err instanceof ApiError) {
+              return err;
+            } else {
+              throw err;
+            }
+          }
+        };
+
+        beforeAll(async () => {
+          accountId = transfersCapableAccounts[0].id;
+          withdrawalRequest = {
+            idempotencyKey: 'some-key',
+            balanceAmount: '1',
+            balanceAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+            destination: {
+              ...subAccountDestinationConfig,
+              amount: '1',
+              asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+              transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,
+            },
+          };
+          withdrawalResponse = await getSubAccountWithdrawalResponse(withdrawalRequest);
+        });
+
+        it('should return same response when using the same idempotency key', async () => {
+          const idempotentResponse = await getSubAccountWithdrawalResponse(withdrawalRequest);
+          expect(idempotentResponse).toEqual(withdrawalResponse);
+        });
+
+        it('should return idempotency key reuse error when using used key for different request', async () => {
+          const differentWithdrawalRequest = { ...withdrawalRequest, balanceAmount: '0' };
+          const idempotencyKeyReuseResponse = await getSubAccountWithdrawalResponse(
+            differentWithdrawalRequest
+          );
+
+          if (!(idempotencyKeyReuseResponse instanceof ApiError)) {
+            expect({}).fail('Expected idempotency key reuse request to fail');
+            return;
+          }
+          expect(idempotencyKeyReuseResponse.status).toBe(400);
+          expect(idempotencyKeyReuseResponse.body.errorType).toBe(
+            BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE
+          );
+        });
       });
     });
 
     describe.skipIf(!transfersBlockchainCapability)('Blockchain withdrawal', () => {
       it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
-        const blockchainDestinationConfig = config.get('withdrawal.blockchain');
-
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
           const subAccountCapabilities = capabilities.filter(
             (capability) =>
@@ -368,36 +436,95 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             const assetBalance = await getCapabilityAssetBalance(accountId, capability);
 
             if (
-              assetBalance &&
-              Number(assetBalance.availableAmount) > Number(minWithdrawalAmount)
+              !assetBalance ||
+              Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
             ) {
-              const requestBody: BlockchainWithdrawalRequest = {
-                idempotencyKey: randomUUID(),
-                balanceAmount: minWithdrawalAmount,
-                balanceAsset: assetBalance.asset,
-                destination: {
-                  ...blockchainDestinationConfig,
-                  amount: minWithdrawalAmount,
-                  asset: assetBalance.asset,
-                  transferMethod: capability.withdrawal.transferMethod,
-                },
-              };
-              const withdrawal = await client.transfersBlockchain.createBlockchainWithdrawal({
-                accountId,
-                requestBody,
-              });
-              expect(withdrawal).toBeDefined();
+              continue;
             }
+
+            const requestBody: BlockchainWithdrawalRequest = {
+              idempotencyKey: randomUUID(),
+              balanceAmount: minWithdrawalAmount,
+              balanceAsset: assetBalance.asset,
+              destination: {
+                ...blockchainDestinationConfig,
+                amount: minWithdrawalAmount,
+                asset: assetBalance.asset,
+                transferMethod: capability.withdrawal.transferMethod,
+              },
+            };
+            const withdrawal = await client.transfersBlockchain.createBlockchainWithdrawal({
+              accountId,
+              requestBody,
+            });
+            expect(withdrawal).toBeDefined();
           }
         }
+      });
+
+      describe('Idempotency', () => {
+        let accountId: string;
+        let withdrawalRequest: BlockchainWithdrawalRequest;
+        let withdrawalResponse: Withdrawal | ApiError;
+
+        const getBlockchainWithdrawalResponse = async (
+          requestBody: BlockchainWithdrawalRequest
+        ): Promise<Withdrawal | ApiError> => {
+          try {
+            return await client.transfersBlockchain.createBlockchainWithdrawal({
+              accountId,
+              requestBody,
+            });
+          } catch (err) {
+            if (err instanceof ApiError) {
+              return err;
+            } else {
+              throw err;
+            }
+          }
+        };
+
+        beforeAll(async () => {
+          accountId = transfersCapableAccounts[0].id;
+          withdrawalRequest = {
+            idempotencyKey: 'some-key',
+            balanceAmount: '1',
+            balanceAsset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
+            destination: {
+              ...blockchainDestinationConfig,
+              amount: '1',
+              asset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
+              transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+            },
+          };
+          withdrawalResponse = await getBlockchainWithdrawalResponse(withdrawalRequest);
+        });
+
+        it('should return same response when using the same idempotency key', async () => {
+          const idempotentResponse = await getBlockchainWithdrawalResponse(withdrawalRequest);
+          expect(idempotentResponse).toEqual(withdrawalResponse);
+        });
+
+        it('should return idempotency key reuse error when using used key for different request', async () => {
+          const differentWithdrawalRequest = { ...withdrawalRequest, balanceAmount: '0' };
+          const idempotencyKeyReuseResponse = await getBlockchainWithdrawalResponse(
+            differentWithdrawalRequest
+          );
+
+          if (!(idempotencyKeyReuseResponse instanceof ApiError)) {
+            expect({}).fail('Expected idempotency key reuse request to fail');
+            return;
+          }
+          expect(idempotencyKeyReuseResponse.status).toBe(400);
+          expect(idempotencyKeyReuseResponse.body.errorType).toBe(
+            BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE
+          );
+        });
       });
     });
 
     describe.skipIf(!transfersFiatCapability)('Fiat withdrawal', () => {
       it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
-        const swiftDestinationConfig = config.get('withdrawal.swift');
-        const ibanDestinationConfig = config.get('withdrawal.iban');
-
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
           const fiatCapabilities = capabilities.filter((capability) =>
             fiatTransferMethods.includes(capability.withdrawal.transferMethod)
@@ -435,12 +562,70 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           }
         }
       });
+
+      describe('Idempotency', () => {
+        let accountId: string;
+        let withdrawalRequest: FiatWithdrawalRequest;
+        let withdrawalResponse: Withdrawal | ApiError;
+
+        const getFiatWithdrawalResponse = async (
+          requestBody: FiatWithdrawalRequest
+        ): Promise<Withdrawal | ApiError> => {
+          try {
+            return await client.transfersFiat.createFiatWithdrawal({
+              accountId,
+              requestBody,
+            });
+          } catch (err) {
+            if (err instanceof ApiError) {
+              return err;
+            } else {
+              throw err;
+            }
+          }
+        };
+
+        beforeAll(async () => {
+          accountId = transfersCapableAccounts[0].id;
+          withdrawalRequest = {
+            idempotencyKey: 'some-key',
+            balanceAmount: '1',
+            balanceAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+            destination: {
+              ...swiftDestinationConfig,
+              amount: '1',
+              asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+              transferMethod: SwiftCapability.transferMethod.SWIFT,
+            },
+          };
+          withdrawalResponse = await getFiatWithdrawalResponse(withdrawalRequest);
+        });
+
+        it('should return same response when using the same idempotency key', async () => {
+          const idempotentResponse = await getFiatWithdrawalResponse(withdrawalRequest);
+          expect(idempotentResponse).toEqual(withdrawalResponse);
+        });
+
+        it('should return idempotency key reuse error when using used key for different request', async () => {
+          const differentWithdrawalRequest = { ...withdrawalRequest, balanceAmount: '0' };
+          const idempotencyKeyReuseResponse = await getFiatWithdrawalResponse(
+            differentWithdrawalRequest
+          );
+
+          if (!(idempotencyKeyReuseResponse instanceof ApiError)) {
+            expect({}).fail('Expected idempotency key reuse request to fail');
+            return;
+          }
+          expect(idempotencyKeyReuseResponse.status).toBe(400);
+          expect(idempotencyKeyReuseResponse.body.errorType).toBe(
+            BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE
+          );
+        });
+      });
     });
 
     describe.skipIf(!transfersPeerAccountsCapability)('Peer account withdrawal', () => {
       it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
-        const peerAccountDestinationConfig = config.get('withdrawal.subAccount');
-
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
           const subAccountCapabilities = capabilities.filter(
             (capability) =>
@@ -476,6 +661,66 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             }
           }
         }
+      });
+
+      describe('Idempotency', () => {
+        let accountId: string;
+        let withdrawalRequest: CrossAccountWithdrawalRequest;
+        let withdrawalResponse: Withdrawal | ApiError;
+
+        const getPeerAccountWithdrawalResponse = async (
+          requestBody: CrossAccountWithdrawalRequest
+        ): Promise<Withdrawal | ApiError> => {
+          try {
+            return await client.transfersPeerAccounts.createPeerAccountWithdrawal({
+              accountId,
+              requestBody,
+            });
+          } catch (err) {
+            if (err instanceof ApiError) {
+              return err;
+            } else {
+              throw err;
+            }
+          }
+        };
+
+        beforeAll(async () => {
+          accountId = transfersCapableAccounts[0].id;
+          withdrawalRequest = {
+            idempotencyKey: 'some-key',
+            balanceAmount: '1',
+            balanceAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+            destination: {
+              ...peerAccountDestinationConfig,
+              amount: '1',
+              asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
+              transferMethod: CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER,
+            },
+          };
+          withdrawalResponse = await getPeerAccountWithdrawalResponse(withdrawalRequest);
+        });
+
+        it('should return same response when using the same idempotency key', async () => {
+          const idempotentResponse = await getPeerAccountWithdrawalResponse(withdrawalRequest);
+          expect(idempotentResponse).toEqual(withdrawalResponse);
+        });
+
+        it('should return idempotency key reuse error when using used key for different request', async () => {
+          const differentWithdrawalRequest = { ...withdrawalRequest, balanceAmount: '0' };
+          const idempotencyKeyReuseResponse = await getPeerAccountWithdrawalResponse(
+            differentWithdrawalRequest
+          );
+
+          if (!(idempotencyKeyReuseResponse instanceof ApiError)) {
+            expect({}).fail('Expected idempotency key reuse request to fail');
+            return;
+          }
+          expect(idempotencyKeyReuseResponse.status).toBe(400);
+          expect(idempotencyKeyReuseResponse.body.errorType).toBe(
+            BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE
+          );
+        });
       });
     });
   });

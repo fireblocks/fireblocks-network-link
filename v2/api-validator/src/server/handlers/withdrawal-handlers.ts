@@ -243,7 +243,7 @@ export async function createSubAccountWithdrawal(
         responseStatus,
         responseBody,
       },
-      BLOCKCHAIN_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
+      SUB_ACCOUNT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
     );
     return reply.code(responseStatus).send(responseBody);
   };
@@ -285,7 +285,7 @@ export async function createPeerAccountWithdrawal(
         responseStatus,
         responseBody,
       },
-      BLOCKCHAIN_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
+      PEER_ACCOUNT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
     );
     return reply.code(responseStatus).send(responseBody);
   };
@@ -369,7 +369,7 @@ export async function createFiatWithdrawal(
         responseStatus,
         responseBody,
       },
-      BLOCKCHAIN_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
+      FIAT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
     );
     return reply.code(responseStatus).send(responseBody);
   };
