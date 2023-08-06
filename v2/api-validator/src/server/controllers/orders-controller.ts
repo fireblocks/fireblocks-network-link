@@ -1,17 +1,15 @@
+import _ from 'lodash';
+import logger from '../../logging';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
 import { books } from './books-controller';
 import { Order, OrderData, OrderRequest, OrderStatus } from '../../client/generated';
-import _ from 'lodash';
-import logger from '../../logging';
 
 const log = logger('server');
 
-type StoredOrder = { order: Order; idempotencyKey: string };
-
 export class OrdersController {
   private readonly usedIdempotencyKeys = new Set<string>();
-  private readonly orders: Array<StoredOrder> = [];
+  private readonly orders: Array<Order> = [];
 
   public createOrder(order: OrderRequest): Order {
     const book = books.find((b) => b.id === order.bookId);
@@ -21,15 +19,6 @@ export class OrdersController {
 
     const orderData = _.omit(order, 'idempotencyKey') as OrderData;
 
-    const idempotentOrder = this.orders.find((o) => o.idempotencyKey === order.idempotencyKey);
-    if (idempotentOrder) {
-      if (_.isMatch(idempotentOrder.order, orderData)) {
-        return idempotentOrder.order;
-      } else {
-        throw new IdempotencyKeyReuseError(order.idempotencyKey);
-      }
-    }
-
     const newOrder: Order = {
       ...orderData,
       id: randomUUID(),
@@ -37,7 +26,7 @@ export class OrdersController {
       trades: [],
       createdAt: new Date().toISOString(),
     };
-    this.orders.push({ order: newOrder, idempotencyKey: order.idempotencyKey });
+    this.orders.push(newOrder);
 
     log.info('New order', { order: newOrder });
     return newOrder;
@@ -48,8 +37,7 @@ export class OrdersController {
   }
 
   public findOrder(orderId: string): Order | undefined {
-    const stored = this.orders.find((o) => o.order.id === orderId);
-    return stored?.order;
+    return this.orders.find((o) => o.id === orderId);
   }
 
   public cancelOrder(orderId: string): void {
