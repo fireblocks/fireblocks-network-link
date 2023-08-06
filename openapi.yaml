@@ -1105,6 +1105,8 @@ components:
       - Ethereum
       - EthereumPoW
       - Chiliz
+      - Chiliz 2.0
+      - Flare
       - BNB Chain
       - Polygon
       - Arbitrum
@@ -1162,6 +1164,7 @@ components:
         - Ethereum
         - BNB Chain
         - Arbitrum
+        - Chiliz 2.0
         - Polygon
         - Avalanche
         - ANZ Bank
