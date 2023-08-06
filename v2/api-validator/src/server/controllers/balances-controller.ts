@@ -5,10 +5,10 @@ import {
   Layer2Cryptocurrency,
   NationalCurrencyCode,
 } from '../../client/generated';
-import { isKnownAdditionalAsset, UnknownAdditionalAssetError } from './assets-controller';
-import { ACCOUNTS } from './accounts-controller';
+import { assetsController, UnknownAdditionalAssetError } from './assets-controller';
 import { XComError } from '../../error';
 import _ from 'lodash';
+import { accountsController } from './accounts-controller';
 
 export class InvalidAssetQueryCombinationError extends XComError {
   constructor() {
@@ -17,7 +17,7 @@ export class InvalidAssetQueryCombinationError extends XComError {
 }
 
 export function getSubAccountBalances(accountId: string): Balances {
-  return ACCOUNTS.find((account) => account.id === accountId)?.balances ?? [];
+  return accountsController.getSubAccount(accountId)?.balances ?? [];
 }
 
 export function getSingleAssetBalance(accountId: string, asset: AssetReference): Balances {
@@ -44,7 +44,7 @@ export function validateAssetQueryParams(
   if (!isUpToOneParameterDefined(assetId, nationalCurrencyCode, cryptocurrencySymbol)) {
     throw new InvalidAssetQueryCombinationError();
   }
-  if (assetId && !isKnownAdditionalAsset(assetId)) {
+  if (assetId && !assetsController.isKnownAdditionalAsset(assetId)) {
     throw new UnknownAdditionalAssetError();
   }
 }

@@ -10,6 +10,7 @@ import {
   StellarToken,
 } from '../../client/generated';
 import { XComError } from '../../error';
+import { Repository } from './repository';
 
 export const SUPPORTED_ASSETS: AssetDefinition[] = [
   {
@@ -62,26 +63,42 @@ export class UnknownAdditionalAssetError extends XComError {
   }
 }
 
-export function getSupportedAsset(assetId: string): AssetDefinition | undefined {
-  return SUPPORTED_ASSETS.find((asset) => asset.id === assetId);
+export class AssetsController {
+  private readonly repository = new Repository<AssetDefinition>();
+
+  constructor(additionalAssets: AssetDefinition[]) {
+    for (const asset of additionalAssets) {
+      this.repository.create(asset);
+    }
+  }
+
+  public getAllAdditionalAssets(): AssetDefinition[] {
+    return this.repository.list();
+  }
+
+  public getAdditionalAsset(assetId: string): AssetDefinition | undefined {
+    return this.repository.find(assetId);
+  }
+
+  public isKnownAdditionalAsset(assetId: string): boolean {
+    return !!this.repository.find(assetId);
+  }
+
+  public isKnownAsset(asset: AssetReference): boolean {
+    if ('assetId' in asset) {
+      return this.isKnownAdditionalAsset(asset.assetId);
+    }
+    if ('cryptocurrencySymbol' in asset) {
+      return (
+        !!Layer1Cryptocurrency[asset.cryptocurrencySymbol] ||
+        !!Layer2Cryptocurrency[asset.cryptocurrencySymbol]
+      );
+    }
+    if ('nationalCurrencyCode' in asset) {
+      return !!NationalCurrencyCode[asset.nationalCurrencyCode];
+    }
+    return false;
+  }
 }
 
-export function isKnownAdditionalAsset(assetId: string): boolean {
-  return SUPPORTED_ASSETS.some((x) => x.id === assetId);
-}
-
-export function isKnownAsset(asset: AssetReference): boolean {
-  if ('assetId' in asset) {
-    return isKnownAdditionalAsset(asset.assetId);
-  }
-  if ('cryptocurrencySymbol' in asset) {
-    return (
-      !!Layer1Cryptocurrency[asset.cryptocurrencySymbol] ||
-      !!Layer2Cryptocurrency[asset.cryptocurrencySymbol]
-    );
-  }
-  if ('nationalCurrencyCode' in asset) {
-    return !!NationalCurrencyCode[asset.nationalCurrencyCode];
-  }
-  return false;
-}
+export const assetsController = new AssetsController(SUPPORTED_ASSETS);

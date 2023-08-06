@@ -8,7 +8,7 @@ import {
 import { SUPPORTED_ASSETS } from './assets-controller';
 import { Repository } from './repository';
 
-export const ACCOUNTS: Account[] = [
+const ACCOUNTS: Account[] = [
   {
     id: '1',
     balances: [

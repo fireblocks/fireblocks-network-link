@@ -7,7 +7,7 @@ import {
   QuoteStatus,
 } from '../../client/generated';
 import { XComError } from '../../error';
-import { SUPPORTED_ASSETS, isKnownAsset } from './assets-controller';
+import { SUPPORTED_ASSETS, assetsController } from './assets-controller';
 import _ from 'lodash';
 
 export class QuoteNotFoundError extends XComError {
@@ -54,10 +54,10 @@ function isKnownLiquidityCapability(capability: QuoteCapability) {
 }
 
 export function validateQuoteRequest(quoteRequest: QuoteRequest): void {
-  if (!isKnownAsset(quoteRequest.fromAsset)) {
+  if (!assetsController.isKnownAsset(quoteRequest.fromAsset)) {
     throw new UnknownFromAssetError();
   }
-  if (!isKnownAsset(quoteRequest.toAsset)) {
+  if (!assetsController.isKnownAsset(quoteRequest.toAsset)) {
     throw new UnknownToAssetError();
   }
   if (

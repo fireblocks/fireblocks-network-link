@@ -3,7 +3,11 @@ import RandExp from 'randexp';
 import { randomUUID } from 'crypto';
 import { JsonValue } from 'type-fest';
 import { XComError } from '../../error';
-import { isKnownAsset, SUPPORTED_ASSETS, UnknownAdditionalAssetError } from './assets-controller';
+import {
+  assetsController,
+  SUPPORTED_ASSETS,
+  UnknownAdditionalAssetError,
+} from './assets-controller';
 import {
   CrossAccountTransferCapability,
   Deposit,
@@ -172,7 +176,7 @@ export function validateDepositAddressCreationRequest(
     }
     throw new IdempotencyRequestError(metadata);
   }
-  if (!isKnownAsset(depositAddressRequest.transferMethod.asset)) {
+  if (!assetsController.isKnownAsset(depositAddressRequest.transferMethod.asset)) {
     throw new UnknownAdditionalAssetError();
   }
 }
