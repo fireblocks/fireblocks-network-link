@@ -15,7 +15,7 @@ export type Replier<T> = {
 export class IdempotencyHandler<RequestBody extends IdempotentRequest, ResponseBody> {
   private readonly requests = new Map<
     IdempotencyKey,
-    { request: RequestBody; response: ResponseBody }
+    { request: RequestBody; statusCode: number; response: ResponseBody }
   >();
 
   public isKnownKey(idempotencyKey: IdempotencyKey): boolean {
@@ -36,15 +36,15 @@ export class IdempotencyHandler<RequestBody extends IdempotentRequest, ResponseB
       return reply.code(400).send(errorData);
     }
 
-    return reply.code(200).send(previousRequest.response);
+    return reply.code(previousRequest.statusCode).send(previousRequest.response);
   }
 
-  public add(request: RequestBody, response: ResponseBody): void {
+  public add(request: RequestBody, statusCode: number, response: ResponseBody): void {
     if (this.requests.has(request.idempotencyKey)) {
       throw new IdempotentRequestAlreadyExists();
     }
 
-    this.requests.set(request.idempotencyKey, { request, response });
+    this.requests.set(request.idempotencyKey, { request, statusCode, response });
   }
 }
 

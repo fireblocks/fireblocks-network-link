@@ -47,7 +47,7 @@ describe('IdempotencyHandler', () => {
       const response = makeResponse();
 
       expect(idempotencyHandler.isKnownKey(request.idempotencyKey)).toBeFalsy();
-      idempotencyHandler.add(request, response);
+      idempotencyHandler.add(request, 200, response);
       expect(idempotencyHandler.isKnownKey(request.idempotencyKey)).toBeTruthy();
     });
   });
@@ -57,9 +57,9 @@ describe('IdempotencyHandler', () => {
       const request = makeRequest();
       const response = makeResponse();
 
-      idempotencyHandler.add(request, response);
+      idempotencyHandler.add(request, 201, response);
       idempotencyHandler.reply(request, reply);
-      expect(reply.code).toHaveBeenCalledWith(200);
+      expect(reply.code).toHaveBeenCalledWith(201);
       expect(reply.send).toHaveBeenCalledWith(response);
     });
   });
@@ -78,7 +78,7 @@ describe('IdempotencyHandler', () => {
       request2.idempotencyKey = request1.idempotencyKey;
 
       const response = makeResponse();
-      idempotencyHandler.add(request1, response);
+      idempotencyHandler.add(request1, 200, response);
       expect(idempotencyHandler.isKnownKey(request2.idempotencyKey)).toBeTruthy();
 
       idempotencyHandler.reply(request2, reply);
@@ -97,8 +97,8 @@ describe('IdempotencyHandler', () => {
       request2.idempotencyKey = request1.idempotencyKey;
 
       const response = makeResponse();
-      idempotencyHandler.add(request1, response);
-      expect(() => idempotencyHandler.add(request2, response)).toThrow(
+      idempotencyHandler.add(request1, 200, response);
+      expect(() => idempotencyHandler.add(request2, 200, response)).toThrow(
         IdempotentRequestAlreadyExists
       );
     });

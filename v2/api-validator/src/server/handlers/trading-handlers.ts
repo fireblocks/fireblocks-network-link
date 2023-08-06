@@ -114,7 +114,7 @@ export async function createOrder(
   }
 
   const response = ordersController.createOrder(body);
-  idempotencyHandler.add(body, response);
+  idempotencyHandler.add(body, 200, response);
 
   return response;
 }
