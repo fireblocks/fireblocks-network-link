@@ -320,7 +320,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           );
 
           for (const capability of subAccountCapabilities) {
-            const minWithdrawalAmount = capability.minWithdrawalAmount ?? 0;
+            const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
             const assetBalance = accountBalancesMap
               .get(accountId)
               ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
@@ -331,11 +331,11 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             ) {
               const requestBody: CrossAccountWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
-                balanceAmount: assetBalance.availableAmount,
+                balanceAmount: minWithdrawalAmount,
                 balanceAsset: assetBalance.asset,
                 destination: {
                   accountId: subAccountDestinationConfig,
-                  amount: assetBalance.availableAmount,
+                  amount: minWithdrawalAmount,
                   asset: assetBalance.asset,
                   transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,
                 },
@@ -363,7 +363,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           );
 
           for (const capability of subAccountCapabilities) {
-            const minWithdrawalAmount = capability.minWithdrawalAmount ?? 0;
+            const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
             const assetBalance = accountBalancesMap
               .get(accountId)
               ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
@@ -374,11 +374,11 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             ) {
               const requestBody: BlockchainWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
-                balanceAmount: assetBalance.availableAmount,
+                balanceAmount: minWithdrawalAmount,
                 balanceAsset: assetBalance.asset,
                 destination: {
                   ...blockchainDestinationConfig,
-                  amount: assetBalance.availableAmount,
+                  amount: minWithdrawalAmount,
                   asset: assetBalance.asset,
                   transferMethod: capability.withdrawal.transferMethod,
                 },
@@ -405,7 +405,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           );
 
           for (const capability of fiatCapabilities) {
-            const minWithdrawalAmount = capability.minWithdrawalAmount ?? 0;
+            const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
             const assetBalance = accountBalancesMap
               .get(accountId)
               ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
@@ -420,11 +420,11 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
                   : swiftDestinationConfig;
               const requestBody: FiatWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
-                balanceAmount: assetBalance.availableAmount,
+                balanceAmount: minWithdrawalAmount,
                 balanceAsset: assetBalance.asset,
                 destination: {
                   ...destinationAddress,
-                  amount: assetBalance.availableAmount,
+                  amount: minWithdrawalAmount,
                   asset: assetBalance.asset,
                   transferMethod: capability.withdrawal.transferMethod,
                 },
@@ -452,7 +452,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
           );
 
           for (const capability of subAccountCapabilities) {
-            const minWithdrawalAmount = capability.minWithdrawalAmount ?? 0;
+            const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
             const assetBalance = accountBalancesMap
               .get(accountId)
               ?.find((balance) => _.isMatch(balance.asset, capability.balanceAsset));
@@ -463,11 +463,11 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             ) {
               const requestBody: CrossAccountWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
-                balanceAmount: assetBalance.availableAmount,
+                balanceAmount: minWithdrawalAmount,
                 balanceAsset: assetBalance.asset,
                 destination: {
                   accountId: peerAccountDestinationConfig,
-                  amount: assetBalance.availableAmount,
+                  amount: minWithdrawalAmount,
                   asset: assetBalance.asset,
                   transferMethod:
                     CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER,
