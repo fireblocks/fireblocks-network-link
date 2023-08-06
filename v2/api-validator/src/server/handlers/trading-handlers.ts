@@ -2,7 +2,7 @@ import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { IdempotencyKeyReuseError, OrdersController } from '../controllers/orders-controller';
 import { asks, bids, books } from '../controllers/books-controller';
-import { isKnownSubAccount } from '../controllers/accounts-controller';
+import { accountsController } from '../controllers/accounts-controller';
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { AccountIdPathParam, EntityIdPathParam, PaginationQuerystring } from './request-types';
 import {
@@ -103,7 +103,7 @@ export async function createOrder(
 ): Promise<Order> {
   const { accountId } = params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -121,7 +121,7 @@ export async function getOrderDetails(
   { params }: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
   reply: FastifyReply
 ): Promise<Order> {
-  if (!isKnownSubAccount(params.accountId)) {
+  if (!accountsController.isKnownSubAccount(params.accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -136,7 +136,7 @@ export async function cancelOrder(
   { params }: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
   reply: FastifyReply
 ): Promise<void> {
-  if (!isKnownSubAccount(params.accountId)) {
+  if (!accountsController.isKnownSubAccount(params.accountId)) {
     return ErrorFactory.notFound(reply);
   }
 

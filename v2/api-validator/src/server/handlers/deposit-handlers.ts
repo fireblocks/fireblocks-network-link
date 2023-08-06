@@ -1,7 +1,7 @@
 import { JsonValue } from 'type-fest';
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { isKnownSubAccount } from '../controllers/accounts-controller';
+import { accountsController } from '../controllers/accounts-controller';
 import { IdempotencyKeyReuseError } from '../controllers/orders-controller';
 import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
 import { getPaginationResult, PaginationParams } from '../controllers/pagination-controller';
@@ -39,7 +39,7 @@ export async function getDepositMethods(
   const { limit, startingAfter, endingBefore } = request.query;
   const { accountId } = request.params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -63,7 +63,7 @@ export async function createDepositAddress(
     return reply.code(responseStatus).send(responseBody);
   };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -105,7 +105,7 @@ export async function getDepositAddresses(
   const { accountId } = request.params;
   const { limit, startingAfter, endingBefore } = request.query;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -128,7 +128,7 @@ export async function getDepositAddressDetails(
 ): Promise<DepositAddress> {
   const { accountId, id: depositAddressId } = request.params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -150,7 +150,7 @@ export async function disableDepositAddress(
 ): Promise<DepositAddress> {
   const { accountId, id: depositAddressId } = request.params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -177,7 +177,7 @@ export async function getDeposits(
   const { accountId } = request.params;
   const { limit, startingAfter, endingBefore } = request.query;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -192,7 +192,7 @@ export async function getDepositDetails(
 ): Promise<Deposit> {
   const { accountId, id: depositId } = request.params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 

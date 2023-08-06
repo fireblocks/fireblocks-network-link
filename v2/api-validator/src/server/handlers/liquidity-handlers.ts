@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import * as ErrorFactory from '../http-error-factory';
-import { isKnownSubAccount } from '../controllers/accounts-controller';
+import { accountsController } from '../controllers/accounts-controller';
 import {
   BadRequestError,
   EntityIdPathParam,
@@ -39,7 +39,7 @@ export async function getQuotes(
   const { limit, startingAfter, endingBefore } = request.query as PaginationParams;
   const { accountId } = request.params as { accountId: SubAccountIdPathParam };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -53,7 +53,7 @@ export async function createQuote(request: FastifyRequest, reply: FastifyReply):
   const { accountId } = request.params as { accountId: SubAccountIdPathParam };
   const quoteRequest = request.body as QuoteRequest;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -102,7 +102,7 @@ export async function getQuoteDetails(
     id: EntityIdPathParam;
   };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -122,7 +122,7 @@ export async function executeQuote(request: FastifyRequest, reply: FastifyReply)
     id: EntityIdPathParam;
   };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
