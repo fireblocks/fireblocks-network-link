@@ -187,6 +187,10 @@ _Note_ that not all error codes need to be in use!
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+### v0.9.4
+> 06 August 2023
+* Supporting new networks Chiliz 2.0 and Flare.
+
 ### v0.9.3
 > 17 July 2023
 * Added isSettlementTx as a flag for the withdraw endpoint, for third party services that support off-exchange.
