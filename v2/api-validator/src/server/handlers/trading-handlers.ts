@@ -1,8 +1,9 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { IdempotencyKeyReuseError, OrdersController } from '../controllers/orders-controller';
 import { booksController } from '../controllers/books-controller';
 import { accountsController } from '../controllers/accounts-controller';
+import { OrdersController } from '../controllers/orders-controller';
+import { IdempotencyHandler } from '../controllers/idempotency-handler';
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { AccountIdPathParam, EntityIdPathParam, PaginationQuerystring } from './request-types';
 import {
@@ -21,6 +22,7 @@ type GetBookBidsResponse = { bids: MarketEntry[] };
 type CreateOrderRequest = { Body: OrderRequest };
 
 const ordersController = new OrdersController();
+const idempotencyHandler = new IdempotencyHandler<OrderRequest, Order>();
 
 export async function getBooks({
   query,
@@ -113,14 +115,14 @@ export async function createOrder(
     return ErrorFactory.notFound(reply);
   }
 
-  try {
-    return ordersController.createOrder(body);
-  } catch (err) {
-    if (err instanceof IdempotencyKeyReuseError) {
-      return ErrorFactory.idempotencyKeyReuse(reply);
-    }
-    throw err;
+  if (idempotencyHandler.isKnownKey(body.idempotencyKey)) {
+    return idempotencyHandler.reply(body, reply);
   }
+
+  const response = ordersController.createOrder(body);
+  idempotencyHandler.add(body, 200, response);
+
+  return response;
 }
 
 export async function getOrderDetails(
