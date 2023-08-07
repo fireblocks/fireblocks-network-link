@@ -12,10 +12,6 @@ export class Repository<T extends { id: Id }> {
   }
 
   public list(): T[] {
-    const result: T[] = [];
-    for (const record of this.data.values()) {
-      result.push(record);
-    }
-    return result;
+    return Array.from(this.data.values());
   }
 }
