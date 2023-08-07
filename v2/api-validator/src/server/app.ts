@@ -4,8 +4,8 @@ import addFormats from 'ajv-formats';
 import Ajv, { ValidateFunction } from 'ajv';
 import { FastifyError } from '@fastify/error';
 import { FastifyBaseLogger } from 'fastify/types/logger';
+import { getEndpointRequestSchema, loadOpenApiSchemas } from '../schemas';
 import { BadRequestError, GeneralError, RequestPart } from '../client/generated';
-import { loadOpenApiSchema, OpenApiOperationDetails, OpenApiSchema } from './schema';
 import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
 import { nonceMiddleware } from './middlewares/nonce-middleware';
 import { timestampMiddleware } from './middlewares/timestamp-middleware';
@@ -24,23 +24,22 @@ const log = logger('app');
 
 export async function createWebApp(): Promise<WebApp> {
   const openApiYamlPathname = config.getUnifiedOpenApiPathname();
-  const schema = await loadOpenApiSchema(openApiYamlPathname);
+  await loadOpenApiSchemas(openApiYamlPathname);
 
-  return new WebApp(schema);
+  return new WebApp();
 }
 
 export class WebApp {
   private readonly app: FastifyInstance;
   private readonly ajv = new Ajv({ strictSchema: false });
 
-  constructor(private readonly schema: OpenApiSchema) {
+  constructor() {
     const loggerForFastify: FastifyBaseLogger = log.pinoLogger;
 
     addFormats(this.ajv);
 
     this.app = Fastify({
       logger: loggerForFastify,
-      // schemaErrorFormatter,
     });
 
     // For POST routes that do not define request body, allow any content type
@@ -94,12 +93,8 @@ export class WebApp {
       method,
       url,
       handler,
-      schema: this.schema.getOperationSchema(method, url),
+      schema: getEndpointRequestSchema(method, url),
     });
-  }
-
-  public getAllOperations(): OpenApiOperationDetails[] {
-    return this.schema.getAllOperations();
   }
 }
 
