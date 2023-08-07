@@ -1,11 +1,17 @@
+import _ from 'lodash';
+import { randomUUID } from 'crypto';
+import BigNumber from 'bignumber.js';
 import config from '../../src/config';
 import ApiClient from '../../src/client';
+import { AssetsDirectory } from '../utils/assets-directory';
+import { arrayFromAsyncGenerator, Pageable, paginated } from '../utils/pagination';
 import {
   ApiError,
   AssetBalance,
   BadRequestError,
   LimitOrderData,
   MarketOrderData,
+  Order,
   OrderBook,
   OrderData,
   OrderRequest,
@@ -14,11 +20,6 @@ import {
   OrderTimeInForce,
   PositiveAmount,
 } from '../../src/client/generated';
-import { arrayFromAsyncGenerator, Pageable, paginated } from '../utils/pagination';
-import { AssetsDirectory } from '../utils/assets-directory';
-import _ from 'lodash';
-import BigNumber from 'bignumber.js';
-import { randomUUID } from 'crypto';
 
 const LIMIT = LimitOrderData.orderType.LIMIT;
 const MARKET = MarketOrderData.orderType.MARKET;
@@ -112,7 +113,7 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
     });
   });
 
-  describe('createOrder getOrder cancelOrder', () => {
+  describe('Orders', () => {
     const client = new ApiClient();
     let balances: AssetBalance[];
     let books: OrderBook[];
@@ -130,6 +131,51 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
     beforeAll(async () => {
       balances = await arrayFromAsyncGenerator(paginated(getBalances));
       books = await arrayFromAsyncGenerator(paginated(getBooks));
+    });
+
+    describe('Create several orders and list them', () => {
+      const ordersData: OrderData[] = [];
+
+      beforeAll(async () => {
+        const ordersCount = 10;
+        for (let i = 0; i < ordersCount; i++) {
+          const orderCandidate = await generateValidOrder(LIMIT, books, balances);
+          if (!orderCandidate) {
+            throw new Error(
+              `Failed to generate a valid order for account ${accountId}. Is there enough balance?`
+            );
+          }
+          ordersData.push(orderCandidate);
+        }
+      });
+
+      it('should list the created orders sorted from the latest to the earliest', async () => {
+        const orderIds: string[] = [];
+
+        for (const orderData of ordersData) {
+          const requestBody: OrderRequest = { ...orderData, idempotencyKey: randomUUID() };
+          const order = await client.trading.createOrder({ accountId, requestBody });
+          orderIds.push(order.id);
+        }
+
+        const getOrders: Pageable<Order> = async (limit, startingAfter?) => {
+          const response = await client.trading.getOrders({ accountId, limit, startingAfter });
+          return response.orders;
+        };
+
+        let expectedOrderId = orderIds.pop();
+        for await (const order of paginated(getOrders)) {
+          if (order.id === expectedOrderId) {
+            expectedOrderId = orderIds.pop();
+            if (!expectedOrderId) {
+              break;
+            }
+          }
+        }
+
+        const errorTxt = 'Orders not correctly sorted or not all orders listed';
+        expect(orderIds, errorTxt).toBeEmpty();
+      });
     });
 
     describe.each([[LIMIT], [MARKET]])('Create %s order', (orderType) => {
@@ -183,7 +229,7 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
         expect(order1.id).toEqual(order2.id);
       });
 
-      it('should fail then reusing idempotency key for different request', async () => {
+      it('should fail when reusing idempotency key for different request', async () => {
         const requestBody1: OrderRequest = { ...orderData, idempotencyKey: randomUUID() };
         const order1 = await client.trading.createOrder({ accountId, requestBody: requestBody1 });
         expect(order1).toMatchObject(orderData);
