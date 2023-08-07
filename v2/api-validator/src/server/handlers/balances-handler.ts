@@ -1,6 +1,12 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { accountsController } from '../controllers/accounts-controller';
+import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
+import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
+import {
+  InvalidAssetQueryCombinationError,
+  balanceController,
+} from '../controllers/balances-controller';
 import {
   AssetIdQueryParam,
   BadRequestError,
@@ -10,14 +16,6 @@ import {
   NationalCurrencyCodeQueryParam,
   RequestPart,
 } from '../../client/generated';
-import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
-import {
-  InvalidAssetQueryCombinationError,
-  getSingleAssetBalance,
-  getSubAccountBalances,
-  validateAssetQueryParams,
-} from '../controllers/balances-controller';
-import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
 
 export async function getBalances(
   request: FastifyRequest,
@@ -42,16 +40,20 @@ export async function getBalances(
   }
 
   try {
-    validateAssetQueryParams(assetId, nationalCurrencyCode, cryptocurrencySymbol);
+    balanceController.validateAssetQueryParams(assetId, nationalCurrencyCode, cryptocurrencySymbol);
 
     if (assetId) {
-      return { balances: getSingleAssetBalance(accountId, { assetId }) };
+      return { balances: balanceController.getSingleAssetBalance(accountId, { assetId }) };
     }
     if (nationalCurrencyCode) {
-      return { balances: getSingleAssetBalance(accountId, { nationalCurrencyCode }) };
+      return {
+        balances: balanceController.getSingleAssetBalance(accountId, { nationalCurrencyCode }),
+      };
     }
     if (cryptocurrencySymbol) {
-      return { balances: getSingleAssetBalance(accountId, { cryptocurrencySymbol }) };
+      return {
+        balances: balanceController.getSingleAssetBalance(accountId, { cryptocurrencySymbol }),
+      };
     }
   } catch (err) {
     if (err instanceof InvalidAssetQueryCombinationError) {
@@ -76,7 +78,7 @@ export async function getBalances(
       limit,
       startingAfter,
       endingBefore,
-      getSubAccountBalances(accountId),
+      balanceController.getSubAccountBalances(accountId),
       'id'
     ),
   };

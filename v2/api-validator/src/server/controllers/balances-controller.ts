@@ -8,7 +8,7 @@ import {
 import { assetsController, UnknownAdditionalAssetError } from './assets-controller';
 import { XComError } from '../../error';
 import _ from 'lodash';
-import { accountsController } from './accounts-controller';
+import { AccountsController, accountsController } from './accounts-controller';
 
 export class InvalidAssetQueryCombinationError extends XComError {
   constructor() {
@@ -16,35 +16,41 @@ export class InvalidAssetQueryCombinationError extends XComError {
   }
 }
 
-export function getSubAccountBalances(accountId: string): Balances {
-  return accountsController.getSubAccount(accountId)?.balances ?? [];
-}
+export class BalancesController {
+  constructor(private accountsController: AccountsController) {}
 
-export function getSingleAssetBalance(accountId: string, asset: AssetReference): Balances {
-  const accountBalances = getSubAccountBalances(accountId);
-
-  const assetBalance = accountBalances.find((balance) => _.isMatch(balance.asset, asset));
-
-  if (!assetBalance) {
-    return [];
+  public getSubAccountBalances(accountId: string): Balances {
+    return this.accountsController.getSubAccount(accountId)?.balances ?? [];
   }
 
-  return [assetBalance];
+  public getSingleAssetBalance(accountId: string, asset: AssetReference): Balances {
+    const accountBalances = this.getSubAccountBalances(accountId);
+
+    const assetBalance = accountBalances.find((balance) => _.isMatch(balance.asset, asset));
+
+    if (!assetBalance) {
+      return [];
+    }
+
+    return [assetBalance];
+  }
+
+  private isUpToOneParameterDefined(...params) {
+    return params.filter((param) => !!param).length <= 1;
+  }
+
+  public validateAssetQueryParams(
+    assetId: string | undefined,
+    nationalCurrencyCode: NationalCurrencyCode | undefined,
+    cryptocurrencySymbol: Layer1Cryptocurrency | Layer2Cryptocurrency | undefined
+  ): void {
+    if (!this.isUpToOneParameterDefined(assetId, nationalCurrencyCode, cryptocurrencySymbol)) {
+      throw new InvalidAssetQueryCombinationError();
+    }
+    if (assetId && !assetsController.isKnownAdditionalAsset(assetId)) {
+      throw new UnknownAdditionalAssetError();
+    }
+  }
 }
 
-function isUpToOneParameterDefined(...params) {
-  return params.filter((param) => !!param).length <= 1;
-}
-
-export function validateAssetQueryParams(
-  assetId: string | undefined,
-  nationalCurrencyCode: NationalCurrencyCode | undefined,
-  cryptocurrencySymbol: Layer1Cryptocurrency | Layer2Cryptocurrency | undefined
-): void {
-  if (!isUpToOneParameterDefined(assetId, nationalCurrencyCode, cryptocurrencySymbol)) {
-    throw new InvalidAssetQueryCombinationError();
-  }
-  if (assetId && !assetsController.isKnownAdditionalAsset(assetId)) {
-    throw new UnknownAdditionalAssetError();
-  }
-}
+export const balanceController = new BalancesController(accountsController);

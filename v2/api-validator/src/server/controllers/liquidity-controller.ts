@@ -7,8 +7,9 @@ import {
   QuoteStatus,
 } from '../../client/generated';
 import { XComError } from '../../error';
-import { SUPPORTED_ASSETS, assetsController } from './assets-controller';
+import { AssetsController, SUPPORTED_ASSETS, assetsController } from './assets-controller';
 import _ from 'lodash';
+import { Repository } from './repository';
 
 export class QuoteNotFoundError extends XComError {
   constructor() {
@@ -36,9 +37,9 @@ export class UnknownQuoteCapabilityError extends XComError {
   }
 }
 
-const QUOTE_EXPIRATION_IN_MS = 1000;
+type AccountQuote = { id: string; accountId: string; data: Quote };
 
-const ACCOUNTS_QUOTES_MAP: Map<string, Quote[]> = new Map();
+const QUOTE_EXPIRATION_IN_MS = 1000;
 
 export const QUOTE_CAPABILITIES: QuoteCapability[] = [
   { fromAsset: { assetId: SUPPORTED_ASSETS[0].id }, toAsset: { assetId: SUPPORTED_ASSETS[1].id } },
@@ -49,91 +50,94 @@ export const QUOTE_CAPABILITIES: QuoteCapability[] = [
   },
 ];
 
-function isKnownLiquidityCapability(capability: QuoteCapability) {
-  return QUOTE_CAPABILITIES.some((quoteCapability) => _.isEqual(quoteCapability, capability));
+export class LiquidityController {
+  private readonly quoteRepository = new Repository<AccountQuote>();
+
+  constructor(private assetsController: AssetsController) {}
+
+  private isKnownLiquidityCapability(capability: QuoteCapability) {
+    return QUOTE_CAPABILITIES.some((quoteCapability) => _.isEqual(quoteCapability, capability));
+  }
+
+  public validateQuoteRequest(quoteRequest: QuoteRequest): void {
+    if (!this.assetsController.isKnownAsset(quoteRequest.fromAsset)) {
+      throw new UnknownFromAssetError();
+    }
+    if (!this.assetsController.isKnownAsset(quoteRequest.toAsset)) {
+      throw new UnknownToAssetError();
+    }
+    if (
+      !this.isKnownLiquidityCapability({
+        fromAsset: quoteRequest.fromAsset,
+        toAsset: quoteRequest.toAsset,
+      })
+    ) {
+      throw new UnknownQuoteCapabilityError({
+        fromAsset: quoteRequest.fromAsset,
+        toAsset: quoteRequest.toAsset,
+      });
+    }
+  }
+
+  public quoteFromQuoteRequest(quoteRequest: QuoteRequest): Quote {
+    const { fromAsset, toAsset } = quoteRequest;
+    let fromAmount;
+    let toAmount;
+
+    if ('fromAmount' in quoteRequest && quoteRequest.fromAmount) {
+      fromAmount = toAmount = quoteRequest.fromAmount;
+    }
+    if ('toAmount' in quoteRequest && quoteRequest.toAmount) {
+      toAmount = fromAmount = quoteRequest.toAmount;
+    }
+    return {
+      fromAmount,
+      toAmount,
+      fromAsset,
+      toAsset,
+      conversionFeeBps: 1,
+      createdAt: new Date(Date.now()).toISOString(),
+      expiresAt: new Date(Date.now() + QUOTE_EXPIRATION_IN_MS).toISOString(),
+      id: randomUUID(),
+      status: QuoteStatus.READY,
+    };
+  }
+
+  public getAccountQuotes(accountId: string): Quote[] {
+    const allQuotes = this.quoteRepository.list();
+    const accountQuotes = allQuotes.filter((aq) => aq.accountId === accountId);
+    return accountQuotes.map((aq) => aq.data);
+  }
+
+  public getAccountQuote(accountId: string, quoteId: string): Quote {
+    const accountQuote = this.quoteRepository.find(quoteId);
+
+    if (!accountQuote || accountQuote.accountId !== accountId) {
+      throw new QuoteNotFoundError();
+    }
+
+    return accountQuote.data;
+  }
+
+  public addNewQuoteForAccount(accountId: string, quote: Quote): void {
+    this.quoteRepository.create({ id: quote.id, accountId, data: quote });
+  }
+
+  public executeAccountQuote(accountId: string, quoteId: string): Quote {
+    const accountQuote = this.quoteRepository.find(quoteId);
+
+    if (!accountQuote || accountQuote.accountId !== accountId) {
+      throw new QuoteNotFoundError();
+    }
+
+    if (accountQuote.data.status !== QuoteStatus.READY) {
+      throw new QuoteNotReadyError();
+    }
+
+    accountQuote.data.status = QuoteStatus.EXECUTED;
+
+    return accountQuote.data;
+  }
 }
 
-export function validateQuoteRequest(quoteRequest: QuoteRequest): void {
-  if (!assetsController.isKnownAsset(quoteRequest.fromAsset)) {
-    throw new UnknownFromAssetError();
-  }
-  if (!assetsController.isKnownAsset(quoteRequest.toAsset)) {
-    throw new UnknownToAssetError();
-  }
-  if (
-    !isKnownLiquidityCapability({
-      fromAsset: quoteRequest.fromAsset,
-      toAsset: quoteRequest.toAsset,
-    })
-  ) {
-    throw new UnknownQuoteCapabilityError({
-      fromAsset: quoteRequest.fromAsset,
-      toAsset: quoteRequest.toAsset,
-    });
-  }
-}
-
-export function quoteFromQuoteRequest(quoteRequest: QuoteRequest): Quote {
-  const { fromAsset, toAsset } = quoteRequest;
-  let fromAmount;
-  let toAmount;
-
-  if ('fromAmount' in quoteRequest && quoteRequest.fromAmount) {
-    fromAmount = toAmount = quoteRequest.fromAmount;
-  }
-  if ('toAmount' in quoteRequest && quoteRequest.toAmount) {
-    toAmount = fromAmount = quoteRequest.toAmount;
-  }
-  return {
-    fromAmount,
-    toAmount,
-    fromAsset,
-    toAsset,
-    conversionFeeBps: 1,
-    createdAt: new Date(Date.now()).toISOString(),
-    expiresAt: new Date(Date.now() + QUOTE_EXPIRATION_IN_MS).toISOString(),
-    id: randomUUID(),
-    status: QuoteStatus.READY,
-  };
-}
-
-export function getAccountQuotes(
-  accountId: string,
-  accountsQuotesMap: Map<string, Quote[]> = ACCOUNTS_QUOTES_MAP
-): Quote[] {
-  return accountsQuotesMap.get(accountId) ?? [];
-}
-
-export function addNewQuoteForAccount(
-  accountId: string,
-  quote: Quote,
-  accountsQuotesMap: Map<string, Quote[]> = ACCOUNTS_QUOTES_MAP
-): void {
-  const accountQuotes = accountsQuotesMap.get(accountId) ?? [];
-  accountQuotes.push(quote);
-
-  accountsQuotesMap.set(accountId, accountQuotes);
-}
-
-export function executeAccountQuote(
-  accountId: string,
-  quoteId: string,
-  accountsQuotesMap: Map<string, Quote[]> = ACCOUNTS_QUOTES_MAP
-): Quote {
-  const accountQuotes = accountsQuotesMap.get(accountId) ?? [];
-  const quoteIndex = accountQuotes.findIndex((quote) => quote.id === quoteId);
-  if (quoteIndex === -1) {
-    throw new QuoteNotFoundError();
-  }
-
-  if (accountQuotes[quoteIndex].status !== QuoteStatus.READY) {
-    throw new QuoteNotReadyError();
-  }
-
-  const executedQuote: Quote = { ...accountQuotes[quoteIndex], status: QuoteStatus.EXECUTED };
-
-  accountQuotes[quoteIndex] = executedQuote;
-  accountsQuotesMap.set(accountId, accountQuotes);
-
-  return executedQuote;
-}
+export const liquidityController = new LiquidityController(assetsController);

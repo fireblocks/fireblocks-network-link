@@ -18,11 +18,7 @@ import {
   UnknownFromAssetError,
   UnknownQuoteCapabilityError,
   UnknownToAssetError,
-  addNewQuoteForAccount,
-  executeAccountQuote,
-  getAccountQuotes,
-  quoteFromQuoteRequest,
-  validateQuoteRequest,
+  liquidityController,
 } from '../controllers/liquidity-controller';
 
 export async function getQuoteCapabilities(
@@ -43,7 +39,7 @@ export async function getQuotes(
     return ErrorFactory.notFound(reply);
   }
 
-  const accountQuotes = getAccountQuotes(accountId);
+  const accountQuotes = liquidityController.getAccountQuotes(accountId);
 
   const result = getPaginationResult(limit, startingAfter, endingBefore, accountQuotes, 'id');
   return { quotes: result };
@@ -58,7 +54,7 @@ export async function createQuote(request: FastifyRequest, reply: FastifyReply):
   }
 
   try {
-    validateQuoteRequest(quoteRequest);
+    liquidityController.validateQuoteRequest(quoteRequest);
   } catch (err) {
     if (err instanceof UnknownFromAssetError) {
       return ErrorFactory.badRequest(reply, {
@@ -86,9 +82,9 @@ export async function createQuote(request: FastifyRequest, reply: FastifyReply):
     throw err;
   }
 
-  const quote = quoteFromQuoteRequest(quoteRequest);
+  const quote = liquidityController.quoteFromQuoteRequest(quoteRequest);
 
-  addNewQuoteForAccount(accountId, quote);
+  liquidityController.addNewQuoteForAccount(accountId, quote);
 
   return quote;
 }
@@ -106,14 +102,14 @@ export async function getQuoteDetails(
     return ErrorFactory.notFound(reply);
   }
 
-  const accountQuotes = getAccountQuotes(accountId);
-  const quote = accountQuotes.find((quote) => quote.id === quoteId);
-
-  if (!quote) {
-    return ErrorFactory.notFound(reply);
+  try {
+    return liquidityController.getAccountQuote(accountId, quoteId);
+  } catch (err) {
+    if (err instanceof QuoteNotFoundError) {
+      ErrorFactory.notFound(reply);
+    }
+    throw err;
   }
-
-  return quote;
 }
 
 export async function executeQuote(request: FastifyRequest, reply: FastifyReply): Promise<Quote> {
@@ -127,7 +123,7 @@ export async function executeQuote(request: FastifyRequest, reply: FastifyReply)
   }
 
   try {
-    const executedQuote = executeAccountQuote(accountId, quoteId);
+    const executedQuote = liquidityController.executeAccountQuote(accountId, quoteId);
     return executedQuote;
   } catch (err) {
     if (err instanceof QuoteNotFoundError) {
