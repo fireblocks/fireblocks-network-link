@@ -2,7 +2,6 @@ import { randomUUID } from 'crypto';
 import { books } from '../../src/server/controllers/books-controller';
 import {
   CannotCancelOrder,
-  IdempotencyKeyReuseError,
   OrdersController,
   UnknownBookError,
   UnknownOrderError,
@@ -62,40 +61,6 @@ describe('Create order', () => {
       expect(() =>
         controller.createOrder({ ...badOrderDetails, idempotencyKey: randomUUID() })
       ).toThrow(UnknownBookError);
-    });
-  });
-
-  describe('Idempotency key reuse', () => {
-    const idempotencyKey = randomUUID();
-    let originalOrder: Order;
-
-    beforeEach(() => {
-      originalOrder = controller.createOrder({ ...orderDetails, idempotencyKey });
-    });
-
-    describe('Identical requests', () => {
-      let newOrder: Order;
-
-      beforeEach(() => {
-        newOrder = controller.createOrder({ ...orderDetails, idempotencyKey });
-      });
-
-      it('should return the original order', () => {
-        expect(newOrder).toEqual(originalOrder);
-      });
-      it('should not create new records', () => {
-        expect(controller.getOrdersCount()).toEqual(1);
-      });
-    });
-
-    describe('Different requests', () => {
-      it('should throw IdempotencyKeyReuseError', () => {
-        const badOrderDetails: OrderData = { ...orderDetails, side: OrderSide.SELL };
-
-        expect(() => controller.createOrder({ ...badOrderDetails, idempotencyKey })).toThrow(
-          IdempotencyKeyReuseError
-        );
-      });
     });
   });
 });

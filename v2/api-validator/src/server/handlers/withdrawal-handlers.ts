@@ -1,6 +1,6 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { isKnownSubAccount } from '../controllers/accounts-controller';
+import { accountsController } from '../controllers/accounts-controller';
 import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import {
   BlockchainWithdrawalRequest,
@@ -47,7 +47,7 @@ export async function getWithdrawalMethods(
   const { limit, startingAfter, endingBefore } = request.query;
   const { accountId } = request.params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -66,7 +66,7 @@ export async function getWithdrawals(
   const { limit, startingAfter, endingBefore, order } = request.query;
   const { accountId } = request.params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -90,7 +90,7 @@ export async function getWithdrawalDetails(
 ): Promise<Withdrawal> {
   const { accountId, id: withdrawalId } = request.params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -113,7 +113,7 @@ export async function getSubAccountWithdrawals(
   const { limit, startingAfter, endingBefore, order } = request.query;
   const { accountId } = request.params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -139,7 +139,7 @@ export async function getPeerAccountWithdrawals(
   const { limit, startingAfter, endingBefore, order } = request.query;
   const { accountId } = request.params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -165,7 +165,7 @@ export async function getBlockchainWithdrawals(
   const { limit, startingAfter, endingBefore, order } = request.query;
   const { accountId } = request.params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -191,7 +191,7 @@ export async function getFiatWithdrawals(
   const { limit, startingAfter, endingBefore, order } = request.query;
   const { accountId } = request.params;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -248,7 +248,7 @@ export async function createSubAccountWithdrawal(
     return reply.code(responseStatus).send(responseBody);
   };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -290,7 +290,7 @@ export async function createPeerAccountWithdrawal(
     return reply.code(responseStatus).send(responseBody);
   };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -332,7 +332,7 @@ export async function createBlockchainWithdrawal(
     return reply.code(responseStatus).send(responseBody);
   };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -374,7 +374,7 @@ export async function createFiatWithdrawal(
     return reply.code(responseStatus).send(responseBody);
   };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
