@@ -1,8 +1,9 @@
 import { WebApp } from './app';
 import logger from '../logging';
 import * as Handlers from './handlers';
+import { getAllEndpointSchemas } from '../schemas';
 import * as ErrorFactory from './http-error-factory';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyReply, FastifyRequest, HTTPMethods } from 'fastify';
 
 const log = logger('app:routes');
 
@@ -15,11 +16,11 @@ async function alwaysReturns404(request: FastifyRequest, reply: FastifyReply): P
 }
 
 export function registerRoutes(app: WebApp): void {
-  for (const { method, url, operationId, schema } of app.getAllOperations()) {
+  for (const { method, url, operationId, schema } of getAllEndpointSchemas()) {
     const stubHandler = schema.params ? alwaysReturns404 : alwaysReturns200;
 
     const handler = Handlers[operationId] ?? stubHandler;
-    app.addRoute(method, url, handler);
+    app.addRoute(method as HTTPMethods, url, handler);
 
     const usingDummyHandler = !Handlers[operationId];
     const registrationInfo = { method, url, operationId, isDummy: usingDummyHandler };
