@@ -1,8 +1,6 @@
-import { JsonValue } from 'type-fest';
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { accountsController } from '../controllers/accounts-controller';
-import { IdempotencyKeyReuseError } from '../controllers/orders-controller';
 import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
 import { getPaginationResult, PaginationParams } from '../controllers/pagination-controller';
 import {
@@ -12,7 +10,6 @@ import {
   DepositAddressCreationRequest,
   DepositCapability,
   EntityIdPathParam,
-  GeneralError,
   RequestPart,
   SubAccountIdPathParam,
 } from '../../client/generated';
@@ -21,9 +18,14 @@ import {
   DepositAddressDisabledError,
   DepositAddressNotFoundError,
   DepositNotFoundError,
-  IdempotencyRequestError,
   depositController,
 } from '../controllers/deposit-controller';
+import { IdempotencyHandler } from '../controllers/idempotency-handler';
+
+const idempotencyHandler = new IdempotencyHandler<
+  DepositAddressCreationRequest,
+  DepositAddress | BadRequestError
+>();
 
 type AccountParam = { accountId: SubAccountIdPathParam };
 
@@ -44,53 +46,40 @@ export async function getDepositMethods(
 }
 
 export async function createDepositAddress(
-  request: FastifyRequest<{ Params: AccountParam; Body: DepositAddressCreationRequest }>,
+  { body, params }: FastifyRequest<{ Params: AccountParam; Body: DepositAddressCreationRequest }>,
   reply: FastifyReply
 ): Promise<DepositAddress> {
-  const { accountId } = request.params;
+  const { accountId } = params;
 
-  const saveAndSendIdempotentResponse = (responseStatus: number, responseBody: JsonValue) => {
-    depositController.registerIdempotencyResponse(request.body.idempotencyKey, {
-      requestBody: request.body,
-      responseStatus,
-      responseBody,
-    });
-    return reply.code(responseStatus).send(responseBody);
-  };
+  if (idempotencyHandler.isKnownKey(body.idempotencyKey)) {
+    return idempotencyHandler.reply(body, reply);
+  }
 
   if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
   try {
-    depositController.validateDepositAddressCreationRequest(request.body);
+    depositController.validateDepositAddressCreationRequest(body);
   } catch (err) {
     if (err instanceof UnknownAdditionalAssetError) {
-      return saveAndSendIdempotentResponse(400, {
+      const response = {
         message: err.message,
         errorType: BadRequestError.errorType.UNKNOWN_ASSET,
         requestPart: RequestPart.BODY,
         propertyName: '/destination/asset/assetId',
-      });
+      };
+      idempotencyHandler.add(body, 400, response);
+      ErrorFactory.badRequest(reply, response);
     }
-    if (err instanceof IdempotencyKeyReuseError) {
-      return ErrorFactory.badRequest(reply, {
-        message: err.message,
-        errorType: BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE,
-      });
-    }
-    if (err instanceof IdempotencyRequestError) {
-      return reply.code(err.metadata.responseStatus).send(err.metadata.responseBody);
-    }
-    return saveAndSendIdempotentResponse(500, {
-      errorType: GeneralError.errorType.INTERNAL_ERROR,
-    });
+    throw err;
   }
 
-  const depositAddress = depositController.depositAddressFromDepositAddressRequest(request.body);
-
+  const depositAddress = depositController.depositAddressFromDepositAddressRequest(body);
   depositController.addNewDepositAddressForAccount(accountId, depositAddress);
-  return saveAndSendIdempotentResponse(200, depositAddress);
+
+  idempotencyHandler.add(body, 200, depositAddress);
+  return depositAddress;
 }
 
 export async function getDepositAddresses(

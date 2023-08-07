@@ -1,6 +1,5 @@
 import { randomUUID } from 'crypto';
 import { UnknownAdditionalAssetError } from '../../src/server/controllers/assets-controller';
-import { IdempotencyKeyReuseError } from '../../src/server/controllers/orders-controller';
 import {
   DepositAddress,
   DepositAddressStatus,
@@ -10,7 +9,6 @@ import {
 import {
   DepositAddressDisabledError,
   DepositController,
-  IdempotencyRequestError,
 } from '../../src/server/controllers/deposit-controller';
 
 describe('Deposit controller', () => {
@@ -100,10 +98,6 @@ describe('Deposit controller', () => {
       transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
       asset: unknownAssetReference,
     };
-    const validTransferCapability = {
-      transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-      asset: { cryptocurrencySymbol: Layer1Cryptocurrency.ETH },
-    };
 
     it('should throw error when unknown asset is provided', () => {
       expect(() => {
@@ -112,36 +106,6 @@ describe('Deposit controller', () => {
           transferMethod: unknownAssetTransferCapability,
         });
       }).toThrow(UnknownAdditionalAssetError);
-    });
-
-    describe('Idempotency validation', () => {
-      const idempotencyKey = 'key';
-      depositController.registerIdempotencyResponse(idempotencyKey, {
-        requestBody: {
-          idempotencyKey,
-          transferMethod: validTransferCapability,
-        },
-        responseStatus: 200,
-        responseBody: {},
-      });
-
-      it('should throw idempotency request error when the same request is provided more than once', () => {
-        expect(() => {
-          depositController.validateDepositAddressCreationRequest({
-            idempotencyKey,
-            transferMethod: validTransferCapability,
-          });
-        }).toThrow(IdempotencyRequestError);
-      });
-
-      it('should throw idempotency key used error when the same key is sent with a different request body', () => {
-        expect(() => {
-          depositController.validateDepositAddressCreationRequest({
-            idempotencyKey,
-            transferMethod: unknownAssetTransferCapability,
-          });
-        }).toThrow(IdempotencyKeyReuseError);
-      });
     });
   });
 });

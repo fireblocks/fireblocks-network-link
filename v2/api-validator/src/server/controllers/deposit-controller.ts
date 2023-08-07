@@ -24,11 +24,8 @@ import {
   PublicBlockchainCapability,
   SwiftCapability,
 } from '../../client/generated';
-import { IdempotencyKeyReuseError } from './orders-controller';
 import { Repository } from './repository';
 import { accountsController } from './accounts-controller';
-
-const CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP = new Map<string, IdempotencyMetadata>();
 
 export const DEPOSIT_METHODS: DepositCapability[] = [
   {
@@ -170,23 +167,6 @@ export class DepositController {
     }
   }
 
-  private isUsedIdempotencyKey(key: string) {
-    return CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP.has(key);
-  }
-
-  private getIdempotencyResponseForKey(key: string): IdempotencyMetadata {
-    const metadata = CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP.get(key);
-    if (!metadata) {
-      throw new Error('Idempotency key missing from map');
-    }
-
-    return metadata;
-  }
-
-  public registerIdempotencyResponse(key: string, metadata: IdempotencyMetadata): void {
-    CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP.set(key, metadata);
-  }
-
   public getAllDeposits(accountId: string): Deposit[] {
     const deposits = this.depositRepository.list();
     const depositsForAccount = deposits.filter((d) => d.accountId === accountId);
@@ -206,13 +186,6 @@ export class DepositController {
   public validateDepositAddressCreationRequest(
     depositAddressRequest: DepositAddressCreationRequest
   ): void {
-    if (this.isUsedIdempotencyKey(depositAddressRequest.idempotencyKey)) {
-      const metadata = this.getIdempotencyResponseForKey(depositAddressRequest.idempotencyKey);
-      if (!_.isEqual(depositAddressRequest, metadata.requestBody)) {
-        throw new IdempotencyKeyReuseError(depositAddressRequest.idempotencyKey);
-      }
-      throw new IdempotencyRequestError(metadata);
-    }
     if (!assetsController.isKnownAsset(depositAddressRequest.transferMethod.asset)) {
       throw new UnknownAdditionalAssetError();
     }
