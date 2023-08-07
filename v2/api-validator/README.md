@@ -61,7 +61,7 @@ definitions and the possible values.
   - Any state is managed in-memory.
   - Values from the shared configuration in `src/config` are used to coordinate
     scenarios between the server and the client.
-  - The official OpenAPI document, located in `../fb-xcom-openapi` is used to
+  - The official OpenAPI document, located in `../openapi` is used to
     validate the incoming requests and the outgoing responses.
 - `src/client` contains the API client.
 - `tests` contains the API validation tests.
