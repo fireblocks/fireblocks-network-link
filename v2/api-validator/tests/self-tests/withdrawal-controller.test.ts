@@ -1,9 +1,34 @@
+import { fakeSchemaObject } from '../../src/schemas';
+import { CrossAccountWithdrawalRequest, Withdrawal } from '../../src/client/generated';
 import { WithdrawalController } from '../../src/server/controllers/withdrawal-controller';
+import _ from 'lodash';
+import { assetsController } from '../../src/server/controllers/assets-controller';
 
 describe('Withdrawal controller', () => {
-  const withdrawals = [];
-  const withdrawalController = new WithdrawalController(withdrawals);
+  let controller: WithdrawalController;
+
+  beforeAll(() => {
+    controller = new WithdrawalController(assetsController, 5, 5);
+  });
+
+  describe('List withdrawals', () => {
+    const orderOptions: ('asc' | 'desc')[] = ['asc', 'desc'];
+    it.each(orderOptions)('should return withdrawals ordered by creation date', (order) => {
+      const withdrawals = controller.getWithdrawals(order);
+      expect(withdrawals).toEqual(_.orderBy(withdrawals, 'createdAt', order));
+    });
+  });
+
   describe('Create withdrawal', () => {
-    it('should add withdrawal to account withdrawals', () => {});
+    let withdrawal: Withdrawal;
+    beforeAll(() => {
+      const withdrawalRequest = fakeSchemaObject(
+        'CrossAccountWithdrawalRequest'
+      ) as CrossAccountWithdrawalRequest;
+      withdrawal = controller.createWithdrawal(withdrawalRequest);
+    });
+    it('should add withdrawal to account withdrawals', () => {
+      expect(controller.getWithdrawal(withdrawal.id)).toBeDefined();
+    });
   });
 });

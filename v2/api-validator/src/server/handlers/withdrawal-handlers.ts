@@ -3,8 +3,6 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { IdempotencyHandler } from '../controllers/idempotency-handler';
 import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import {
-  WITHDRAWALS,
-  WITHDRAWAL_METHODS,
   WithdrawalController,
   WithdrawalNotFoundError,
 } from '../controllers/withdrawal-controller';
@@ -19,10 +17,13 @@ import {
   WithdrawalCapability,
 } from '../../client/generated';
 import { ControllersContainer } from '../controllers/controllers-container';
+import { assetsController } from '../controllers/assets-controller';
 
 type AccountParam = { accountId: SubAccountIdPathParam };
 
-const controllers = new ControllersContainer(() => new WithdrawalController(WITHDRAWALS));
+const controllers = new ControllersContainer(
+  () => new WithdrawalController(assetsController, 5, 5)
+);
 
 /**
  * GET Endpoints
@@ -41,7 +42,13 @@ export async function getWithdrawalMethods(
   }
 
   return {
-    capabilities: getPaginationResult(limit, startingAfter, endingBefore, WITHDRAWAL_METHODS, 'id'),
+    capabilities: getPaginationResult(
+      limit,
+      startingAfter,
+      endingBefore,
+      controller.getCapabilites(),
+      'id'
+    ),
   };
 }
 
@@ -65,7 +72,7 @@ export async function getWithdrawals(
       limit,
       startingAfter,
       endingBefore,
-      controller.getAccountWithdrawals(order),
+      controller.getWithdrawals(order),
       'id'
     ),
   };
@@ -85,7 +92,7 @@ export async function getWithdrawalDetails(
   }
 
   try {
-    return controller.getAccountWithdrawal(withdrawalId);
+    return controller.getWithdrawal(withdrawalId);
   } catch (err) {
     if (err instanceof WithdrawalNotFoundError) {
       return ErrorFactory.notFound(reply);
@@ -114,7 +121,7 @@ export async function getSubAccountWithdrawals(
       limit,
       startingAfter,
       endingBefore,
-      controller.getAccountSubAccountWithdrawals(order),
+      controller.getSubAccountWithdrawals(order),
       'id'
     ),
   };
@@ -140,7 +147,7 @@ export async function getPeerAccountWithdrawals(
       limit,
       startingAfter,
       endingBefore,
-      controller.getAccountPeerAccountWithdrawals(order),
+      controller.getPeerAccountWithdrawals(order),
       'id'
     ),
   };
@@ -166,7 +173,7 @@ export async function getBlockchainWithdrawals(
       limit,
       startingAfter,
       endingBefore,
-      controller.getAccountBlockchainWithdrawals(order),
+      controller.getBlockchainWithdrawals(order),
       'id'
     ),
   };
@@ -192,7 +199,7 @@ export async function getFiatWithdrawals(
       limit,
       startingAfter,
       endingBefore,
-      controller.getAccountFiatWithdrawals(order),
+      controller.getFiatWithdrawals(order),
       'id'
     ),
   };
@@ -231,7 +238,7 @@ export async function createSubAccountWithdrawal(
     return subAccountIdempotencyHandler.reply(body, reply);
   }
 
-  const withdrawal = controller.createAccountWithdrawal(body);
+  const withdrawal = controller.createWithdrawal(body);
   subAccountIdempotencyHandler.add(body, 200, withdrawal);
 
   return withdrawal;
@@ -252,7 +259,7 @@ export async function createPeerAccountWithdrawal(
     return peerAccountIdempotencyHandler.reply(body, reply);
   }
 
-  const withdrawal = controller.createAccountWithdrawal(body);
+  const withdrawal = controller.createWithdrawal(body);
   peerAccountIdempotencyHandler.add(body, 200, withdrawal);
 
   return withdrawal;
@@ -273,7 +280,7 @@ export async function createBlockchainWithdrawal(
     return blockchainIdempotencyHandler.reply(body, reply);
   }
 
-  const withdrawal = controller.createAccountWithdrawal(body);
+  const withdrawal = controller.createWithdrawal(body);
   blockchainIdempotencyHandler.add(body, 200, withdrawal);
 
   return withdrawal;
@@ -294,7 +301,7 @@ export async function createFiatWithdrawal(
     return fiatIdempotencyHandler.reply(body, reply);
   }
 
-  const withdrawal = controller.createAccountWithdrawal(body);
+  const withdrawal = controller.createWithdrawal(body);
   fiatIdempotencyHandler.add(body, 200, withdrawal);
 
   return withdrawal;

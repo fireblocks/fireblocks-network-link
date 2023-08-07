@@ -72,7 +72,6 @@ describe('Liquidity Controller', () => {
         liquidityController.addNewQuoteForAccount(accountId, differentQuote);
       });
       it('should add quote to account quote list', () => {
-        console.log(liquidityController.getAccountQuotes(accountId));
         expect(liquidityController.getAccountQuotes(accountId)).toEqual([
           defaultQuote,
           differentQuote,
