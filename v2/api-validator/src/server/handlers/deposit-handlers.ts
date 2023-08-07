@@ -17,17 +17,12 @@ import {
   SubAccountIdPathParam,
 } from '../../client/generated';
 import {
-  addNewDepositAddressForAccount,
   DEPOSIT_METHODS,
   DepositAddressDisabledError,
-  depositAddressFromDepositAddressRequest,
   DepositAddressNotFoundError,
-  DEPOSITS,
-  disableAccountDepositAddress,
-  getAccountDepositAddresses,
+  DepositNotFoundError,
   IdempotencyRequestError,
-  registerIdempotencyResponse,
-  validateDepositAddressCreationRequest,
+  depositController,
 } from '../controllers/deposit-controller';
 
 type AccountParam = { accountId: SubAccountIdPathParam };
@@ -55,7 +50,7 @@ export async function createDepositAddress(
   const { accountId } = request.params;
 
   const saveAndSendIdempotentResponse = (responseStatus: number, responseBody: JsonValue) => {
-    registerIdempotencyResponse(request.body.idempotencyKey, {
+    depositController.registerIdempotencyResponse(request.body.idempotencyKey, {
       requestBody: request.body,
       responseStatus,
       responseBody,
@@ -68,7 +63,7 @@ export async function createDepositAddress(
   }
 
   try {
-    validateDepositAddressCreationRequest(request.body);
+    depositController.validateDepositAddressCreationRequest(request.body);
   } catch (err) {
     if (err instanceof UnknownAdditionalAssetError) {
       return saveAndSendIdempotentResponse(400, {
@@ -92,9 +87,9 @@ export async function createDepositAddress(
     });
   }
 
-  const depositAddress = depositAddressFromDepositAddressRequest(request.body);
+  const depositAddress = depositController.depositAddressFromDepositAddressRequest(request.body);
 
-  addNewDepositAddressForAccount(accountId, depositAddress);
+  depositController.addNewDepositAddressForAccount(accountId, depositAddress);
   return saveAndSendIdempotentResponse(200, depositAddress);
 }
 
@@ -109,7 +104,7 @@ export async function getDepositAddresses(
     return ErrorFactory.notFound(reply);
   }
 
-  const accountDepositAddresses = getAccountDepositAddresses(accountId);
+  const accountDepositAddresses = depositController.getAccountDepositAddresses(accountId);
 
   return {
     addresses: getPaginationResult(
@@ -132,7 +127,7 @@ export async function getDepositAddressDetails(
     return ErrorFactory.notFound(reply);
   }
 
-  const accountDepositAddresses = getAccountDepositAddresses(accountId);
+  const accountDepositAddresses = depositController.getAccountDepositAddresses(accountId);
   const depositAddress = accountDepositAddresses.find(
     (depositAddress) => depositAddress.id === depositAddressId
   );
@@ -155,7 +150,7 @@ export async function disableDepositAddress(
   }
 
   try {
-    return disableAccountDepositAddress(accountId, depositAddressId);
+    return depositController.disableAccountDepositAddress(accountId, depositAddressId);
   } catch (err) {
     if (err instanceof DepositAddressNotFoundError) {
       return ErrorFactory.notFound(reply);
@@ -182,7 +177,13 @@ export async function getDeposits(
   }
 
   return {
-    deposits: getPaginationResult(limit, startingAfter, endingBefore, DEPOSITS, 'id'),
+    deposits: getPaginationResult(
+      limit,
+      startingAfter,
+      endingBefore,
+      depositController.getAllDeposits(accountId),
+      'id'
+    ),
   };
 }
 
@@ -196,11 +197,12 @@ export async function getDepositDetails(
     return ErrorFactory.notFound(reply);
   }
 
-  const deposit = DEPOSITS.find((deposit) => deposit.id === depositId);
-
-  if (!deposit) {
-    return ErrorFactory.notFound(reply);
+  try {
+    return depositController.getDeposit(accountId, depositId);
+  } catch (err) {
+    if (err instanceof DepositNotFoundError) {
+      return ErrorFactory.notFound(reply);
+    }
+    throw err;
   }
-
-  return deposit;
 }

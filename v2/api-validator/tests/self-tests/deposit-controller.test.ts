@@ -8,87 +8,93 @@ import {
   PublicBlockchainCapability,
 } from '../../src/client/generated';
 import {
-  addNewDepositAddressForAccount,
   DepositAddressDisabledError,
-  disableAccountDepositAddress,
-  getAccountDepositAddresses,
+  DepositController,
   IdempotencyRequestError,
-  registerIdempotencyResponse,
-  validateDepositAddressCreationRequest,
 } from '../../src/server/controllers/deposit-controller';
 
 describe('Deposit controller', () => {
   describe('Deposit addresses', () => {
-    const accountDepositAddressMap: Map<string, DepositAddress[]> = new Map();
+    let depositController: DepositController;
     const accountId = 'some-account';
     const differentAccountId = 'different-account';
-    const depositAddress: DepositAddress = {
-      id: 'id',
+    const depositAddress1: DepositAddress = {
+      id: 'id1',
       status: DepositAddressStatus.ENABLED,
       destination: {
         transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
         asset: { cryptocurrencySymbol: Layer1Cryptocurrency.ETH },
-        address: 'address',
+        address: 'address1',
+      },
+    };
+    const depositAddress2: DepositAddress = {
+      id: 'id2',
+      status: DepositAddressStatus.ENABLED,
+      destination: {
+        transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+        asset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
+        address: 'address2',
       },
     };
 
-    afterEach(() => {
-      accountDepositAddressMap.clear();
+    beforeEach(() => {
+      depositController = new DepositController([]);
     });
 
     describe('Add new deposit address', () => {
       beforeEach(() => {
-        addNewDepositAddressForAccount(accountId, depositAddress, accountDepositAddressMap);
+        depositController.addNewDepositAddressForAccount(accountId, depositAddress1);
       });
 
       it('should set address to relevant accountId when address list is empty', () => {
-        expect(accountDepositAddressMap.get(accountId)).toEqual([depositAddress]);
+        expect(depositController.getAccountDepositAddresses(accountId)).toEqual([depositAddress1]);
       });
 
       it('should add to existing deposit address list', () => {
-        addNewDepositAddressForAccount(accountId, depositAddress, accountDepositAddressMap);
-        expect(accountDepositAddressMap.get(accountId)).toEqual([depositAddress, depositAddress]);
+        depositController.addNewDepositAddressForAccount(accountId, depositAddress2);
+        expect(depositController.getAccountDepositAddresses(accountId)).toEqual([
+          depositAddress1,
+          depositAddress2,
+        ]);
       });
     });
 
     describe("Get account's deposit addresses", () => {
       it('should return empty list when the account doesnt have any deposit addresses', () => {
-        expect(getAccountDepositAddresses(accountId)).toEqual([]);
+        expect(depositController.getAccountDepositAddresses(accountId)).toEqual([]);
       });
 
       it('should return address list set for account', () => {
-        accountDepositAddressMap.set(accountId, [depositAddress]);
-        expect(getAccountDepositAddresses(accountId, accountDepositAddressMap)).toEqual([
-          depositAddress,
-        ]);
-        expect(getAccountDepositAddresses(differentAccountId, accountDepositAddressMap)).toEqual(
-          []
-        );
+        depositController.addNewDepositAddressForAccount(accountId, depositAddress1);
+        expect(depositController.getAccountDepositAddresses(accountId)).toEqual([depositAddress1]);
+        expect(depositController.getAccountDepositAddresses(differentAccountId)).toEqual([]);
       });
     });
 
     describe('Disable deposit address', () => {
       beforeEach(() => {
-        accountDepositAddressMap.set(accountId, [depositAddress]);
-        disableAccountDepositAddress(accountId, depositAddress.id, accountDepositAddressMap);
+        depositController.addNewDepositAddressForAccount(accountId, depositAddress1);
+        depositController.disableAccountDepositAddress(accountId, depositAddress1.id);
       });
 
       it('should set the deposit address status to disabled', () => {
-        const disabledDepositAddress = accountDepositAddressMap
-          .get(accountId)
-          ?.find((address) => address.id === depositAddress.id);
+        const disabledDepositAddress = depositController.getAccountDepositAddress(
+          accountId,
+          depositAddress1.id
+        );
         expect(disabledDepositAddress?.status).toBe(DepositAddressStatus.DISABLED);
       });
 
-      it('should fail attempting to disable an already disabled address', () => {
-        expect(() => {
-          disableAccountDepositAddress(accountId, depositAddress.id, accountDepositAddressMap);
-        }).toThrow(DepositAddressDisabledError);
+      it('should fail to disable an already disabled address', () => {
+        expect(() =>
+          depositController.disableAccountDepositAddress(accountId, depositAddress1.id)
+        ).toThrow(DepositAddressDisabledError);
       });
     });
   });
 
   describe('Validate deposit address creation request', () => {
+    const depositController = new DepositController([]);
     const unknownAssetReference = { assetId: randomUUID() };
     const unknownAssetTransferCapability = {
       transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
@@ -101,7 +107,7 @@ describe('Deposit controller', () => {
 
     it('should throw error when unknown asset is provided', () => {
       expect(() => {
-        validateDepositAddressCreationRequest({
+        depositController.validateDepositAddressCreationRequest({
           idempotencyKey: randomUUID(),
           transferMethod: unknownAssetTransferCapability,
         });
@@ -110,7 +116,7 @@ describe('Deposit controller', () => {
 
     describe('Idempotency validation', () => {
       const idempotencyKey = 'key';
-      registerIdempotencyResponse(idempotencyKey, {
+      depositController.registerIdempotencyResponse(idempotencyKey, {
         requestBody: {
           idempotencyKey,
           transferMethod: validTransferCapability,
@@ -121,7 +127,7 @@ describe('Deposit controller', () => {
 
       it('should throw idempotency request error when the same request is provided more than once', () => {
         expect(() => {
-          validateDepositAddressCreationRequest({
+          depositController.validateDepositAddressCreationRequest({
             idempotencyKey,
             transferMethod: validTransferCapability,
           });
@@ -130,7 +136,7 @@ describe('Deposit controller', () => {
 
       it('should throw idempotency key used error when the same key is sent with a different request body', () => {
         expect(() => {
-          validateDepositAddressCreationRequest({
+          depositController.validateDepositAddressCreationRequest({
             idempotencyKey,
             transferMethod: unknownAssetTransferCapability,
           });
