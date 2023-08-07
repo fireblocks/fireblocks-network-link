@@ -2,7 +2,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { SubAccountIdPathParam, WithdrawalCapability } from '../../client/generated';
 import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import { WITHDRAWAL_METHODS } from '../controllers/withdrawal-controller';
-import { isKnownSubAccount } from '../controllers/accounts-controller';
+import { accountsController } from '../controllers/accounts-controller';
 import * as ErrorFactory from '../http-error-factory';
 
 export async function getWithdrawalMethods(
@@ -12,7 +12,7 @@ export async function getWithdrawalMethods(
   const { limit, startingAfter, endingBefore } = request.query as PaginationParams;
   const { accountId } = request.params as { accountId: SubAccountIdPathParam };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 

@@ -1,7 +1,7 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { booksController } from '../controllers/books-controller';
 import { OrdersController } from '../controllers/orders-controller';
-import { asks, bids, books } from '../controllers/books-controller';
 import { IdempotencyHandler } from '../controllers/idempotency-handler';
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { ControllersContainer } from '../controllers/controllers-container';
@@ -30,7 +30,13 @@ export async function getBooks({
 }: FastifyRequest<PaginationQuerystring>): Promise<GetBooksResponse> {
   const { limit, startingAfter, endingBefore } = query;
   return {
-    books: getPaginationResult(limit, startingAfter, endingBefore, books, 'id'),
+    books: getPaginationResult(
+      limit,
+      startingAfter,
+      endingBefore,
+      booksController.getAllBooks(),
+      'id'
+    ),
   };
 }
 
@@ -39,7 +45,7 @@ export async function getBookDetails(
   reply: FastifyReply
 ): Promise<OrderBook> {
   const id = decodeURIComponent(params.id);
-  const book = books.find((b) => b.id === id);
+  const book = booksController.getBook(id);
   if (!book) {
     return ErrorFactory.notFound(reply);
   }
@@ -52,12 +58,12 @@ export async function getBookAsks(
   reply: FastifyReply
 ): Promise<GetBookAsksResponse> {
   const id = decodeURIComponent(params.id);
-  const book = books.find((b) => b.id === id);
+  const book = booksController.getBook(id);
   if (!book) {
     return ErrorFactory.notFound(reply);
   }
 
-  const bookAsks = asks[id];
+  const bookAsks = booksController.getAsks(id);
   if (!bookAsks) {
     return { asks: [] };
   }
@@ -73,12 +79,12 @@ export async function getBookBids(
   reply: FastifyReply
 ): Promise<GetBookBidsResponse> {
   const id = decodeURIComponent(params.id);
-  const book = books.find((b) => b.id === id);
+  const book = booksController.getBook(id);
   if (!book) {
     return ErrorFactory.notFound(reply);
   }
 
-  const bookBids = bids[id];
+  const bookBids = booksController.getBids(id);
   if (!bookBids) {
     return { bids: [] };
   }
@@ -94,7 +100,7 @@ export async function getBookOrderHistory(
   reply: FastifyReply
 ): Promise<MarketTrade[]> {
   const id = decodeURIComponent(params.id);
-  const book = books.find((b) => b.id === id);
+  const book = booksController.getBook(id);
   if (!book) {
     return ErrorFactory.notFound(reply);
   }

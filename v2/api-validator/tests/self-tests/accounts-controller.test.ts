@@ -1,8 +1,5 @@
 import { Account, AccountStatus } from '../../src/client/generated';
-import {
-  omitBalancesFromAccount,
-  omitBalancesFromAccountList,
-} from '../../src/server/controllers/accounts-controller';
+import { AccountsController } from '../../src/server/controllers/accounts-controller';
 
 describe('Accounts Controller', () => {
   describe('Omit balances from account', () => {
@@ -13,10 +10,12 @@ describe('Accounts Controller', () => {
       balances: [],
     };
 
+    const accountsController = new AccountsController([account]);
+
     let accountWithoutBalances: Account;
 
     beforeAll(() => {
-      accountWithoutBalances = omitBalancesFromAccount(account);
+      accountWithoutBalances = accountsController.omitBalancesFromAccount(account);
     });
 
     it('should remove balance property from account object', () => {
@@ -40,10 +39,12 @@ describe('Accounts Controller', () => {
       },
     ];
 
+    const accountsController = new AccountsController(accounts);
+
     let accountsWithoutBalances: Account[];
 
     beforeAll(() => {
-      accountsWithoutBalances = omitBalancesFromAccountList(accounts);
+      accountsWithoutBalances = accountsController.omitBalancesFromAccountList(accounts);
     });
 
     it('should remove balances property from every item in array', () => {

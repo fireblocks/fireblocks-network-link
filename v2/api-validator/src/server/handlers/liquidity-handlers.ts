@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import * as ErrorFactory from '../http-error-factory';
-import { isKnownSubAccount } from '../controllers/accounts-controller';
+import { accountsController } from '../controllers/accounts-controller';
 import {
   BadRequestError,
   EntityIdPathParam,
@@ -18,11 +18,7 @@ import {
   UnknownFromAssetError,
   UnknownQuoteCapabilityError,
   UnknownToAssetError,
-  addNewQuoteForAccount,
-  executeAccountQuote,
-  getAccountQuotes,
-  quoteFromQuoteRequest,
-  validateQuoteRequest,
+  liquidityController,
 } from '../controllers/liquidity-controller';
 
 export async function getQuoteCapabilities(
@@ -39,11 +35,11 @@ export async function getQuotes(
   const { limit, startingAfter, endingBefore } = request.query as PaginationParams;
   const { accountId } = request.params as { accountId: SubAccountIdPathParam };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
-  const accountQuotes = getAccountQuotes(accountId);
+  const accountQuotes = liquidityController.getAccountQuotes(accountId);
 
   const result = getPaginationResult(limit, startingAfter, endingBefore, accountQuotes, 'id');
   return { quotes: result };
@@ -53,12 +49,12 @@ export async function createQuote(request: FastifyRequest, reply: FastifyReply):
   const { accountId } = request.params as { accountId: SubAccountIdPathParam };
   const quoteRequest = request.body as QuoteRequest;
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
   try {
-    validateQuoteRequest(quoteRequest);
+    liquidityController.validateQuoteRequest(quoteRequest);
   } catch (err) {
     if (err instanceof UnknownFromAssetError) {
       return ErrorFactory.badRequest(reply, {
@@ -86,9 +82,9 @@ export async function createQuote(request: FastifyRequest, reply: FastifyReply):
     throw err;
   }
 
-  const quote = quoteFromQuoteRequest(quoteRequest);
+  const quote = liquidityController.quoteFromQuoteRequest(quoteRequest);
 
-  addNewQuoteForAccount(accountId, quote);
+  liquidityController.addNewQuoteForAccount(accountId, quote);
 
   return quote;
 }
@@ -102,18 +98,18 @@ export async function getQuoteDetails(
     id: EntityIdPathParam;
   };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
-  const accountQuotes = getAccountQuotes(accountId);
-  const quote = accountQuotes.find((quote) => quote.id === quoteId);
-
-  if (!quote) {
-    return ErrorFactory.notFound(reply);
+  try {
+    return liquidityController.getAccountQuote(accountId, quoteId);
+  } catch (err) {
+    if (err instanceof QuoteNotFoundError) {
+      ErrorFactory.notFound(reply);
+    }
+    throw err;
   }
-
-  return quote;
 }
 
 export async function executeQuote(request: FastifyRequest, reply: FastifyReply): Promise<Quote> {
@@ -122,12 +118,12 @@ export async function executeQuote(request: FastifyRequest, reply: FastifyReply)
     id: EntityIdPathParam;
   };
 
-  if (!isKnownSubAccount(accountId)) {
+  if (!accountsController.isKnownSubAccount(accountId)) {
     return ErrorFactory.notFound(reply);
   }
 
   try {
-    const executedQuote = executeAccountQuote(accountId, quoteId);
+    const executedQuote = liquidityController.executeAccountQuote(accountId, quoteId);
     return executedQuote;
   } catch (err) {
     if (err instanceof QuoteNotFoundError) {

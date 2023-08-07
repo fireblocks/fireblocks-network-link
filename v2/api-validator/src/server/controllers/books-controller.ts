@@ -5,6 +5,7 @@ import {
   NationalCurrencyCode,
   OrderBook,
 } from '../../client/generated';
+import { Repository } from './repository';
 
 export const books: OrderBook[] = [
   {
@@ -108,3 +109,47 @@ export const bids: Record<string, MarketEntry[]> = {
     },
   ],
 };
+
+type BookMarketEntries = { id: string; entries: MarketEntry[] };
+
+export class BooksController {
+  private readonly booksRepository = new Repository<OrderBook>();
+  private readonly asksRepository = new Repository<BookMarketEntries>();
+  private readonly bidsRepository = new Repository<BookMarketEntries>();
+
+  constructor(
+    books: OrderBook[],
+    asks: Record<string, MarketEntry[]>,
+    bids: Record<string, MarketEntry[]>
+  ) {
+    for (const book of books) {
+      this.booksRepository.create(book);
+    }
+
+    for (const id in asks) {
+      this.asksRepository.create({ id, entries: asks[id] });
+    }
+
+    for (const id in bids) {
+      this.bidsRepository.create({ id, entries: bids[id] });
+    }
+  }
+
+  public getAllBooks(): OrderBook[] {
+    return this.booksRepository.list();
+  }
+
+  public getBook(id: string): OrderBook | undefined {
+    return this.booksRepository.find(id);
+  }
+
+  public getAsks(id: string): MarketEntry[] {
+    return this.asksRepository.find(id)?.entries ?? [];
+  }
+
+  public getBids(id: string): MarketEntry[] {
+    return this.bidsRepository.find(id)?.entries ?? [];
+  }
+}
+
+export const booksController = new BooksController(books, asks, bids);

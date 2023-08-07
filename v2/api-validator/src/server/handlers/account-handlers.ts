@@ -2,13 +2,8 @@ import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { Account, AccountBalancesQueryParam, SubAccountIdPathParam } from '../../client/generated';
 import { getPaginationResult, PaginationParams } from '../controllers/pagination-controller';
-import {
-  ACCOUNTS,
-  getSubAccount,
-  omitBalancesFromAccount,
-  omitBalancesFromAccountList,
-} from '../controllers/accounts-controller';
 import logger from '../../logging';
+import { accountsController } from '../controllers/accounts-controller';
 
 const log = logger('handler:accounts');
 
@@ -20,10 +15,16 @@ export async function getAccounts(
     balances?: AccountBalancesQueryParam;
   };
 
-  let page = getPaginationResult(limit, startingAfter, endingBefore, ACCOUNTS, 'id');
+  let page = getPaginationResult(
+    limit,
+    startingAfter,
+    endingBefore,
+    accountsController.getAllSubAccounts(),
+    'id'
+  );
 
   if (!balances) {
-    page = omitBalancesFromAccountList(page);
+    page = accountsController.omitBalancesFromAccountList(page);
   }
   return { accounts: page };
 }
@@ -34,14 +35,14 @@ export async function getAccountDetails(
 ): Promise<Account> {
   const { accountId } = request.params as { accountId: SubAccountIdPathParam };
   const query = request.query as { balances?: AccountBalancesQueryParam };
-  let account = getSubAccount(accountId);
+  let account = accountsController.getSubAccount(accountId);
 
   if (!account) {
     return ErrorFactory.notFound(reply);
   }
 
   if (!query.balances) {
-    account = omitBalancesFromAccount(account);
+    account = accountsController.omitBalancesFromAccount(account);
   }
 
   return account;

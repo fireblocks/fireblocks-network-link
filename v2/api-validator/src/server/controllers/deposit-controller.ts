@@ -3,7 +3,11 @@ import RandExp from 'randexp';
 import { randomUUID } from 'crypto';
 import { JsonValue } from 'type-fest';
 import { XComError } from '../../error';
-import { isKnownAsset, SUPPORTED_ASSETS, UnknownAdditionalAssetError } from './assets-controller';
+import {
+  assetsController,
+  SUPPORTED_ASSETS,
+  UnknownAdditionalAssetError,
+} from './assets-controller';
 import {
   CrossAccountTransferCapability,
   Deposit,
@@ -20,13 +24,8 @@ import {
   PublicBlockchainCapability,
   SwiftCapability,
 } from '../../client/generated';
-import { IdempotencyKeyReuseError } from './orders-controller';
-
-const swiftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
-const ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
-
-const CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP = new Map<string, IdempotencyMetadata>();
-const ACCOUNT_DEPOSIT_ADDRESS_MAP = new Map<string, DepositAddress[]>();
+import { Repository } from './repository';
+import { accountsController } from './accounts-controller';
 
 export const DEPOSIT_METHODS: DepositCapability[] = [
   {
@@ -127,9 +126,15 @@ export class DepositAddressNotFoundError extends XComError {
   }
 }
 
+export class DepositNotFoundError extends XComError {
+  constructor() {
+    super('Deposit not found');
+  }
+}
+
 export class DepositAddressDisabledError extends XComError {
   constructor(id: string) {
-    super(`Deposit address ${id} is disabled`);
+    super('Deposit address is disabled', { id });
   }
 }
 
@@ -145,118 +150,127 @@ type IdempotencyMetadata = {
   responseStatus: number;
 };
 
-function isUsedIdempotencyKey(key: string) {
-  return CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP.has(key);
-}
+type AccountDeposit = { id: string; accountId: string; data: Deposit };
+type AccountDepositAddress = { id: string; accountId: string; data: DepositAddress };
 
-function getIdempotencyResponseForKey(key: string): IdempotencyMetadata {
-  const metadata = CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP.get(key);
-  if (!metadata) {
-    throw new Error('Idempotency key missing from map');
-  }
+export class DepositController {
+  private readonly depositRepository = new Repository<AccountDeposit>();
+  private readonly depositAddressRepository = new Repository<AccountDepositAddress>();
+  private readonly swiftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
+  private readonly ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
 
-  return metadata;
-}
-
-export function registerIdempotencyResponse(key: string, metadata: IdempotencyMetadata): void {
-  CREATE_DEPOSIT_ADDRESS_IDEMPOTENCY_RESPONSE_MAP.set(key, metadata);
-}
-
-export function validateDepositAddressCreationRequest(
-  depositAddressRequest: DepositAddressCreationRequest
-): void {
-  if (isUsedIdempotencyKey(depositAddressRequest.idempotencyKey)) {
-    const metadata = getIdempotencyResponseForKey(depositAddressRequest.idempotencyKey);
-    if (!_.isEqual(depositAddressRequest, metadata.requestBody)) {
-      throw new IdempotencyKeyReuseError(depositAddressRequest.idempotencyKey);
+  constructor(deposits: Deposit[]) {
+    for (const { id: accountId } of accountsController.getAllSubAccounts()) {
+      for (const deposit of deposits) {
+        this.depositRepository.create({ id: deposit.id, accountId, data: deposit });
+      }
     }
-    throw new IdempotencyRequestError(metadata);
   }
-  if (!isKnownAsset(depositAddressRequest.transferMethod.asset)) {
-    throw new UnknownAdditionalAssetError();
+
+  public getAllDeposits(accountId: string): Deposit[] {
+    const deposits = this.depositRepository.list();
+    const depositsForAccount = deposits.filter((d) => d.accountId === accountId);
+    return depositsForAccount.map((d) => d.data);
+  }
+
+  public getDeposit(accountId: string, depositId: string): Deposit {
+    const accountDeposit = this.depositRepository.find(depositId);
+
+    if (!accountDeposit || accountDeposit.accountId !== accountId) {
+      throw new DepositNotFoundError();
+    }
+
+    return accountDeposit.data;
+  }
+
+  public validateDepositAddressCreationRequest(
+    depositAddressRequest: DepositAddressCreationRequest
+  ): void {
+    if (!assetsController.isKnownAsset(depositAddressRequest.transferMethod.asset)) {
+      throw new UnknownAdditionalAssetError();
+    }
+  }
+
+  public depositAddressFromDepositAddressRequest(
+    depositAddressRequest: DepositAddressCreationRequest
+  ): DepositAddress {
+    const { transferMethod } = depositAddressRequest;
+    const status = DepositAddressStatus.ENABLED;
+    const id = randomUUID();
+    let destination: DepositDestination;
+
+    switch (transferMethod.transferMethod) {
+      case IbanCapability.transferMethod.IBAN:
+        destination = {
+          ...transferMethod,
+          accountHolder: { name: randomUUID() },
+          iban: new RandExp(this.ibanRegexp).gen(),
+        };
+        break;
+      case SwiftCapability.transferMethod.SWIFT:
+        destination = {
+          ...transferMethod,
+          accountHolder: { name: randomUUID() },
+          swiftCode: new RandExp(this.swiftCodeRegexp).gen(),
+          routingNumber: randomUUID(),
+        };
+        break;
+      case PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN:
+        destination = {
+          ...transferMethod,
+          address: randomUUID(),
+        };
+        break;
+      default:
+        throw new Error(
+          `Unknown deposit address transfer method: ${transferMethod.transferMethod}`
+        );
+    }
+
+    return { id, status, destination };
+  }
+
+  public addNewDepositAddressForAccount(accountId: string, depositAddress: DepositAddress): void {
+    this.depositAddressRepository.create({
+      id: depositAddress.id,
+      accountId,
+      data: depositAddress,
+    });
+  }
+
+  public getAccountDepositAddresses(accountId: string): DepositAddress[] {
+    const depositAddresses = this.depositAddressRepository.list();
+    const depositAddressesForAccount = depositAddresses.filter(
+      (depositAddress) => depositAddress.accountId === accountId
+    );
+    return depositAddressesForAccount.map((da) => da.data);
+  }
+
+  public getAccountDepositAddress(accountId: string, depositAddressId: string): DepositAddress {
+    const accountDepositAddress = this.depositAddressRepository.find(depositAddressId);
+
+    if (!accountDepositAddress || accountDepositAddress.accountId !== accountId) {
+      throw new DepositAddressNotFoundError();
+    }
+
+    return accountDepositAddress.data;
+  }
+
+  public disableAccountDepositAddress(accountId: string, depositAddressId: string): DepositAddress {
+    const accountDepositAddress = this.depositAddressRepository.find(depositAddressId);
+
+    if (!accountDepositAddress || accountDepositAddress.accountId !== accountId) {
+      throw new DepositAddressNotFoundError();
+    }
+
+    if (accountDepositAddress.data.status === DepositAddressStatus.DISABLED) {
+      throw new DepositAddressDisabledError(depositAddressId);
+    }
+
+    accountDepositAddress.data.status = DepositAddressStatus.DISABLED;
+
+    return accountDepositAddress.data;
   }
 }
 
-export function depositAddressFromDepositAddressRequest(
-  depositAddressRequest: DepositAddressCreationRequest
-): DepositAddress {
-  const { transferMethod } = depositAddressRequest;
-  const status = DepositAddressStatus.ENABLED;
-  const id = randomUUID();
-  let destination: DepositDestination;
-
-  switch (transferMethod.transferMethod) {
-    case IbanCapability.transferMethod.IBAN:
-      destination = {
-        ...transferMethod,
-        accountHolder: { name: randomUUID() },
-        iban: new RandExp(ibanRegexp).gen(),
-      };
-      break;
-    case SwiftCapability.transferMethod.SWIFT:
-      destination = {
-        ...transferMethod,
-        accountHolder: { name: randomUUID() },
-        swiftCode: new RandExp(swiftCodeRegexp).gen(),
-        routingNumber: randomUUID(),
-      };
-      break;
-    case PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN:
-      destination = {
-        ...transferMethod,
-        address: randomUUID(),
-      };
-      break;
-    default:
-      throw new Error(`Unknown deposit address transfer method: ${transferMethod.transferMethod}`);
-  }
-
-  return { id, status, destination };
-}
-
-export function addNewDepositAddressForAccount(
-  accountId: string,
-  depositAddress: DepositAddress,
-  accountDepositAddressesMap: Map<string, DepositAddress[]> = ACCOUNT_DEPOSIT_ADDRESS_MAP
-): void {
-  const accountDepositAddresses = accountDepositAddressesMap.get(accountId) ?? [];
-  accountDepositAddresses.push(depositAddress);
-
-  accountDepositAddressesMap.set(accountId, accountDepositAddresses);
-}
-
-export function getAccountDepositAddresses(
-  accountId: string,
-  accountDepositAddressesMap: Map<string, DepositAddress[]> = ACCOUNT_DEPOSIT_ADDRESS_MAP
-): DepositAddress[] {
-  return accountDepositAddressesMap.get(accountId) ?? [];
-}
-
-export function disableAccountDepositAddress(
-  accountId: string,
-  depositAddressId: string,
-  accountDepositAddressesMap: Map<string, DepositAddress[]> = ACCOUNT_DEPOSIT_ADDRESS_MAP
-): DepositAddress {
-  const accountDepositAddresses = getAccountDepositAddresses(accountId, accountDepositAddressesMap);
-  const depositAddressIndex = accountDepositAddresses.findIndex(
-    (depositAddress) => depositAddress.id === depositAddressId
-  );
-
-  if (depositAddressIndex === -1) {
-    throw new DepositAddressNotFoundError();
-  }
-
-  if (accountDepositAddresses[depositAddressIndex].status === DepositAddressStatus.DISABLED) {
-    throw new DepositAddressDisabledError(depositAddressId);
-  }
-
-  const disabledDepositAddress = {
-    ...accountDepositAddresses[depositAddressIndex],
-    status: DepositAddressStatus.DISABLED,
-  };
-
-  accountDepositAddresses[depositAddressIndex] = disabledDepositAddress;
-  accountDepositAddressesMap.set(accountId, accountDepositAddresses);
-
-  return disabledDepositAddress;
-}
+export const depositController = new DepositController(DEPOSITS);

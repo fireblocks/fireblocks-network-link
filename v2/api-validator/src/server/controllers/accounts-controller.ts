@@ -6,8 +6,9 @@ import {
   NationalCurrencyCode,
 } from '../../client/generated';
 import { SUPPORTED_ASSETS } from './assets-controller';
+import { Repository } from './repository';
 
-export const ACCOUNTS: Account[] = [
+const ACCOUNTS: Account[] = [
   {
     id: '1',
     balances: [
@@ -93,20 +94,36 @@ export const ACCOUNTS: Account[] = [
   },
 ];
 
-export function getSubAccount(accountId: string): Account | undefined {
-  return ACCOUNTS.find((account) => account.id === accountId);
+export class AccountsController {
+  private readonly repository = new Repository<Account>();
+
+  constructor(accounts: Account[]) {
+    for (const account of accounts) {
+      this.repository.create(account);
+    }
+  }
+
+  public getAllSubAccounts(): Account[] {
+    return this.repository.list();
+  }
+
+  public getSubAccount(accountId: string): Account | undefined {
+    return this.repository.find(accountId);
+  }
+
+  public isKnownSubAccount(accountId: string): boolean {
+    return !!this.repository.find(accountId);
+  }
+
+  public omitBalancesFromAccountList(accounts: Account[]): Account[] {
+    return accounts.map((account) => this.omitBalancesFromAccount(account));
+  }
+
+  public omitBalancesFromAccount(account: Account): Account {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { balances, ...accountWithoutBalances } = account;
+    return accountWithoutBalances;
+  }
 }
 
-export function isKnownSubAccount(accountId: string): boolean {
-  return ACCOUNTS.some((account) => account.id === accountId);
-}
-
-export function omitBalancesFromAccountList(accounts: Account[]): Account[] {
-  return accounts.map((account) => omitBalancesFromAccount(account));
-}
-
-export function omitBalancesFromAccount(account: Account): Account {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { balances, ...accountWithoutBalances } = account;
-  return accountWithoutBalances;
-}
+export const accountsController = new AccountsController(ACCOUNTS);
