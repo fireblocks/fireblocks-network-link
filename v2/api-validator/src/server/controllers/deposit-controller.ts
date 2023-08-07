@@ -134,7 +134,7 @@ export class DepositNotFoundError extends XComError {
 
 export class DepositAddressDisabledError extends XComError {
   constructor(id: string) {
-    super(`Deposit address ${id} is disabled`);
+    super('Deposit address is disabled', { id });
   }
 }
 

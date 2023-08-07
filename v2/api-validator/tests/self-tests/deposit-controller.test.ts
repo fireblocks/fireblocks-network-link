@@ -10,6 +10,7 @@ import {
   DepositAddressDisabledError,
   DepositController,
 } from '../../src/server/controllers/deposit-controller';
+import { inspect } from 'util';
 
 describe('Deposit controller', () => {
   describe('Deposit addresses', () => {
@@ -71,7 +72,10 @@ describe('Deposit controller', () => {
 
     describe('Disable deposit address', () => {
       beforeEach(() => {
-        depositController.addNewDepositAddressForAccount(accountId, depositAddress1);
+        depositController.addNewDepositAddressForAccount(
+          accountId,
+          Object.assign({}, depositAddress1)
+        );
         depositController.disableAccountDepositAddress(accountId, depositAddress1.id);
       });
 
@@ -86,7 +90,7 @@ describe('Deposit controller', () => {
       it('should fail to disable an already disabled address', () => {
         expect(() =>
           depositController.disableAccountDepositAddress(accountId, depositAddress1.id)
-        ).toThrow(DepositAddressDisabledError);
+        ).toThrowError(DepositAddressDisabledError);
       });
     });
   });
