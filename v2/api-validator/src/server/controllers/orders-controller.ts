@@ -4,11 +4,11 @@ import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
 import { books } from './books-controller';
 import { Order, OrderData, OrderRequest, OrderStatus } from '../../client/generated';
+import { getPaginationResult } from './pagination-controller';
 
 const log = logger('server');
 
 export class OrdersController {
-  private readonly usedIdempotencyKeys = new Set<string>();
   private readonly orders: Array<Order> = [];
 
   public createOrder(order: OrderRequest): Order {
@@ -30,6 +30,16 @@ export class OrdersController {
 
     log.info('New order', { order: newOrder });
     return newOrder;
+  }
+
+  public getOrders(limit: number, startingAfter?: string, endingBefore?: string): Order[] {
+    return getPaginationResult(
+      limit,
+      startingAfter,
+      endingBefore,
+      _.orderBy(this.orders, 'createdAt', 'desc'),
+      'id'
+    );
   }
 
   public getOrdersCount(): number {
