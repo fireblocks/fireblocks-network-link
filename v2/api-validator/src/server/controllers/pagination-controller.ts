@@ -24,17 +24,9 @@ export function getPaginationResult<T>(
   startingAfter: string | undefined,
   endingBefore: string | undefined,
   data: T[],
-  idProp: keyof T,
-  order?: 'asc' | 'desc'
+  idProp: keyof T
 ): T[] {
   validatePaginationParams(limit, startingAfter, endingBefore);
-
-  data.sort((a, b) => {
-    if (order === 'desc') {
-      return a[idProp] > b[idProp] ? -1 : 1;
-    }
-    return a[idProp] < b[idProp] ? -1 : 1;
-  });
 
   if (startingAfter) {
     return paginationResultWithStartingAfter(limit, startingAfter, data, idProp);

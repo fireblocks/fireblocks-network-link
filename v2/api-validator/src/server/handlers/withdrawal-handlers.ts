@@ -1,40 +1,28 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { accountsController } from '../controllers/accounts-controller';
+import { IdempotencyHandler } from '../controllers/idempotency-handler';
 import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
+import {
+  WITHDRAWALS,
+  WITHDRAWAL_METHODS,
+  WithdrawalController,
+  WithdrawalNotFoundError,
+} from '../controllers/withdrawal-controller';
 import {
   BlockchainWithdrawalRequest,
   CrossAccountWithdrawalRequest,
   EntityIdPathParam,
   FiatWithdrawalRequest,
-  GeneralError,
   ListOrderQueryParam,
   SubAccountIdPathParam,
   Withdrawal,
   WithdrawalCapability,
 } from '../../client/generated';
-import {
-  WITHDRAWAL_METHODS,
-  createAccountBlockchainWithdrawal,
-  createAccountFiatWithdrawal,
-  createAccountPeerAccountWithdrawal,
-  createAccountSubAccountWithdrawal,
-  getAccountBlockchainWithdrawals,
-  getAccountFiatWithdrawals,
-  getAccountPeerAccountWithdrawals,
-  getAccountSubAccountWithdrawals,
-  getAccountWithdrawals,
-  getSingleAccountWithdrawal,
-  registerIdempotentResponse,
-} from '../controllers/withdrawal-controller';
-import { JsonValue } from 'type-fest';
-import { IdempotencyMetadata, IdempotencyRequest } from '../controllers/deposit-controller';
-import { IdempotencyKeyReuseError } from '../controllers/orders-controller';
-import logger from '../../logging';
-
-const log = logger('handler:withdrawal');
+import { ControllersContainer } from '../controllers/controllers-container';
 
 type AccountParam = { accountId: SubAccountIdPathParam };
+
+const controllers = new ControllersContainer(() => new WithdrawalController(WITHDRAWALS));
 
 /**
  * GET Endpoints
@@ -47,7 +35,8 @@ export async function getWithdrawalMethods(
   const { limit, startingAfter, endingBefore } = request.query;
   const { accountId } = request.params;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -66,7 +55,8 @@ export async function getWithdrawals(
   const { limit, startingAfter, endingBefore, order } = request.query;
   const { accountId } = request.params;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -75,9 +65,8 @@ export async function getWithdrawals(
       limit,
       startingAfter,
       endingBefore,
-      getAccountWithdrawals(accountId),
-      'createdAt',
-      order
+      controller.getAccountWithdrawals(order),
+      'id'
     ),
   };
 }
@@ -90,17 +79,19 @@ export async function getWithdrawalDetails(
 ): Promise<Withdrawal> {
   const { accountId, id: withdrawalId } = request.params;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
-  const withdrawal = getSingleAccountWithdrawal(accountId, withdrawalId);
-
-  if (!withdrawal) {
-    return ErrorFactory.notFound(reply);
+  try {
+    return controller.getAccountWithdrawal(withdrawalId);
+  } catch (err) {
+    if (err instanceof WithdrawalNotFoundError) {
+      return ErrorFactory.notFound(reply);
+    }
+    throw err;
   }
-
-  return withdrawal;
 }
 
 export async function getSubAccountWithdrawals(
@@ -113,7 +104,8 @@ export async function getSubAccountWithdrawals(
   const { limit, startingAfter, endingBefore, order } = request.query;
   const { accountId } = request.params;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -122,9 +114,8 @@ export async function getSubAccountWithdrawals(
       limit,
       startingAfter,
       endingBefore,
-      getAccountSubAccountWithdrawals(accountId),
-      'createdAt',
-      order
+      controller.getAccountSubAccountWithdrawals(order),
+      'id'
     ),
   };
 }
@@ -139,7 +130,8 @@ export async function getPeerAccountWithdrawals(
   const { limit, startingAfter, endingBefore, order } = request.query;
   const { accountId } = request.params;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -148,9 +140,8 @@ export async function getPeerAccountWithdrawals(
       limit,
       startingAfter,
       endingBefore,
-      getAccountPeerAccountWithdrawals(accountId),
-      'createdAt',
-      order
+      controller.getAccountPeerAccountWithdrawals(order),
+      'id'
     ),
   };
 }
@@ -165,7 +156,8 @@ export async function getBlockchainWithdrawals(
   const { limit, startingAfter, endingBefore, order } = request.query;
   const { accountId } = request.params;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -174,9 +166,8 @@ export async function getBlockchainWithdrawals(
       limit,
       startingAfter,
       endingBefore,
-      getAccountBlockchainWithdrawals(accountId),
-      'createdAt',
-      order
+      controller.getAccountBlockchainWithdrawals(order),
+      'id'
     ),
   };
 }
@@ -191,7 +182,8 @@ export async function getFiatWithdrawals(
   const { limit, startingAfter, endingBefore, order } = request.query;
   const { accountId } = request.params;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -200,9 +192,8 @@ export async function getFiatWithdrawals(
       limit,
       startingAfter,
       endingBefore,
-      getAccountFiatWithdrawals(accountId),
-      'createdAt',
-      order
+      controller.getAccountFiatWithdrawals(order),
+      'id'
     ),
   };
 }
@@ -211,187 +202,100 @@ export async function getFiatWithdrawals(
  * POST Endpoints
  */
 
-export const SUB_ACCOUNT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP = new Map<
-  string,
-  Map<string, IdempotencyMetadata>
+const subAccountIdempotencyHandler = new IdempotencyHandler<
+  CrossAccountWithdrawalRequest,
+  Withdrawal
 >();
-export const PEER_ACCOUNT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP = new Map<
-  string,
-  Map<string, IdempotencyMetadata>
+const peerAccountIdempotencyHandler = new IdempotencyHandler<
+  CrossAccountWithdrawalRequest,
+  Withdrawal
 >();
-export const BLOCKCHAIN_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP = new Map<
-  string,
-  Map<string, IdempotencyMetadata>
+const blockchainIdempotencyHandler = new IdempotencyHandler<
+  BlockchainWithdrawalRequest,
+  Withdrawal
 >();
-export const FIAT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP = new Map<
-  string,
-  Map<string, IdempotencyMetadata>
->();
+const fiatIdempotencyHandler = new IdempotencyHandler<FiatWithdrawalRequest, Withdrawal>();
 
 export async function createSubAccountWithdrawal(
-  request: FastifyRequest<{ Body: CrossAccountWithdrawalRequest; Params: AccountParam }>,
+  { body, params }: FastifyRequest<{ Body: CrossAccountWithdrawalRequest; Params: AccountParam }>,
   reply: FastifyReply
 ): Promise<Withdrawal> {
-  const { accountId } = request.params;
+  const { accountId } = params;
 
-  const saveAndSendIdempotentResponse = (responseStatus: number, responseBody: JsonValue) => {
-    registerIdempotentResponse(
-      accountId,
-      request.body.idempotencyKey,
-      {
-        requestBody: request.body,
-        responseStatus,
-        responseBody,
-      },
-      SUB_ACCOUNT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
-    );
-    return reply.code(responseStatus).send(responseBody);
-  };
-
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
-  try {
-    const withdrawal = createAccountSubAccountWithdrawal(
-      accountId,
-      request.body,
-      SUB_ACCOUNT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
-    );
-    return saveAndSendIdempotentResponse(200, withdrawal);
-  } catch (err) {
-    if (err instanceof IdempotencyRequest) {
-      return reply.code(err.metadata.responseStatus).send(err.metadata.responseBody);
-    }
-    if (err instanceof IdempotencyKeyReuseError) {
-      return ErrorFactory.idempotencyKeyReuse(reply);
-    }
-    return saveAndSendIdempotentResponse(500, { errorType: GeneralError.errorType.INTERNAL_ERROR });
+  if (subAccountIdempotencyHandler.isKnownKey(body.idempotencyKey)) {
+    return subAccountIdempotencyHandler.reply(body, reply);
   }
+
+  const withdrawal = controller.createAccountWithdrawal(body);
+  subAccountIdempotencyHandler.add(body, 200, withdrawal);
+
+  return withdrawal;
 }
 
 export async function createPeerAccountWithdrawal(
-  request: FastifyRequest<{ Body: CrossAccountWithdrawalRequest; Params: AccountParam }>,
+  { body, params }: FastifyRequest<{ Body: CrossAccountWithdrawalRequest; Params: AccountParam }>,
   reply: FastifyReply
 ): Promise<Withdrawal> {
-  const { accountId } = request.params;
+  const { accountId } = params;
 
-  const saveAndSendIdempotentResponse = (responseStatus: number, responseBody: JsonValue) => {
-    registerIdempotentResponse(
-      accountId,
-      request.body.idempotencyKey,
-      {
-        requestBody: request.body,
-        responseStatus,
-        responseBody,
-      },
-      PEER_ACCOUNT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
-    );
-    return reply.code(responseStatus).send(responseBody);
-  };
-
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
-  try {
-    const withdrawal = createAccountPeerAccountWithdrawal(
-      accountId,
-      request.body,
-      PEER_ACCOUNT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
-    );
-    return saveAndSendIdempotentResponse(200, withdrawal);
-  } catch (err) {
-    if (err instanceof IdempotencyRequest) {
-      return reply.code(err.metadata.responseStatus).send(err.metadata.responseBody);
-    }
-    if (err instanceof IdempotencyKeyReuseError) {
-      return ErrorFactory.idempotencyKeyReuse(reply);
-    }
-    return saveAndSendIdempotentResponse(500, { errorType: GeneralError.errorType.INTERNAL_ERROR });
+  if (peerAccountIdempotencyHandler.isKnownKey(body.idempotencyKey)) {
+    return peerAccountIdempotencyHandler.reply(body, reply);
   }
+
+  const withdrawal = controller.createAccountWithdrawal(body);
+  peerAccountIdempotencyHandler.add(body, 200, withdrawal);
+
+  return withdrawal;
 }
 
 export async function createBlockchainWithdrawal(
-  request: FastifyRequest<{ Body: BlockchainWithdrawalRequest; Params: AccountParam }>,
+  { body, params }: FastifyRequest<{ Body: BlockchainWithdrawalRequest; Params: AccountParam }>,
   reply: FastifyReply
 ): Promise<Withdrawal> {
-  const { accountId } = request.params;
+  const { accountId } = params;
 
-  const saveAndSendIdempotentResponse = (responseStatus: number, responseBody: JsonValue) => {
-    registerIdempotentResponse(
-      accountId,
-      request.body.idempotencyKey,
-      {
-        requestBody: request.body,
-        responseStatus,
-        responseBody,
-      },
-      BLOCKCHAIN_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
-    );
-    return reply.code(responseStatus).send(responseBody);
-  };
-
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
-  try {
-    const withdrawal = createAccountBlockchainWithdrawal(
-      accountId,
-      request.body,
-      BLOCKCHAIN_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
-    );
-    return saveAndSendIdempotentResponse(200, withdrawal);
-  } catch (err) {
-    if (err instanceof IdempotencyRequest) {
-      return reply.code(err.metadata.responseStatus).send(err.metadata.responseBody);
-    }
-    if (err instanceof IdempotencyKeyReuseError) {
-      return ErrorFactory.idempotencyKeyReuse(reply);
-    }
-    return saveAndSendIdempotentResponse(500, { errorType: GeneralError.errorType.INTERNAL_ERROR });
+  if (blockchainIdempotencyHandler.isKnownKey(body.idempotencyKey)) {
+    return blockchainIdempotencyHandler.reply(body, reply);
   }
+
+  const withdrawal = controller.createAccountWithdrawal(body);
+  blockchainIdempotencyHandler.add(body, 200, withdrawal);
+
+  return withdrawal;
 }
 
 export async function createFiatWithdrawal(
-  request: FastifyRequest<{ Body: FiatWithdrawalRequest; Params: AccountParam }>,
+  { body, params }: FastifyRequest<{ Body: FiatWithdrawalRequest; Params: AccountParam }>,
   reply: FastifyReply
 ): Promise<Withdrawal> {
-  const { accountId } = request.params;
+  const { accountId } = params;
 
-  const saveAndSendIdempotentResponse = (responseStatus: number, responseBody: JsonValue) => {
-    registerIdempotentResponse(
-      accountId,
-      request.body.idempotencyKey,
-      {
-        requestBody: request.body,
-        responseStatus,
-        responseBody,
-      },
-      FIAT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
-    );
-    return reply.code(responseStatus).send(responseBody);
-  };
-
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
-  try {
-    const withdrawal = createAccountFiatWithdrawal(
-      accountId,
-      request.body,
-      FIAT_WITHDRAWAL_IDEMPOTENCY_RESPONSE_MAP
-    );
-    return saveAndSendIdempotentResponse(200, withdrawal);
-  } catch (err) {
-    if (err instanceof IdempotencyRequest) {
-      return reply.code(err.metadata.responseStatus).send(err.metadata.responseBody);
-    }
-    if (err instanceof IdempotencyKeyReuseError) {
-      return ErrorFactory.idempotencyKeyReuse(reply);
-    }
-    return saveAndSendIdempotentResponse(500, { errorType: GeneralError.errorType.INTERNAL_ERROR });
+  if (fiatIdempotencyHandler.isKnownKey(body.idempotencyKey)) {
+    return fiatIdempotencyHandler.reply(body, reply);
   }
+
+  const withdrawal = controller.createAccountWithdrawal(body);
+  fiatIdempotencyHandler.add(body, 200, withdrawal);
+
+  return withdrawal;
 }

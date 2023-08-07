@@ -1,4 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import _ from 'lodash';
+import { randomUUID } from 'crypto';
+import { XComError } from '../../error';
+import { Repository } from './repository';
 import { SUPPORTED_ASSETS } from './assets-controller';
 import {
   BlockchainWithdrawalRequest,
@@ -14,11 +18,6 @@ import {
   WithdrawalCapability,
   WithdrawalStatus,
 } from '../../client/generated';
-import { ACCOUNTS } from './accounts-controller';
-import { IdempotencyMetadata, IdempotencyRequest } from './deposit-controller';
-import { randomUUID } from 'crypto';
-import _ from 'lodash';
-import { IdempotencyKeyReuseError } from './orders-controller';
 
 export const WITHDRAWAL_METHODS: WithdrawalCapability[] = [
   {
@@ -64,7 +63,7 @@ export const WITHDRAWAL_METHODS: WithdrawalCapability[] = [
   },
 ];
 
-const WITHDRAWALS: Withdrawal[] = [
+export const WITHDRAWALS: Withdrawal[] = [
   {
     id: 'bbe93e60-da8b-43bb-bebb-19e41421e9d1',
     balanceAmount: '1.123',
@@ -103,7 +102,7 @@ const WITHDRAWALS: Withdrawal[] = [
       transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,
       asset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
       amount: '0.1',
-      accountId: ACCOUNTS[0].id,
+      accountId: '1',
     },
     status: WithdrawalStatus.FAILED,
     finalizedAt: '2022-03-09T09:12:45.463Z',
@@ -139,181 +138,94 @@ const WITHDRAWALS: Withdrawal[] = [
   },
 ];
 
-const ACCOUNT_WITHDRAWALS_MAP = new Map<string, Withdrawal[]>(
-  ACCOUNTS.map((account) => [account.id, WITHDRAWALS])
-);
-
-/**
- * Withdrawal listing
- */
-
-export function getAccountWithdrawals(
-  accountId: string,
-  accountWithdrawalMap: Map<string, Withdrawal[]> = ACCOUNT_WITHDRAWALS_MAP
-): Withdrawal[] {
-  return accountWithdrawalMap.get(accountId) ?? [];
-}
-
-export function addAccountWithdrawal(
-  accountId: string,
-  withdrawal: Withdrawal,
-  accountWithdrawalMap: Map<string, Withdrawal[]>
-): void {
-  const accountWithdrawals = getAccountWithdrawals(accountId, accountWithdrawalMap);
-  accountWithdrawals.push(withdrawal);
-  accountWithdrawalMap.set(accountId, accountWithdrawals);
-}
-
-export function getSingleAccountWithdrawal(
-  accountId: string,
-  withdrawalId: string,
-  accountWithdrawalMap: Map<string, Withdrawal[]> = ACCOUNT_WITHDRAWALS_MAP
-): Withdrawal | undefined {
-  const withdrawals = getAccountWithdrawals(accountId, accountWithdrawalMap);
-  return withdrawals.find((withdrawal) => withdrawal.id === withdrawalId);
-}
-
-export function getAccountSubAccountWithdrawals(
-  accountId: string,
-  accountWithdrawalMap: Map<string, Withdrawal[]> = ACCOUNT_WITHDRAWALS_MAP
-): Withdrawal[] {
-  const withdrawals = getAccountWithdrawals(accountId, accountWithdrawalMap);
-  return withdrawals.filter(
-    (withdrawal) =>
-      withdrawal.destination.transferMethod ===
-      CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER
-  );
-}
-
-export function getAccountPeerAccountWithdrawals(
-  accountId: string,
-  accountWithdrawalMap: Map<string, Withdrawal[]> = ACCOUNT_WITHDRAWALS_MAP
-): Withdrawal[] {
-  const withdrawals = getAccountWithdrawals(accountId, accountWithdrawalMap);
-  return withdrawals.filter(
-    (withdrawal) =>
-      withdrawal.destination.transferMethod ===
-      CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
-  );
-}
-
-export function getAccountFiatWithdrawals(
-  accountId: string,
-  accountWithdrawalMap: Map<string, Withdrawal[]> = ACCOUNT_WITHDRAWALS_MAP
-): Withdrawal[] {
-  const fiatTransferMethods: string[] = [
-    IbanCapability.transferMethod.IBAN,
-    SwiftCapability.transferMethod.SWIFT,
-  ];
-  const withdrawals = getAccountWithdrawals(accountId, accountWithdrawalMap);
-  return withdrawals.filter((withdrawal) =>
-    fiatTransferMethods.includes(withdrawal.destination.transferMethod)
-  );
-}
-
-export function getAccountBlockchainWithdrawals(
-  accountId: string,
-  accountWithdrawalMap: Map<string, Withdrawal[]> = ACCOUNT_WITHDRAWALS_MAP
-): Withdrawal[] {
-  const withdrawals = getAccountWithdrawals(accountId, accountWithdrawalMap);
-  return withdrawals.filter(
-    (withdrawal) =>
-      withdrawal.destination.transferMethod ===
-      PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
-  );
-}
-
-/**
- * Withdrawal creation
- */
-
 export type WithdrawalRequest =
   | FiatWithdrawalRequest
   | BlockchainWithdrawalRequest
   | CrossAccountWithdrawalRequest;
 
-export function registerIdempotentResponse(
-  accountId: string,
-  idempotencyKey: string,
-  data: IdempotencyMetadata,
-  accountIdempotencyMap: Map<string, Map<string, IdempotencyMetadata>>
-): void {
-  const idempotencyMap = accountIdempotencyMap.get(accountId);
-  if (!idempotencyMap) {
-    accountIdempotencyMap.set(accountId, new Map([[idempotencyKey, data]]));
-    return;
+type Order = 'asc' | 'desc';
+
+export class WithdrawalNotFoundError extends XComError {
+  constructor() {
+    super('Withdrawal not found');
   }
-  idempotencyMap.set(idempotencyKey, data);
 }
 
-function validateWithdrawalRequest(
-  accountId: string,
-  request: WithdrawalRequest,
-  requestIdempotencyMap: Map<string, Map<string, IdempotencyMetadata>>
-): void {
-  const usedIdempotencyMetadata = requestIdempotencyMap.get(accountId)?.get(request.idempotencyKey);
-  if (usedIdempotencyMetadata) {
-    if (!_.isEqual(request, usedIdempotencyMetadata.requestBody)) {
-      throw new IdempotencyKeyReuseError(request.idempotencyKey);
+export class WithdrawalController {
+  private readonly withdrawalRepository = new Repository<Withdrawal>();
+
+  constructor(withdrawals: Withdrawal[]) {
+    for (const withdrawal of withdrawals) {
+      this.withdrawalRepository.create(withdrawal);
     }
-    throw new IdempotencyRequest(usedIdempotencyMetadata);
   }
-}
 
-function withdrawalFromWithdrawalRequest(request: WithdrawalRequest): Withdrawal {
-  const { idempotencyKey, ...withdrawalRequest } = request;
-  return {
-    id: randomUUID(),
-    status: WithdrawalStatus.PENDING,
-    createdAt: new Date().toISOString(),
-    ...withdrawalRequest,
-  };
-}
+  private withdrawalFromWithdrawalRequest(request: WithdrawalRequest): Withdrawal {
+    const { idempotencyKey, ...withdrawalRequest } = request;
+    return {
+      id: randomUUID(),
+      status: WithdrawalStatus.PENDING,
+      createdAt: new Date().toISOString(),
+      ...withdrawalRequest,
+    };
+  }
 
-export function createAccountSubAccountWithdrawal(
-  accountId: string,
-  request: CrossAccountWithdrawalRequest,
-  accountIdempotencyMap: Map<string, Map<string, IdempotencyMetadata>>,
-  accountWithdrawalMap: Map<string, Withdrawal[]> = ACCOUNT_WITHDRAWALS_MAP
-): Withdrawal {
-  validateWithdrawalRequest(accountId, request, accountIdempotencyMap);
-  const withdrawal = withdrawalFromWithdrawalRequest(request);
-  addAccountWithdrawal(accountId, withdrawal, accountWithdrawalMap);
-  return withdrawal;
-}
+  public getAccountWithdrawals(order: Order): Withdrawal[] {
+    const withdrawals = this.withdrawalRepository.list();
+    return _.orderBy(withdrawals, 'createdAt', order);
+  }
 
-export function createAccountPeerAccountWithdrawal(
-  accountId: string,
-  request: CrossAccountWithdrawalRequest,
-  accountIdempotencyMap: Map<string, Map<string, IdempotencyMetadata>>,
-  accountWithdrawalMap: Map<string, Withdrawal[]> = ACCOUNT_WITHDRAWALS_MAP
-): Withdrawal {
-  validateWithdrawalRequest(accountId, request, accountIdempotencyMap);
-  const withdrawal = withdrawalFromWithdrawalRequest(request);
-  addAccountWithdrawal(accountId, withdrawal, accountWithdrawalMap);
-  return withdrawal;
-}
+  public getAccountWithdrawal(withdrawalId: string): Withdrawal {
+    const withdrawal = this.withdrawalRepository.find(withdrawalId);
 
-export function createAccountBlockchainWithdrawal(
-  accountId: string,
-  request: BlockchainWithdrawalRequest,
-  accountIdempotencyMap: Map<string, Map<string, IdempotencyMetadata>>,
-  accountWithdrawalMap: Map<string, Withdrawal[]> = ACCOUNT_WITHDRAWALS_MAP
-): Withdrawal {
-  validateWithdrawalRequest(accountId, request, accountIdempotencyMap);
-  const withdrawal = withdrawalFromWithdrawalRequest(request);
-  addAccountWithdrawal(accountId, withdrawal, accountWithdrawalMap);
-  return withdrawal;
-}
+    if (!withdrawal) {
+      throw new WithdrawalNotFoundError();
+    }
 
-export function createAccountFiatWithdrawal(
-  accountId: string,
-  request: FiatWithdrawalRequest,
-  accountIdempotencyMap: Map<string, Map<string, IdempotencyMetadata>>,
-  accountWithdrawalMap: Map<string, Withdrawal[]> = ACCOUNT_WITHDRAWALS_MAP
-): Withdrawal {
-  validateWithdrawalRequest(accountId, request, accountIdempotencyMap);
-  const withdrawal = withdrawalFromWithdrawalRequest(request);
-  addAccountWithdrawal(accountId, withdrawal, accountWithdrawalMap);
-  return withdrawal;
+    return withdrawal;
+  }
+
+  public getAccountSubAccountWithdrawals(order: Order): Withdrawal[] {
+    const withdrawals = this.getAccountWithdrawals(order);
+    return withdrawals.filter(
+      (withdrawal) =>
+        withdrawal.destination.transferMethod ===
+        CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER
+    );
+  }
+
+  public getAccountPeerAccountWithdrawals(order: Order): Withdrawal[] {
+    const withdrawals = this.getAccountWithdrawals(order);
+    return withdrawals.filter(
+      (withdrawal) =>
+        withdrawal.destination.transferMethod ===
+        CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
+    );
+  }
+
+  public getAccountFiatWithdrawals(order: Order): Withdrawal[] {
+    const fiatTransferMethods: string[] = [
+      IbanCapability.transferMethod.IBAN,
+      SwiftCapability.transferMethod.SWIFT,
+    ];
+    const withdrawals = this.getAccountWithdrawals(order);
+    return withdrawals.filter((withdrawal) =>
+      fiatTransferMethods.includes(withdrawal.destination.transferMethod)
+    );
+  }
+
+  public getAccountBlockchainWithdrawals(order: Order): Withdrawal[] {
+    const withdrawals = this.getAccountWithdrawals(order);
+    return withdrawals.filter(
+      (withdrawal) =>
+        withdrawal.destination.transferMethod ===
+        PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+    );
+  }
+
+  public createAccountWithdrawal(request: WithdrawalRequest): Withdrawal {
+    const withdrawal = this.withdrawalFromWithdrawalRequest(request);
+    this.withdrawalRepository.create(withdrawal);
+    return withdrawal;
+  }
 }
