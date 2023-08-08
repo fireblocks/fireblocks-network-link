@@ -15,7 +15,7 @@
   },
   "scripts": {
     "server": "NODE_ENV=development ts-node src/server/server.ts | pino-pretty",
-    "test": "NODE_ENV=test jest --verbose",
+    "test": "NODE_ENV=test jest --verbose --json --outputFile=test-results.json",
     "test:self": "NODE_ENV=test jest tests/self-tests --verbose",
     "test:server": "NODE_ENV=test jest tests/api-implementation-tests --verbose --json --outputFile=test-results.json",
     "test:watch": "NODE_ENV=test jest --verbose --watch",
