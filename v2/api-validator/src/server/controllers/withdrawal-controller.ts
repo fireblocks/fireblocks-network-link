@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import _ from 'lodash';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
 import { Repository } from './repository';
+import { fakeSchemaObject } from '../../schemas';
+import { JSONSchemaFaker } from 'json-schema-faker';
 import { AssetsController } from './assets-controller';
 import {
   BlockchainWithdrawalRequest,
@@ -10,16 +11,12 @@ import {
   CrossAccountWithdrawalRequest,
   FiatWithdrawalRequest,
   IbanCapability,
-  Layer1Cryptocurrency,
-  NationalCurrencyCode,
   PublicBlockchainCapability,
   SwiftCapability,
   Withdrawal,
   WithdrawalCapability,
   WithdrawalStatus,
 } from '../../client/generated';
-import { fakeSchemaObject } from '../../schemas';
-import { JSONSchemaFaker } from 'json-schema-faker';
 
 export type WithdrawalRequest =
   | FiatWithdrawalRequest
@@ -28,68 +25,52 @@ export type WithdrawalRequest =
 
 type Order = 'asc' | 'desc';
 
+type ControllerOptions = {
+  capabilitiesCount?: number;
+  withdrawalsCount?: number;
+  assetsController?: AssetsController;
+};
+
 export class WithdrawalNotFoundError extends XComError {
   constructor() {
     super('Withdrawal not found');
   }
 }
 
+const DEFAULT_CAPABILITIES_COUNT = 5;
+const DEFAULT_WITHDRAWALS_COUNT = 5;
+
 export class WithdrawalController {
   private readonly withdrawalRepository = new Repository<Withdrawal>();
   private readonly withdrawalCapabilityRepository = new Repository<WithdrawalCapability>();
 
-  constructor(
-    assetsConroller: AssetsController,
-    capabilitiesCount: number,
-    withdrawalsCount: number
-  ) {
-    Array.from(Array(capabilitiesCount)).map(() =>
-      this.withdrawalRepository.create(fakeSchemaObject('Withdrawal') as Withdrawal)
-    );
-    Array.from(Array(withdrawalsCount)).map(() =>
-      this.withdrawalCapabilityRepository.create(
-        fakeSchemaObject('WithdrawalCapability') as WithdrawalCapability
-      )
-    );
+  constructor(options?: ControllerOptions) {
+    const capabilitiesCount = options?.capabilitiesCount ?? DEFAULT_CAPABILITIES_COUNT;
+    const withdrawalsCount = options?.withdrawalsCount ?? DEFAULT_WITHDRAWALS_COUNT;
 
-    this.setKnownAdditionalAssets(assetsConroller);
-  }
-
-  private setKnownAdditionalAssets(assetsController: AssetsController): void {
-    const additionalAssetsIds = assetsController.getAllAdditionalAssets().map((asset) => asset.id);
-
-    for (const { id } of this.withdrawalCapabilityRepository.list()) {
-      const capability = this.withdrawalCapabilityRepository.find(id);
-      if (!capability) {
-        throw new Error('Not possible!');
-      }
-
-      if ('assetId' in capability.balanceAsset) {
-        capability.balanceAsset.assetId = JSONSchemaFaker.random.pick(additionalAssetsIds);
-      }
-
-      if ('assetId' in capability.withdrawal.asset) {
-        capability.withdrawal.asset.assetId = JSONSchemaFaker.random.pick(additionalAssetsIds);
-      }
+    for (let i = 0; i < capabilitiesCount; i++) {
+      this.withdrawalRepository.create(fakeSchemaObject('Withdrawal') as Withdrawal);
     }
 
-    for (const { id } of this.withdrawalRepository.list()) {
-      const withdrawal = this.withdrawalRepository.find(id);
-      if (!withdrawal) {
-        throw new Error('Not possible!');
-      }
+    for (let i = 0; i < withdrawalsCount; i++) {
+      this.withdrawalCapabilityRepository.create(
+        fakeSchemaObject('WithdrawalCapability') as WithdrawalCapability
+      );
+    }
 
-      if ('assetId' in withdrawal.balanceAsset) {
-        withdrawal.balanceAsset.assetId = JSONSchemaFaker.random.pick(additionalAssetsIds);
-      }
+    if (options?.assetsController) {
+      const knownAssetIds = options.assetsController.getAllAdditionalAssets().map((a) => a.id);
 
-      if ('assetId' in withdrawal.destination.asset) {
-        withdrawal.destination.asset.assetId = JSONSchemaFaker.random.pick(additionalAssetsIds);
-      }
+      injectKnownAssetIdsToWithdrawals(knownAssetIds, this.withdrawalRepository);
+      injectKnownAssetIdsToWithdrawalCapabilities(
+        knownAssetIds,
+        this.withdrawalCapabilityRepository
+      );
     }
   }
 
   private withdrawalFromWithdrawalRequest(request: WithdrawalRequest): Withdrawal {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { idempotencyKey, ...withdrawalRequest } = request;
     return {
       id: randomUUID(),
@@ -160,5 +141,45 @@ export class WithdrawalController {
     const withdrawal = this.withdrawalFromWithdrawalRequest(request);
     this.withdrawalRepository.create(withdrawal);
     return withdrawal;
+  }
+}
+
+function injectKnownAssetIdsToWithdrawals(
+  knownAssetIds: string[],
+  withdrawalRepository: Repository<Withdrawal>
+): void {
+  for (const { id } of withdrawalRepository.list()) {
+    const withdrawal = withdrawalRepository.find(id);
+    if (!withdrawal) {
+      throw new Error('Not possible!');
+    }
+
+    if ('assetId' in withdrawal.balanceAsset) {
+      withdrawal.balanceAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+
+    if ('assetId' in withdrawal.destination.asset) {
+      withdrawal.destination.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+  }
+}
+
+function injectKnownAssetIdsToWithdrawalCapabilities(
+  knownAssetIds: string[],
+  withdrawalCapabilityRepository: Repository<WithdrawalCapability>
+): void {
+  for (const { id } of withdrawalCapabilityRepository.list()) {
+    const capability = withdrawalCapabilityRepository.find(id);
+    if (!capability) {
+      throw new Error('Not possible!');
+    }
+
+    if ('assetId' in capability.balanceAsset) {
+      capability.balanceAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+
+    if ('assetId' in capability.withdrawal.asset) {
+      capability.withdrawal.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
   }
 }

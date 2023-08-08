@@ -2,13 +2,12 @@ import { fakeSchemaObject } from '../../src/schemas';
 import { CrossAccountWithdrawalRequest, Withdrawal } from '../../src/client/generated';
 import { WithdrawalController } from '../../src/server/controllers/withdrawal-controller';
 import _ from 'lodash';
-import { assetsController } from '../../src/server/controllers/assets-controller';
 
 describe('Withdrawal controller', () => {
   let controller: WithdrawalController;
 
   beforeAll(() => {
-    controller = new WithdrawalController(assetsController, 5, 5);
+    controller = new WithdrawalController();
   });
 
   describe('List withdrawals', () => {

@@ -1,36 +1,39 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { IdempotencyHandler } from '../controllers/idempotency-handler';
-import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
+import { getPaginationResult } from '../controllers/pagination-controller';
+import { ControllersContainer } from '../controllers/controllers-container';
+import { assetsController } from '../controllers/assets-controller';
 import {
   WithdrawalController,
   WithdrawalNotFoundError,
 } from '../controllers/withdrawal-controller';
 import {
+  AccountIdPathParam,
+  EntityIdPathParam,
+  ListOrderQuerystring,
+  PaginationQuerystring,
+} from './request-types';
+import {
   BlockchainWithdrawalRequest,
   CrossAccountWithdrawalRequest,
-  EntityIdPathParam,
   FiatWithdrawalRequest,
-  ListOrderQueryParam,
-  SubAccountIdPathParam,
   Withdrawal,
   WithdrawalCapability,
 } from '../../client/generated';
-import { ControllersContainer } from '../controllers/controllers-container';
-import { assetsController } from '../controllers/assets-controller';
 
-type AccountParam = { accountId: SubAccountIdPathParam };
+type CrossAccountWithdrawalRequestBody = { Body: CrossAccountWithdrawalRequest };
+type BlockchainWithdrawalRequestBody = { Body: BlockchainWithdrawalRequest };
+type FiatWithdrawalRequestBody = { Body: FiatWithdrawalRequest };
 
-const controllers = new ControllersContainer(
-  () => new WithdrawalController(assetsController, 5, 5)
-);
+const controllers = new ControllersContainer(() => new WithdrawalController({ assetsController }));
 
 /**
  * GET Endpoints
  */
 
 export async function getWithdrawalMethods(
-  request: FastifyRequest<{ Querystring: PaginationParams; Params: AccountParam }>,
+  request: FastifyRequest<AccountIdPathParam & PaginationQuerystring>,
   reply: FastifyReply
 ): Promise<{ capabilities: WithdrawalCapability[] }> {
   const { limit, startingAfter, endingBefore } = request.query;
@@ -53,10 +56,7 @@ export async function getWithdrawalMethods(
 }
 
 export async function getWithdrawals(
-  request: FastifyRequest<{
-    Querystring: PaginationParams & { order: ListOrderQueryParam };
-    Params: AccountParam;
-  }>,
+  request: FastifyRequest<AccountIdPathParam & PaginationQuerystring & ListOrderQuerystring>,
   reply: FastifyReply
 ): Promise<{ withdrawals: Withdrawal[] }> {
   const { limit, startingAfter, endingBefore, order } = request.query;
@@ -79,9 +79,7 @@ export async function getWithdrawals(
 }
 
 export async function getWithdrawalDetails(
-  request: FastifyRequest<{
-    Params: AccountParam & { id: EntityIdPathParam };
-  }>,
+  request: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
   reply: FastifyReply
 ): Promise<Withdrawal> {
   const { accountId, id: withdrawalId } = request.params;
@@ -102,10 +100,7 @@ export async function getWithdrawalDetails(
 }
 
 export async function getSubAccountWithdrawals(
-  request: FastifyRequest<{
-    Querystring: PaginationParams & { order: ListOrderQueryParam };
-    Params: AccountParam;
-  }>,
+  request: FastifyRequest<AccountIdPathParam & PaginationQuerystring & ListOrderQuerystring>,
   reply: FastifyReply
 ): Promise<{ withdrawals: Withdrawal[] }> {
   const { limit, startingAfter, endingBefore, order } = request.query;
@@ -128,10 +123,7 @@ export async function getSubAccountWithdrawals(
 }
 
 export async function getPeerAccountWithdrawals(
-  request: FastifyRequest<{
-    Querystring: PaginationParams & { order: ListOrderQueryParam };
-    Params: AccountParam;
-  }>,
+  request: FastifyRequest<AccountIdPathParam & PaginationQuerystring & ListOrderQuerystring>,
   reply: FastifyReply
 ): Promise<{ withdrawals: Withdrawal[] }> {
   const { limit, startingAfter, endingBefore, order } = request.query;
@@ -154,10 +146,7 @@ export async function getPeerAccountWithdrawals(
 }
 
 export async function getBlockchainWithdrawals(
-  request: FastifyRequest<{
-    Querystring: PaginationParams & { order: ListOrderQueryParam };
-    Params: AccountParam;
-  }>,
+  request: FastifyRequest<AccountIdPathParam & PaginationQuerystring & ListOrderQuerystring>,
   reply: FastifyReply
 ): Promise<{ withdrawals: Withdrawal[] }> {
   const { limit, startingAfter, endingBefore, order } = request.query;
@@ -180,10 +169,7 @@ export async function getBlockchainWithdrawals(
 }
 
 export async function getFiatWithdrawals(
-  request: FastifyRequest<{
-    Querystring: PaginationParams & { order: ListOrderQueryParam };
-    Params: AccountParam;
-  }>,
+  request: FastifyRequest<AccountIdPathParam & PaginationQuerystring & ListOrderQuerystring>,
   reply: FastifyReply
 ): Promise<{ withdrawals: Withdrawal[] }> {
   const { limit, startingAfter, endingBefore, order } = request.query;
@@ -224,7 +210,7 @@ const blockchainIdempotencyHandler = new IdempotencyHandler<
 const fiatIdempotencyHandler = new IdempotencyHandler<FiatWithdrawalRequest, Withdrawal>();
 
 export async function createSubAccountWithdrawal(
-  { body, params }: FastifyRequest<{ Body: CrossAccountWithdrawalRequest; Params: AccountParam }>,
+  { body, params }: FastifyRequest<CrossAccountWithdrawalRequestBody & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<Withdrawal> {
   const { accountId } = params;
@@ -245,7 +231,7 @@ export async function createSubAccountWithdrawal(
 }
 
 export async function createPeerAccountWithdrawal(
-  { body, params }: FastifyRequest<{ Body: CrossAccountWithdrawalRequest; Params: AccountParam }>,
+  { body, params }: FastifyRequest<CrossAccountWithdrawalRequestBody & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<Withdrawal> {
   const { accountId } = params;
@@ -266,7 +252,7 @@ export async function createPeerAccountWithdrawal(
 }
 
 export async function createBlockchainWithdrawal(
-  { body, params }: FastifyRequest<{ Body: BlockchainWithdrawalRequest; Params: AccountParam }>,
+  { body, params }: FastifyRequest<BlockchainWithdrawalRequestBody & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<Withdrawal> {
   const { accountId } = params;
@@ -287,7 +273,7 @@ export async function createBlockchainWithdrawal(
 }
 
 export async function createFiatWithdrawal(
-  { body, params }: FastifyRequest<{ Body: FiatWithdrawalRequest; Params: AccountParam }>,
+  { body, params }: FastifyRequest<FiatWithdrawalRequestBody & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<Withdrawal> {
   const { accountId } = params;

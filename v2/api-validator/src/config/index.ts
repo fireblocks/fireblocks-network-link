@@ -101,26 +101,26 @@ const config = convict({
     peerAccount: {
       accountId: {
         format: String,
-        default: '',
+        default: undefined,
         env: 'WITHDRAWAL_PEER_ACCOUNT',
       },
     },
     subAccount: {
       accountId: {
         format: String,
-        default: '',
+        default: undefined,
         env: 'WITHDRAWAL_SUB_ACCOUNT',
       },
     },
     blockchain: {
       address: {
         format: String,
-        default: '',
+        default: undefined,
         env: 'WITHDRAWAL_BLOCKCHAIN_ADDRESS',
       },
       addressTag: {
         format: String,
-        default: '',
+        default: undefined,
         env: 'WITHDRAWAL_BLOCKCHAIN_ADDRESS_TAG',
       },
     },
@@ -128,38 +128,38 @@ const config = convict({
       accountHolder: {
         name: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_IBAN_ACCOUNT_NAME',
         },
         city: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_IBAN_ACCOUNT_CITY',
         },
         country: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_IBAN_ACCOUNT_COUNTRY',
         },
         subdivision: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_IBAN_ACCOUNT_SUBDIVISION',
         },
         address: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_IBAN_ACCOUNT_ADDRESS',
         },
         postalCode: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_IBAN_ACCOUNT_POSTAL_CODE',
         },
       },
       iban: {
         format: String,
-        default: '',
+        default: undefined,
         env: 'WITHDRAWAL_IBAN_IBAN',
       },
     },
@@ -167,43 +167,43 @@ const config = convict({
       accountHolder: {
         name: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_SWIFT_ACCOUNT_NAME',
         },
         city: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_SWIFT_ACCOUNT_CITY',
         },
         country: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_SWIFT_ACCOUNT_COUNTRY',
         },
         subdivision: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_SWIFT_ACCOUNT_SUBDIVISION',
         },
         address: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_SWIFT_ACCOUNT_ADDRESS',
         },
         postalCode: {
           format: String,
-          default: '',
+          default: undefined,
           env: 'WITHDRAWAL_SWIFT_ACCOUNT_POSTAL_CODE',
         },
       },
       swiftCode: {
         format: String,
-        default: '',
+        default: undefined,
         env: 'WITHDRAWAL_SWIFT_CODE',
       },
       routingNumber: {
         format: String,
-        default: '',
+        default: undefined,
         env: 'WITHDRAWAL_SWIFT_ROUTING_NUMBER',
       },
     },
