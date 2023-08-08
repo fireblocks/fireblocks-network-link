@@ -101,21 +101,21 @@ const config = convict({
     peerAccount: {
       accountId: {
         format: String,
-        default: undefined,
+        default: 'be5ff76b-6cc8-4a39-af40-fc71aea1865c',
         env: 'WITHDRAWAL_PEER_ACCOUNT',
       },
     },
     subAccount: {
       accountId: {
         format: String,
-        default: undefined,
+        default: 'c5bb0880-523c-4c1c-bfe7-bcf2941517a0',
         env: 'WITHDRAWAL_SUB_ACCOUNT',
       },
     },
     blockchain: {
       address: {
         format: String,
-        default: undefined,
+        default: '0x91b9e7bc95f8ef6f4e08ea10aaaac84b6c54203b',
         env: 'WITHDRAWAL_BLOCKCHAIN_ADDRESS',
       },
       addressTag: {
@@ -128,7 +128,7 @@ const config = convict({
       accountHolder: {
         name: {
           format: String,
-          default: undefined,
+          default: 'John Doe',
           env: 'WITHDRAWAL_IBAN_ACCOUNT_NAME',
         },
         city: {
@@ -159,7 +159,7 @@ const config = convict({
       },
       iban: {
         format: String,
-        default: undefined,
+        default: 'LO16MVPcSq8',
         env: 'WITHDRAWAL_IBAN_IBAN',
       },
     },
@@ -167,7 +167,7 @@ const config = convict({
       accountHolder: {
         name: {
           format: String,
-          default: undefined,
+          default: 'John Doe',
           env: 'WITHDRAWAL_SWIFT_ACCOUNT_NAME',
         },
         city: {
@@ -198,12 +198,12 @@ const config = convict({
       },
       swiftCode: {
         format: String,
-        default: undefined,
+        default: 'KPKUJWXMLDB',
         env: 'WITHDRAWAL_SWIFT_CODE',
       },
       routingNumber: {
         format: String,
-        default: undefined,
+        default: '8d73hc7sj8',
         env: 'WITHDRAWAL_SWIFT_ROUTING_NUMBER',
       },
     },

@@ -47,23 +47,71 @@ could be configured using the environment variables. Make a copy of `env.example
 to `.env` and edit the values. `src/config/index.ts` contains all the environment variable
 definitions and the possible values.
 
-### Configuration for withdrawals tests
+### Configure withdrawal destinations
 
-Withdrawals require destination addresses to be provided and funds are supposedly transfered
-in the process.
-Since this is the case, you will be required to set the destinations that will be sent in
-withdrawal requests.
+By default, withdrawal requests sent during testing will use random destinations.
+If your server needs to work with specific destinations, you can set your own destiantions to
+use.
 
-These configurations are identified in `src/config/index.ts` by `WITHDRAWAL_*` env names
+Subaccount destination:
 
-Each transfers capability will require you to configure the corresponding destinations:
-`transfers`: configure `WITHDRAWAL_SUB_ACCOUNT` with the subaccount id to withdraw to.
-`transfersPeerAccounts`: configure `WITHDRAWAL_PEER_ACCOUNT` with the peeraccount id
-to withdraw to.
-`transfersBlockchain`: configure `WITHDRAWAL_BLOCKCHAIN_ADDRESS` and optionally
-`WITHDRAWAL_BLOCKCHAIN_ADDRESS_TAG`
-`transfersFiat`: configure all `WITHDRAWAL_IBAN_*` and `WITHDRAWAL_SWIFT_*` variables with
-the details of the iban/swift addresses.
+1. Open the project's .env file
+2. Add a new line:
+   ```shell
+    WITHDRAWAL_SUB_ACCOUNT=
+   ```
+3. After the equal sign, enter the subaccount id to use for withdrawal destination
+
+Peeraccount destination:
+
+1. Open the project's .env file
+2. Add a new line:
+   ```shell
+    WITHDRAWAL_PEER_ACCOUNT=
+   ```
+3. After the equal sign, enter the peeraccount id to use for withdrawal destination
+
+Blockchain destination:
+
+1. Open the project's .env file
+2. Add these new lines:
+   ```shell
+     WITHDRAWAL_BLOCKCHAIN_ADDRESS=
+     WITHDRAWAL_BLOCKCHAIN_ADDRESS_TAG=
+   ```
+   Note: address tag is optional
+3. Enter the wanted values after the equal signs
+
+Swift destination (for fiat withdrawals):
+
+1. Open the project's .env file
+2. Add these new lines:
+   ```shell
+    WITHDRAWAL_SWIFT_ACCOUNT_NAME=
+    WITHDRAWAL_SWIFT_ACCOUNT_CITY=
+    WITHDRAWAL_SWIFT_ACCOUNT_COUNTRY=
+    WITHDRAWAL_SWIFT_ACCOUNT_SUBDIVISION=
+    WITHDRAWAL_SWIFT_ACCOUNT_ADDRESS=
+    WITHDRAWAL_SWIFT_ACCOUNT_POSTAL_CODE=
+    WITHDRAWAL_SWIFT_CODE=
+    WITHDRAWAL_SWIFT_ROUTING_NUMBER=
+   ```
+3. Enter the wanted values after the equal signs
+
+Iban destination (for fiat withdrawals):
+
+1. Open the project's .env file
+2. Add these new lines:
+   ```shell
+    WITHDRAWAL_IBAN_ACCOUNT_NAME=
+    WITHDRAWAL_IBAN_ACCOUNT_CITY=
+    WITHDRAWAL_IBAN_ACCOUNT_COUNTRY=
+    WITHDRAWAL_IBAN_ACCOUNT_SUBDIVISION=
+    WITHDRAWAL_IBAN_ACCOUNT_ADDRESS=
+    WITHDRAWAL_IBAN_ACCOUNT_POSTAL_CODE=
+    WITHDRAWAL_IBAN_IBAN=
+   ```
+3. Enter the wanted values after the equal signs
 
 ## Design
 
