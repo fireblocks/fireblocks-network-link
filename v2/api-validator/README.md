@@ -1,14 +1,13 @@
 # Fireblocks Network Link v2 API Validator
 
 This project contains the Fireblocks Network Link v2 API validation tool.
-The tool is built to be executed as a stand-alone application that sends various 
+The tool is built to be executed as a stand-alone application that sends various
 HTTP requests to the system under test to validate the correctness of the API
 implementation.
 
 ## Prerequisites
 
 - [nvm](https://github.com/nvm-sh/nvm)
-
 
 ## Quick start
 
@@ -19,7 +18,6 @@ nvm install 18.14.2
 nvm use
 npm install
 ```
-
 
 ### Use the bundled mock server
 
@@ -49,6 +47,23 @@ could be configured using the environment variables. Make a copy of `env.example
 to `.env` and edit the values. `src/config/index.ts` contains all the environment variable
 definitions and the possible values.
 
+### Configuration for withdrawals tests
+
+Withdrawals require destination addresses to be provided and funds are supposedly transfered
+in the process.
+Since this is the case, you will be required to set the destinations that will be sent in
+withdrawal requests.
+
+These configurations are identified in `src/config/index.ts` by `WITHDRAWAL_*` env names
+
+Each transfers capability will require you to configure the corresponding destinations:
+`transfers`: configure `WITHDRAWAL_SUB_ACCOUNT` with the subaccount id to withdraw to.
+`transfersPeerAccounts`: configure `WITHDRAWAL_PEER_ACCOUNT` with the peeraccount id
+to withdraw to.
+`transfersBlockchain`: configure `WITHDRAWAL_BLOCKCHAIN_ADDRESS` and optionally
+`WITHDRAWAL_BLOCKCHAIN_ADDRESS_TAG`
+`transfersFiat`: configure all `WITHDRAWAL_IBAN_*` and `WITHDRAWAL_SWIFT_*` variables with
+the details of the iban/swift addresses.
 
 ## Design
 
