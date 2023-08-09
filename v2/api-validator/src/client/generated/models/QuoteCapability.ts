@@ -6,6 +6,7 @@
 import type { AssetReference } from './AssetReference';
 
 export type QuoteCapability = {
+    id: string;
     fromAsset: AssetReference;
     toAsset: AssetReference;
 };

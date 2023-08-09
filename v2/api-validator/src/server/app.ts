@@ -19,12 +19,14 @@ import Fastify, {
   HTTPMethods,
   RouteOptions,
 } from 'fastify';
+import { loadFakeData } from './controllers/loader';
 
 const log = logger('app');
 
 export async function createWebApp(): Promise<WebApp> {
   const openApiYamlPathname = config.getUnifiedOpenApiPathname();
   await loadOpenApiSchemas(openApiYamlPathname);
+  loadFakeData();
 
   return new WebApp();
 }

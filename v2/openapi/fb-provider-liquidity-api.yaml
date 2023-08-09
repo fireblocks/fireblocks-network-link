@@ -198,8 +198,10 @@ components:
   schemas:
     QuoteCapability:
       type: object
-      required: [ fromAsset, toAsset ]
+      required: [ id, fromAsset, toAsset ]
       properties:
+        id:
+          type: string
         fromAsset:
           $ref: '#/x-schemas/AssetReference'
         toAsset:

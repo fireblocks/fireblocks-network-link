@@ -1,129 +1,63 @@
-import {
-  Account,
-  AccountStatus,
-  Blockchain,
-  Layer1Cryptocurrency,
-  NationalCurrencyCode,
-} from '../../client/generated';
-import { SUPPORTED_ASSETS } from './assets-controller';
+import { JSONSchemaFaker } from 'json-schema-faker';
+import { Account } from '../../client/generated';
+import { fakeSchemaObject } from '../../schemas';
 import { Repository } from './repository';
+import { AssetsController } from './assets-controller';
 
-const ACCOUNTS: Account[] = [
-  {
-    id: '1',
-    balances: [
-      {
-        asset: { assetId: SUPPORTED_ASSETS[0].id },
-        availableAmount: '100',
-        id: '1',
-      },
-      {
-        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        availableAmount: '100',
-        id: '2',
-      },
-      {
-        asset: {
-          blockchain: Blockchain.BITCOIN,
-          cryptocurrencySymbol: Layer1Cryptocurrency.BTC,
-        },
-        availableAmount: '100',
-        id: '3',
-      },
-      {
-        asset: { assetId: SUPPORTED_ASSETS[3].id },
-        availableAmount: '100',
-        id: '4',
-      },
-    ],
-    status: AccountStatus.ACTIVE,
-    title: '',
-    description: '',
-  },
-  {
-    id: '2',
-    balances: [
-      {
-        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        availableAmount: '1',
-        id: '1',
-      },
-    ],
-    status: AccountStatus.INACTIVE,
-    title: '',
-    description: '',
-  },
-  {
-    id: '3',
-    balances: [
-      {
-        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        availableAmount: '1',
-        id: '1',
-      },
-    ],
-    status: AccountStatus.ACTIVE,
-    title: '',
-    description: '',
-  },
-  {
-    id: '4',
-    balances: [
-      {
-        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        availableAmount: '1',
-        id: '1',
-      },
-    ],
-    status: AccountStatus.ACTIVE,
-    title: '',
-    description: '',
-  },
-  {
-    id: '5',
-    balances: [
-      {
-        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        availableAmount: '1',
-        id: '1',
-      },
-    ],
-    status: AccountStatus.ACTIVE,
-    title: '',
-    description: '',
-  },
-];
-
+const SUB_ACCOUNT_COUNT = 10;
 export class AccountsController {
-  private readonly repository = new Repository<Account>();
+  private static readonly repository = new Repository<Account>();
 
-  constructor(accounts: Account[]) {
-    for (const account of accounts) {
-      this.repository.create(account);
+  public static init(): void {
+    for (let i = 0; i < SUB_ACCOUNT_COUNT; i++) {
+      AccountsController.repository.create(fakeSchemaObject('Account') as Account);
+
+      const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
+      injectKnownAssetIdsToBalances(knownAssetIds, AccountsController.repository);
     }
   }
 
-  public getAllSubAccounts(): Account[] {
-    return this.repository.list();
+  public static getAllSubAccounts(): Account[] {
+    return AccountsController.repository.list();
   }
 
-  public getSubAccount(accountId: string): Account | undefined {
-    return this.repository.find(accountId);
+  public static getSubAccount(accountId: string): Account | undefined {
+    return AccountsController.repository.find(accountId);
   }
 
-  public isKnownSubAccount(accountId: string): boolean {
-    return !!this.repository.find(accountId);
+  public static isKnownSubAccount(accountId: string): boolean {
+    return !!AccountsController.repository.find(accountId);
   }
 
-  public omitBalancesFromAccountList(accounts: Account[]): Account[] {
-    return accounts.map((account) => this.omitBalancesFromAccount(account));
+  public static omitBalancesFromAccountList(accounts: Account[]): Account[] {
+    return accounts.map((account) => AccountsController.omitBalancesFromAccount(account));
   }
 
-  public omitBalancesFromAccount(account: Account): Account {
+  public static omitBalancesFromAccount(account: Account): Account {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { balances, ...accountWithoutBalances } = account;
     return accountWithoutBalances;
   }
 }
 
-export const accountsController = new AccountsController(ACCOUNTS);
+function injectKnownAssetIdsToBalances(
+  knownAssetIds: string[],
+  accountRepository: Repository<Account>
+): void {
+  for (const { id } of accountRepository.list()) {
+    const account = accountRepository.find(id);
+    if (!account) {
+      throw new Error('Not possible!');
+    }
+
+    if (!account.balances) {
+      continue;
+    }
+
+    for (let i = 0; i < account.balances.length; i++) {
+      if ('assetId' in account.balances[i].asset) {
+        account.balances[i].asset['assetId'] = JSONSchemaFaker.random.pick(knownAssetIds);
+      }
+    }
+  }
+}

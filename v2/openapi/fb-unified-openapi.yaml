@@ -2768,9 +2768,12 @@ components:
     QuoteCapability:
       type: object
       required:
+        - id
         - fromAsset
         - toAsset
       properties:
+        id:
+          type: string
         fromAsset:
           $ref: '#/components/schemas/AssetReference'
         toAsset:

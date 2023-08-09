@@ -3,7 +3,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { Account, AccountBalancesQueryParam, SubAccountIdPathParam } from '../../client/generated';
 import { getPaginationResult, PaginationParams } from '../controllers/pagination-controller';
 import logger from '../../logging';
-import { accountsController } from '../controllers/accounts-controller';
+import { AccountsController } from '../controllers/accounts-controller';
 
 const log = logger('handler:accounts');
 
@@ -19,12 +19,12 @@ export async function getAccounts(
     limit,
     startingAfter,
     endingBefore,
-    accountsController.getAllSubAccounts(),
+    AccountsController.getAllSubAccounts(),
     'id'
   );
 
   if (!balances) {
-    page = accountsController.omitBalancesFromAccountList(page);
+    page = AccountsController.omitBalancesFromAccountList(page);
   }
   return { accounts: page };
 }
@@ -35,14 +35,14 @@ export async function getAccountDetails(
 ): Promise<Account> {
   const { accountId } = request.params as { accountId: SubAccountIdPathParam };
   const query = request.query as { balances?: AccountBalancesQueryParam };
-  let account = accountsController.getSubAccount(accountId);
+  let account = AccountsController.getSubAccount(accountId);
 
   if (!account) {
     return ErrorFactory.notFound(reply);
   }
 
   if (!query.balances) {
-    account = accountsController.omitBalancesFromAccount(account);
+    account = AccountsController.omitBalancesFromAccount(account);
   }
 
   return account;

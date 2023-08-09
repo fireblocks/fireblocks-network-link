@@ -5,10 +5,10 @@ import {
   Layer2Cryptocurrency,
   NationalCurrencyCode,
 } from '../../client/generated';
-import { assetsController, UnknownAdditionalAssetError } from './assets-controller';
+import { AssetsController, UnknownAdditionalAssetError } from './assets-controller';
 import { XComError } from '../../error';
 import _ from 'lodash';
-import { AccountsController, accountsController } from './accounts-controller';
+import { AccountsController } from './accounts-controller';
 
 export class InvalidAssetQueryCombinationError extends XComError {
   constructor() {
@@ -17,14 +17,14 @@ export class InvalidAssetQueryCombinationError extends XComError {
 }
 
 export class BalancesController {
-  constructor(private accountsController: AccountsController) {}
+  constructor(private accountId: string) {}
 
-  public getSubAccountBalances(accountId: string): Balances {
-    return this.accountsController.getSubAccount(accountId)?.balances ?? [];
+  public getSubAccountBalances(): Balances {
+    return AccountsController.getSubAccount(this.accountId)?.balances ?? [];
   }
 
-  public getSingleAssetBalance(accountId: string, asset: AssetReference): Balances {
-    const accountBalances = this.getSubAccountBalances(accountId);
+  public getSingleAssetBalance(asset: AssetReference): Balances {
+    const accountBalances = this.getSubAccountBalances();
 
     const assetBalance = accountBalances.find((balance) => _.isMatch(balance.asset, asset));
 
@@ -47,10 +47,8 @@ export class BalancesController {
     if (!this.isUpToOneParameterDefined(assetId, nationalCurrencyCode, cryptocurrencySymbol)) {
       throw new InvalidAssetQueryCombinationError();
     }
-    if (assetId && !assetsController.isKnownAdditionalAsset(assetId)) {
+    if (assetId && !AssetsController.isKnownAdditionalAsset(assetId)) {
       throw new UnknownAdditionalAssetError();
     }
   }
 }
-
-export const balanceController = new BalancesController(accountsController);

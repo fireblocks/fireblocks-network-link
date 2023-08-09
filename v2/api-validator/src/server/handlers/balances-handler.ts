@@ -1,27 +1,40 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { accountsController } from '../controllers/accounts-controller';
 import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
-import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
+import { getPaginationResult } from '../controllers/pagination-controller';
 import {
+  BalancesController,
   InvalidAssetQueryCombinationError,
-  balanceController,
 } from '../controllers/balances-controller';
 import {
   AssetIdQueryParam,
   BadRequestError,
   Balances,
   CryptocurrencySymbolQueryParam,
-  EntityIdPathParam,
   NationalCurrencyCodeQueryParam,
   RequestPart,
 } from '../../client/generated';
+import { AccountIdPathParam, PaginationQuerystring } from './request-types';
+import { ControllersContainer } from '../controllers/controllers-container';
+
+type AssetQuery = {
+  assetId?: AssetIdQueryParam;
+  nationalCurrencyCode?: NationalCurrencyCodeQueryParam;
+  cryptocurrencySymbol?: CryptocurrencySymbolQueryParam;
+};
+type AssetQuerystring = { Querystring: AssetQuery };
+type BalancesResponse = { balances: Balances };
+type BalancesBody = { Body: BalancesResponse };
+
+const controllers = new ControllersContainer((accountId) => new BalancesController(accountId));
 
 export async function getBalances(
-  request: FastifyRequest,
+  request: FastifyRequest<
+    BalancesBody & AssetQuerystring & AccountIdPathParam & PaginationQuerystring
+  >,
   reply: FastifyReply
-): Promise<{ balances: Balances }> {
-  const { accountId } = request.params as { accountId: EntityIdPathParam };
+): Promise<BalancesResponse> {
+  const { accountId } = request.params;
   const {
     limit,
     startingAfter,
@@ -29,30 +42,27 @@ export async function getBalances(
     assetId,
     nationalCurrencyCode,
     cryptocurrencySymbol,
-  } = request.query as PaginationParams & {
-    assetId?: AssetIdQueryParam;
-    nationalCurrencyCode?: NationalCurrencyCodeQueryParam;
-    cryptocurrencySymbol?: CryptocurrencySymbolQueryParam;
-  };
+  } = request.query;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
   try {
-    balanceController.validateAssetQueryParams(assetId, nationalCurrencyCode, cryptocurrencySymbol);
+    controller.validateAssetQueryParams(assetId, nationalCurrencyCode, cryptocurrencySymbol);
 
     if (assetId) {
-      return { balances: balanceController.getSingleAssetBalance(accountId, { assetId }) };
+      return { balances: controller.getSingleAssetBalance({ assetId }) };
     }
     if (nationalCurrencyCode) {
       return {
-        balances: balanceController.getSingleAssetBalance(accountId, { nationalCurrencyCode }),
+        balances: controller.getSingleAssetBalance({ nationalCurrencyCode }),
       };
     }
     if (cryptocurrencySymbol) {
       return {
-        balances: balanceController.getSingleAssetBalance(accountId, { cryptocurrencySymbol }),
+        balances: controller.getSingleAssetBalance({ cryptocurrencySymbol }),
       };
     }
   } catch (err) {
@@ -78,15 +88,17 @@ export async function getBalances(
       limit,
       startingAfter,
       endingBefore,
-      balanceController.getSubAccountBalances(accountId),
+      controller.getSubAccountBalances(),
       'id'
     ),
   };
 }
 
 export async function getHistoricBalances(
-  request: FastifyRequest,
+  request: FastifyRequest<
+    BalancesBody & AssetQuerystring & AccountIdPathParam & PaginationQuerystring
+  >,
   reply: FastifyReply
-): Promise<{ balances: Balances }> {
+): Promise<BalancesResponse> {
   return getBalances(request, reply);
 }

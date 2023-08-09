@@ -14,8 +14,6 @@ import {
 describe('Deposit controller', () => {
   describe('Deposit addresses', () => {
     let depositController: DepositController;
-    const accountId = 'some-account';
-    const differentAccountId = 'different-account';
     const depositAddress1: DepositAddress = {
       id: 'id1',
       status: DepositAddressStatus.ENABLED,
@@ -36,66 +34,52 @@ describe('Deposit controller', () => {
     };
 
     beforeEach(() => {
-      depositController = new DepositController([]);
+      depositController = new DepositController();
     });
 
     describe('Add new deposit address', () => {
       beforeEach(() => {
-        depositController.addNewDepositAddressForAccount(accountId, depositAddress1);
+        depositController.addNewDepositAddress(depositAddress1);
       });
 
-      it('should set address to relevant accountId when address list is empty', () => {
-        expect(depositController.getAccountDepositAddresses(accountId)).toEqual([depositAddress1]);
+      it('should add address when address list is empty', () => {
+        expect(depositController.getDepositAddresses()).toEqual([depositAddress1]);
       });
 
       it('should add to existing deposit address list', () => {
-        depositController.addNewDepositAddressForAccount(accountId, depositAddress2);
-        expect(depositController.getAccountDepositAddresses(accountId)).toEqual([
-          depositAddress1,
-          depositAddress2,
-        ]);
+        depositController.addNewDepositAddress(depositAddress2);
+        expect(depositController.getDepositAddresses()).toEqual([depositAddress1, depositAddress2]);
       });
     });
 
-    describe("Get account's deposit addresses", () => {
-      it('should return empty list when the account doesnt have any deposit addresses', () => {
-        expect(depositController.getAccountDepositAddresses(accountId)).toEqual([]);
-      });
-
-      it('should return address list set for account', () => {
-        depositController.addNewDepositAddressForAccount(accountId, depositAddress1);
-        expect(depositController.getAccountDepositAddresses(accountId)).toEqual([depositAddress1]);
-        expect(depositController.getAccountDepositAddresses(differentAccountId)).toEqual([]);
+    describe('Get deposit addresses', () => {
+      it('should return address list set', () => {
+        depositController.addNewDepositAddress(depositAddress1);
+        expect(depositController.getDepositAddresses()).toEqual([depositAddress1]);
       });
     });
 
     describe('Disable deposit address', () => {
       beforeEach(() => {
-        depositController.addNewDepositAddressForAccount(
-          accountId,
-          Object.assign({}, depositAddress1)
-        );
-        depositController.disableAccountDepositAddress(accountId, depositAddress1.id);
+        depositController.addNewDepositAddress(Object.assign({}, depositAddress1));
+        depositController.disableDepositAddress(depositAddress1.id);
       });
 
       it('should set the deposit address status to disabled', () => {
-        const disabledDepositAddress = depositController.getAccountDepositAddress(
-          accountId,
-          depositAddress1.id
-        );
+        const disabledDepositAddress = depositController.getDepositAddress(depositAddress1.id);
         expect(disabledDepositAddress?.status).toBe(DepositAddressStatus.DISABLED);
       });
 
       it('should fail to disable an already disabled address', () => {
-        expect(() =>
-          depositController.disableAccountDepositAddress(accountId, depositAddress1.id)
-        ).toThrowError(DepositAddressDisabledError);
+        expect(() => depositController.disableDepositAddress(depositAddress1.id)).toThrowError(
+          DepositAddressDisabledError
+        );
       });
     });
   });
 
   describe('Validate deposit address creation request', () => {
-    const depositController = new DepositController([]);
+    const depositController = new DepositController();
     const unknownAssetReference = { assetId: randomUUID() };
     const unknownAssetTransferCapability = {
       transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,

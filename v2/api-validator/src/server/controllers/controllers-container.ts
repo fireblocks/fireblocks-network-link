@@ -1,4 +1,4 @@
-import { accountsController } from './accounts-controller';
+import { AccountsController } from './accounts-controller';
 
 type AccountId = string;
 
@@ -8,7 +8,7 @@ export class ControllersContainer<T> {
   constructor(private readonly factory: (accountId: AccountId) => T) {}
 
   public getController(accountId: string): T | undefined {
-    if (!accountsController.isKnownSubAccount(accountId)) {
+    if (!AccountsController.isKnownSubAccount(accountId)) {
       return;
     }
     if (this.controllers.has(accountId)) {

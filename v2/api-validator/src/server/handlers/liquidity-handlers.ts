@@ -1,6 +1,7 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
 import * as ErrorFactory from '../http-error-factory';
-import { accountsController } from '../controllers/accounts-controller';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import { ControllersContainer } from '../controllers/controllers-container';
+import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import {
   BadRequestError,
   EntityIdPathParam,
@@ -10,22 +11,19 @@ import {
   RequestPart,
   SubAccountIdPathParam,
 } from '../../client/generated';
-import { PaginationParams, getPaginationResult } from '../controllers/pagination-controller';
 import {
-  QUOTE_CAPABILITIES,
+  LiquidityController,
   QuoteNotFoundError,
   QuoteNotReadyError,
   UnknownFromAssetError,
   UnknownQuoteCapabilityError,
   UnknownToAssetError,
-  liquidityController,
 } from '../controllers/liquidity-controller';
 
-export async function getQuoteCapabilities(
-  request: FastifyRequest,
-  reply: FastifyReply
-): Promise<{ capabilities: QuoteCapability[] }> {
-  return { capabilities: QUOTE_CAPABILITIES };
+const controllers = new ControllersContainer(() => new LiquidityController());
+
+export async function getQuoteCapabilities(): Promise<{ capabilities: QuoteCapability[] }> {
+  return { capabilities: LiquidityController.getQuoteCapabilities() };
 }
 
 export async function getQuotes(
@@ -35,26 +33,27 @@ export async function getQuotes(
   const { limit, startingAfter, endingBefore } = request.query as PaginationParams;
   const { accountId } = request.params as { accountId: SubAccountIdPathParam };
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
-  const accountQuotes = liquidityController.getAccountQuotes(accountId);
-
-  const result = getPaginationResult(limit, startingAfter, endingBefore, accountQuotes, 'id');
-  return { quotes: result };
+  return {
+    quotes: getPaginationResult(limit, startingAfter, endingBefore, controller.getQuotes(), 'id'),
+  };
 }
 
 export async function createQuote(request: FastifyRequest, reply: FastifyReply): Promise<Quote> {
   const { accountId } = request.params as { accountId: SubAccountIdPathParam };
   const quoteRequest = request.body as QuoteRequest;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
   try {
-    liquidityController.validateQuoteRequest(quoteRequest);
+    controller.validateQuoteRequest(quoteRequest);
   } catch (err) {
     if (err instanceof UnknownFromAssetError) {
       return ErrorFactory.badRequest(reply, {
@@ -82,9 +81,9 @@ export async function createQuote(request: FastifyRequest, reply: FastifyReply):
     throw err;
   }
 
-  const quote = liquidityController.quoteFromQuoteRequest(quoteRequest);
+  const quote = controller.quoteFromQuoteRequest(quoteRequest);
 
-  liquidityController.addNewQuoteForAccount(accountId, quote);
+  controller.createQuote(quote);
 
   return quote;
 }
@@ -98,12 +97,13 @@ export async function getQuoteDetails(
     id: EntityIdPathParam;
   };
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
   try {
-    return liquidityController.getAccountQuote(accountId, quoteId);
+    return controller.getQuote(quoteId);
   } catch (err) {
     if (err instanceof QuoteNotFoundError) {
       ErrorFactory.notFound(reply);
@@ -118,12 +118,13 @@ export async function executeQuote(request: FastifyRequest, reply: FastifyReply)
     id: EntityIdPathParam;
   };
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
   try {
-    const executedQuote = liquidityController.executeAccountQuote(accountId, quoteId);
+    const executedQuote = controller.executeQuote(quoteId);
     return executedQuote;
   } catch (err) {
     if (err instanceof QuoteNotFoundError) {

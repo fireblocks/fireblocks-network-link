@@ -80,6 +80,7 @@ export function getObjectSchema(objectName: string): SomeJSONSchema {
 
 export function fakeSchemaObject(objectName: string): unknown {
   const schema = getObjectSchema(objectName);
+  JSONSchemaFaker.option('alwaysFakeOptionals', true);
   const faked = JSONSchemaFaker.generate(schema as Schema);
   if (faked?.['id']) {
     faked['id'] = randomUUID();

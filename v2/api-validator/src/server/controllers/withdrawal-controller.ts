@@ -25,12 +25,6 @@ export type WithdrawalRequest =
 
 type Order = 'asc' | 'desc';
 
-type ControllerOptions = {
-  capabilitiesCount?: number;
-  withdrawalsCount?: number;
-  assetsController?: AssetsController;
-};
-
 export class WithdrawalNotFoundError extends XComError {
   constructor() {
     super('Withdrawal not found');
@@ -44,29 +38,21 @@ export class WithdrawalController {
   private readonly withdrawalRepository = new Repository<Withdrawal>();
   private readonly withdrawalCapabilityRepository = new Repository<WithdrawalCapability>();
 
-  constructor(options?: ControllerOptions) {
-    const capabilitiesCount = options?.capabilitiesCount ?? DEFAULT_CAPABILITIES_COUNT;
-    const withdrawalsCount = options?.withdrawalsCount ?? DEFAULT_WITHDRAWALS_COUNT;
-
-    for (let i = 0; i < capabilitiesCount; i++) {
+  constructor() {
+    for (let i = 0; i < DEFAULT_CAPABILITIES_COUNT; i++) {
       this.withdrawalRepository.create(fakeSchemaObject('Withdrawal') as Withdrawal);
     }
 
-    for (let i = 0; i < withdrawalsCount; i++) {
+    for (let i = 0; i < DEFAULT_WITHDRAWALS_COUNT; i++) {
       this.withdrawalCapabilityRepository.create(
         fakeSchemaObject('WithdrawalCapability') as WithdrawalCapability
       );
     }
 
-    if (options?.assetsController) {
-      const knownAssetIds = options.assetsController.getAllAdditionalAssets().map((a) => a.id);
+    const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
 
-      injectKnownAssetIdsToWithdrawals(knownAssetIds, this.withdrawalRepository);
-      injectKnownAssetIdsToWithdrawalCapabilities(
-        knownAssetIds,
-        this.withdrawalCapabilityRepository
-      );
-    }
+    injectKnownAssetIdsToWithdrawals(knownAssetIds, this.withdrawalRepository);
+    injectKnownAssetIdsToWithdrawalCapabilities(knownAssetIds, this.withdrawalCapabilityRepository);
   }
 
   private withdrawalFromWithdrawalRequest(request: WithdrawalRequest): Withdrawal {

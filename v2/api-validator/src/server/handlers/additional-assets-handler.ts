@@ -6,7 +6,7 @@ import {
   InvalidPaginationParamsCombinationError,
   PaginationParams,
 } from '../controllers/pagination-controller';
-import { assetsController } from '../controllers/assets-controller';
+import { AssetsController } from '../controllers/assets-controller';
 
 export async function getAdditionalAssets(
   request: FastifyRequest,
@@ -19,7 +19,7 @@ export async function getAdditionalAssets(
       paginationParams.limit,
       paginationParams.startingAfter,
       paginationParams.endingBefore,
-      assetsController.getAllAdditionalAssets(),
+      AssetsController.getAllAdditionalAssets(),
       'id'
     );
     return { assets: result };
