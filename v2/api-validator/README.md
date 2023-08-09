@@ -6,7 +6,6 @@
 <h1>Fireblocks Network Link v2 API Validator</h1>
 <ul>
     <li style="display:inline-block; margin: 0 10px;"> <a href="../openapi/fb-unified-openapi.yaml"> Network Link v2 API Specification </a></li>
-    <li style="display:inline-block; margin: 0 10px;"> <a href="../openapi/fb-unified-openapi.yaml"> Fireblocks API Documentation </a></li>
 </ul>
 </center>
 
