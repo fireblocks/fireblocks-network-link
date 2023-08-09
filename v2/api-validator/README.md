@@ -82,7 +82,7 @@ SIGNING_HASH_ALGORITHM='sha256'
 SIGNING_POST_ENCODING='url-encoded'
 ```
 
-The default values can be overridden by setting the ```production/development/test.json``` in ```./src/config``` directory. For example:
+The default values can be also overridden by setting the ```production/development/test.json``` in ```./src/config``` directory. For example:
 ```js
 {
   logging: {
