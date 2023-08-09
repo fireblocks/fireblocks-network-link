@@ -1,46 +1,185 @@
-import { SUPPORTED_ASSETS } from './assets-controller';
+import _ from 'lodash';
+import { randomUUID } from 'crypto';
+import { XComError } from '../../error';
+import { Repository } from './repository';
+import { fakeSchemaObject } from '../../schemas';
+import { JSONSchemaFaker } from 'json-schema-faker';
+import { AssetsController } from './assets-controller';
 import {
+  BlockchainWithdrawalRequest,
   CrossAccountTransferCapability,
+  CrossAccountWithdrawalRequest,
+  FiatWithdrawalRequest,
   IbanCapability,
-  Layer1Cryptocurrency,
-  Layer2Cryptocurrency,
-  NationalCurrencyCode,
   PublicBlockchainCapability,
   SwiftCapability,
+  Withdrawal,
   WithdrawalCapability,
+  WithdrawalStatus,
 } from '../../client/generated';
 
-export const WITHDRAWAL_METHODS: WithdrawalCapability[] = [
-  {
-    id: 'e4dee3be-ae75-41d7-83e3-cc29360969b1',
-    balanceAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-    withdrawal: {
-      asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-      transferMethod: IbanCapability.transferMethod.IBAN,
-    },
-  },
-  {
-    id: '1c560908-8704-4706-a732-ab4a54160297',
-    balanceAsset: { assetId: SUPPORTED_ASSETS[0].id },
-    withdrawal: {
-      asset: { cryptocurrencySymbol: Layer1Cryptocurrency.ETH },
-      transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-    },
-  },
-  {
-    id: 'fdd88a6d-e9d7-4e30-a495-a8867839f83b',
-    balanceAsset: { cryptocurrencySymbol: Layer2Cryptocurrency.MATIC },
-    withdrawal: {
-      asset: { nationalCurrencyCode: NationalCurrencyCode.MXN },
-      transferMethod: SwiftCapability.transferMethod.SWIFT,
-    },
-  },
-  {
-    id: '4ae61af1-1c23-43ec-8ff6-8892789a266c',
-    balanceAsset: { cryptocurrencySymbol: Layer2Cryptocurrency.MATIC },
-    withdrawal: {
-      asset: { nationalCurrencyCode: NationalCurrencyCode.MXN },
-      transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,
-    },
-  },
-];
+export type WithdrawalRequest =
+  | FiatWithdrawalRequest
+  | BlockchainWithdrawalRequest
+  | CrossAccountWithdrawalRequest;
+
+type Order = 'asc' | 'desc';
+
+type ControllerOptions = {
+  capabilitiesCount?: number;
+  withdrawalsCount?: number;
+  assetsController?: AssetsController;
+};
+
+export class WithdrawalNotFoundError extends XComError {
+  constructor() {
+    super('Withdrawal not found');
+  }
+}
+
+const DEFAULT_CAPABILITIES_COUNT = 5;
+const DEFAULT_WITHDRAWALS_COUNT = 5;
+
+export class WithdrawalController {
+  private readonly withdrawalRepository = new Repository<Withdrawal>();
+  private readonly withdrawalCapabilityRepository = new Repository<WithdrawalCapability>();
+
+  constructor(options?: ControllerOptions) {
+    const capabilitiesCount = options?.capabilitiesCount ?? DEFAULT_CAPABILITIES_COUNT;
+    const withdrawalsCount = options?.withdrawalsCount ?? DEFAULT_WITHDRAWALS_COUNT;
+
+    for (let i = 0; i < capabilitiesCount; i++) {
+      this.withdrawalRepository.create(fakeSchemaObject('Withdrawal') as Withdrawal);
+    }
+
+    for (let i = 0; i < withdrawalsCount; i++) {
+      this.withdrawalCapabilityRepository.create(
+        fakeSchemaObject('WithdrawalCapability') as WithdrawalCapability
+      );
+    }
+
+    if (options?.assetsController) {
+      const knownAssetIds = options.assetsController.getAllAdditionalAssets().map((a) => a.id);
+
+      injectKnownAssetIdsToWithdrawals(knownAssetIds, this.withdrawalRepository);
+      injectKnownAssetIdsToWithdrawalCapabilities(
+        knownAssetIds,
+        this.withdrawalCapabilityRepository
+      );
+    }
+  }
+
+  private withdrawalFromWithdrawalRequest(request: WithdrawalRequest): Withdrawal {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { idempotencyKey, ...withdrawalRequest } = request;
+    return {
+      id: randomUUID(),
+      status: WithdrawalStatus.PENDING,
+      createdAt: new Date().toISOString(),
+      ...withdrawalRequest,
+    };
+  }
+
+  public getCapabilites(): WithdrawalCapability[] {
+    return this.withdrawalCapabilityRepository.list();
+  }
+
+  public getWithdrawals(order: Order): Withdrawal[] {
+    const withdrawals = this.withdrawalRepository.list();
+    return _.orderBy(withdrawals, 'createdAt', order);
+  }
+
+  public getWithdrawal(withdrawalId: string): Withdrawal {
+    const withdrawal = this.withdrawalRepository.find(withdrawalId);
+
+    if (!withdrawal) {
+      throw new WithdrawalNotFoundError();
+    }
+
+    return withdrawal;
+  }
+
+  public getSubAccountWithdrawals(order: Order): Withdrawal[] {
+    const withdrawals = this.getWithdrawals(order);
+    return withdrawals.filter(
+      (withdrawal) =>
+        withdrawal.destination.transferMethod ===
+        CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER
+    );
+  }
+
+  public getPeerAccountWithdrawals(order: Order): Withdrawal[] {
+    const withdrawals = this.getWithdrawals(order);
+    return withdrawals.filter(
+      (withdrawal) =>
+        withdrawal.destination.transferMethod ===
+        CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
+    );
+  }
+
+  public getFiatWithdrawals(order: Order): Withdrawal[] {
+    const fiatTransferMethods: string[] = [
+      IbanCapability.transferMethod.IBAN,
+      SwiftCapability.transferMethod.SWIFT,
+    ];
+    const withdrawals = this.getWithdrawals(order);
+    return withdrawals.filter((withdrawal) =>
+      fiatTransferMethods.includes(withdrawal.destination.transferMethod)
+    );
+  }
+
+  public getBlockchainWithdrawals(order: Order): Withdrawal[] {
+    const withdrawals = this.getWithdrawals(order);
+    return withdrawals.filter(
+      (withdrawal) =>
+        withdrawal.destination.transferMethod ===
+        PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+    );
+  }
+
+  public createWithdrawal(request: WithdrawalRequest): Withdrawal {
+    const withdrawal = this.withdrawalFromWithdrawalRequest(request);
+    this.withdrawalRepository.create(withdrawal);
+    return withdrawal;
+  }
+}
+
+function injectKnownAssetIdsToWithdrawals(
+  knownAssetIds: string[],
+  withdrawalRepository: Repository<Withdrawal>
+): void {
+  for (const { id } of withdrawalRepository.list()) {
+    const withdrawal = withdrawalRepository.find(id);
+    if (!withdrawal) {
+      throw new Error('Not possible!');
+    }
+
+    if ('assetId' in withdrawal.balanceAsset) {
+      withdrawal.balanceAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+
+    if ('assetId' in withdrawal.destination.asset) {
+      withdrawal.destination.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+  }
+}
+
+function injectKnownAssetIdsToWithdrawalCapabilities(
+  knownAssetIds: string[],
+  withdrawalCapabilityRepository: Repository<WithdrawalCapability>
+): void {
+  for (const { id } of withdrawalCapabilityRepository.list()) {
+    const capability = withdrawalCapabilityRepository.find(id);
+    if (!capability) {
+      throw new Error('Not possible!');
+    }
+
+    if ('assetId' in capability.balanceAsset) {
+      capability.balanceAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+
+    if ('assetId' in capability.withdrawal.asset) {
+      capability.withdrawal.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+  }
+}

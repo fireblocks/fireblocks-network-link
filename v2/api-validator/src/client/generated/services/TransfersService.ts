@@ -68,7 +68,7 @@ export class TransfersService {
          */
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
-        withdrawals?: Array<Withdrawal>;
+        withdrawals: Array<Withdrawal>;
     }> {
         return this.httpRequest.request({
             method: 'GET',

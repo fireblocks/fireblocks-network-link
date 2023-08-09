@@ -10,7 +10,6 @@ import {
   DepositAddressDisabledError,
   DepositController,
 } from '../../src/server/controllers/deposit-controller';
-import { inspect } from 'util';
 
 describe('Deposit controller', () => {
   describe('Deposit addresses', () => {

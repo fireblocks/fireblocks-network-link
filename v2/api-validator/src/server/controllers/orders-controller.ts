@@ -81,9 +81,3 @@ export class CannotCancelOrder extends XComError {
     super('Cannot cancel order in this state', { id, status });
   }
 }
-
-export class IdempotencyKeyReuseError extends XComError {
-  constructor(public readonly key: string) {
-    super('Idempotency key was already used', { key });
-  }
-}

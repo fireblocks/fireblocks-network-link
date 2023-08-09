@@ -97,6 +97,117 @@ const config = convict({
       },
     },
   },
+  withdrawal: {
+    peerAccount: {
+      accountId: {
+        format: String,
+        default: 'be5ff76b-6cc8-4a39-af40-fc71aea1865c',
+        env: 'WITHDRAWAL_PEER_ACCOUNT',
+      },
+    },
+    subAccount: {
+      accountId: {
+        format: String,
+        default: 'c5bb0880-523c-4c1c-bfe7-bcf2941517a0',
+        env: 'WITHDRAWAL_SUB_ACCOUNT',
+      },
+    },
+    blockchain: {
+      address: {
+        format: String,
+        default: '0x91b9e7bc95f8ef6f4e08ea10aaaac84b6c54203b',
+        env: 'WITHDRAWAL_BLOCKCHAIN_ADDRESS',
+      },
+      addressTag: {
+        format: String,
+        default: undefined,
+        env: 'WITHDRAWAL_BLOCKCHAIN_ADDRESS_TAG',
+      },
+    },
+    iban: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      iban: {
+        format: String,
+        default: 'LO16MVPcSq8',
+        env: 'WITHDRAWAL_IBAN_IBAN',
+      },
+    },
+    swift: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      swiftCode: {
+        format: String,
+        default: 'KPKUJWXMLDB',
+        env: 'WITHDRAWAL_SWIFT_CODE',
+      },
+      routingNumber: {
+        format: String,
+        default: '8d73hc7sj8',
+        env: 'WITHDRAWAL_SWIFT_ROUTING_NUMBER',
+      },
+    },
+  },
   authentication: {
     apiKey: {
       doc: 'API key used for identification',

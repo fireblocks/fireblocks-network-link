@@ -1,14 +1,13 @@
 # Fireblocks Network Link v2 API Validator
 
 This project contains the Fireblocks Network Link v2 API validation tool.
-The tool is built to be executed as a stand-alone application that sends various 
+The tool is built to be executed as a stand-alone application that sends various
 HTTP requests to the system under test to validate the correctness of the API
 implementation.
 
 ## Prerequisites
 
 - [nvm](https://github.com/nvm-sh/nvm)
-
 
 ## Quick start
 
@@ -19,7 +18,6 @@ nvm install 18.14.2
 nvm use
 npm install
 ```
-
 
 ### Use the bundled mock server
 
@@ -48,7 +46,6 @@ connecting to the server and the request signing method the server uses. All the
 could be configured using the environment variables. Make a copy of `env.example`, rename it
 to `.env` and edit the values. `src/config/index.ts` contains all the environment variable
 definitions and the possible values.
-
 
 ## Design
 

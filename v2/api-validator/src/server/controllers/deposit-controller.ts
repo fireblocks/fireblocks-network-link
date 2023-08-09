@@ -138,18 +138,6 @@ export class DepositAddressDisabledError extends XComError {
   }
 }
 
-export class IdempotencyRequestError extends XComError {
-  constructor(public metadata: IdempotencyMetadata) {
-    super("Idempotent request, will return original request's response");
-  }
-}
-
-type IdempotencyMetadata = {
-  requestBody: JsonValue;
-  responseBody: JsonValue;
-  responseStatus: number;
-};
-
 type AccountDeposit = { id: string; accountId: string; data: Deposit };
 type AccountDepositAddress = { id: string; accountId: string; data: DepositAddress };
 
