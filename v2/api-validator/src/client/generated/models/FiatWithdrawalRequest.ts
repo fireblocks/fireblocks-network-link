@@ -3,12 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { AssetReference } from './AssetReference';
 import type { FiatTransferDestination } from './FiatTransferDestination';
-import type { NationalCurrency } from './NationalCurrency';
 import type { WithdrawalRequestCommonProperties } from './WithdrawalRequestCommonProperties';
 
 export type FiatWithdrawalRequest = (WithdrawalRequestCommonProperties & {
-    balanceAsset: NationalCurrency;
+    balanceAsset: AssetReference;
     destination: FiatTransferDestination;
 });
 

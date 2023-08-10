@@ -1069,7 +1069,7 @@ components:
           required: [ balanceAsset, destination ]
           properties:
             balanceAsset:
-              $ref: '#/x-schemas/NationalCurrency'
+              $ref: '#/x-schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/FiatTransferDestination'
 
@@ -1080,7 +1080,7 @@ components:
           required: [ balanceAsset, destination ]
           properties:
             balanceAsset:
-              $ref: '#/x-schemas/CryptocurrencyReference'
+              $ref: '#/x-schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
 

@@ -3,12 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CryptocurrencyReference } from './CryptocurrencyReference';
+import type { AssetReference } from './AssetReference';
 import type { PublicBlockchainTransactionDestination } from './PublicBlockchainTransactionDestination';
 import type { WithdrawalRequestCommonProperties } from './WithdrawalRequestCommonProperties';
 
 export type BlockchainWithdrawalRequest = (WithdrawalRequestCommonProperties & {
-    balanceAsset: CryptocurrencyReference;
+    balanceAsset: AssetReference;
     destination: PublicBlockchainTransactionDestination;
 });
 

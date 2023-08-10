@@ -3328,7 +3328,7 @@ components:
             - destination
           properties:
             balanceAsset:
-              $ref: '#/components/schemas/NationalCurrency'
+              $ref: '#/components/schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/FiatTransferDestination'
     BlockchainWithdrawalRequest:
@@ -3340,7 +3340,7 @@ components:
             - destination
           properties:
             balanceAsset:
-              $ref: '#/components/schemas/CryptocurrencyReference'
+              $ref: '#/components/schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
     CrossAccountWithdrawalRequest:

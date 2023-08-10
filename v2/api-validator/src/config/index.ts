@@ -37,6 +37,11 @@ const config = convict({
       env: 'LOG_LEVEL',
     },
   },
+  paginationLimit: {
+    format: Number,
+    default: 2,
+    env: 'PAGINATION_LIMIT',
+  },
   capabilities: {
     version: {
       doc: 'Version of the API used',
