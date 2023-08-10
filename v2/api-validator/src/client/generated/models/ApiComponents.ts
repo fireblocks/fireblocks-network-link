@@ -18,6 +18,5 @@ export type ApiComponents = {
     transfersPeerAccounts?: AccountsSet;
     trading?: AccountsSet;
     liquidity?: AccountsSet;
-    subscriptions?: AccountsSet;
 };
 
