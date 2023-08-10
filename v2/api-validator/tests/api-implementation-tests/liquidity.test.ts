@@ -126,6 +126,7 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
 
     it('should fail when using a fromAsset and toAsset permutation which is not listed from quote capabilities', async () => {
       const unsupportedPair: QuoteCapability = {
+        id: randomUUID(),
         fromAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
         toAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
       };

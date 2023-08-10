@@ -31,7 +31,7 @@ export class WithdrawalNotFoundError extends XComError {
   }
 }
 
-const DEFAULT_CAPABILITIES_COUNT = 5;
+const DEFAULT_CAPABILITIES_COUNT = 50;
 const DEFAULT_WITHDRAWALS_COUNT = 5;
 
 export class WithdrawalController {

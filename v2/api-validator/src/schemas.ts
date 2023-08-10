@@ -7,6 +7,8 @@ import FastifyOpenApiParser from 'fastify-openapi-glue/lib/parser.v3';
 import { XComError } from './error';
 import { randomUUID } from 'crypto';
 
+JSONSchemaFaker.option({ alwaysFakeOptionals: true, fillProperties: false });
+
 const schemas: { endpointSchemas: EndpointSchema[]; componentSchemas?: ApiComponents } = {
   endpointSchemas: [],
 };
@@ -80,7 +82,6 @@ export function getObjectSchema(objectName: string): SomeJSONSchema {
 
 export function fakeSchemaObject(objectName: string): unknown {
   const schema = getObjectSchema(objectName);
-  JSONSchemaFaker.option('alwaysFakeOptionals', true);
   const faked = JSONSchemaFaker.generate(schema as Schema);
   if (faked?.['id']) {
     faked['id'] = randomUUID();

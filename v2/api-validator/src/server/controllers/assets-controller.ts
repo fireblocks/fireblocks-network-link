@@ -19,11 +19,17 @@ const ADDITIONAL_ASSETS_COUNT = 20;
 
 export class AssetsController {
   private static readonly repository = new Repository<AssetDefinition>();
+  private static assetsLoaded = false;
 
-  public static init(): void {
+  public static generateAdditionalAssets(): void {
+    if (this.assetsLoaded) {
+      return;
+    }
+
     for (let i = 0; i < ADDITIONAL_ASSETS_COUNT; i++) {
       this.repository.create(fakeSchemaObject('AssetDefinition') as AssetDefinition);
     }
+    this.assetsLoaded = true;
   }
 
   public static getAllAdditionalAssets(): AssetDefinition[] {

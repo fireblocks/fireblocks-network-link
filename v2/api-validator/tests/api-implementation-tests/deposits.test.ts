@@ -13,18 +13,10 @@ import {
   DepositAddressCreationRequest,
   DepositAddressStatus,
   DepositCapability,
-  IbanCapability,
   PublicBlockchainCapability,
   RequestPart,
-  SwiftCapability,
 } from '../../src/client/generated';
 import { randomUUID } from 'crypto';
-
-const depositAddressTransferCapabilities: string[] = [
-  IbanCapability.transferMethod.IBAN,
-  SwiftCapability.transferMethod.SWIFT,
-  PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-];
 
 const transfersCapability = config.get('capabilities.components.transfers');
 
@@ -96,11 +88,7 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
     describe('Create new deposit address', () => {
       it('should succeed with every listed capability', async () => {
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
-          const depositAddressCapabilities = capabilities.filter((capability) =>
-            depositAddressTransferCapabilities.includes(capability.deposit.transferMethod)
-          );
-
-          for (const capability of depositAddressCapabilities) {
+          for (const capability of capabilities) {
             try {
               const depositAddress = await client.transfers.createDepositAddress({
                 accountId,
@@ -170,7 +158,6 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
               asset: { assetId: randomUUID() },
             },
           };
-
           successResponse = await client.transfers.createDepositAddress({
             accountId,
             requestBody: successBody,

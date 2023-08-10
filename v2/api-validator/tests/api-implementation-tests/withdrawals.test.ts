@@ -14,15 +14,18 @@ import {
   BlockchainWithdrawalRequest,
   CrossAccountTransferCapability,
   CrossAccountWithdrawalRequest,
+  CryptocurrencyReference,
   FiatWithdrawalRequest,
   IbanCapability,
   Layer1Cryptocurrency,
+  NationalCurrency,
   NationalCurrencyCode,
   PublicBlockchainCapability,
   SwiftCapability,
   Withdrawal,
   WithdrawalCapability,
 } from '../../src/client/generated';
+import { inspect } from 'util';
 
 const transfersCapability = config.get('capabilities.components.transfers');
 const transfersBlockchainCapability = config.get('capabilities.components.transfersBlockchain');
@@ -445,7 +448,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             const requestBody: BlockchainWithdrawalRequest = {
               idempotencyKey: randomUUID(),
               balanceAmount: minWithdrawalAmount,
-              balanceAsset: assetBalance.asset,
+              balanceAsset: assetBalance.asset as CryptocurrencyReference,
               destination: {
                 ...blockchainDestinationConfig,
                 amount: minWithdrawalAmount,
@@ -545,7 +548,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
               const requestBody: FiatWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
                 balanceAmount: minWithdrawalAmount,
-                balanceAsset: assetBalance.asset,
+                balanceAsset: assetBalance.asset as NationalCurrency,
                 destination: {
                   ...destinationAddress,
                   amount: minWithdrawalAmount,

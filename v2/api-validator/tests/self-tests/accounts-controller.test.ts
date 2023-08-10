@@ -2,6 +2,10 @@ import { Account, AccountStatus } from '../../src/client/generated';
 import { AccountsController } from '../../src/server/controllers/accounts-controller';
 
 describe('Accounts Controller', () => {
+  beforeAll(() => {
+    AccountsController.generateAccounts();
+  });
+
   describe('Omit balances from account', () => {
     const account: Account = {
       id: '',
@@ -10,12 +14,10 @@ describe('Accounts Controller', () => {
       balances: [],
     };
 
-    const accountsController = new AccountsController([account]);
-
     let accountWithoutBalances: Account;
 
     beforeAll(() => {
-      accountWithoutBalances = accountsController.omitBalancesFromAccount(account);
+      accountWithoutBalances = AccountsController.omitBalancesFromAccount(account);
     });
 
     it('should remove balance property from account object', () => {
@@ -39,12 +41,10 @@ describe('Accounts Controller', () => {
       },
     ];
 
-    const accountsController = new AccountsController(accounts);
-
     let accountsWithoutBalances: Account[];
 
     beforeAll(() => {
-      accountsWithoutBalances = accountsController.omitBalancesFromAccountList(accounts);
+      accountsWithoutBalances = AccountsController.omitBalancesFromAccountList(accounts);
     });
 
     it('should remove balances property from every item in array', () => {

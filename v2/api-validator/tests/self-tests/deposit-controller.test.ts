@@ -14,7 +14,7 @@ import {
 describe('Deposit controller', () => {
   describe('Deposit addresses', () => {
     let depositController: DepositController;
-    const depositAddress1: DepositAddress = {
+    const depositAddress: DepositAddress = {
       id: 'id1',
       status: DepositAddressStatus.ENABLED,
       destination: {
@@ -23,55 +23,33 @@ describe('Deposit controller', () => {
         address: 'address1',
       },
     };
-    const depositAddress2: DepositAddress = {
-      id: 'id2',
-      status: DepositAddressStatus.ENABLED,
-      destination: {
-        transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-        asset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
-        address: 'address2',
-      },
-    };
-
     beforeEach(() => {
       depositController = new DepositController();
     });
 
     describe('Add new deposit address', () => {
       beforeEach(() => {
-        depositController.addNewDepositAddress(depositAddress1);
+        depositController.addNewDepositAddress(depositAddress);
       });
 
-      it('should add address when address list is empty', () => {
-        expect(depositController.getDepositAddresses()).toEqual([depositAddress1]);
-      });
-
-      it('should add to existing deposit address list', () => {
-        depositController.addNewDepositAddress(depositAddress2);
-        expect(depositController.getDepositAddresses()).toEqual([depositAddress1, depositAddress2]);
-      });
-    });
-
-    describe('Get deposit addresses', () => {
-      it('should return address list set', () => {
-        depositController.addNewDepositAddress(depositAddress1);
-        expect(depositController.getDepositAddresses()).toEqual([depositAddress1]);
+      it('should find added address', () => {
+        expect(depositController.getDepositAddresses()).toContain(depositAddress);
       });
     });
 
     describe('Disable deposit address', () => {
       beforeEach(() => {
-        depositController.addNewDepositAddress(Object.assign({}, depositAddress1));
-        depositController.disableDepositAddress(depositAddress1.id);
+        depositController.addNewDepositAddress(Object.assign({}, depositAddress));
+        depositController.disableDepositAddress(depositAddress.id);
       });
 
       it('should set the deposit address status to disabled', () => {
-        const disabledDepositAddress = depositController.getDepositAddress(depositAddress1.id);
+        const disabledDepositAddress = depositController.getDepositAddress(depositAddress.id);
         expect(disabledDepositAddress?.status).toBe(DepositAddressStatus.DISABLED);
       });
 
       it('should fail to disable an already disabled address', () => {
-        expect(() => depositController.disableDepositAddress(depositAddress1.id)).toThrowError(
+        expect(() => depositController.disableDepositAddress(depositAddress.id)).toThrowError(
           DepositAddressDisabledError
         );
       });

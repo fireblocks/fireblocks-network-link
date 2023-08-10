@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { randomUUID } from 'crypto';
 import Client from '../../src/client';
 import { Pageable, paginated } from '../utils/pagination';

@@ -35,7 +35,7 @@ export class DepositAddressDisabledError extends XComError {
   }
 }
 
-const DEFAULT_CAPABILITIES_COUNT = 5;
+const DEFAULT_CAPABILITIES_COUNT = 50;
 const DEFAULT_DEPOSITS_COUNT = 5;
 const DEFAULT_DEPOSIT_ADDRESSES_COUNT = 5;
 
@@ -124,10 +124,6 @@ export class DepositController {
           address: randomUUID(),
         };
         break;
-      default:
-        throw new Error(
-          `Unknown deposit address transfer method: ${transferMethod.transferMethod}`
-        );
     }
 
     return { id, status, destination };

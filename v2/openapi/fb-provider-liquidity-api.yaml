@@ -227,7 +227,13 @@ components:
     QuoteRequest:
       type: object
       allOf:
-        - $ref: '#/components/schemas/QuoteCapability'
+        - type: object
+          required: [ fromAsset, toAsset ]
+          properties:
+            fromAsset:
+              $ref: '#/x-schemas/AssetReference'
+            toAsset:
+              $ref: '#/x-schemas/AssetReference'
         - oneOf:
             - type: object
               required: [ fromAmount ]

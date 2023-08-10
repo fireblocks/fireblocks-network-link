@@ -70,6 +70,11 @@ export async function createDepositAddress(
 
   try {
     controller.validateDepositAddressCreationRequest(body);
+    const depositAddress = controller.depositAddressFromDepositAddressRequest(body);
+    controller.addNewDepositAddress(depositAddress);
+
+    idempotencyHandler.add(body, 200, depositAddress);
+    return depositAddress;
   } catch (err) {
     if (err instanceof UnknownAdditionalAssetError) {
       const response = {
@@ -83,12 +88,6 @@ export async function createDepositAddress(
     }
     throw err;
   }
-
-  const depositAddress = controller.depositAddressFromDepositAddressRequest(body);
-  controller.addNewDepositAddress(depositAddress);
-
-  idempotencyHandler.add(body, 200, depositAddress);
-  return depositAddress;
 }
 
 export async function getDepositAddresses(

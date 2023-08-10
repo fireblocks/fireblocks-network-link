@@ -2797,7 +2797,15 @@ components:
     QuoteRequest:
       type: object
       allOf:
-        - $ref: '#/components/schemas/QuoteCapability'
+        - type: object
+          required:
+            - fromAsset
+            - toAsset
+          properties:
+            fromAsset:
+              $ref: '#/components/schemas/AssetReference'
+            toAsset:
+              $ref: '#/components/schemas/AssetReference'
         - oneOf:
             - type: object
               required:
@@ -3231,7 +3239,10 @@ components:
         idempotencyKey:
           type: string
         transferMethod:
-          $ref: '#/components/schemas/TransferCapability'
+          oneOf:
+            - $ref: '#/components/schemas/PublicBlockchainCapability'
+            - $ref: '#/components/schemas/IbanCapability'
+            - $ref: '#/components/schemas/SwiftCapability'
     DepositCapability:
       type: object
       description: Capability to deposit to a balance asset using a specific transfer capability.
@@ -3243,7 +3254,10 @@ components:
         id:
           type: string
         deposit:
-          $ref: '#/components/schemas/TransferCapability'
+          oneOf:
+            - $ref: '#/components/schemas/PublicBlockchainCapability'
+            - $ref: '#/components/schemas/IbanCapability'
+            - $ref: '#/components/schemas/SwiftCapability'
         balanceAsset:
           $ref: '#/components/schemas/AssetReference'
     Deposit:
@@ -3299,13 +3313,10 @@ components:
       type: object
       required:
         - idempotencyKey
-        - balanceAsset
         - balanceAmount
       properties:
         idempotencyKey:
           type: string
-        balanceAsset:
-          $ref: '#/components/schemas/AssetReference'
         balanceAmount:
           $ref: '#/components/schemas/PositiveAmount'
     FiatWithdrawalRequest:
@@ -3313,8 +3324,11 @@ components:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
           required:
+            - balanceAsset
             - destination
           properties:
+            balanceAsset:
+              $ref: '#/components/schemas/NationalCurrency'
             destination:
               $ref: '#/components/schemas/FiatTransferDestination'
     BlockchainWithdrawalRequest:
@@ -3322,8 +3336,11 @@ components:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
           required:
+            - balanceAsset
             - destination
           properties:
+            balanceAsset:
+              $ref: '#/components/schemas/CryptocurrencyReference'
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
     CrossAccountWithdrawalRequest:
@@ -3331,8 +3348,11 @@ components:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
           required:
+            - balanceAsset
             - destination
           properties:
+            balanceAsset:
+              $ref: '#/components/schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/CrossAccountTransferDestination'
     WithdrawalCommonProperties:

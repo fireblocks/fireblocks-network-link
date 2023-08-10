@@ -3,10 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { AssetReference } from './AssetReference';
 import type { PositiveAmount } from './PositiveAmount';
-import type { QuoteCapability } from './QuoteCapability';
 
-export type QuoteRequest = (QuoteCapability & ({
+export type QuoteRequest = ({
+    fromAsset: AssetReference;
+    toAsset: AssetReference;
+} & ({
     fromAmount: PositiveAmount;
 } | {
     toAmount: PositiveAmount;

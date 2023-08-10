@@ -1,5 +1,10 @@
 import { JSONSchemaFaker } from 'json-schema-faker';
-import { Account } from '../../client/generated';
+import {
+  Account,
+  Balances,
+  CryptocurrencySymbol,
+  NationalCurrencyCode,
+} from '../../client/generated';
 import { fakeSchemaObject } from '../../schemas';
 import { Repository } from './repository';
 import { AssetsController } from './assets-controller';
@@ -7,14 +12,21 @@ import { AssetsController } from './assets-controller';
 const SUB_ACCOUNT_COUNT = 10;
 export class AccountsController {
   private static readonly repository = new Repository<Account>();
+  private static accountsLoaded = false;
 
-  public static init(): void {
+  public static generateAccounts(): void {
+    if (this.accountsLoaded) {
+      return;
+    }
+
     for (let i = 0; i < SUB_ACCOUNT_COUNT; i++) {
       AccountsController.repository.create(fakeSchemaObject('Account') as Account);
 
       const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
       injectKnownAssetIdsToBalances(knownAssetIds, AccountsController.repository);
+      removeDuplicateBalances(AccountsController.repository);
     }
+    this.accountsLoaded = true;
   }
 
   public static getAllSubAccounts(): Account[] {
@@ -59,5 +71,47 @@ function injectKnownAssetIdsToBalances(
         account.balances[i].asset['assetId'] = JSONSchemaFaker.random.pick(knownAssetIds);
       }
     }
+  }
+}
+
+function removeDuplicateBalances(accountRepository: Repository<Account>) {
+  for (const { id } of accountRepository.list()) {
+    const account = accountRepository.find(id);
+    if (!account) {
+      throw new Error('Not possible!');
+    }
+    const usedCryptocurrencySymbols = new Set<CryptocurrencySymbol>();
+    const usedNationalCurrencyCodes = new Set<NationalCurrencyCode>();
+    const usedOtherAssetReferences = new Set<string>();
+    const balances = account.balances ?? [];
+    const dedupedBalances: Balances = [];
+
+    for (let i = 0; i < balances.length; i++) {
+      const asset = balances[i].asset;
+
+      if ('assetId' in asset) {
+        if (usedOtherAssetReferences.has(asset.assetId)) {
+          continue;
+        }
+        usedOtherAssetReferences.add(asset.assetId);
+        dedupedBalances.push(balances[i]);
+      }
+      if ('cryptocurrencySymbol' in asset) {
+        if (usedCryptocurrencySymbols.has(asset.cryptocurrencySymbol)) {
+          continue;
+        }
+        usedCryptocurrencySymbols.add(asset.cryptocurrencySymbol);
+        dedupedBalances.push(balances[i]);
+      }
+      if ('nationalCurrencyCode' in asset) {
+        if (usedNationalCurrencyCodes.has(asset.nationalCurrencyCode)) {
+          continue;
+        }
+        usedNationalCurrencyCodes.add(asset.nationalCurrencyCode);
+        dedupedBalances.push(balances[i]);
+      }
+    }
+
+    account.balances = dedupedBalances;
   }
 }
