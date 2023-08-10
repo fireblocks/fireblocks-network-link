@@ -15,7 +15,6 @@ const CAPABILITIES: Capabilities = {
     transfersPeerAccounts: '*',
     trading: '*',
     liquidity: '*',
-    subscriptions: '*',
   },
 };
 

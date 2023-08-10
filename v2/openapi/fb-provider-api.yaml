@@ -360,7 +360,6 @@ paths:
                       transfersPeerAccounts: "*"
                       trading: "*"
                       liquidity: "*"
-                      subscriptions: "*"
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:
@@ -969,8 +968,6 @@ components:
         trading:
           $ref: '#/components/schemas/AccountsSet'
         liquidity:
-          $ref: '#/components/schemas/AccountsSet'
-        subscriptions:
           $ref: '#/components/schemas/AccountsSet'
 
     AccountsSet:

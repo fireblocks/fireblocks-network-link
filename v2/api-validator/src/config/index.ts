@@ -90,11 +90,6 @@ const config = convict({
         default: '*',
         env: 'CAPABILITIES_LIQUIDITY',
       },
-      subscriptions: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_SUBSCRIPTIONS',
-      },
     },
   },
   withdrawal: {
