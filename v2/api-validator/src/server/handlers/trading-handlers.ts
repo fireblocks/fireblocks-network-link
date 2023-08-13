@@ -1,6 +1,6 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { booksController } from '../controllers/books-controller';
+import { BooksController } from '../controllers/books-controller';
 import { OrdersController } from '../controllers/orders-controller';
 import { IdempotencyHandler } from '../controllers/idempotency-handler';
 import { getPaginationResult } from '../controllers/pagination-controller';
@@ -34,7 +34,7 @@ export async function getBooks({
       limit,
       startingAfter,
       endingBefore,
-      booksController.getAllBooks(),
+      BooksController.getAllBooks(),
       'id'
     ),
   };
@@ -45,7 +45,7 @@ export async function getBookDetails(
   reply: FastifyReply
 ): Promise<OrderBook> {
   const id = decodeURIComponent(params.id);
-  const book = booksController.getBook(id);
+  const book = BooksController.getBook(id);
   if (!book) {
     return ErrorFactory.notFound(reply);
   }
@@ -58,12 +58,12 @@ export async function getBookAsks(
   reply: FastifyReply
 ): Promise<GetBookAsksResponse> {
   const id = decodeURIComponent(params.id);
-  const book = booksController.getBook(id);
+  const book = BooksController.getBook(id);
   if (!book) {
     return ErrorFactory.notFound(reply);
   }
 
-  const bookAsks = booksController.getAsks(id);
+  const bookAsks = BooksController.getAsks(id);
   if (!bookAsks) {
     return { asks: [] };
   }
@@ -79,12 +79,12 @@ export async function getBookBids(
   reply: FastifyReply
 ): Promise<GetBookBidsResponse> {
   const id = decodeURIComponent(params.id);
-  const book = booksController.getBook(id);
+  const book = BooksController.getBook(id);
   if (!book) {
     return ErrorFactory.notFound(reply);
   }
 
-  const bookBids = booksController.getBids(id);
+  const bookBids = BooksController.getBids(id);
   if (!bookBids) {
     return { bids: [] };
   }
@@ -100,7 +100,7 @@ export async function getBookOrderHistory(
   reply: FastifyReply
 ): Promise<MarketTrade[]> {
   const id = decodeURIComponent(params.id);
-  const book = booksController.getBook(id);
+  const book = BooksController.getBook(id);
   if (!book) {
     return ErrorFactory.notFound(reply);
   }

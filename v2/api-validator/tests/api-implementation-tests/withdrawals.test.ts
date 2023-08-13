@@ -14,11 +14,9 @@ import {
   BlockchainWithdrawalRequest,
   CrossAccountTransferCapability,
   CrossAccountWithdrawalRequest,
-  CryptocurrencyReference,
   FiatWithdrawalRequest,
   IbanCapability,
   Layer1Cryptocurrency,
-  NationalCurrency,
   NationalCurrencyCode,
   PublicBlockchainCapability,
   SwiftCapability,
@@ -452,7 +450,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
               destination: {
                 ...blockchainDestinationConfig,
                 amount: minWithdrawalAmount,
-                asset: assetBalance.asset,
+                asset: capability.withdrawal.asset,
                 transferMethod: capability.withdrawal.transferMethod,
               },
             };

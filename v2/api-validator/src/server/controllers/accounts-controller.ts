@@ -1,8 +1,9 @@
-import { JSONSchemaFaker } from 'json-schema-faker';
 import {
   Account,
+  AssetBalance,
   Balances,
-  CryptocurrencySymbol,
+  Layer1Cryptocurrency,
+  Layer2Cryptocurrency,
   NationalCurrencyCode,
 } from '../../client/generated';
 import { fakeSchemaObject } from '../../schemas';
@@ -20,11 +21,11 @@ export class AccountsController {
     }
 
     for (let i = 0; i < SUB_ACCOUNT_COUNT; i++) {
-      AccountsController.repository.create(fakeSchemaObject('Account') as Account);
-
       const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
-      injectKnownAssetIdsToBalances(knownAssetIds, AccountsController.repository);
-      removeDuplicateBalances(AccountsController.repository);
+      const balances = getEveryAssetBalances(knownAssetIds);
+      const account = fakeSchemaObject('Account') as Account;
+      account.balances = balances;
+      AccountsController.repository.create(account);
     }
     this.accountsLoaded = true;
   }
@@ -52,66 +53,30 @@ export class AccountsController {
   }
 }
 
-function injectKnownAssetIdsToBalances(
-  knownAssetIds: string[],
-  accountRepository: Repository<Account>
-): void {
-  for (const { id } of accountRepository.list()) {
-    const account = accountRepository.find(id);
-    if (!account) {
-      throw new Error('Not possible!');
-    }
+function getEveryAssetBalances(knownAdditionalAssetIds: string[]) {
+  const balances: Balances = [];
 
-    if (!account.balances) {
-      continue;
-    }
-
-    for (let i = 0; i < account.balances.length; i++) {
-      if ('assetId' in account.balances[i].asset) {
-        account.balances[i].asset['assetId'] = JSONSchemaFaker.random.pick(knownAssetIds);
-      }
-    }
+  for (const assetId of knownAdditionalAssetIds) {
+    const balance = fakeSchemaObject('AssetBalance') as AssetBalance;
+    balance.asset = { assetId };
+    balances.push(balance);
   }
-}
 
-function removeDuplicateBalances(accountRepository: Repository<Account>) {
-  for (const { id } of accountRepository.list()) {
-    const account = accountRepository.find(id);
-    if (!account) {
-      throw new Error('Not possible!');
-    }
-    const usedCryptocurrencySymbols = new Set<CryptocurrencySymbol>();
-    const usedNationalCurrencyCodes = new Set<NationalCurrencyCode>();
-    const usedOtherAssetReferences = new Set<string>();
-    const balances = account.balances ?? [];
-    const dedupedBalances: Balances = [];
-
-    for (let i = 0; i < balances.length; i++) {
-      const asset = balances[i].asset;
-
-      if ('assetId' in asset) {
-        if (usedOtherAssetReferences.has(asset.assetId)) {
-          continue;
-        }
-        usedOtherAssetReferences.add(asset.assetId);
-        dedupedBalances.push(balances[i]);
-      }
-      if ('cryptocurrencySymbol' in asset) {
-        if (usedCryptocurrencySymbols.has(asset.cryptocurrencySymbol)) {
-          continue;
-        }
-        usedCryptocurrencySymbols.add(asset.cryptocurrencySymbol);
-        dedupedBalances.push(balances[i]);
-      }
-      if ('nationalCurrencyCode' in asset) {
-        if (usedNationalCurrencyCodes.has(asset.nationalCurrencyCode)) {
-          continue;
-        }
-        usedNationalCurrencyCodes.add(asset.nationalCurrencyCode);
-        dedupedBalances.push(balances[i]);
-      }
-    }
-
-    account.balances = dedupedBalances;
+  const cryptocurrencySymbols = [
+    ...Object.values(Layer1Cryptocurrency),
+    ...Object.values(Layer2Cryptocurrency),
+  ];
+  for (const cryptocurrencySymbol of cryptocurrencySymbols) {
+    const balance = fakeSchemaObject('AssetBalance') as AssetBalance;
+    balance.asset = { cryptocurrencySymbol };
+    balances.push(balance);
   }
+
+  for (const nationalCurrencyCode of Object.values(NationalCurrencyCode)) {
+    const balance = fakeSchemaObject('AssetBalance') as AssetBalance;
+    balance.asset = { nationalCurrencyCode };
+    balances.push(balance);
+  }
+
+  return balances;
 }

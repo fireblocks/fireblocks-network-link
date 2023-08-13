@@ -2,7 +2,10 @@ import Client from '../../src/client';
 import { Account } from '../../src/client/generated';
 import { Pageable, paginated } from './pagination';
 
-export async function getCapableAccounts(capability: '*' | string[]): Promise<Account[]> {
+export async function getCapableAccounts(
+  capability: '*' | string[],
+  balances?: boolean
+): Promise<Account[]> {
   const client = new Client();
 
   if (Array.isArray(capability)) {
@@ -10,7 +13,7 @@ export async function getCapableAccounts(capability: '*' | string[]): Promise<Ac
   }
 
   const getAccounts: Pageable<Account> = async (limit, startingAfter?) => {
-    const response = await client.accounts.getAccounts({ limit, startingAfter });
+    const response = await client.accounts.getAccounts({ limit, startingAfter, balances });
     return response.accounts;
   };
 

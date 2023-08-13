@@ -6,6 +6,7 @@ import ApiClient from '../../src/client';
 import { AssetsDirectory } from '../utils/assets-directory';
 import { arrayFromAsyncGenerator, Pageable, paginated } from '../utils/pagination';
 import {
+  Account,
   ApiError,
   AssetBalance,
   BadRequestError,
@@ -20,6 +21,7 @@ import {
   OrderTimeInForce,
   PositiveAmount,
 } from '../../src/client/generated';
+import { getCapableAccounts } from '../utils/capable-accounts';
 
 const LIMIT = LimitOrderData.orderType.LIMIT;
 const MARKET = MarketOrderData.orderType.MARKET;
@@ -28,11 +30,11 @@ type OrderType = LimitOrderData.orderType.LIMIT | MarketOrderData.orderType.MARK
 
 const tradingCapability = config.get('capabilities').components.trading;
 
-const accountId = '1';
-
 describe.skipIf(!tradingCapability)('Trading API tests', () => {
   const client = new ApiClient();
   let assets: AssetsDirectory;
+  let accounts: Account[];
+  let accountId: string;
 
   const getBooks: Pageable<OrderBook> = async (limit, startingAfter?) => {
     const response = await client.capabilities.getBooks({ limit, startingAfter });
@@ -41,6 +43,8 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
 
   beforeAll(async () => {
     assets = await AssetsDirectory.fetch();
+    accounts = await getCapableAccounts(tradingCapability, true);
+    accountId = accounts[0].id;
   });
 
   describe('getBooks getBookDetails', () => {
@@ -115,13 +119,7 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
 
   describe('Orders', () => {
     const client = new ApiClient();
-    let balances: AssetBalance[];
     let books: OrderBook[];
-
-    const getBalances: Pageable<AssetBalance> = async (limit, startingAfter?) => {
-      const response = await client.balances.getBalances({ accountId, limit, startingAfter });
-      return response.balances;
-    };
 
     const getBooks: Pageable<OrderBook> = async (limit, startingAfter?) => {
       const response = await client.capabilities.getBooks({ limit, startingAfter });
@@ -129,7 +127,6 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
     };
 
     beforeAll(async () => {
-      balances = await arrayFromAsyncGenerator(paginated(getBalances));
       books = await arrayFromAsyncGenerator(paginated(getBooks));
     });
 
@@ -139,10 +136,10 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
       beforeAll(async () => {
         const ordersCount = 10;
         for (let i = 0; i < ordersCount; i++) {
-          const orderCandidate = await generateValidOrder(LIMIT, books, balances);
+          const orderCandidate = await generateValidOrder(LIMIT, books, accounts);
           if (!orderCandidate) {
             throw new Error(
-              `Failed to generate a valid order for account ${accountId}. Is there enough balance?`
+              `Failed to generate a valid order for any account. Is there enough balance?`
             );
           }
           ordersData.push(orderCandidate);
@@ -182,10 +179,10 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
       let orderData: OrderData;
 
       beforeAll(async () => {
-        const orderCandidate = await generateValidOrder(orderType, books, balances);
+        const orderCandidate = await generateValidOrder(orderType, books, accounts);
         if (!orderCandidate) {
           throw new Error(
-            `Failed to generate a valid order for account ${accountId}. Is there enough balance?`
+            `Failed to generate a valid order for any account. Is there enough balance?`
           );
         }
         orderData = orderCandidate;
@@ -285,16 +282,30 @@ describe.skipIf(!tradingCapability)('Trading API tests', () => {
   });
 });
 
-async function generateValidOrder(
-  orderType: OrderType,
-  books: OrderBook[],
-  balances: AssetBalance[]
-) {
+async function generateValidOrder(orderType: OrderType, books: OrderBook[], accounts: Account[]) {
   if (orderType === LIMIT) {
-    return await generateValidLimitOrder(books, balances);
+    for (const account of accounts) {
+      if (!account.balances) {
+        continue;
+      }
+      const order = await generateValidLimitOrder(books, account.balances);
+      if (!order) {
+        continue;
+      }
+      return order;
+    }
   }
   if (orderType === MARKET) {
-    return await generateValidMarketOrder(books, balances);
+    for (const account of accounts) {
+      if (!account.balances) {
+        continue;
+      }
+      const order = await generateValidMarketOrder(books, account.balances);
+      if (!order) {
+        continue;
+      }
+      return order;
+    }
   }
 }
 

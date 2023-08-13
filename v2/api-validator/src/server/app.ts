@@ -21,6 +21,7 @@ import Fastify, {
   HTTPMethods,
   RouteOptions,
 } from 'fastify';
+import { BooksController } from './controllers/books-controller';
 
 const log = logger('app');
 
@@ -29,6 +30,7 @@ export async function createWebApp(): Promise<WebApp> {
   await loadOpenApiSchemas(openApiYamlPathname);
   AssetsController.generateAdditionalAssets();
   AccountsController.generateAccounts();
+  BooksController.loadBooks();
 
   return new WebApp();
 }

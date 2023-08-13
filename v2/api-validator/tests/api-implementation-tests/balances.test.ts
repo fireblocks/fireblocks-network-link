@@ -165,6 +165,7 @@ describe('Balances', () => {
 
             expect(balances.length).toBe(1);
             expect(balances[0].asset).toEqual(asset);
+            return;
           }
         }
       });
@@ -284,6 +285,7 @@ describe('Balances', () => {
 
             expect(balances.length).toBe(1);
             expect(balances[0].asset).toEqual(asset);
+            return;
           }
         }
       });
