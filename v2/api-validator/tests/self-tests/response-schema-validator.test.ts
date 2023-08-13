@@ -16,7 +16,6 @@ const optionalComponents = {
   transfersPeerAccounts: '*',
   trading: ['account1'],
   liquidity: ['account1', 'account2'],
-  subscriptions: '*',
 };
 
 describe('Response schema validator', () => {
