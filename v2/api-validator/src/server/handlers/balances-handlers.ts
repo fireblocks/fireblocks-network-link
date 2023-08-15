@@ -51,20 +51,6 @@ export async function getBalances(
 
   try {
     controller.validateAssetQueryParams(assetId, nationalCurrencyCode, cryptocurrencySymbol);
-
-    if (assetId) {
-      return { balances: controller.getSingleAssetBalance({ assetId }) };
-    }
-    if (nationalCurrencyCode) {
-      return {
-        balances: controller.getSingleAssetBalance({ nationalCurrencyCode }),
-      };
-    }
-    if (cryptocurrencySymbol) {
-      return {
-        balances: controller.getSingleAssetBalance({ cryptocurrencySymbol }),
-      };
-    }
   } catch (err) {
     if (err instanceof InvalidAssetQueryCombinationError) {
       ErrorFactory.badRequest(reply, {
@@ -81,6 +67,20 @@ export async function getBalances(
       });
     }
     throw err;
+  }
+
+  if (assetId) {
+    return { balances: controller.getSingleAssetBalance({ assetId }) };
+  }
+  if (nationalCurrencyCode) {
+    return {
+      balances: controller.getSingleAssetBalance({ nationalCurrencyCode }),
+    };
+  }
+  if (cryptocurrencySymbol) {
+    return {
+      balances: controller.getSingleAssetBalance({ cryptocurrencySymbol }),
+    };
   }
 
   return {

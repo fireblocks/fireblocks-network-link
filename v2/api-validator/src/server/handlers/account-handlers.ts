@@ -1,19 +1,31 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { Account, AccountBalancesQueryParam, SubAccountIdPathParam } from '../../client/generated';
-import { getPaginationResult, PaginationParams } from '../controllers/pagination-controller';
-import logger from '../../logging';
 import { AccountsController } from '../controllers/accounts-controller';
+import { getPaginationResult } from '../controllers/pagination-controller';
+import { AccountIdPathParam, PaginationQuerystring } from './request-types';
+import { Account, AccountBalancesQueryParam } from '../../client/generated';
 
-const log = logger('handler:accounts');
-
-export async function getAccounts(
-  request: FastifyRequest,
-  reply: FastifyReply
-): Promise<{ accounts: Partial<Account>[] }> {
-  const { limit, startingAfter, endingBefore, balances } = request.query as PaginationParams & {
+type AccountsResponse = { accounts: Account[] };
+type IncludeBalancesQuerystring = {
+  Querystring: {
     balances?: AccountBalancesQueryParam;
   };
+};
+
+function omitBalancesFromAccountList(accounts: Account[]): Account[] {
+  return accounts.map((account) => omitBalancesFromAccount(account));
+}
+
+function omitBalancesFromAccount(account: Account): Account {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { balances, ...accountWithoutBalances } = account;
+  return accountWithoutBalances;
+}
+
+export async function getAccounts(
+  request: FastifyRequest<PaginationQuerystring & IncludeBalancesQuerystring>
+): Promise<AccountsResponse> {
+  const { limit, startingAfter, endingBefore, balances } = request.query;
 
   let page = getPaginationResult(
     limit,
@@ -24,17 +36,17 @@ export async function getAccounts(
   );
 
   if (!balances) {
-    page = AccountsController.omitBalancesFromAccountList(page);
+    page = omitBalancesFromAccountList(page);
   }
   return { accounts: page };
 }
 
 export async function getAccountDetails(
-  request: FastifyRequest,
+  request: FastifyRequest<IncludeBalancesQuerystring & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<Account> {
-  const { accountId } = request.params as { accountId: SubAccountIdPathParam };
-  const query = request.query as { balances?: AccountBalancesQueryParam };
+  const { accountId } = request.params;
+  const query = request.query;
   let account = AccountsController.getSubAccount(accountId);
 
   if (!account) {
@@ -42,7 +54,7 @@ export async function getAccountDetails(
   }
 
   if (!query.balances) {
-    account = AccountsController.omitBalancesFromAccount(account);
+    account = omitBalancesFromAccount(account);
   }
 
   return account;

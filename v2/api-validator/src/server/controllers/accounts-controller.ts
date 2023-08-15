@@ -41,16 +41,6 @@ export class AccountsController {
   public static isKnownSubAccount(accountId: string): boolean {
     return !!AccountsController.repository.find(accountId);
   }
-
-  public static omitBalancesFromAccountList(accounts: Account[]): Account[] {
-    return accounts.map((account) => AccountsController.omitBalancesFromAccount(account));
-  }
-
-  public static omitBalancesFromAccount(account: Account): Account {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { balances, ...accountWithoutBalances } = account;
-    return accountWithoutBalances;
-  }
 }
 
 function getEveryAssetBalances(knownAdditionalAssetIds: string[]) {

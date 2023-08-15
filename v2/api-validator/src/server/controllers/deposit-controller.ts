@@ -1,7 +1,7 @@
 import RandExp from 'randexp';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
-import { AssetsController, UnknownAdditionalAssetError } from './assets-controller';
+import { AssetsController } from './assets-controller';
 import {
   Deposit,
   DepositAddress,
@@ -84,14 +84,6 @@ export class DepositController {
     }
 
     return deposit;
-  }
-
-  public validateDepositAddressCreationRequest(
-    depositAddressRequest: DepositAddressCreationRequest
-  ): void {
-    if (!AssetsController.isKnownAsset(depositAddressRequest.transferMethod.asset)) {
-      throw new UnknownAdditionalAssetError();
-    }
   }
 
   public depositAddressFromDepositAddressRequest(

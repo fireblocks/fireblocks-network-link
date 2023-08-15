@@ -1,4 +1,3 @@
-import { Capabilities } from '../../src/client/generated';
 import { ResponseSchemaValidator } from '../../src/client/response-schema-validator';
 
 const version = '0.0.1';

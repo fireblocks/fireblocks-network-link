@@ -23,7 +23,6 @@ import {
   Withdrawal,
   WithdrawalCapability,
 } from '../../src/client/generated';
-import { inspect } from 'util';
 
 const transfersCapability = config.get('capabilities.components.transfers');
 const transfersBlockchainCapability = config.get('capabilities.components.transfersBlockchain');

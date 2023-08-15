@@ -1,5 +1,3 @@
-import { randomUUID } from 'crypto';
-import { UnknownAdditionalAssetError } from '../../src/server/controllers/assets-controller';
 import {
   DepositAddress,
   DepositAddressStatus,
@@ -53,24 +51,6 @@ describe('Deposit controller', () => {
           DepositAddressDisabledError
         );
       });
-    });
-  });
-
-  describe('Validate deposit address creation request', () => {
-    const depositController = new DepositController();
-    const unknownAssetReference = { assetId: randomUUID() };
-    const unknownAssetTransferCapability = {
-      transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-      asset: unknownAssetReference,
-    };
-
-    it('should throw error when unknown asset is provided', () => {
-      expect(() => {
-        depositController.validateDepositAddressCreationRequest({
-          idempotencyKey: randomUUID(),
-          transferMethod: unknownAssetTransferCapability,
-        });
-      }).toThrow(UnknownAdditionalAssetError);
     });
   });
 });
