@@ -5,9 +5,7 @@ import Ajv, { ValidateFunction } from 'ajv';
 import { FastifyError } from '@fastify/error';
 import { FastifyBaseLogger } from 'fastify/types/logger';
 import { nonceMiddleware } from './middlewares/nonce-middleware';
-import { AssetsController } from './controllers/assets-controller';
 import { apiKeyMiddleware } from './middlewares/api-key-middleware';
-import { AccountsController } from './controllers/accounts-controller';
 import { timestampMiddleware } from './middlewares/timestamp-middleware';
 import { getEndpointRequestSchema, loadOpenApiSchemas } from '../schemas';
 import { BadRequestError, GeneralError, RequestPart } from '../client/generated';
@@ -21,16 +19,12 @@ import Fastify, {
   HTTPMethods,
   RouteOptions,
 } from 'fastify';
-import { BooksController } from './controllers/books-controller';
 
 const log = logger('app');
 
 export async function createWebApp(): Promise<WebApp> {
   const openApiYamlPathname = config.getUnifiedOpenApiPathname();
   await loadOpenApiSchemas(openApiYamlPathname);
-  AssetsController.generateAdditionalAssets();
-  AccountsController.generateAccounts();
-  BooksController.loadBooks();
 
   return new WebApp();
 }

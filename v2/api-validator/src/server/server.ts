@@ -1,5 +1,8 @@
 import logger from '../logging';
 import { createWebApp } from './app';
+import { AccountsController } from './controllers/accounts-controller';
+import { AssetsController } from './controllers/assets-controller';
+import { BooksController } from './controllers/books-controller';
 import { registerRoutes } from './routes';
 
 const log = logger('server');
@@ -27,6 +30,9 @@ async function start() {
   try {
     const app = await createWebApp();
     registerRoutes(app);
+    AssetsController.generateAdditionalAssets();
+    AccountsController.generateAccounts();
+    BooksController.loadBooks();
     await app.start();
   } catch (err: unknown) {
     handleError(err);
