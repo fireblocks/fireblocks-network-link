@@ -3,7 +3,6 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { IdempotencyHandler } from '../controllers/idempotency-handler';
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { ControllersContainer } from '../controllers/controllers-container';
-import { assetsController } from '../controllers/assets-controller';
 import {
   WithdrawalController,
   WithdrawalNotFoundError,
@@ -26,7 +25,7 @@ type CrossAccountWithdrawalRequestBody = { Body: CrossAccountWithdrawalRequest }
 type BlockchainWithdrawalRequestBody = { Body: BlockchainWithdrawalRequest };
 type FiatWithdrawalRequestBody = { Body: FiatWithdrawalRequest };
 
-const controllers = new ControllersContainer(() => new WithdrawalController({ assetsController }));
+const controllers = new ControllersContainer(() => new WithdrawalController());
 
 /**
  * GET Endpoints

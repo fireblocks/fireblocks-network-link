@@ -985,7 +985,11 @@ components:
         idempotencyKey:
           type: string
         transferMethod:
-          $ref: '#/components/schemas/TransferCapability'
+          oneOf:
+            - $ref: '#/components/schemas/PublicBlockchainCapability'
+            - $ref: '#/components/schemas/IbanCapability'
+            - $ref: '#/components/schemas/SwiftCapability'
+
 
     DepositCapability:
       type: object
@@ -996,7 +1000,10 @@ components:
         id:
           type: string
         deposit:
-          $ref: '#/components/schemas/TransferCapability'
+          oneOf:
+            - $ref: '#/components/schemas/PublicBlockchainCapability'
+            - $ref: '#/components/schemas/IbanCapability'
+            - $ref: '#/components/schemas/SwiftCapability'
         balanceAsset:
           $ref: '#/x-schemas/AssetReference'
 
@@ -1048,12 +1055,10 @@ components:
 
     WithdrawalRequestCommonProperties:
       type: object
-      required: [ idempotencyKey, balanceAsset, balanceAmount ]
+      required: [ idempotencyKey, balanceAmount ]
       properties:
         idempotencyKey:
           type: string
-        balanceAsset:
-          $ref: '#/x-schemas/AssetReference'
         balanceAmount:
           $ref: '#/x-schemas/PositiveAmount'
 
@@ -1061,8 +1066,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
-          required: [ destination ]
+          required: [ balanceAsset, destination ]
           properties:
+            balanceAsset:
+              $ref: '#/x-schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/FiatTransferDestination'
 
@@ -1070,8 +1077,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
-          required: [ destination ]
+          required: [ balanceAsset, destination ]
           properties:
+            balanceAsset:
+              $ref: '#/x-schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
 
@@ -1079,8 +1088,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
-          required: [ destination ]
+          required: [ balanceAsset, destination ]
           properties:
+            balanceAsset:
+              $ref: '#/x-schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/CrossAccountTransferDestination'
 

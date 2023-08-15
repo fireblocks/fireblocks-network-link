@@ -1,15 +1,17 @@
 import { randomUUID } from 'crypto';
 import {
-  NationalCurrencyCode,
+  AssetReference,
   Quote,
   QuoteCapability,
   QuoteRequest,
   QuoteStatus,
 } from '../../client/generated';
 import { XComError } from '../../error';
-import { AssetsController, SUPPORTED_ASSETS, assetsController } from './assets-controller';
+import { AssetsController } from './assets-controller';
 import _ from 'lodash';
 import { Repository } from './repository';
+import { fakeSchemaObject } from '../../schemas';
+import { JSONSchemaFaker } from 'json-schema-faker';
 
 export class QuoteNotFoundError extends XComError {
   constructor() {
@@ -32,38 +34,45 @@ export class UnknownToAssetError extends XComError {
   }
 }
 export class UnknownQuoteCapabilityError extends XComError {
-  constructor({ fromAsset, toAsset }: QuoteCapability) {
+  constructor({ fromAsset, toAsset }: QuoteCapabilityAssets) {
     super('Converstion not supported', { fromAsset, toAsset });
   }
 }
 
-type AccountQuote = { id: string; accountId: string; data: Quote };
+type QuoteCapabilityAssets = {
+  fromAsset: AssetReference;
+  toAsset: AssetReference;
+};
 
 const QUOTE_EXPIRATION_IN_MS = 1000;
-
-export const QUOTE_CAPABILITIES: QuoteCapability[] = [
-  { fromAsset: { assetId: SUPPORTED_ASSETS[0].id }, toAsset: { assetId: SUPPORTED_ASSETS[1].id } },
-  { fromAsset: { assetId: SUPPORTED_ASSETS[1].id }, toAsset: { assetId: SUPPORTED_ASSETS[0].id } },
-  {
-    fromAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-    toAsset: { nationalCurrencyCode: NationalCurrencyCode.MXN },
-  },
-];
+const QUOTES_COUNT = 5;
+const QUOTE_CAPABILITIES_COUNT = 5;
 
 export class LiquidityController {
-  private readonly quoteRepository = new Repository<AccountQuote>();
+  private readonly quoteRepository = new Repository<Quote>();
+  private static readonly quoteCapabilityRepository = new Repository<QuoteCapability>();
+  private static loadedCapabilities = false;
 
-  constructor(private assetsController: AssetsController) {}
+  constructor() {
+    for (let i = 0; i < QUOTES_COUNT; i++) {
+      this.quoteRepository.create(fakeSchemaObject('Quote') as Quote);
+    }
 
-  private isKnownLiquidityCapability(capability: QuoteCapability) {
-    return QUOTE_CAPABILITIES.some((quoteCapability) => _.isEqual(quoteCapability, capability));
+    const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
+    injectKnownAssetIdsToQuoteAssetObjects(knownAssetIds, this.quoteRepository);
+  }
+
+  private isKnownLiquidityCapability(capability: QuoteCapabilityAssets) {
+    return LiquidityController.quoteCapabilityRepository
+      .list()
+      .some((quoteCapability) => _.isMatch(quoteCapability, capability));
   }
 
   public validateQuoteRequest(quoteRequest: QuoteRequest): void {
-    if (!this.assetsController.isKnownAsset(quoteRequest.fromAsset)) {
+    if (!AssetsController.isKnownAsset(quoteRequest.fromAsset)) {
       throw new UnknownFromAssetError();
     }
-    if (!this.assetsController.isKnownAsset(quoteRequest.toAsset)) {
+    if (!AssetsController.isKnownAsset(quoteRequest.toAsset)) {
       throw new UnknownToAssetError();
     }
     if (
@@ -103,41 +112,69 @@ export class LiquidityController {
     };
   }
 
-  public getAccountQuotes(accountId: string): Quote[] {
-    const allQuotes = this.quoteRepository.list();
-    const accountQuotes = allQuotes.filter((aq) => aq.accountId === accountId);
-    return accountQuotes.map((aq) => aq.data);
+  public static getQuoteCapabilities(): QuoteCapability[] {
+    if (!this.loadedCapabilities) {
+      for (let i = 0; i < QUOTE_CAPABILITIES_COUNT; i++) {
+        this.quoteCapabilityRepository.create(
+          fakeSchemaObject('QuoteCapability') as QuoteCapability
+        );
+      }
+      const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
+      injectKnownAssetIdsToQuoteAssetObjects(knownAssetIds, this.quoteCapabilityRepository);
+      this.loadedCapabilities = true;
+    }
+    return this.quoteCapabilityRepository.list();
   }
 
-  public getAccountQuote(accountId: string, quoteId: string): Quote {
-    const accountQuote = this.quoteRepository.find(quoteId);
+  public getQuotes(): Quote[] {
+    return this.quoteRepository.list();
+  }
 
-    if (!accountQuote || accountQuote.accountId !== accountId) {
+  public getQuote(quoteId: string): Quote {
+    const quote = this.quoteRepository.find(quoteId);
+
+    if (!quote) {
       throw new QuoteNotFoundError();
     }
 
-    return accountQuote.data;
+    return quote;
   }
 
-  public addNewQuoteForAccount(accountId: string, quote: Quote): void {
-    this.quoteRepository.create({ id: quote.id, accountId, data: quote });
+  public createQuote(quote: Quote): void {
+    this.quoteRepository.create(quote);
   }
 
-  public executeAccountQuote(accountId: string, quoteId: string): Quote {
-    const accountQuote = this.quoteRepository.find(quoteId);
+  public executeQuote(quoteId: string): Quote {
+    const quote = this.quoteRepository.find(quoteId);
 
-    if (!accountQuote || accountQuote.accountId !== accountId) {
+    if (!quote) {
       throw new QuoteNotFoundError();
     }
-
-    if (accountQuote.data.status !== QuoteStatus.READY) {
+    if (quote.status !== QuoteStatus.READY) {
       throw new QuoteNotReadyError();
     }
 
-    accountQuote.data.status = QuoteStatus.EXECUTED;
-
-    return accountQuote.data;
+    quote.status = QuoteStatus.EXECUTED;
+    return quote;
   }
 }
 
-export const liquidityController = new LiquidityController(assetsController);
+function injectKnownAssetIdsToQuoteAssetObjects(
+  knownAssetIds: string[],
+  repository: Repository<Quote | QuoteCapability>
+) {
+  for (const { id } of repository.list()) {
+    const quote = repository.find(id);
+
+    if (!quote) {
+      throw new Error('Not possible!');
+    }
+
+    if ('assetId' in quote.fromAsset) {
+      quote.fromAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+    if ('assetId' in quote.toAsset) {
+      quote.toAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+  }
+}

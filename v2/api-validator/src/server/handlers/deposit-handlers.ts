@@ -1,52 +1,68 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { accountsController } from '../controllers/accounts-controller';
-import { UnknownAdditionalAssetError } from '../controllers/assets-controller';
-import { getPaginationResult, PaginationParams } from '../controllers/pagination-controller';
+import { IdempotencyHandler } from '../controllers/idempotency-handler';
+import { getPaginationResult } from '../controllers/pagination-controller';
+import { ControllersContainer } from '../controllers/controllers-container';
+import { AssetsController, UnknownAdditionalAssetError } from '../controllers/assets-controller';
+import { AccountIdPathParam, EntityIdPathParam, PaginationQuerystring } from './request-types';
 import {
   BadRequestError,
   Deposit,
   DepositAddress,
   DepositAddressCreationRequest,
   DepositCapability,
-  EntityIdPathParam,
   RequestPart,
-  SubAccountIdPathParam,
 } from '../../client/generated';
 import {
-  DEPOSIT_METHODS,
   DepositAddressDisabledError,
   DepositAddressNotFoundError,
+  DepositController,
   DepositNotFoundError,
-  depositController,
 } from '../controllers/deposit-controller';
-import { IdempotencyHandler } from '../controllers/idempotency-handler';
+
+function validateDepositAddressCreationRequest(
+  depositAddressRequest: DepositAddressCreationRequest
+): void {
+  if (!AssetsController.isKnownAsset(depositAddressRequest.transferMethod.asset)) {
+    throw new UnknownAdditionalAssetError();
+  }
+}
+
+type CreateDepositAddressBody = { Body: DepositAddressCreationRequest };
+type DepositCapabilitiesResponse = { capabilities: DepositCapability[] };
 
 const idempotencyHandler = new IdempotencyHandler<
   DepositAddressCreationRequest,
   DepositAddress | BadRequestError
 >();
 
-type AccountParam = { accountId: SubAccountIdPathParam };
+const controllers = new ControllersContainer(() => new DepositController());
 
 export async function getDepositMethods(
-  request: FastifyRequest<{ Querystring: PaginationParams; Params: AccountParam }>,
+  request: FastifyRequest<PaginationQuerystring & AccountIdPathParam>,
   reply: FastifyReply
-): Promise<{ capabilities: DepositCapability[] }> {
+): Promise<DepositCapabilitiesResponse> {
   const { limit, startingAfter, endingBefore } = request.query;
   const { accountId } = request.params;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
   return {
-    capabilities: getPaginationResult(limit, startingAfter, endingBefore, DEPOSIT_METHODS, 'id'),
+    capabilities: getPaginationResult(
+      limit,
+      startingAfter,
+      endingBefore,
+      controller.getDepositCapabilities(),
+      'id'
+    ),
   };
 }
 
 export async function createDepositAddress(
-  { body, params }: FastifyRequest<{ Params: AccountParam; Body: DepositAddressCreationRequest }>,
+  { body, params }: FastifyRequest<CreateDepositAddressBody & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<DepositAddress> {
   const { accountId } = params;
@@ -55,12 +71,13 @@ export async function createDepositAddress(
     return idempotencyHandler.reply(body, reply);
   }
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
   try {
-    depositController.validateDepositAddressCreationRequest(body);
+    validateDepositAddressCreationRequest(body);
   } catch (err) {
     if (err instanceof UnknownAdditionalAssetError) {
       const response = {
@@ -75,71 +92,70 @@ export async function createDepositAddress(
     throw err;
   }
 
-  const depositAddress = depositController.depositAddressFromDepositAddressRequest(body);
-  depositController.addNewDepositAddressForAccount(accountId, depositAddress);
+  const depositAddress = controller.depositAddressFromDepositAddressRequest(body);
+  controller.addNewDepositAddress(depositAddress);
 
   idempotencyHandler.add(body, 200, depositAddress);
   return depositAddress;
 }
 
 export async function getDepositAddresses(
-  request: FastifyRequest<{ Querystring: PaginationParams; Params: AccountParam }>,
+  request: FastifyRequest<PaginationQuerystring & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<{ addresses: DepositAddress[] }> {
   const { accountId } = request.params;
   const { limit, startingAfter, endingBefore } = request.query;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
-
-  const accountDepositAddresses = depositController.getAccountDepositAddresses(accountId);
 
   return {
     addresses: getPaginationResult(
       limit,
       startingAfter,
       endingBefore,
-      accountDepositAddresses,
+      controller.getDepositAddresses(),
       'id'
     ),
   };
 }
 
 export async function getDepositAddressDetails(
-  request: FastifyRequest<{ Params: AccountParam & { id: EntityIdPathParam } }>,
+  request: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
   reply: FastifyReply
 ): Promise<DepositAddress> {
   const { accountId, id: depositAddressId } = request.params;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  const accountDepositAddresses = depositController.getAccountDepositAddresses(accountId);
-  const depositAddress = accountDepositAddresses.find(
-    (depositAddress) => depositAddress.id === depositAddressId
-  );
-
-  if (!depositAddress) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  return depositAddress;
-}
-
-export async function disableDepositAddress(
-  request: FastifyRequest<{ Params: AccountParam & { id: EntityIdPathParam } }>,
-  reply: FastifyReply
-): Promise<DepositAddress> {
-  const { accountId, id: depositAddressId } = request.params;
-
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
   try {
-    return depositController.disableAccountDepositAddress(accountId, depositAddressId);
+    return controller.getDepositAddress(depositAddressId);
+  } catch (err) {
+    if (err instanceof DepositAddressNotFoundError) {
+      return ErrorFactory.notFound(reply);
+    }
+    throw err;
+  }
+}
+
+export async function disableDepositAddress(
+  request: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
+  reply: FastifyReply
+): Promise<DepositAddress> {
+  const { accountId, id: depositAddressId } = request.params;
+
+  const controller = controllers.getController(accountId);
+  if (!controller) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  try {
+    return controller.disableDepositAddress(depositAddressId);
   } catch (err) {
     if (err instanceof DepositAddressNotFoundError) {
       return ErrorFactory.notFound(reply);
@@ -155,13 +171,14 @@ export async function disableDepositAddress(
 }
 
 export async function getDeposits(
-  request: FastifyRequest<{ Querystring: PaginationParams; Params: AccountParam }>,
+  request: FastifyRequest<PaginationQuerystring & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<{ deposits: Deposit[] }> {
   const { accountId } = request.params;
   const { limit, startingAfter, endingBefore } = request.query;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -170,24 +187,25 @@ export async function getDeposits(
       limit,
       startingAfter,
       endingBefore,
-      depositController.getAllDeposits(accountId),
+      controller.getAllDeposits(),
       'id'
     ),
   };
 }
 
 export async function getDepositDetails(
-  request: FastifyRequest<{ Params: AccountParam & { id: EntityIdPathParam } }>,
+  request: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
   reply: FastifyReply
 ): Promise<Deposit> {
   const { accountId, id: depositId } = request.params;
 
-  if (!accountsController.isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
   try {
-    return depositController.getDeposit(accountId, depositId);
+    return controller.getDeposit(depositId);
   } catch (err) {
     if (err instanceof DepositNotFoundError) {
       return ErrorFactory.notFound(reply);

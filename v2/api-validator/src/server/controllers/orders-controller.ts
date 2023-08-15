@@ -2,9 +2,9 @@ import _ from 'lodash';
 import logger from '../../logging';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
-import { books } from './books-controller';
 import { Order, OrderData, OrderRequest, OrderStatus } from '../../client/generated';
 import { getPaginationResult } from './pagination-controller';
+import { BooksController } from './books-controller';
 
 const log = logger('server');
 
@@ -12,7 +12,7 @@ export class OrdersController {
   private readonly orders: Array<Order> = [];
 
   public createOrder(order: OrderRequest): Order {
-    const book = books.find((b) => b.id === order.bookId);
+    const book = BooksController.getBook(order.bookId);
     if (!book) {
       throw new UnknownBookError(order.bookId);
     }

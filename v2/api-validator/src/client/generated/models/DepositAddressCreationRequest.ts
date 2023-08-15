@@ -3,10 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { TransferCapability } from './TransferCapability';
+import type { IbanCapability } from './IbanCapability';
+import type { PublicBlockchainCapability } from './PublicBlockchainCapability';
+import type { SwiftCapability } from './SwiftCapability';
 
 export type DepositAddressCreationRequest = {
     idempotencyKey: string;
-    transferMethod: TransferCapability;
+    transferMethod: (PublicBlockchainCapability | IbanCapability | SwiftCapability);
 };
 

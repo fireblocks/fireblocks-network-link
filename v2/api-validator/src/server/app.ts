@@ -4,12 +4,12 @@ import addFormats from 'ajv-formats';
 import Ajv, { ValidateFunction } from 'ajv';
 import { FastifyError } from '@fastify/error';
 import { FastifyBaseLogger } from 'fastify/types/logger';
+import { nonceMiddleware } from './middlewares/nonce-middleware';
+import { apiKeyMiddleware } from './middlewares/api-key-middleware';
+import { timestampMiddleware } from './middlewares/timestamp-middleware';
 import { getEndpointRequestSchema, loadOpenApiSchemas } from '../schemas';
 import { BadRequestError, GeneralError, RequestPart } from '../client/generated';
 import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
-import { nonceMiddleware } from './middlewares/nonce-middleware';
-import { timestampMiddleware } from './middlewares/timestamp-middleware';
-import { apiKeyMiddleware } from './middlewares/api-key-middleware';
 import { ResponseSchemaValidationFailed, SchemaCompilationError, XComError } from '../error';
 import { paginationValidationMiddleware } from './middlewares/pagination-validation-middleware';
 import Fastify, {

@@ -1,129 +1,72 @@
 import {
   Account,
-  AccountStatus,
-  Blockchain,
+  AssetBalance,
+  Balances,
   Layer1Cryptocurrency,
+  Layer2Cryptocurrency,
   NationalCurrencyCode,
 } from '../../client/generated';
-import { SUPPORTED_ASSETS } from './assets-controller';
+import { fakeSchemaObject } from '../../schemas';
 import { Repository } from './repository';
+import { AssetsController } from './assets-controller';
 
-const ACCOUNTS: Account[] = [
-  {
-    id: '1',
-    balances: [
-      {
-        asset: { assetId: SUPPORTED_ASSETS[0].id },
-        availableAmount: '100',
-        id: '1',
-      },
-      {
-        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        availableAmount: '100',
-        id: '2',
-      },
-      {
-        asset: {
-          blockchain: Blockchain.BITCOIN,
-          cryptocurrencySymbol: Layer1Cryptocurrency.BTC,
-        },
-        availableAmount: '100',
-        id: '3',
-      },
-      {
-        asset: { assetId: SUPPORTED_ASSETS[3].id },
-        availableAmount: '100',
-        id: '4',
-      },
-    ],
-    status: AccountStatus.ACTIVE,
-    title: '',
-    description: '',
-  },
-  {
-    id: '2',
-    balances: [
-      {
-        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        availableAmount: '1',
-        id: '1',
-      },
-    ],
-    status: AccountStatus.INACTIVE,
-    title: '',
-    description: '',
-  },
-  {
-    id: '3',
-    balances: [
-      {
-        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        availableAmount: '1',
-        id: '1',
-      },
-    ],
-    status: AccountStatus.ACTIVE,
-    title: '',
-    description: '',
-  },
-  {
-    id: '4',
-    balances: [
-      {
-        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        availableAmount: '1',
-        id: '1',
-      },
-    ],
-    status: AccountStatus.ACTIVE,
-    title: '',
-    description: '',
-  },
-  {
-    id: '5',
-    balances: [
-      {
-        asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        availableAmount: '1',
-        id: '1',
-      },
-    ],
-    status: AccountStatus.ACTIVE,
-    title: '',
-    description: '',
-  },
-];
-
+const SUB_ACCOUNT_COUNT = 10;
 export class AccountsController {
-  private readonly repository = new Repository<Account>();
+  private static readonly repository = new Repository<Account>();
+  private static accountsLoaded = false;
 
-  constructor(accounts: Account[]) {
-    for (const account of accounts) {
-      this.repository.create(account);
+  public static generateAccounts(): void {
+    if (this.accountsLoaded) {
+      return;
     }
+
+    for (let i = 0; i < SUB_ACCOUNT_COUNT; i++) {
+      const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
+      const balances = getEveryAssetBalances(knownAssetIds);
+      const account = fakeSchemaObject('Account') as Account;
+      account.balances = balances;
+      AccountsController.repository.create(account);
+    }
+    this.accountsLoaded = true;
   }
 
-  public getAllSubAccounts(): Account[] {
-    return this.repository.list();
+  public static getAllSubAccounts(): Account[] {
+    return AccountsController.repository.list();
   }
 
-  public getSubAccount(accountId: string): Account | undefined {
-    return this.repository.find(accountId);
+  public static getSubAccount(accountId: string): Account | undefined {
+    return AccountsController.repository.find(accountId);
   }
 
-  public isKnownSubAccount(accountId: string): boolean {
-    return !!this.repository.find(accountId);
-  }
-
-  public omitBalancesFromAccountList(accounts: Account[]): Account[] {
-    return accounts.map((account) => this.omitBalancesFromAccount(account));
-  }
-
-  public omitBalancesFromAccount(account: Account): Account {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { balances, ...accountWithoutBalances } = account;
-    return accountWithoutBalances;
+  public static isKnownSubAccount(accountId: string): boolean {
+    return !!AccountsController.repository.find(accountId);
   }
 }
 
-export const accountsController = new AccountsController(ACCOUNTS);
+function getEveryAssetBalances(knownAdditionalAssetIds: string[]) {
+  const balances: Balances = [];
+
+  for (const assetId of knownAdditionalAssetIds) {
+    const balance = fakeSchemaObject('AssetBalance') as AssetBalance;
+    balance.asset = { assetId };
+    balances.push(balance);
+  }
+
+  const cryptocurrencySymbols = [
+    ...Object.values(Layer1Cryptocurrency),
+    ...Object.values(Layer2Cryptocurrency),
+  ];
+  for (const cryptocurrencySymbol of cryptocurrencySymbols) {
+    const balance = fakeSchemaObject('AssetBalance') as AssetBalance;
+    balance.asset = { cryptocurrencySymbol };
+    balances.push(balance);
+  }
+
+  for (const nationalCurrencyCode of Object.values(NationalCurrencyCode)) {
+    const balance = fakeSchemaObject('AssetBalance') as AssetBalance;
+    balance.asset = { nationalCurrencyCode };
+    balances.push(balance);
+  }
+
+  return balances;
+}

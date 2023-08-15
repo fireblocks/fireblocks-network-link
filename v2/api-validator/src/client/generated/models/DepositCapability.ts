@@ -4,14 +4,16 @@
 /* eslint-disable */
 
 import type { AssetReference } from './AssetReference';
-import type { TransferCapability } from './TransferCapability';
+import type { IbanCapability } from './IbanCapability';
+import type { PublicBlockchainCapability } from './PublicBlockchainCapability';
+import type { SwiftCapability } from './SwiftCapability';
 
 /**
  * Capability to deposit to a balance asset using a specific transfer capability.
  */
 export type DepositCapability = {
     id: string;
-    deposit: TransferCapability;
+    deposit: (PublicBlockchainCapability | IbanCapability | SwiftCapability);
     balanceAsset: AssetReference;
 };
 

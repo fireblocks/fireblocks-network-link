@@ -344,11 +344,11 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             const requestBody: CrossAccountWithdrawalRequest = {
               idempotencyKey: randomUUID(),
               balanceAmount: minWithdrawalAmount,
-              balanceAsset: assetBalance.asset,
+              balanceAsset: capability.balanceAsset,
               destination: {
                 ...subAccountDestinationConfig,
                 amount: minWithdrawalAmount,
-                asset: assetBalance.asset,
+                asset: capability.withdrawal.asset,
                 transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,
               },
             };
@@ -445,11 +445,11 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
             const requestBody: BlockchainWithdrawalRequest = {
               idempotencyKey: randomUUID(),
               balanceAmount: minWithdrawalAmount,
-              balanceAsset: assetBalance.asset,
+              balanceAsset: capability.balanceAsset,
               destination: {
                 ...blockchainDestinationConfig,
                 amount: minWithdrawalAmount,
-                asset: assetBalance.asset,
+                asset: capability.withdrawal.asset,
                 transferMethod: capability.withdrawal.transferMethod,
               },
             };
@@ -545,11 +545,11 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
               const requestBody: FiatWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
                 balanceAmount: minWithdrawalAmount,
-                balanceAsset: assetBalance.asset,
+                balanceAsset: capability.balanceAsset,
                 destination: {
                   ...destinationAddress,
                   amount: minWithdrawalAmount,
-                  asset: assetBalance.asset,
+                  asset: capability.withdrawal.asset,
                   transferMethod: capability.withdrawal.transferMethod,
                 },
               };
@@ -644,11 +644,11 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
               const requestBody: CrossAccountWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
                 balanceAmount: minWithdrawalAmount,
-                balanceAsset: assetBalance.asset,
+                balanceAsset: capability.balanceAsset,
                 destination: {
                   ...peerAccountDestinationConfig,
                   amount: minWithdrawalAmount,
-                  asset: assetBalance.asset,
+                  asset: capability.withdrawal.asset,
                   transferMethod:
                     CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER,
                 },
