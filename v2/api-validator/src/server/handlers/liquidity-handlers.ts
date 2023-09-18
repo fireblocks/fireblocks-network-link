@@ -109,7 +109,7 @@ export async function getQuoteDetails(
     return controller.getQuote(quoteId);
   } catch (err) {
     if (err instanceof QuoteNotFoundError) {
-      ErrorFactory.notFound(reply);
+      return ErrorFactory.notFound(reply);
     }
     throw err;
   }

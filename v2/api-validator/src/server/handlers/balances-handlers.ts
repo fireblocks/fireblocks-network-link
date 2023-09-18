@@ -53,14 +53,14 @@ export async function getBalances(
     controller.validateAssetQueryParams(assetId, nationalCurrencyCode, cryptocurrencySymbol);
   } catch (err) {
     if (err instanceof InvalidAssetQueryCombinationError) {
-      ErrorFactory.badRequest(reply, {
+      return ErrorFactory.badRequest(reply, {
         message: err.message,
         errorType: BadRequestError.errorType.SCHEMA_ERROR,
         requestPart: RequestPart.QUERYSTRING,
       });
     }
     if (err instanceof UnknownAdditionalAssetError) {
-      ErrorFactory.badRequest(reply, {
+      return ErrorFactory.badRequest(reply, {
         message: err.message,
         errorType: BadRequestError.errorType.UNKNOWN_ASSET,
         requestPart: RequestPart.QUERYSTRING,
