@@ -62,6 +62,7 @@ export class WebApp {
     this.app.addHook('preHandler', timestampMiddleware);
     this.app.addHook('preHandler', apiKeyMiddleware);
     this.app.addHook('preHandler', paginationValidationMiddleware);
+    this.app.addHook('preSerialization', clientErrorLogger);
 
     // Override the default serializer. Some of the schemas are not serialized properly by the default serializer
     // due to a bug in the Fastify serialization library: https://github.com/fastify/fast-json-stringify/issues/290
@@ -167,4 +168,14 @@ function sendValidationError(error: FastifyError, reply: FastifyReply) {
     };
     reply.status(400).send(badRequest);
   }
+}
+
+async function clientErrorLogger(request: FastifyRequest, reply: FastifyReply, payload: unknown) {
+  const { statusCode } = reply;
+
+  if (statusCode >= 400 && statusCode < 500) {
+    reply.log.info({ statusCode, response: payload }, 'request filed due to client error');
+  }
+
+  return payload;
 }
