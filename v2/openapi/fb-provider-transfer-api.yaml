@@ -864,6 +864,26 @@ components:
             referenceId:
               type: string
 
+    OtherFiatTransfer:
+      type: object
+      description: >-
+        Used for historic fiat transfers that do not fit a more specific transfer method. 
+        It is impossible to create new deposits or withdrawal of this type using this API.
+      required: [ transferMethod, asset, amount, description ]
+      properties:
+        transferMethod:
+          enum: [ OtherFiat ]
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        amount:
+          $ref: '#/x-schemas/PositiveAmount'
+        description:
+          type: string
+        tag:
+          type: string
+        referenceId:
+          type: string
+
     PublicBlockchainCapability:
       type: object
       required: [ asset, transferMethod ]
@@ -947,6 +967,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
+        - $ref: '#/components/schemas/OtherFiatTransfer'
 
     Transfer:
       oneOf:
@@ -954,6 +975,7 @@ components:
         - $ref: '#/components/schemas/PublicBlockchainTransaction'
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
+        - $ref: '#/components/schemas/OtherFiatTransfer'
 
     DepositDestination:
       oneOf:
