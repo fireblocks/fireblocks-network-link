@@ -1,7 +1,7 @@
 import ApiClient from '../../src/client';
 import { Capabilities } from '../../src/client/generated';
 
-const KNOWN_API_VERSIONS = ['0.0.1'];
+const KNOWN_API_VERSIONS = ['0.2.0'];
 
 describe('Capabilities', () => {
   const client = new ApiClient();
