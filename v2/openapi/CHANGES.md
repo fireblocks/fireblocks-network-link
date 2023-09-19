@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.2.0 - 2023-09-19
+
+### New features
+
+- It is now possible to specify historic fiat deposits and withdrawals that do not comply
+  to any of the defined transfer methods. These transfers have the type `OtherFiat` and
+  allow free text description and tag.
+
+### Breaking changes
+
+- Obligatory `id` property was added to `QuoteCapability` object in the liquidity API.
+
+### Bug fixes
+
+- Transfers between two sub-accounts of the same user cannot be listed as deposits 
+  and consequently are not a valid transfer method for deposit address generation.
+- In all the endpoints returning lists of withdrawals, the `withdrawals` property was 
+  marked as required.
+
+### Minor improvements
+
+- Optional property `subscriptions` was completely removed from the capabilities response.
+
+-----
 ## 0.1.1 - 2023-08-03
 
 ### Minor improvements
