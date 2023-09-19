@@ -87,7 +87,7 @@ export async function createDepositAddress(
         propertyName: '/destination/asset/assetId',
       };
       idempotencyHandler.add(body, 400, response);
-      ErrorFactory.badRequest(reply, response);
+      return ErrorFactory.badRequest(reply, response);
     }
     throw err;
   }

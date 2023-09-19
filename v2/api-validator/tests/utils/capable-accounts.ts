@@ -1,38 +1,86 @@
-import Client from '../../src/client';
-import { Account } from '../../src/client/generated';
-import { Pageable, paginated } from './pagination';
+import ApiClient from '../../src/client';
+import { AccountStatus, ApiComponents } from '../../src/client/generated';
 
-export async function getCapableAccounts(
-  capability: '*' | string[],
-  balances?: boolean
-): Promise<Account[]> {
-  const client = new Client();
-
-  if (Array.isArray(capability)) {
-    return await getAccountsFromIdList(capability);
-  }
-
-  const getAccounts: Pageable<Account> = async (limit, startingAfter?) => {
-    const response = await client.accounts.getAccounts({ limit, startingAfter, balances });
-    return response.accounts;
-  };
-
-  const accounts: Account[] = [];
-
-  for await (const account of paginated(getAccounts)) {
-    accounts.push(account);
-  }
-
-  return accounts;
+export function hasCapability(component: keyof ApiComponents): boolean {
+  const accountId = findCapableAccountId(component);
+  return accountId != null;
 }
 
-async function getAccountsFromIdList(accountIds: string[]): Promise<Account[]> {
-  const client = new Client();
-  const accountPromises: Promise<Account>[] = [];
+/**
+ * Returns ID of an account supporting the specified API component.
+ * Throws if such an account does not exist.
+ */
+export function getCapableAccountId(component: keyof ApiComponents): string {
+  const accountId = findCapableAccountId(component);
+  if (accountId == null) {
+    throw new Error(`No ${component} capability`);
+  }
+  return accountId;
+}
 
-  for (const accountId of accountIds) {
-    accountPromises.push(client.accounts.getAccountDetails({ accountId }));
+/**
+ * Returns ID of an account supporting the specified API component.
+ * Returns undefined if such an account does not exist.
+ */
+export function findCapableAccountId(component: keyof ApiComponents): string | undefined {
+  const capability = ApiClient.getCachedApiComponents()[component];
+  if (!capability) {
+    return undefined;
+  }
+  if (capability === '*') {
+    return getAnyActiveAccountId();
   }
 
-  return await Promise.all(accountPromises);
+  if (!Array.isArray(capability)) {
+    throw new Error('Unexpected capability value: ' + capability);
+  }
+
+  for (const accountId of capability) {
+    if (isActiveAccount(accountId)) {
+      return accountId;
+    }
+  }
+}
+
+function getAnyActiveAccountId(): string | undefined {
+  for (const account of ApiClient.getCachedAccounts()) {
+    if (account.status === AccountStatus.ACTIVE) {
+      return account.id;
+    }
+  }
+}
+
+/**
+ * Returns IDs of all the accounts supporting the specified API component.
+ * Returns an empty array if such accounts do not exist.
+ */
+export function getAllCapableAccountIds(component: keyof ApiComponents): string[] {
+  const capability = ApiClient.getCachedApiComponents()[component];
+  if (!capability) {
+    return [];
+  }
+  if (capability === '*') {
+    return getAllActiveAccountIds();
+  }
+
+  if (!Array.isArray(capability)) {
+    throw new Error('Unexpected capability value: ' + capability);
+  }
+
+  return capability.filter((accountId) => isActiveAccount(accountId));
+}
+
+function getAllActiveAccountIds(): string[] {
+  return ApiClient.getCachedAccounts()
+    .filter((a) => a.status === AccountStatus.ACTIVE)
+    .map((a) => a.id);
+}
+
+function isActiveAccount(accountId: string): boolean {
+  for (const account of ApiClient.getCachedAccounts()) {
+    if (account.id === accountId) {
+      return account.status === AccountStatus.ACTIVE;
+    }
+  }
+  return false;
 }

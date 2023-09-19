@@ -1,14 +1,10 @@
-// Jest configuration
+// Jest configuration for the sanity tests
 export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-  setupFiles: ['./tests/setup/preload-schemas.ts', './tests/setup/preload-capabilities.ts'],
-  setupFilesAfterEnv: [
-    'jest-extended/all',
-    'jest-expect-message',
-    './tests/setup/conditional-tests.ts',
-  ],
+  setupFiles: ['./tests/setup/preload-schemas.ts'],
+  setupFilesAfterEnv: ['jest-extended/all', 'jest-expect-message'],
   reporters: [
     'default',
     [

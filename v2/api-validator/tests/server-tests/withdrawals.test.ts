@@ -1,12 +1,10 @@
 import { randomUUID } from 'crypto';
 import config from '../../src/config';
 import Client from '../../src/client';
-import { Pageable, paginated } from '../utils/pagination';
 import { AssetsDirectory } from '../utils/assets-directory';
-import { getCapableAccounts } from '../utils/capable-accounts';
+import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 import {
-  Account,
   ApiError,
   AssetBalance,
   AssetReference,
@@ -24,18 +22,19 @@ import {
   WithdrawalCapability,
 } from '../../src/client/generated';
 
-const transfersCapability = config.get('capabilities.components.transfers');
-const transfersBlockchainCapability = config.get('capabilities.components.transfersBlockchain');
-const transfersFiatCapability = config.get('capabilities.components.transfersFiat');
-const transfersPeerAccountsCapability = config.get('capabilities.components.transfersPeerAccounts');
+const noTransfersCapability = !hasCapability('transfers');
+const noTransfersBlockchainCapability = !hasCapability('transfersBlockchain');
+const noTransfersFiatCapability = !hasCapability('transfersFiat');
+const noTransfersPeerAccountsCapability = !hasCapability('transfersPeerAccounts');
 
-describe.skipIf(!transfersCapability)('Withdrawals', () => {
+const transfersCapableAccountIds = getAllCapableAccountIds('transfers');
+const blockchainTransfersCapableAccountIds = getAllCapableAccountIds('transfersBlockchain');
+const fiatTransfersCapableAccountIds = getAllCapableAccountIds('transfersFiat');
+const peerAccountTransfersCapableAccountIds = getAllCapableAccountIds('transfersPeerAccounts');
+
+describe.skipIf(noTransfersCapability)('Withdrawals', () => {
   let client: Client;
   let assets: AssetsDirectory;
-  let transfersCapableAccounts: Account[];
-  let blockchainTransfersCapableAccounts: Account[];
-  let fiatTransfersCapableAccounts: Account[];
-  let peerAccountTransfersCapableAccounts: Account[];
   let accountCapabilitiesMap: Map<string, WithdrawalCapability[]>;
   const fiatTransferMethods: string[] = [
     IbanCapability.transferMethod.IBAN,
@@ -56,19 +55,9 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
   beforeAll(async () => {
     client = new Client();
     assets = await AssetsDirectory.fetch();
-    transfersCapableAccounts = await getCapableAccounts(transfersCapability);
-    blockchainTransfersCapableAccounts = transfersBlockchainCapability
-      ? await getCapableAccounts(transfersBlockchainCapability)
-      : [];
-    fiatTransfersCapableAccounts = transfersFiatCapability
-      ? await getCapableAccounts(transfersFiatCapability)
-      : [];
-    peerAccountTransfersCapableAccounts = transfersPeerAccountsCapability
-      ? await getCapableAccounts(transfersPeerAccountsCapability)
-      : [];
     accountCapabilitiesMap = await getResponsePerIdMapping(
       getCapabilities,
-      transfersCapableAccounts.map((account) => account.id)
+      transfersCapableAccountIds
     );
     isKnownAsset = assets.isKnownAsset.bind(assets);
   });
@@ -147,23 +136,23 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
     beforeAll(async () => {
       accountWithdrawalsMap = await getResponsePerIdMapping(
         getWithdrawals,
-        transfersCapableAccounts.map((account) => account.id)
+        transfersCapableAccountIds
       );
       accountFiatWithdrawalsMap = await getResponsePerIdMapping(
         getFiatWithdrawals,
-        fiatTransfersCapableAccounts.map((account) => account.id)
+        fiatTransfersCapableAccountIds
       );
       accountBlockchainWithdrawalsMap = await getResponsePerIdMapping(
         getBlockchainWithdrawals,
-        blockchainTransfersCapableAccounts.map((account) => account.id)
+        blockchainTransfersCapableAccountIds
       );
       accountPeerAccountWithdrawalsMap = await getResponsePerIdMapping(
         getPeerAccountWithdrawals,
-        peerAccountTransfersCapableAccounts.map((account) => account.id)
+        peerAccountTransfersCapableAccountIds
       );
       accountSubAccountWithdrawalsMap = await getResponsePerIdMapping(
         getSubAccountWithdrawals,
-        transfersCapableAccounts.map((account) => account.id)
+        transfersCapableAccountIds
       );
     });
 
@@ -220,7 +209,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
       }
     });
 
-    it.skipIf(!transfersBlockchainCapability)(
+    it.skipIf(noTransfersBlockchainCapability)(
       'should find every listed blockchain withdrawal in list blockchain withdrawals',
       () => {
         for (const [accountId, withdrawals] of accountWithdrawalsMap.entries()) {
@@ -243,7 +232,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
       }
     );
 
-    it.skipIf(!transfersFiatCapability)(
+    it.skipIf(noTransfersFiatCapability)(
       'should find every listed fiat withdrawal in list fiat withdrawals',
       () => {
         for (const [accountId, withdrawals] of accountWithdrawalsMap.entries()) {
@@ -262,7 +251,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
       }
     );
 
-    it.skipIf(!transfersPeerAccountsCapability)(
+    it.skipIf(noTransfersPeerAccountsCapability)(
       'should find every listed peer account withdrawal in list peer account withdrawals',
       () => {
         for (const [accountId, withdrawals] of accountWithdrawalsMap.entries()) {
@@ -293,11 +282,6 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
     const swiftDestinationConfig = config.get('withdrawal.swift');
     const ibanDestinationConfig = config.get('withdrawal.iban');
 
-    const getAccounts: Pageable<Account> = async (limit, startingAfter?) => {
-      const response = await client.accounts.getAccounts({ limit, startingAfter });
-      return response.accounts;
-    };
-
     const getCapabilityAssetBalance = async (
       accountId: string,
       capability: WithdrawalCapability
@@ -313,13 +297,6 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
 
       return balances[0];
     };
-
-    beforeAll(async () => {
-      const allAccounts: string[] = [];
-      for await (const { id } of paginated(getAccounts)) {
-        allAccounts.push(id);
-      }
-    });
 
     describe('Subaccount withdrawal', () => {
       it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
@@ -384,7 +361,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
         };
 
         beforeAll(async () => {
-          accountId = transfersCapableAccounts[0].id;
+          accountId = transfersCapableAccountIds[0];
           withdrawalRequest = {
             idempotencyKey: 'some-key',
             balanceAmount: '1',
@@ -422,7 +399,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
       });
     });
 
-    describe.skipIf(!transfersBlockchainCapability)('Blockchain withdrawal', () => {
+    describe.skipIf(noTransfersBlockchainCapability)('Blockchain withdrawal', () => {
       it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
           const subAccountCapabilities = capabilities.filter(
@@ -485,7 +462,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
         };
 
         beforeAll(async () => {
-          accountId = transfersCapableAccounts[0].id;
+          accountId = transfersCapableAccountIds[0];
           withdrawalRequest = {
             idempotencyKey: 'some-key',
             balanceAmount: '1',
@@ -523,7 +500,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
       });
     });
 
-    describe.skipIf(!transfersFiatCapability)('Fiat withdrawal', () => {
+    describe.skipIf(noTransfersFiatCapability)('Fiat withdrawal', () => {
       it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
           const fiatCapabilities = capabilities.filter((capability) =>
@@ -586,7 +563,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
         };
 
         beforeAll(async () => {
-          accountId = transfersCapableAccounts[0].id;
+          accountId = transfersCapableAccountIds[0];
           withdrawalRequest = {
             idempotencyKey: 'some-key',
             balanceAmount: '1',
@@ -624,7 +601,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
       });
     });
 
-    describe.skipIf(!transfersPeerAccountsCapability)('Peer account withdrawal', () => {
+    describe.skipIf(noTransfersPeerAccountsCapability)('Peer account withdrawal', () => {
       it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
           const subAccountCapabilities = capabilities.filter(
@@ -686,7 +663,7 @@ describe.skipIf(!transfersCapability)('Withdrawals', () => {
         };
 
         beforeAll(async () => {
-          accountId = transfersCapableAccounts[0].id;
+          accountId = transfersCapableAccountIds[0];
           withdrawalRequest = {
             idempotencyKey: 'some-key',
             balanceAmount: '1',
