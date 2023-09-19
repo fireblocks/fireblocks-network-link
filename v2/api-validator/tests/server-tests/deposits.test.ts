@@ -1,10 +1,9 @@
+import { randomUUID } from 'crypto';
 import Client from '../../src/client';
-import config from '../../src/config';
 import { AssetsDirectory } from '../utils/assets-directory';
-import { getCapableAccounts } from '../utils/capable-accounts';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
+import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
 import {
-  Account,
   ApiError,
   AssetReference,
   BadRequestError,
@@ -16,16 +15,16 @@ import {
   PublicBlockchainCapability,
   RequestPart,
 } from '../../src/client/generated';
-import { randomUUID } from 'crypto';
 
-const transfersCapability = config.get('capabilities.components.transfers');
+const noTransfersCapability = !hasCapability('transfers');
 
-describe.skipIf(!transfersCapability)('Deposits', () => {
+describe.skipIf(noTransfersCapability)('Deposits', () => {
   let client: Client;
   let assets: AssetsDirectory;
-  let accounts: Account[];
+  let accountIds: string[];
   let accountCapabilitiesMap: Map<string, DepositCapability[]>;
   let isKnownAsset: (assetId: AssetReference) => boolean;
+
   const getDepositCapabilities = async (accountId, limit, startingAfter?) => {
     const response = await client.capabilities.getDepositMethods({
       accountId,
@@ -34,6 +33,7 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
     });
     return response.capabilities;
   };
+
   const findFirstAccountCapability = ():
     | { accountId: string; capability: DepositCapability }
     | undefined => {
@@ -47,12 +47,9 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
   beforeAll(async () => {
     client = new Client();
     assets = await AssetsDirectory.fetch();
-    accounts = await getCapableAccounts(transfersCapability);
+    accountIds = getAllCapableAccountIds('transfers');
     isKnownAsset = assets.isKnownAsset.bind(assets);
-    accountCapabilitiesMap = await getResponsePerIdMapping(
-      getDepositCapabilities,
-      accounts.map((account) => account.id)
-    );
+    accountCapabilitiesMap = await getResponsePerIdMapping(getDepositCapabilities, accountIds);
   });
 
   describe('Capabilities', () => {
@@ -120,7 +117,7 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
             asset: { assetId: randomUUID() },
           },
         };
-        for (const { id: accountId } of accounts) {
+        for (const accountId of accountIds) {
           const error = await getCreateDepositAddressFailureResult(accountId, requestBody);
 
           expect(error.status).toBe(400);
@@ -218,10 +215,7 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
         return response.addresses;
       };
       beforeAll(async () => {
-        accountDepositAddressesMap = await getResponsePerIdMapping(
-          getDepositAddresses,
-          accounts.map((account) => account.id)
-        );
+        accountDepositAddressesMap = await getResponsePerIdMapping(getDepositAddresses, accountIds);
       });
 
       it('should return only known assets', () => {
@@ -339,10 +333,7 @@ describe.skipIf(!transfersCapability)('Deposits', () => {
     };
 
     beforeAll(async () => {
-      accountDepositsMap = await getResponsePerIdMapping(
-        getDeposits,
-        accounts.map((account) => account.id)
-      );
+      accountDepositsMap = await getResponsePerIdMapping(getDeposits, accountIds);
     });
 
     it('should find each returned deposit on getDepositDetails', async () => {

@@ -1,4 +1,4 @@
-import { Pageable, paginated } from './pagination';
+import { arrayFromAsyncGenerator, Pageable, paginated } from './pagination';
 
 type IdBoundMethod<T> = (id: string, limit: number, startingAfter?: string) => Promise<T[]>;
 
@@ -13,12 +13,7 @@ export async function getResponsePerIdMapping<T>(
       return await method(id, limit, startingAfter);
     };
 
-    const response: T[] = [];
-
-    for await (const page of paginated(pageableMethod)) {
-      response.push(page);
-    }
-
+    const response = await arrayFromAsyncGenerator(paginated(pageableMethod));
     responsePerAccountMap.set(id, response);
   }
 
