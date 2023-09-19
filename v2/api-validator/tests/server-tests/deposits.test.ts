@@ -17,11 +17,11 @@ import {
 } from '../../src/client/generated';
 
 const noTransfersCapability = !hasCapability('transfers');
+const accountIds = getAllCapableAccountIds('transfers');
 
 describe.skipIf(noTransfersCapability)('Deposits', () => {
   let client: Client;
   let assets: AssetsDirectory;
-  let accountIds: string[];
   let accountCapabilitiesMap: Map<string, DepositCapability[]>;
   let isKnownAsset: (assetId: AssetReference) => boolean;
 
@@ -47,7 +47,6 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
   beforeAll(async () => {
     client = new Client();
     assets = await AssetsDirectory.fetch();
-    accountIds = getAllCapableAccountIds('transfers');
     isKnownAsset = assets.isKnownAsset.bind(assets);
     accountCapabilitiesMap = await getResponsePerIdMapping(getDepositCapabilities, accountIds);
   });

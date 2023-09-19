@@ -42,61 +42,6 @@ const config = convict({
     default: 2,
     env: 'PAGINATION_LIMIT',
   },
-  capabilities: {
-    version: {
-      doc: 'Version of the API used',
-      format: String,
-      default: '0.0.1',
-      env: 'CAPABILITIES_VERSION',
-    },
-    components: {
-      accounts: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_ACCOUNTS',
-      },
-      balances: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_BALANCES',
-      },
-      historicBalances: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_HISTORIC_BALANCES',
-      },
-      transfers: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_TRANSFERS',
-      },
-      transfersBlockchain: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_TRANSFERS_BLOCKCHAIN',
-      },
-      transfersFiat: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_TRANSFERS_FIAT',
-      },
-      transfersPeerAccounts: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_TRANSFERS_PEER_ACCOUNTS',
-      },
-      trading: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_TRADING',
-      },
-      liquidity: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_LIQUIDITY',
-      },
-    },
-  },
   withdrawal: {
     peerAccount: {
       accountId: {
