@@ -41,11 +41,12 @@ The tests generate report files in the validation tool root directory in JSON an
 SERVER="my-server-base-url" npm run test
 ```
 
-When testing your own server, you will usually need to configure the credentials of the user
-connecting to the server and the request signing method the server uses. All these parameters
-could be configured using the environment variables. Make a copy of `env.example`, rename it
-to `.env` and edit the values. `src/config/index.ts` contains all the environment variable
-definitions and the possible values.
+When testing your own server, you will usually need to configure the withdrawal 
+destinations, the credentials of the user connecting to the server and the request signing
+method the server uses. All these parameters could be configured using environment 
+variables. Make a copy of `env.example`, rename it to `.env` and edit the values.
+`src/config/index.ts` contains all the environment variable definitions and the possible
+values.
 
 ## Design
 
@@ -63,3 +64,17 @@ definitions and the possible values.
 - `src/client` contains the API client.
 - `tests` contains the API validation tests.
   - The tests use the client in `src/client` to communicate with the server.
+
+## Troubleshooting
+
+If the tests fail catastrophically, it is possible to run the tests in three separate
+groups:
+
+1. `npm run test:self` unit-tests validation tool's code. If these tests fail, there 
+   is something wrong with the tool itself.
+2. `npm run test:sanity` tests server functionality that is critical for the rest of 
+   the tests. If these tests fail, there is either a configuration problem or the 
+   server doesn't work properly. Usually, if these tests fail, most of the server 
+   tests will fail too.
+3. `npm run test:server` runs the rest of the tests. These tests assume the sanity 
+   tests pass.
