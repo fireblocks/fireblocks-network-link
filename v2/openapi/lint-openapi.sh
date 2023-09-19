@@ -6,7 +6,8 @@ echo "🧬 Generating the unified spec"
 echo "\n🧿 Linting"
 docker run --rm -it \
   -v "$(pwd)":/tmp stoplight/spectral lint \
-  --ruleset "/tmp/fireblocks-openapi-ruleset.yaml" "/tmp/fb-unified-openapi.yaml"
+  --ruleset "/tmp/fireblocks-openapi-ruleset.yaml" "/tmp/fb-unified-openapi.yaml" \
+|| exit 1
 
 echo "\n💌 Wiring external documentation"
 sed -i '' 's/Placeholder for automatic documentation injection from README.md/\n    $ref: README.md/g' fb-unified-openapi.yaml

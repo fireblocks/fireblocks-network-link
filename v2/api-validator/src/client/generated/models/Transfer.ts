@@ -5,8 +5,9 @@
 
 import type { CrossAccountTransfer } from './CrossAccountTransfer';
 import type { IbanTransfer } from './IbanTransfer';
+import type { OtherFiatTransfer } from './OtherFiatTransfer';
 import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction';
 import type { SwiftTransfer } from './SwiftTransfer';
 
-export type Transfer = (CrossAccountTransfer | PublicBlockchainTransaction | IbanTransfer | SwiftTransfer);
+export type Transfer = (CrossAccountTransfer | PublicBlockchainTransaction | IbanTransfer | SwiftTransfer | OtherFiatTransfer);
 
