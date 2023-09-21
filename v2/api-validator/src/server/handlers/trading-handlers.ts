@@ -1,9 +1,10 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { IdempotencyKeyReuseError, OrdersController } from '../controllers/orders-controller';
-import { asks, bids, books } from '../controllers/books-controller';
-import { isKnownSubAccount } from '../controllers/accounts-controller';
+import { BooksController } from '../controllers/books-controller';
+import { OrdersController } from '../controllers/orders-controller';
+import { IdempotencyHandler } from '../controllers/idempotency-handler';
 import { getPaginationResult } from '../controllers/pagination-controller';
+import { ControllersContainer } from '../controllers/controllers-container';
 import { AccountIdPathParam, EntityIdPathParam, PaginationQuerystring } from './request-types';
 import {
   MarketEntry,
@@ -19,15 +20,23 @@ type GetBookAsksResponse = { asks: MarketEntry[] };
 type GetBookBidsResponse = { bids: MarketEntry[] };
 
 type CreateOrderRequest = { Body: OrderRequest };
+type GetOrdersResponse = { orders: Order[] };
 
-const ordersController = new OrdersController();
+const idempotencyHandler = new IdempotencyHandler<OrderRequest, Order>();
+const controllers = new ControllersContainer(() => new OrdersController());
 
 export async function getBooks({
   query,
 }: FastifyRequest<PaginationQuerystring>): Promise<GetBooksResponse> {
   const { limit, startingAfter, endingBefore } = query;
   return {
-    books: getPaginationResult(limit, startingAfter, endingBefore, books, 'id'),
+    books: getPaginationResult(
+      limit,
+      startingAfter,
+      endingBefore,
+      BooksController.getAllBooks(),
+      'id'
+    ),
   };
 }
 
@@ -36,7 +45,7 @@ export async function getBookDetails(
   reply: FastifyReply
 ): Promise<OrderBook> {
   const id = decodeURIComponent(params.id);
-  const book = books.find((b) => b.id === id);
+  const book = BooksController.getBook(id);
   if (!book) {
     return ErrorFactory.notFound(reply);
   }
@@ -49,12 +58,12 @@ export async function getBookAsks(
   reply: FastifyReply
 ): Promise<GetBookAsksResponse> {
   const id = decodeURIComponent(params.id);
-  const book = books.find((b) => b.id === id);
+  const book = BooksController.getBook(id);
   if (!book) {
     return ErrorFactory.notFound(reply);
   }
 
-  const bookAsks = asks[id];
+  const bookAsks = BooksController.getAsks(id);
   if (!bookAsks) {
     return { asks: [] };
   }
@@ -70,12 +79,12 @@ export async function getBookBids(
   reply: FastifyReply
 ): Promise<GetBookBidsResponse> {
   const id = decodeURIComponent(params.id);
-  const book = books.find((b) => b.id === id);
+  const book = BooksController.getBook(id);
   if (!book) {
     return ErrorFactory.notFound(reply);
   }
 
-  const bookBids = bids[id];
+  const bookBids = BooksController.getBids(id);
   if (!bookBids) {
     return { bids: [] };
   }
@@ -87,14 +96,33 @@ export async function getBookBids(
 }
 
 export async function getBookOrderHistory(
-  request: FastifyRequest,
+  { params }: FastifyRequest<EntityIdPathParam & PaginationQuerystring>,
   reply: FastifyReply
 ): Promise<MarketTrade[]> {
-  return ErrorFactory.notFound(reply);
+  const id = decodeURIComponent(params.id);
+  const book = BooksController.getBook(id);
+  if (!book) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  return [];
 }
 
-export async function getOrders(request: FastifyRequest, reply: FastifyReply): Promise<Order[]> {
-  return ErrorFactory.notFound(reply);
+export async function getOrders(
+  { params, query }: FastifyRequest<AccountIdPathParam & PaginationQuerystring>,
+  reply: FastifyReply
+): Promise<GetOrdersResponse> {
+  const { accountId } = params;
+
+  const controller = controllers.getController(accountId);
+  if (!controller) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  const { limit, startingAfter, endingBefore } = query;
+  return {
+    orders: controller.getOrders(limit, startingAfter, endingBefore),
+  };
 }
 
 export async function createOrder(
@@ -103,29 +131,31 @@ export async function createOrder(
 ): Promise<Order> {
   const { accountId } = params;
 
-  if (!isKnownSubAccount(accountId)) {
+  const controller = controllers.getController(accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
-  try {
-    return ordersController.createOrder(body);
-  } catch (err) {
-    if (err instanceof IdempotencyKeyReuseError) {
-      return ErrorFactory.idempotencyKeyReuse(reply);
-    }
-    throw err;
+  if (idempotencyHandler.isKnownKey(body.idempotencyKey)) {
+    return idempotencyHandler.reply(body, reply);
   }
+
+  const response = controller.createOrder(body);
+  idempotencyHandler.add(body, 200, response);
+
+  return response;
 }
 
 export async function getOrderDetails(
   { params }: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
   reply: FastifyReply
 ): Promise<Order> {
-  if (!isKnownSubAccount(params.accountId)) {
+  const controller = controllers.getController(params.accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
-  const order = ordersController.findOrder(params.id);
+  const order = controller.findOrder(params.id);
   if (!order) {
     return ErrorFactory.notFound(reply);
   }
@@ -136,11 +166,12 @@ export async function cancelOrder(
   { params }: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
   reply: FastifyReply
 ): Promise<void> {
-  if (!isKnownSubAccount(params.accountId)) {
+  const controller = controllers.getController(params.accountId);
+  if (!controller) {
     return ErrorFactory.notFound(reply);
   }
 
-  const order = ordersController.findOrder(params.id);
+  const order = controller.findOrder(params.id);
   if (!order) {
     return ErrorFactory.notFound(reply);
   }
@@ -149,5 +180,5 @@ export async function cancelOrder(
     return ErrorFactory.orderNotTrading(reply);
   }
 
-  ordersController.cancelOrder(params.id);
+  controller.cancelOrder(params.id);
 }

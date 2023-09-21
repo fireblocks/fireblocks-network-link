@@ -1,8 +1,9 @@
+// Jest configuration
 export default {
   preset: 'ts-jest',
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-  setupFiles: ['./tests/setup/preload-schemas.ts'],
+  setupFiles: ['./tests/setup/preload-schemas.ts', './tests/setup/preload-capabilities.ts'],
   setupFilesAfterEnv: [
     'jest-extended/all',
     'jest-expect-message',

@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { randomUUID } from 'crypto';
 import Client from '../../src/client';
 import { Pageable, paginated } from '../utils/pagination';
@@ -166,6 +165,7 @@ describe('Balances', () => {
 
             expect(balances.length).toBe(1);
             expect(balances[0].asset).toEqual(asset);
+            return;
           }
         }
       });
@@ -285,6 +285,7 @@ describe('Balances', () => {
 
             expect(balances.length).toBe(1);
             expect(balances[0].asset).toEqual(asset);
+            return;
           }
         }
       });

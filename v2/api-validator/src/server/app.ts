@@ -4,12 +4,12 @@ import addFormats from 'ajv-formats';
 import Ajv, { ValidateFunction } from 'ajv';
 import { FastifyError } from '@fastify/error';
 import { FastifyBaseLogger } from 'fastify/types/logger';
-import { BadRequestError, GeneralError, RequestPart } from '../client/generated';
-import { loadOpenApiSchema, OpenApiOperationDetails, OpenApiSchema } from './schema';
-import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
 import { nonceMiddleware } from './middlewares/nonce-middleware';
-import { timestampMiddleware } from './middlewares/timestamp-middleware';
 import { apiKeyMiddleware } from './middlewares/api-key-middleware';
+import { timestampMiddleware } from './middlewares/timestamp-middleware';
+import { getEndpointRequestSchema, loadOpenApiSchemas } from '../schemas';
+import { BadRequestError, GeneralError, RequestPart } from '../client/generated';
+import { verifySignatureMiddleware } from './middlewares/verify-signature-middleware';
 import { ResponseSchemaValidationFailed, SchemaCompilationError, XComError } from '../error';
 import { paginationValidationMiddleware } from './middlewares/pagination-validation-middleware';
 import Fastify, {
@@ -24,23 +24,22 @@ const log = logger('app');
 
 export async function createWebApp(): Promise<WebApp> {
   const openApiYamlPathname = config.getUnifiedOpenApiPathname();
-  const schema = await loadOpenApiSchema(openApiYamlPathname);
+  await loadOpenApiSchemas(openApiYamlPathname);
 
-  return new WebApp(schema);
+  return new WebApp();
 }
 
 export class WebApp {
   private readonly app: FastifyInstance;
   private readonly ajv = new Ajv({ strictSchema: false });
 
-  constructor(private readonly schema: OpenApiSchema) {
+  constructor() {
     const loggerForFastify: FastifyBaseLogger = log.pinoLogger;
 
     addFormats(this.ajv);
 
     this.app = Fastify({
       logger: loggerForFastify,
-      // schemaErrorFormatter,
     });
 
     // For POST routes that do not define request body, allow any content type
@@ -63,6 +62,7 @@ export class WebApp {
     this.app.addHook('preHandler', timestampMiddleware);
     this.app.addHook('preHandler', apiKeyMiddleware);
     this.app.addHook('preHandler', paginationValidationMiddleware);
+    this.app.addHook('preSerialization', clientErrorLogger);
 
     // Override the default serializer. Some of the schemas are not serialized properly by the default serializer
     // due to a bug in the Fastify serialization library: https://github.com/fastify/fast-json-stringify/issues/290
@@ -94,12 +94,8 @@ export class WebApp {
       method,
       url,
       handler,
-      schema: this.schema.getOperationSchema(method, url),
+      schema: getEndpointRequestSchema(method, url),
     });
-  }
-
-  public getAllOperations(): OpenApiOperationDetails[] {
-    return this.schema.getAllOperations();
   }
 }
 
@@ -172,4 +168,14 @@ function sendValidationError(error: FastifyError, reply: FastifyReply) {
     };
     reply.status(400).send(badRequest);
   }
+}
+
+async function clientErrorLogger(request: FastifyRequest, reply: FastifyReply, payload: unknown) {
+  const { statusCode } = reply;
+
+  if (statusCode >= 400 && statusCode < 500) {
+    reply.log.info({ statusCode, response: payload }, 'request filed due to client error');
+  }
+
+  return payload;
 }

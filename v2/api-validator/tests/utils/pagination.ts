@@ -1,4 +1,6 @@
-const LIMIT = 2;
+import config from '../../src/config';
+
+const LIMIT = config.get('paginationLimit');
 
 // Function supporting pagination
 export type Pageable<T> = (limit: number, startingAfter?: string) => Promise<T[]>;

@@ -76,6 +76,7 @@ export { OrderSide } from './models/OrderSide';
 export { OrderStatus } from './models/OrderStatus';
 export { OrderTimeInForce } from './models/OrderTimeInForce';
 export type { OtherAssetReference } from './models/OtherAssetReference';
+export { OtherFiatTransfer } from './models/OtherFiatTransfer';
 export type { PaginationEndingBefore } from './models/PaginationEndingBefore';
 export type { PaginationLimit } from './models/PaginationLimit';
 export type { PaginationStartingAfter } from './models/PaginationStartingAfter';

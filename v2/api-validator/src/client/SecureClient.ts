@@ -1,13 +1,15 @@
 import config from '../config';
 import { randomUUID } from 'crypto';
-import { ResponseSchemaValidationFailed } from '../error';
+import { ResponseSchemaValidationFailed, XComError } from '../error';
 import { buildRequestSignature } from '../security';
 import { ResponseSchemaValidator } from './response-schema-validator';
 import { request as requestInternal } from './generated/core/request';
 import { ApiRequestOptions } from './generated/core/ApiRequestOptions';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import {
+  Account,
   AccountsService,
+  ApiComponents,
   BalancesService,
   BaseHttpRequest,
   CancelablePromise,
@@ -94,6 +96,9 @@ export class SecureClient {
 
   private readonly request: BaseHttpRequest;
 
+  private static cachedApiComponents?: ApiComponents;
+  private static cachedAccounts?: Array<Account>;
+
   constructor(securityHeadersFactory: SecurityHeadersFactory = createSecurityHeaders) {
     this.request = new HttpRequestWithSecurityHeaders(securityHeadersFactory, {
       ...OpenAPI,
@@ -114,6 +119,25 @@ export class SecureClient {
     this.transfersPeerAccounts = stripSecurityHeaderArgs(
       new TransfersPeerAccountsService(this.request)
     );
+  }
+
+  public async cacheCapabilities(): Promise<void> {
+    SecureClient.cachedApiComponents = (await this.capabilities.getCapabilities({})).components;
+    SecureClient.cachedAccounts = (await this.accounts.getAccounts({ limit: 200 })).accounts;
+  }
+
+  public static getCachedApiComponents(): ApiComponents {
+    if (!SecureClient.cachedApiComponents) {
+      throw new XComError('Cached capabilities not initialized');
+    }
+    return SecureClient.cachedApiComponents;
+  }
+
+  public static getCachedAccounts(): Array<Account> {
+    if (!SecureClient.cachedAccounts) {
+      throw new XComError('Cached capabilities not initialized');
+    }
+    return SecureClient.cachedAccounts;
   }
 }
 

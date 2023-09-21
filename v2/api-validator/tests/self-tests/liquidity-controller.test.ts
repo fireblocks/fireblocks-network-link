@@ -1,13 +1,11 @@
 import { AssetReference, Quote, QuoteRequest, QuoteStatus } from '../../src/client/generated';
 import {
+  LiquidityController,
   QuoteNotFoundError,
-  addNewQuoteForAccount,
-  executeAccountQuote,
-  quoteFromQuoteRequest,
 } from '../../src/server/controllers/liquidity-controller';
 
 describe('Liquidity Controller', () => {
-  const accountId = 'accountId';
+  let liquidityController: LiquidityController;
   const defaultAmount = '1';
   const defaultAssetReference: AssetReference = { assetId: 'assetId' };
   const defaultQuote: Quote = {
@@ -21,32 +19,29 @@ describe('Liquidity Controller', () => {
     id: 'id',
     status: QuoteStatus.READY,
   };
-  let usersQuotesMapping: Map<string, Quote[]> = new Map();
 
-  afterEach(() => {
-    usersQuotesMapping = new Map();
+  beforeEach(() => {
+    liquidityController = new LiquidityController();
   });
 
   describe('executeAccountQuote', () => {
     beforeEach(() => {
-      usersQuotesMapping.set(accountId, [defaultQuote]);
+      liquidityController.createQuote(defaultQuote);
     });
 
     it('should set quote status to executed and return it', () => {
-      const executedQuote = executeAccountQuote(accountId, defaultQuote.id, usersQuotesMapping);
-      const executedQuoteFromMap = usersQuotesMapping
-        .get(accountId)
-        ?.find((quote) => quote.id === defaultQuote.id);
+      const executedQuote = liquidityController.executeQuote(defaultQuote.id);
+      const retrievedExecutedQuote = liquidityController.getQuote(defaultQuote.id);
 
-      expect(executedQuoteFromMap?.status).toBe(QuoteStatus.EXECUTED);
-      expect(executedQuote).toBe(executedQuoteFromMap);
+      expect(executedQuote.status).toBe(QuoteStatus.EXECUTED);
+      expect(executedQuote).toEqual(retrievedExecutedQuote);
     });
 
     describe('With non existing quote id', () => {
       const nonExistingQuoteId = 'non-existing-id';
       it('should throw quote not found error', () => {
         expect(() => {
-          executeAccountQuote(accountId, nonExistingQuoteId, usersQuotesMapping);
+          liquidityController.executeQuote(nonExistingQuoteId);
         }).toThrow(QuoteNotFoundError);
       });
     });
@@ -54,21 +49,12 @@ describe('Liquidity Controller', () => {
 
   describe('addNewQuoteForUser', () => {
     beforeEach(() => {
-      addNewQuoteForAccount(accountId, defaultQuote, usersQuotesMapping);
+      liquidityController.createQuote(defaultQuote);
     });
 
     describe('With empty mapping', () => {
-      it('should set array with new quote as a single item for the account', () => {
-        expect(usersQuotesMapping.get(accountId)).toEqual([defaultQuote]);
-      });
-    });
-
-    describe('With existing quotes for user', () => {
-      beforeAll(() => {
-        usersQuotesMapping.set(accountId, [defaultQuote]);
-      });
-      it('should add quote to account quote list', () => {
-        expect(usersQuotesMapping.get(accountId)).toEqual([defaultQuote, defaultQuote]);
+      it('should find quote', () => {
+        expect(liquidityController.getQuote(defaultQuote.id)).toEqual(defaultQuote);
       });
     });
   });
@@ -81,7 +67,7 @@ describe('Liquidity Controller', () => {
         fromAmount: defaultAmount,
         toAmount: defaultAmount,
       };
-      const quote = quoteFromQuoteRequest(quoteRequest);
+      const quote = liquidityController.quoteFromQuoteRequest(quoteRequest);
       expect(quote.status).toBe(QuoteStatus.READY);
     });
 
@@ -98,8 +84,10 @@ describe('Liquidity Controller', () => {
         toAmount: defaultAmount,
       };
 
-      const quoteWithFromAmount = quoteFromQuoteRequest(quoteRequestWithFromAmount);
-      const quoteWithToAmount = quoteFromQuoteRequest(quoteRequestWithToAmount);
+      const quoteWithFromAmount = liquidityController.quoteFromQuoteRequest(
+        quoteRequestWithFromAmount
+      );
+      const quoteWithToAmount = liquidityController.quoteFromQuoteRequest(quoteRequestWithToAmount);
 
       expect(quoteWithFromAmount.toAmount).toBe(quoteRequestWithFromAmount.fromAmount);
       expect(quoteWithToAmount.fromAmount).toBe(quoteRequestWithToAmount.toAmount);

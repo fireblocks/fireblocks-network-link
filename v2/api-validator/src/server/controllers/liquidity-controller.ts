@@ -1,14 +1,17 @@
 import { randomUUID } from 'crypto';
 import {
-  NationalCurrencyCode,
+  AssetReference,
   Quote,
   QuoteCapability,
   QuoteRequest,
   QuoteStatus,
 } from '../../client/generated';
 import { XComError } from '../../error';
-import { SUPPORTED_ASSETS, isKnownAsset } from './assets-controller';
+import { AssetsController } from './assets-controller';
 import _ from 'lodash';
+import { Repository } from './repository';
+import { fakeSchemaObject } from '../../schemas';
+import { JSONSchemaFaker } from 'json-schema-faker';
 
 export class QuoteNotFoundError extends XComError {
   constructor() {
@@ -31,109 +34,147 @@ export class UnknownToAssetError extends XComError {
   }
 }
 export class UnknownQuoteCapabilityError extends XComError {
-  constructor({ fromAsset, toAsset }: QuoteCapability) {
+  constructor({ fromAsset, toAsset }: QuoteCapabilityAssets) {
     super('Converstion not supported', { fromAsset, toAsset });
   }
 }
 
+type QuoteCapabilityAssets = {
+  fromAsset: AssetReference;
+  toAsset: AssetReference;
+};
+
 const QUOTE_EXPIRATION_IN_MS = 1000;
+const QUOTES_COUNT = 5;
+const QUOTE_CAPABILITIES_COUNT = 5;
 
-const ACCOUNTS_QUOTES_MAP: Map<string, Quote[]> = new Map();
+export class LiquidityController {
+  private readonly quoteRepository = new Repository<Quote>();
+  private static readonly quoteCapabilityRepository = new Repository<QuoteCapability>();
+  private static loadedCapabilities = false;
 
-export const QUOTE_CAPABILITIES: QuoteCapability[] = [
-  { fromAsset: { assetId: SUPPORTED_ASSETS[0].id }, toAsset: { assetId: SUPPORTED_ASSETS[1].id } },
-  { fromAsset: { assetId: SUPPORTED_ASSETS[1].id }, toAsset: { assetId: SUPPORTED_ASSETS[0].id } },
-  {
-    fromAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-    toAsset: { nationalCurrencyCode: NationalCurrencyCode.MXN },
-  },
-];
+  constructor() {
+    for (let i = 0; i < QUOTES_COUNT; i++) {
+      this.quoteRepository.create(fakeSchemaObject('Quote') as Quote);
+    }
 
-function isKnownLiquidityCapability(capability: QuoteCapability) {
-  return QUOTE_CAPABILITIES.some((quoteCapability) => _.isEqual(quoteCapability, capability));
+    const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
+    injectKnownAssetIdsToQuoteAssetObjects(knownAssetIds, this.quoteRepository);
+  }
+
+  private isKnownLiquidityCapability(capability: QuoteCapabilityAssets) {
+    return LiquidityController.quoteCapabilityRepository
+      .list()
+      .some((quoteCapability) => _.isMatch(quoteCapability, capability));
+  }
+
+  public validateQuoteRequest(quoteRequest: QuoteRequest): void {
+    if (!AssetsController.isKnownAsset(quoteRequest.fromAsset)) {
+      throw new UnknownFromAssetError();
+    }
+    if (!AssetsController.isKnownAsset(quoteRequest.toAsset)) {
+      throw new UnknownToAssetError();
+    }
+    if (
+      !this.isKnownLiquidityCapability({
+        fromAsset: quoteRequest.fromAsset,
+        toAsset: quoteRequest.toAsset,
+      })
+    ) {
+      throw new UnknownQuoteCapabilityError({
+        fromAsset: quoteRequest.fromAsset,
+        toAsset: quoteRequest.toAsset,
+      });
+    }
+  }
+
+  public quoteFromQuoteRequest(quoteRequest: QuoteRequest): Quote {
+    const { fromAsset, toAsset } = quoteRequest;
+    let fromAmount;
+    let toAmount;
+
+    if ('fromAmount' in quoteRequest && quoteRequest.fromAmount) {
+      fromAmount = toAmount = quoteRequest.fromAmount;
+    }
+    if ('toAmount' in quoteRequest && quoteRequest.toAmount) {
+      toAmount = fromAmount = quoteRequest.toAmount;
+    }
+    return {
+      fromAmount,
+      toAmount,
+      fromAsset,
+      toAsset,
+      conversionFeeBps: 1,
+      createdAt: new Date(Date.now()).toISOString(),
+      expiresAt: new Date(Date.now() + QUOTE_EXPIRATION_IN_MS).toISOString(),
+      id: randomUUID(),
+      status: QuoteStatus.READY,
+    };
+  }
+
+  public static getQuoteCapabilities(): QuoteCapability[] {
+    if (!this.loadedCapabilities) {
+      for (let i = 0; i < QUOTE_CAPABILITIES_COUNT; i++) {
+        this.quoteCapabilityRepository.create(
+          fakeSchemaObject('QuoteCapability') as QuoteCapability
+        );
+      }
+      const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
+      injectKnownAssetIdsToQuoteAssetObjects(knownAssetIds, this.quoteCapabilityRepository);
+      this.loadedCapabilities = true;
+    }
+    return this.quoteCapabilityRepository.list();
+  }
+
+  public getQuotes(): Quote[] {
+    return this.quoteRepository.list();
+  }
+
+  public getQuote(quoteId: string): Quote {
+    const quote = this.quoteRepository.find(quoteId);
+
+    if (!quote) {
+      throw new QuoteNotFoundError();
+    }
+
+    return quote;
+  }
+
+  public createQuote(quote: Quote): void {
+    this.quoteRepository.create(quote);
+  }
+
+  public executeQuote(quoteId: string): Quote {
+    const quote = this.quoteRepository.find(quoteId);
+
+    if (!quote) {
+      throw new QuoteNotFoundError();
+    }
+    if (quote.status !== QuoteStatus.READY) {
+      throw new QuoteNotReadyError();
+    }
+
+    quote.status = QuoteStatus.EXECUTED;
+    return quote;
+  }
 }
 
-export function validateQuoteRequest(quoteRequest: QuoteRequest): void {
-  if (!isKnownAsset(quoteRequest.fromAsset)) {
-    throw new UnknownFromAssetError();
+function injectKnownAssetIdsToQuoteAssetObjects(
+  knownAssetIds: string[],
+  repository: Repository<Quote | QuoteCapability>
+) {
+  for (const { id } of repository.list()) {
+    const quote = repository.find(id);
+
+    if (!quote) {
+      throw new Error('Not possible!');
+    }
+
+    if ('assetId' in quote.fromAsset) {
+      quote.fromAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+    if ('assetId' in quote.toAsset) {
+      quote.toAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
   }
-  if (!isKnownAsset(quoteRequest.toAsset)) {
-    throw new UnknownToAssetError();
-  }
-  if (
-    !isKnownLiquidityCapability({
-      fromAsset: quoteRequest.fromAsset,
-      toAsset: quoteRequest.toAsset,
-    })
-  ) {
-    throw new UnknownQuoteCapabilityError({
-      fromAsset: quoteRequest.fromAsset,
-      toAsset: quoteRequest.toAsset,
-    });
-  }
-}
-
-export function quoteFromQuoteRequest(quoteRequest: QuoteRequest): Quote {
-  const { fromAsset, toAsset } = quoteRequest;
-  let fromAmount;
-  let toAmount;
-
-  if ('fromAmount' in quoteRequest && quoteRequest.fromAmount) {
-    fromAmount = toAmount = quoteRequest.fromAmount;
-  }
-  if ('toAmount' in quoteRequest && quoteRequest.toAmount) {
-    toAmount = fromAmount = quoteRequest.toAmount;
-  }
-  return {
-    fromAmount,
-    toAmount,
-    fromAsset,
-    toAsset,
-    conversionFeeBps: 1,
-    createdAt: new Date(Date.now()).toISOString(),
-    expiresAt: new Date(Date.now() + QUOTE_EXPIRATION_IN_MS).toISOString(),
-    id: randomUUID(),
-    status: QuoteStatus.READY,
-  };
-}
-
-export function getAccountQuotes(
-  accountId: string,
-  accountsQuotesMap: Map<string, Quote[]> = ACCOUNTS_QUOTES_MAP
-): Quote[] {
-  return accountsQuotesMap.get(accountId) ?? [];
-}
-
-export function addNewQuoteForAccount(
-  accountId: string,
-  quote: Quote,
-  accountsQuotesMap: Map<string, Quote[]> = ACCOUNTS_QUOTES_MAP
-): void {
-  const accountQuotes = accountsQuotesMap.get(accountId) ?? [];
-  accountQuotes.push(quote);
-
-  accountsQuotesMap.set(accountId, accountQuotes);
-}
-
-export function executeAccountQuote(
-  accountId: string,
-  quoteId: string,
-  accountsQuotesMap: Map<string, Quote[]> = ACCOUNTS_QUOTES_MAP
-): Quote {
-  const accountQuotes = accountsQuotesMap.get(accountId) ?? [];
-  const quoteIndex = accountQuotes.findIndex((quote) => quote.id === quoteId);
-  if (quoteIndex === -1) {
-    throw new QuoteNotFoundError();
-  }
-
-  if (accountQuotes[quoteIndex].status !== QuoteStatus.READY) {
-    throw new QuoteNotReadyError();
-  }
-
-  const executedQuote: Quote = { ...accountQuotes[quoteIndex], status: QuoteStatus.EXECUTED };
-
-  accountQuotes[quoteIndex] = executedQuote;
-  accountsQuotesMap.set(accountId, accountQuotes);
-
-  return executedQuote;
 }

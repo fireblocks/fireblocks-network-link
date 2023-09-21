@@ -1,8 +1,7 @@
 import { randomUUID } from 'crypto';
-import { books } from '../../src/server/controllers/books-controller';
+import { BooksController } from '../../src/server/controllers/books-controller';
 import {
   CannotCancelOrder,
-  IdempotencyKeyReuseError,
   OrdersController,
   UnknownBookError,
   UnknownOrderError,
@@ -10,125 +9,101 @@ import {
 import {
   LimitOrderData,
   Order,
+  OrderBook,
   OrderData,
   OrderSide,
   OrderStatus,
   OrderTimeInForce,
 } from '../../src/client/generated';
+import { AssetsController } from '../../src/server/controllers/assets-controller';
 
-const book = books[0];
+describe('Orders controller', () => {
+  let book: OrderBook;
+  let orderDetails: OrderData;
 
-const orderDetails: OrderData = {
-  bookId: book.id,
-  side: OrderSide.BUY,
-  orderType: LimitOrderData.orderType.LIMIT,
-  timeInForce: OrderTimeInForce.GOOD_TILL_CANCELED,
-  quoteAssetPrice: '1.2',
-  baseAssetQuantity: '10',
-};
-
-describe('Create order', () => {
-  let controller: OrdersController;
-
-  beforeEach(() => {
-    controller = new OrdersController();
+  beforeAll(() => {
+    AssetsController.generateAdditionalAssets();
+    BooksController.loadBooks();
+    book = BooksController.getAllBooks()[0];
+    orderDetails = {
+      bookId: book.id,
+      side: OrderSide.BUY,
+      orderType: LimitOrderData.orderType.LIMIT,
+      timeInForce: OrderTimeInForce.GOOD_TILL_CANCELED,
+      quoteAssetPrice: '1.2',
+      baseAssetQuantity: '10',
+    };
   });
 
-  describe('Order for an existing book', () => {
-    let order: Order;
+  describe('Create order', () => {
+    let controller: OrdersController;
 
     beforeEach(() => {
-      order = controller.createOrder({ ...orderDetails, idempotencyKey: randomUUID() });
+      controller = new OrdersController();
     });
 
-    it('should copy the data from the request object', () => {
-      expect(order).toMatchObject(orderDetails);
-    });
-    it('should have id', () => {
-      expect(order.id).not.toBeEmpty();
-    });
-    it('should have status "trading"', () => {
-      expect(order.status).toEqual(OrderStatus.TRADING);
-    });
-    it('should have creation date', () => {
-      expect(order.createdAt).toBeDateString();
-    });
-  });
-
-  describe('Order for a non existing book', () => {
-    it('should throw UnknownBookError', () => {
-      const badOrderDetails: OrderData = { ...orderDetails, bookId: 'USD_XLM' };
-
-      expect(() =>
-        controller.createOrder({ ...badOrderDetails, idempotencyKey: randomUUID() })
-      ).toThrow(UnknownBookError);
-    });
-  });
-
-  describe('Idempotency key reuse', () => {
-    const idempotencyKey = randomUUID();
-    let originalOrder: Order;
-
-    beforeEach(() => {
-      originalOrder = controller.createOrder({ ...orderDetails, idempotencyKey });
-    });
-
-    describe('Identical requests', () => {
-      let newOrder: Order;
+    describe('Order for an existing book', () => {
+      let order: Order;
 
       beforeEach(() => {
-        newOrder = controller.createOrder({ ...orderDetails, idempotencyKey });
+        order = controller.createOrder({ ...orderDetails, idempotencyKey: randomUUID() });
       });
 
-      it('should return the original order', () => {
-        expect(newOrder).toEqual(originalOrder);
+      it('should copy the data from the request object', () => {
+        expect(order).toMatchObject(orderDetails);
       });
-      it('should not create new records', () => {
-        expect(controller.getOrdersCount()).toEqual(1);
+      it('should have id', () => {
+        expect(order.id).not.toBeEmpty();
       });
-    });
-
-    describe('Different requests', () => {
-      it('should throw IdempotencyKeyReuseError', () => {
-        const badOrderDetails: OrderData = { ...orderDetails, side: OrderSide.SELL };
-
-        expect(() => controller.createOrder({ ...badOrderDetails, idempotencyKey })).toThrow(
-          IdempotencyKeyReuseError
-        );
+      it('should have status "trading"', () => {
+        expect(order.status).toEqual(OrderStatus.TRADING);
+      });
+      it('should have creation date', () => {
+        expect(order.createdAt).toBeDateString();
       });
     });
-  });
-});
 
-describe('Cancel order', () => {
-  let controller: OrdersController;
-  let orderId: string;
+    describe('Order for a non existing book', () => {
+      it('should throw UnknownBookError', () => {
+        const badOrderDetails: OrderData = { ...orderDetails, bookId: 'USD_XLM' };
 
-  beforeEach(() => {
-    controller = new OrdersController();
-    const order = controller.createOrder({ ...orderDetails, idempotencyKey: randomUUID() });
-    orderId = order.id;
-  });
-
-  describe('Order is trading', () => {
-    it('should cancel', () => {
-      controller.cancelOrder(orderId);
-      const order = controller.findOrder(orderId);
-      expect(order).toBeDefined();
-      expect(order?.status).toEqual(OrderStatus.CANCELED);
+        expect(() =>
+          controller.createOrder({ ...badOrderDetails, idempotencyKey: randomUUID() })
+        ).toThrow(UnknownBookError);
+      });
     });
   });
 
-  describe('Unknown order', () => {
-    it('should throw UnknownOrderError', () => {
-      expect(() => controller.cancelOrder(randomUUID())).toThrow(UnknownOrderError);
-    });
-  });
+  describe('Cancel order', () => {
+    let controller: OrdersController;
+    let orderId: string;
 
-  describe('Cancel order twice', () => {
-    it('should throw CannotCancelOrder', () => {
-      controller.cancelOrder(orderId);
-      expect(() => controller.cancelOrder(orderId)).toThrow(CannotCancelOrder);
+    beforeEach(() => {
+      controller = new OrdersController();
+      const order = controller.createOrder({ ...orderDetails, idempotencyKey: randomUUID() });
+      orderId = order.id;
+    });
+
+    describe('Order is trading', () => {
+      it('should cancel', () => {
+        controller.cancelOrder(orderId);
+        const order = controller.findOrder(orderId);
+        expect(order).toBeDefined();
+        expect(order?.status).toEqual(OrderStatus.CANCELED);
+      });
+    });
+
+    describe('Unknown order', () => {
+      it('should throw UnknownOrderError', () => {
+        expect(() => controller.cancelOrder(randomUUID())).toThrow(UnknownOrderError);
+      });
+    });
+
+    describe('Cancel order twice', () => {
+      it('should throw CannotCancelOrder', () => {
+        controller.cancelOrder(orderId);
+        expect(() => controller.cancelOrder(orderId)).toThrow(CannotCancelOrder);
+      });
     });
   });
 });

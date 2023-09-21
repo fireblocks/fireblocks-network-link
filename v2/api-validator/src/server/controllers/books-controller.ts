@@ -5,6 +5,8 @@ import {
   NationalCurrencyCode,
   OrderBook,
 } from '../../client/generated';
+import { AssetsController } from './assets-controller';
+import { Repository } from './repository';
 
 export const books: OrderBook[] = [
   {
@@ -108,3 +110,47 @@ export const bids: Record<string, MarketEntry[]> = {
     },
   ],
 };
+
+type BookMarketEntries = { id: string; entries: MarketEntry[] };
+
+export class BooksController {
+  private static readonly booksRepository = new Repository<OrderBook>();
+  private static readonly asksRepository = new Repository<BookMarketEntries>();
+  private static readonly bidsRepository = new Repository<BookMarketEntries>();
+  private static booksLoaded = false;
+
+  public static loadBooks(): void {
+    const assetId = AssetsController.getAllAdditionalAssets()[0].id;
+    for (const book of books) {
+      book.quoteAsset = { assetId };
+      this.booksRepository.create(book);
+    }
+
+    for (const id in asks) {
+      asks[id] = asks[id].map((ask) => ({ ...ask, asset: { assetId } }));
+      this.asksRepository.create({ id, entries: asks[id] });
+    }
+
+    for (const id in bids) {
+      bids[id] = bids[id].map((ask) => ({ ...ask, asset: { assetId } }));
+      this.bidsRepository.create({ id, entries: bids[id] });
+    }
+    this.booksLoaded = true;
+  }
+
+  public static getAllBooks(): OrderBook[] {
+    return this.booksRepository.list();
+  }
+
+  public static getBook(id: string): OrderBook | undefined {
+    return this.booksRepository.find(id);
+  }
+
+  public static getAsks(id: string): MarketEntry[] {
+    return this.asksRepository.find(id)?.entries ?? [];
+  }
+
+  public static getBids(id: string): MarketEntry[] {
+    return this.bidsRepository.find(id)?.entries ?? [];
+  }
+}

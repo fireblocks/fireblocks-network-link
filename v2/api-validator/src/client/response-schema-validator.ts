@@ -1,10 +1,9 @@
-import config from '../config';
 import addFormats from 'ajv-formats';
 import { HTTPMethods } from 'fastify';
 import { ErrorObject } from 'ajv/lib/types';
 import Ajv, { Schema, ValidateFunction } from 'ajv';
 import { SchemaCompilationError, XComError } from '../error';
-import { OpenApiOperationDetails, parseOpenApiYaml } from '../server/schema';
+import { EndpointSchema, getAllEndpointSchemas } from '../schemas';
 
 type ResponseSchemas = Record<string, Schema>;
 
@@ -21,17 +20,11 @@ type ValidationResult = {
  * payloads.
  */
 export class ResponseSchemaValidator {
-  private readonly openApiCompiled: Promise<void>;
-
   // Precompiled schema validators
-  private validatorsDirectory: ValidatorsDirectory = new Map();
+  private readonly validatorsDirectory: ValidatorsDirectory;
 
   constructor() {
-    const openApiYamlPathname = config.getUnifiedOpenApiPathname();
-
-    this.openApiCompiled = parseOpenApiYaml(openApiYamlPathname).then((schemas) => {
-      this.validatorsDirectory = compileResponseSchemas(schemas);
-    });
+    this.validatorsDirectory = compileResponseSchemas(getAllEndpointSchemas());
   }
 
   /**
@@ -47,12 +40,6 @@ export class ResponseSchemaValidator {
     openApiUrl: string,
     response: any
   ): Promise<ValidationResult> {
-    await this.openApiCompiled;
-
-    if (!this.validatorsDirectory) {
-      throw new Error('Validators were not initialized properly');
-    }
-
     // The parsed schemas use Fastify parameters notation: `:param`
     // While the client specifies URLs in OpenAPI notation: `{param}`
     const url = openApiUrlToFastifyUrl(openApiUrl);
@@ -70,7 +57,7 @@ export class ResponseSchemaValidator {
   }
 }
 
-function compileResponseSchemas(schemas: OpenApiOperationDetails[]): ValidatorsDirectory {
+function compileResponseSchemas(schemas: EndpointSchema[]): ValidatorsDirectory {
   const ajv = new Ajv({ strictSchema: false });
   addFormats(ajv);
 

@@ -1,6 +1,6 @@
 import Client from '../../src/client';
 import { fakeObject } from '../faker';
-import { OpenApiOperationDetails } from '../../src/server/schema';
+import { EndpointSchema, getAllEndpointSchemas } from '../../src/schemas';
 import {
   ApiError,
   BadRequestError,
@@ -73,9 +73,8 @@ describe('Pagination params tests', () => {
   });
 });
 
-function getPaginatedEndpoints() {
-  const supportedOpenApiEndpoints: OpenApiOperationDetails[] = global.supportedOpenApiEndpoints;
-  return supportedOpenApiEndpoints.filter(
+function getPaginatedEndpoints(): EndpointSchema[] {
+  return getAllEndpointSchemas().filter(
     (endpoint) => (endpoint.schema.querystring as any)?.properties?.limit
   );
 }

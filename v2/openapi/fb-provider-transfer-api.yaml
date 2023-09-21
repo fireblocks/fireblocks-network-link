@@ -297,6 +297,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array
@@ -366,6 +367,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array
@@ -435,6 +437,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array
@@ -506,6 +509,7 @@ paths:
             application/json:
               schema:
                 type: object
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array
@@ -746,6 +750,7 @@ components:
         application/json:
           schema:
             type: object
+            required: [ withdrawals ]
             properties:
               withdrawals:
                 type: array
@@ -859,6 +864,26 @@ components:
             referenceId:
               type: string
 
+    OtherFiatTransfer:
+      type: object
+      description: >-
+        Used for historic fiat transfers that do not fit a more specific transfer method. 
+        It is impossible to create new deposits or withdrawal of this type using this API.
+      required: [ transferMethod, asset, amount, description ]
+      properties:
+        transferMethod:
+          enum: [ OtherFiat ]
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        amount:
+          $ref: '#/x-schemas/PositiveAmount'
+        description:
+          type: string
+        tag:
+          type: string
+        referenceId:
+          type: string
+
     PublicBlockchainCapability:
       type: object
       required: [ asset, transferMethod ]
@@ -942,6 +967,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
+        - $ref: '#/components/schemas/OtherFiatTransfer'
 
     Transfer:
       oneOf:
@@ -949,6 +975,7 @@ components:
         - $ref: '#/components/schemas/PublicBlockchainTransaction'
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
+        - $ref: '#/components/schemas/OtherFiatTransfer'
 
     DepositDestination:
       oneOf:
@@ -980,7 +1007,11 @@ components:
         idempotencyKey:
           type: string
         transferMethod:
-          $ref: '#/components/schemas/TransferCapability'
+          oneOf:
+            - $ref: '#/components/schemas/PublicBlockchainCapability'
+            - $ref: '#/components/schemas/IbanCapability'
+            - $ref: '#/components/schemas/SwiftCapability'
+
 
     DepositCapability:
       type: object
@@ -991,7 +1022,10 @@ components:
         id:
           type: string
         deposit:
-          $ref: '#/components/schemas/TransferCapability'
+          oneOf:
+            - $ref: '#/components/schemas/PublicBlockchainCapability'
+            - $ref: '#/components/schemas/IbanCapability'
+            - $ref: '#/components/schemas/SwiftCapability'
         balanceAsset:
           $ref: '#/x-schemas/AssetReference'
 
@@ -1043,12 +1077,10 @@ components:
 
     WithdrawalRequestCommonProperties:
       type: object
-      required: [ idempotencyKey, balanceAsset, balanceAmount ]
+      required: [ idempotencyKey, balanceAmount ]
       properties:
         idempotencyKey:
           type: string
-        balanceAsset:
-          $ref: '#/x-schemas/AssetReference'
         balanceAmount:
           $ref: '#/x-schemas/PositiveAmount'
 
@@ -1056,8 +1088,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
-          required: [ destination ]
+          required: [ balanceAsset, destination ]
           properties:
+            balanceAsset:
+              $ref: '#/x-schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/FiatTransferDestination'
 
@@ -1065,8 +1099,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
-          required: [ destination ]
+          required: [ balanceAsset, destination ]
           properties:
+            balanceAsset:
+              $ref: '#/x-schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
 
@@ -1074,8 +1110,10 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
-          required: [ destination ]
+          required: [ balanceAsset, destination ]
           properties:
+            balanceAsset:
+              $ref: '#/x-schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/CrossAccountTransferDestination'
 

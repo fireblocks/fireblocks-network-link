@@ -4,7 +4,7 @@ import logger from '../../logging';
 const log = logger('handler:capabilities');
 
 const CAPABILITIES: Capabilities = {
-  version: '0.0.1',
+  version: '0.2.0',
   components: {
     accounts: '*',
     balances: '*',
@@ -15,7 +15,6 @@ const CAPABILITIES: Capabilities = {
     transfersPeerAccounts: '*',
     trading: '*',
     liquidity: '*',
-    subscriptions: '*',
   },
 };
 

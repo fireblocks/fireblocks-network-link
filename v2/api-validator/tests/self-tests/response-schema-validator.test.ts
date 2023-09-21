@@ -1,4 +1,3 @@
-import { Capabilities } from '../../src/client/generated';
 import { ResponseSchemaValidator } from '../../src/client/response-schema-validator';
 
 const version = '0.0.1';
@@ -16,7 +15,6 @@ const optionalComponents = {
   transfersPeerAccounts: '*',
   trading: ['account1'],
   liquidity: ['account1', 'account2'],
-  subscriptions: '*',
 };
 
 describe('Response schema validator', () => {

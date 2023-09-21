@@ -1,8 +1,9 @@
+import { randomUUID } from 'crypto';
 import { JsonValue } from 'type-fest';
 import { fakeObject } from '../faker';
 import Client from '../../src/client';
-import { OpenApiOperationDetails } from '../../src/server/schema';
 import { ApiError, GeneralError } from '../../src/client/generated';
+import { EndpointSchema, getAllEndpointSchemas } from '../../src/schemas';
 
 describe('Not Found tests', () => {
   describe.each(getParamEndpoints())('$method $url', ({ method, operationId, schema }) => {
@@ -13,6 +14,13 @@ describe('Not Found tests', () => {
       const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
 
       const params = fakeObject(schema.params);
+      if (params?.id) {
+        params.id = randomUUID();
+      }
+      if (params?.accountId) {
+        params.accountId = randomUUID();
+      }
+
       const querystring = fakeObject(schema.querystring);
 
       let requestBody: JsonValue | undefined = undefined;
@@ -46,7 +54,6 @@ describe('Not Found tests', () => {
   });
 });
 
-function getParamEndpoints() {
-  const supportedOpenApiEndpoints: OpenApiOperationDetails[] = global.supportedOpenApiEndpoints;
-  return supportedOpenApiEndpoints.filter((endpoint) => !!endpoint.schema.params);
+function getParamEndpoints(): EndpointSchema[] {
+  return getAllEndpointSchemas().filter((endpoint) => !!endpoint.schema.params);
 }

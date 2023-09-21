@@ -1,7 +1,9 @@
 import { randomUUID } from 'crypto';
 import Client from '../../src/client';
+import { Pageable, paginated } from '../utils/pagination';
+import { getCapableAccountId, hasCapability } from '../utils/capable-accounts';
+import { AssetsDirectory } from '../utils/assets-directory';
 import {
-  Account,
   ApiError,
   BadRequestError,
   NationalCurrencyCode,
@@ -12,22 +14,19 @@ import {
   QuoteStatus,
   RequestPart,
 } from '../../src/client/generated';
-import config from '../../src/config';
-import { AssetsDirectory } from '../utils/assets-directory';
-import { Pageable, paginated } from '../utils/pagination';
 
-const liquidityCapability = config.get('capabilities.components.liquidity');
+const noLiquidityCapability = !hasCapability('liquidity');
 
-describe.skipIf(!liquidityCapability)('Liquidity', () => {
+describe.skipIf(noLiquidityCapability)('Liquidity', () => {
   let client: Client;
   let assets: AssetsDirectory;
   let capabilitiesResponse: QuoteCapabilities;
-  let account: Account;
+  let accountId: string;
 
   beforeAll(async () => {
     client = new Client();
     assets = await AssetsDirectory.fetch();
-    account = await getLiquidityCapableAccount();
+    accountId = getCapableAccountId('liquidity');
     capabilitiesResponse = await client.capabilities.getQuoteCapabilities({});
   });
 
@@ -54,19 +53,12 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
       capability = capabilitiesResponse.capabilities[0];
     });
 
-    const getCreateQuoteSuccessResult = async (requestBody: QuoteRequest): Promise<Quote> => {
-      return await client.liquidity.createQuote({
-        accountId: account.id,
-        requestBody,
-      });
-    };
+    const getCreateQuoteSuccessResult = async (requestBody: QuoteRequest) =>
+      client.liquidity.createQuote({ accountId, requestBody });
 
     const getCreateQuoteFailureResult = async (requestBody: QuoteRequest): Promise<ApiError> => {
       try {
-        await client.liquidity.createQuote({
-          accountId: account.id,
-          requestBody,
-        });
+        await client.liquidity.createQuote({ accountId, requestBody });
       } catch (err) {
         if (err instanceof ApiError) {
           return err;
@@ -126,6 +118,7 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
 
     it('should fail when using a fromAsset and toAsset permutation which is not listed from quote capabilities', async () => {
       const unsupportedPair: QuoteCapability = {
+        id: randomUUID(),
         fromAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
         toAsset: { nationalCurrencyCode: NationalCurrencyCode.USD },
       };
@@ -163,12 +156,12 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
 
     beforeAll(async () => {
       const createdQuote = await client.liquidity.createQuote({
-        accountId: account.id,
+        accountId,
         requestBody: { ...capabilitiesResponse.capabilities[0], fromAmount: '1' },
       });
       executedQuote = await client.liquidity.executeQuote({
         id: createdQuote.id,
-        accountId: account.id,
+        accountId,
       });
     });
 
@@ -178,14 +171,14 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
 
     it('should find quote on getQuoteDetails post execution', async () => {
       const quote = await client.liquidity.getQuoteDetails({
-        accountId: account.id,
+        accountId,
         id: executedQuote.id,
       });
       expect(quote).toBeDefined();
     });
 
     it('should fail executing quote with non ready status', async () => {
-      const error = await getExecuteQuoteFailureResult(account.id, executedQuote.id);
+      const error = await getExecuteQuoteFailureResult(accountId, executedQuote.id);
       expect(error.status).toBe(400);
       expect(error.body.errorType).toBe(BadRequestError.errorType.QUOTE_NOT_READY);
     });
@@ -194,7 +187,7 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
   describe('List quotes', () => {
     const getQuotes: Pageable<Quote> = async (limit, startingAfter?) => {
       const response = await client.liquidity.getQuotes({
-        accountId: account.id,
+        accountId,
         limit,
         startingAfter,
       });
@@ -213,7 +206,7 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
     it('every returned quote should be found in getQuoteDetails', async () => {
       for await (const quote of paginated(getQuotes)) {
         const quoteDetails = await client.liquidity.getQuoteDetails({
-          accountId: account.id,
+          accountId,
           id: quote.id,
         });
 
@@ -223,16 +216,3 @@ describe.skipIf(!liquidityCapability)('Liquidity', () => {
     });
   });
 });
-
-async function getLiquidityCapableAccount(): Promise<Account> {
-  const capabilitiesLiquidity = config.get('capabilities.components.liquidity');
-  const client = new Client();
-  let accountId: string;
-  if (Array.isArray(capabilitiesLiquidity)) {
-    accountId = capabilitiesLiquidity[0];
-  } else {
-    const accounts = await client.accounts.getAccounts({});
-    accountId = accounts.accounts[0].id;
-  }
-  return await client.accounts.getAccountDetails({ accountId });
-}

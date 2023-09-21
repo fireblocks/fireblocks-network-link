@@ -17,3 +17,9 @@ export type PaginationQuerystring = {
     endingBefore?: string;
   };
 };
+
+export type ListOrderQuerystring = {
+  Querystring: {
+    order: 'asc' | 'desc';
+  };
+};

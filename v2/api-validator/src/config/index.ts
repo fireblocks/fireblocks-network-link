@@ -37,63 +37,119 @@ const config = convict({
       env: 'LOG_LEVEL',
     },
   },
-  capabilities: {
-    version: {
-      doc: 'Version of the API used',
-      format: String,
-      default: '0.0.1',
-      env: 'CAPABILITIES_VERSION',
+  paginationLimit: {
+    format: Number,
+    default: 2,
+    env: 'PAGINATION_LIMIT',
+  },
+  withdrawal: {
+    peerAccount: {
+      accountId: {
+        format: String,
+        default: 'be5ff76b-6cc8-4a39-af40-fc71aea1865c',
+        env: 'WITHDRAWAL_PEER_ACCOUNT',
+      },
     },
-    components: {
-      accounts: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_ACCOUNTS',
+    subAccount: {
+      accountId: {
+        format: String,
+        default: 'c5bb0880-523c-4c1c-bfe7-bcf2941517a0',
+        env: 'WITHDRAWAL_SUB_ACCOUNT',
       },
-      balances: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_BALANCES',
+    },
+    blockchain: {
+      address: {
+        format: String,
+        default: '0x91b9e7bc95f8ef6f4e08ea10aaaac84b6c54203b',
+        env: 'WITHDRAWAL_BLOCKCHAIN_ADDRESS',
       },
-      historicBalances: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_HISTORIC_BALANCES',
+      addressTag: {
+        format: String,
+        default: undefined,
+        env: 'WITHDRAWAL_BLOCKCHAIN_ADDRESS_TAG',
       },
-      transfers: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_TRANSFERS',
+    },
+    iban: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_IBAN_ACCOUNT_POSTAL_CODE',
+        },
       },
-      transfersBlockchain: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_TRANSFERS_BLOCKCHAIN',
+      iban: {
+        format: String,
+        default: 'LO16MVPcSq8',
+        env: 'WITHDRAWAL_IBAN_IBAN',
       },
-      transfersFiat: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_TRANSFERS_FIAT',
+    },
+    swift: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SWIFT_ACCOUNT_POSTAL_CODE',
+        },
       },
-      transfersPeerAccounts: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_TRANSFERS_PEER_ACCOUNTS',
+      swiftCode: {
+        format: String,
+        default: 'KPKUJWXMLDB',
+        env: 'WITHDRAWAL_SWIFT_CODE',
       },
-      trading: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_TRADING',
-      },
-      liquidity: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_LIQUIDITY',
-      },
-      subscriptions: {
-        format: capabilitiesComponent,
-        default: '*',
-        env: 'CAPABILITIES_SUBSCRIPTIONS',
+      routingNumber: {
+        format: String,
+        default: '8d73hc7sj8',
+        env: 'WITHDRAWAL_SWIFT_ROUTING_NUMBER',
       },
     },
   },

@@ -1,14 +1,13 @@
 # Fireblocks Network Link v2 API Validator
 
 This project contains the Fireblocks Network Link v2 API validation tool.
-The tool is built to be executed as a stand-alone application that sends various 
+The tool is built to be executed as a stand-alone application that sends various
 HTTP requests to the system under test to validate the correctness of the API
 implementation.
 
 ## Prerequisites
 
 - [nvm](https://github.com/nvm-sh/nvm)
-
 
 ## Quick start
 
@@ -19,7 +18,6 @@ nvm install 18.14.2
 nvm use
 npm install
 ```
-
 
 ### Use the bundled mock server
 
@@ -43,12 +41,12 @@ The tests generate report files in the validation tool root directory in JSON an
 SERVER="my-server-base-url" npm run test
 ```
 
-When testing your own server, you will usually need to configure the credentials of the user
-connecting to the server and the request signing method the server uses. All these parameters
-could be configured using the environment variables. Make a copy of `env.example`, rename it
-to `.env` and edit the values. `src/config/index.ts` contains all the environment variable
-definitions and the possible values.
-
+When testing your own server, you will usually need to configure the withdrawal 
+destinations, the credentials of the user connecting to the server and the request signing
+method the server uses. All these parameters could be configured using environment 
+variables. Make a copy of `env.example`, rename it to `.env` and edit the values.
+`src/config/index.ts` contains all the environment variable definitions and the possible
+values.
 
 ## Design
 
@@ -61,8 +59,22 @@ definitions and the possible values.
   - Any state is managed in-memory.
   - Values from the shared configuration in `src/config` are used to coordinate
     scenarios between the server and the client.
-  - The official OpenAPI document, located in `../fb-xcom-openapi` is used to
+  - The official OpenAPI document, located in `../openapi` is used to
     validate the incoming requests and the outgoing responses.
 - `src/client` contains the API client.
 - `tests` contains the API validation tests.
   - The tests use the client in `src/client` to communicate with the server.
+
+## Troubleshooting
+
+If the tests fail catastrophically, it is possible to run the tests in three separate
+groups:
+
+1. `npm run test:self` unit-tests validation tool's code. If these tests fail, there 
+   is something wrong with the tool itself.
+2. `npm run test:sanity` tests server functionality that is critical for the rest of 
+   the tests. If these tests fail, there is either a configuration problem or the 
+   server doesn't work properly. Usually, if these tests fail, most of the server 
+   tests will fail too.
+3. `npm run test:server` runs the rest of the tests. These tests assume the sanity 
+   tests pass.
