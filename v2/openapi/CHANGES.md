@@ -5,6 +5,9 @@
 ### Breaking changes
 
 - Obligatory `side` property was added to `MarketEntry` object in the trading API
+
+### Minor improvements
+
 - `asset` property was removed from `MarketEntry` object in the trading API
 
 ## 0.2.0 - 2023-09-19
