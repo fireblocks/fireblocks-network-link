@@ -3,14 +3,17 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { AssetReference } from './AssetReference';
+import type { OrderSide } from './OrderSide';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type MarketEntry = {
     id: string;
+    /**
+     * Amount of the base asset traded
+     */
     amount: PositiveAmount;
     price: PositiveAmount;
     totalPrice: PositiveAmount;
-    asset: AssetReference;
+    side: OrderSide;
 };
 
