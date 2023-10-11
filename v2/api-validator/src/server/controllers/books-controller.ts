@@ -128,12 +128,10 @@ export class BooksController {
     }
 
     for (const id in asks) {
-      asks[id] = asks[id].map((ask) => ({ ...ask, asset: { assetId } }));
       this.asksRepository.create({ id, entries: asks[id] });
     }
 
     for (const id in bids) {
-      bids[id] = bids[id].map((ask) => ({ ...ask, asset: { assetId } }));
       this.bidsRepository.create({ id, entries: bids[id] });
     }
     this.booksLoaded = true;
