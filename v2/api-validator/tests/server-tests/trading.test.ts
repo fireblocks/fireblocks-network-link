@@ -92,9 +92,9 @@ describe.skipIf(noTradingCapability)('Trading API tests', () => {
     });
 
     describe.each([
-      { name: 'asks', fn: getAsks },
-      { name: 'bids', fn: getBids },
-    ])(`$name`, ({ name, fn }) => {
+      { name: 'asks', fn: getAsks, expectedSide: OrderSide.SELL },
+      { name: 'bids', fn: getBids, expectedSide: OrderSide.BUY },
+    ])(`$name`, ({ name, fn, expectedSide }) => {
       it('should return at least an empty array', async () => {
         for (const book of books.slice(0, booksCountToTest)) {
           const entries = await fn(book.id);
@@ -102,11 +102,11 @@ describe.skipIf(noTradingCapability)('Trading API tests', () => {
         }
       });
 
-      it(`${name} assets should be equal to the book quote asset`, async () => {
+      it(`${name} side should be ${expectedSide}`, async () => {
         for (const book of books.slice(0, booksCountToTest)) {
           const entries = await fn(book.id);
           for (const entry of entries) {
-            expect(entry, `In book ${book.id}`).toContainEntry(['asset', book.quoteAsset]);
+            expect(entry, `In book ${book.id}`).toContainEntry(['side', expectedSide]);
           }
         }
       });
