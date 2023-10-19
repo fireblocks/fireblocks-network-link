@@ -13,6 +13,7 @@ import {
   OrderBook,
   OrderRequest,
   OrderStatus,
+  OrderWithTrades,
 } from '../../client/generated';
 
 type GetBooksResponse = { books: OrderBook[] };
@@ -149,7 +150,7 @@ export async function createOrder(
 export async function getOrderDetails(
   { params }: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
   reply: FastifyReply
-): Promise<Order> {
+): Promise<OrderWithTrades> {
   const controller = controllers.getController(params.accountId);
   if (!controller) {
     return ErrorFactory.notFound(reply);
