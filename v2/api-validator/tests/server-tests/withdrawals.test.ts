@@ -26,6 +26,7 @@ const noTransfersCapability = !hasCapability('transfers');
 const noTransfersBlockchainCapability = !hasCapability('transfersBlockchain');
 const noTransfersFiatCapability = !hasCapability('transfersFiat');
 const noTransfersPeerAccountsCapability = !hasCapability('transfersPeerAccounts');
+const noTransfersSubaccountCapability = Client.getCachedAccounts().length <= 1;
 
 const transfersCapableAccountIds = getAllCapableAccountIds('transfers');
 const blockchainTransfersCapableAccountIds = getAllCapableAccountIds('transfersBlockchain');
@@ -298,7 +299,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
       return balances[0];
     };
 
-    describe('Subaccount withdrawal', () => {
+    describe.skipIf(noTransfersSubaccountCapability)('Subaccount withdrawal', () => {
       it('should succeed making withdrawal for every capability that the account has sufficient balance for', async () => {
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
           const subAccountCapabilities = capabilities.filter(
