@@ -7,6 +7,7 @@ import type { MarketTrade } from '../models/MarketTrade';
 import type { Order } from '../models/Order';
 import type { OrderBook } from '../models/OrderBook';
 import type { OrderRequest } from '../models/OrderRequest';
+import type { OrderWithTrades } from '../models/OrderWithTrades';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -435,7 +436,7 @@ export class TradingService {
 
     /**
      * Get trading order details
-     * @returns Order Book order details
+     * @returns OrderWithTrades Book order details
      * @throws ApiError
      */
     public getOrderDetails({
@@ -471,7 +472,7 @@ export class TradingService {
          * Entity unique identifier.
          */
         id: string,
-    }): CancelablePromise<Order> {
+    }): CancelablePromise<OrderWithTrades> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/trading/orders/{id}',

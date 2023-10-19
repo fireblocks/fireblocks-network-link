@@ -2,14 +2,20 @@ import _ from 'lodash';
 import logger from '../../logging';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
-import { Order, OrderData, OrderRequest, OrderStatus } from '../../client/generated';
+import {
+  Order,
+  OrderData,
+  OrderRequest,
+  OrderStatus,
+  OrderWithTrades,
+} from '../../client/generated';
 import { getPaginationResult } from './pagination-controller';
 import { BooksController } from './books-controller';
 
 const log = logger('server');
 
 export class OrdersController {
-  private readonly orders: Array<Order> = [];
+  private readonly orders: Array<OrderWithTrades> = [];
 
   public createOrder(order: OrderRequest): Order {
     const book = BooksController.getBook(order.bookId);
@@ -19,7 +25,7 @@ export class OrdersController {
 
     const orderData = _.omit(order, 'idempotencyKey') as OrderData;
 
-    const newOrder: Order = {
+    const newOrder: OrderWithTrades = {
       ...orderData,
       id: randomUUID(),
       status: OrderStatus.TRADING,
@@ -46,7 +52,7 @@ export class OrdersController {
     return this.orders.length;
   }
 
-  public findOrder(orderId: string): Order | undefined {
+  public findOrder(orderId: string): OrderWithTrades | undefined {
     return this.orders.find((o) => o.id === orderId);
   }
 

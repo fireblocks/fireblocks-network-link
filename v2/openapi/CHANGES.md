@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.3.0 - 2023-10-19
+
+### Breaking changes
+
+- Obligatory `side` property was added to `MarketEntry` object in the trading API.
+- Trading order status `PARTIALLY_FILLED` was renamed to `EXPIRED`. Any order that was 
+  not explicitly canceled user, but still stopped trading, should have the status 
+  `EXPIRED`.
+
+### Non-breaking improvements
+
+- Orders list returned by `GET /accounts/{accountId}/trading/orders` was updated to not 
+  require `trades` property. It is still required when requesting a single order details.
+- `asset` property was removed from `MarketEntry` object in the trading API.
+
+-----
 ## 0.2.0 - 2023-09-19
 
 ### New features
@@ -19,14 +35,14 @@
 - In all the endpoints returning lists of withdrawals, the `withdrawals` property was 
   marked as required.
 
-### Minor improvements
+### Non-breaking improvements
 
 - Optional property `subscriptions` was completely removed from the capabilities response.
 
 -----
 ## 0.1.1 - 2023-08-03
 
-### Minor improvements
+### Non-breaking improvements
 
 - Optional property `minWithdrawalAmount` was added to the withdrawal
   capabilities object.
@@ -59,7 +75,7 @@ introduce non backward compatible changes.
 - Defined more strictly the structure of error responses.
 - Expanded and adjusted the error types list.
 
-### Minor improvements
+### Non-breaking improvements
 
 1. A unique operation ID was defined for each operation.
 2. The various entity IDs are not forced to be UUIDs. 

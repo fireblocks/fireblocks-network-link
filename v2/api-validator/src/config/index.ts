@@ -234,30 +234,6 @@ function filename(f: string) {
   }
 }
 
-function isStringArray(value: unknown) {
-  if (!Array.isArray(value)) {
-    return false;
-  }
-
-  if (value.find((item) => typeof item !== 'string')) {
-    return false;
-  }
-
-  return true;
-}
-
-function capabilitiesComponent(value: unknown) {
-  if (value === undefined) {
-    return;
-  }
-
-  if (value === '*' || isStringArray(value)) {
-    return;
-  }
-
-  throw new Error(`Configuration error: invalid capabilities component format: ${value}`);
-}
-
 const filePath = path.join(__dirname, `${config.get('env')}.json`);
 if (fs.existsSync(filePath)) {
   config.loadFile(filePath);

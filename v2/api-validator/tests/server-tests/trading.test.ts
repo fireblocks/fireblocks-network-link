@@ -92,9 +92,9 @@ describe.skipIf(noTradingCapability)('Trading API tests', () => {
     });
 
     describe.each([
-      { name: 'asks', fn: getAsks },
-      { name: 'bids', fn: getBids },
-    ])(`$name`, ({ name, fn }) => {
+      { name: 'asks', fn: getAsks, expectedSide: OrderSide.SELL },
+      { name: 'bids', fn: getBids, expectedSide: OrderSide.BUY },
+    ])(`$name`, ({ name, fn, expectedSide }) => {
       it('should return at least an empty array', async () => {
         for (const book of books.slice(0, booksCountToTest)) {
           const entries = await fn(book.id);
@@ -102,11 +102,11 @@ describe.skipIf(noTradingCapability)('Trading API tests', () => {
         }
       });
 
-      it(`${name} assets should be equal to the book quote asset`, async () => {
+      it(`${name} side should be ${expectedSide}`, async () => {
         for (const book of books.slice(0, booksCountToTest)) {
           const entries = await fn(book.id);
           for (const entry of entries) {
-            expect(entry, `In book ${book.id}`).toContainEntry(['asset', book.quoteAsset]);
+            expect(entry, `In book ${book.id}`).toContainEntry(['side', expectedSide]);
           }
         }
       });
@@ -165,6 +165,15 @@ describe.skipIf(noTradingCapability)('Trading API tests', () => {
 
         let expectedOrderId = orderIds.pop();
         for await (const order of paginated(getOrders)) {
+          // Fulfilled orders should contain their trades
+          if (order.status === OrderStatus.FULFILLED) {
+            const orderWithTrades = await client.trading.getOrderDetails({
+              accountId,
+              id: order.id,
+            });
+            expect(orderWithTrades.trades.length).toBeGreaterThan(0);
+          }
+
           if (order.id === expectedOrderId) {
             expectedOrderId = orderIds.pop();
             if (!expectedOrderId) {
@@ -205,17 +214,6 @@ describe.skipIf(noTradingCapability)('Trading API tests', () => {
         const order1 = await client.trading.createOrder({ accountId, requestBody });
         expect(order1).toMatchObject(orderData);
         expect(order1.status).not.toEqual(OrderStatus.CANCELED);
-      });
-
-      it('should have trade data for fulfilled and partially fulfilled orders', async () => {
-        const requestBody: OrderRequest = { ...orderData, idempotencyKey: randomUUID() };
-        const order1 = await client.trading.createOrder({ accountId, requestBody });
-        if (
-          order1.status === OrderStatus.PARTIALLY_FILLED ||
-          order1.status === OrderStatus.FULFILLED
-        ) {
-          expect(order1.trades.length).toBeGreaterThan(0);
-        }
       });
 
       it('should return the same order if creating twice with the same idempotency key', async () => {
