@@ -165,6 +165,11 @@ describe.skipIf(noTradingCapability)('Trading API tests', () => {
 
         let expectedOrderId = orderIds.pop();
         for await (const order of paginated(getOrders)) {
+          // Fulfilled orders should contain their trades
+          if (order.status === OrderStatus.FULFILLED) {
+            expect(order.trades.length).toBeGreaterThan(0);
+          }
+
           if (order.id === expectedOrderId) {
             expectedOrderId = orderIds.pop();
             if (!expectedOrderId) {
@@ -205,17 +210,6 @@ describe.skipIf(noTradingCapability)('Trading API tests', () => {
         const order1 = await client.trading.createOrder({ accountId, requestBody });
         expect(order1).toMatchObject(orderData);
         expect(order1.status).not.toEqual(OrderStatus.CANCELED);
-      });
-
-      it('should have trade data for fulfilled and partially fulfilled orders', async () => {
-        const requestBody: OrderRequest = { ...orderData, idempotencyKey: randomUUID() };
-        const order1 = await client.trading.createOrder({ accountId, requestBody });
-        if (
-          order1.status === OrderStatus.PARTIALLY_FILLED ||
-          order1.status === OrderStatus.FULFILLED
-        ) {
-          expect(order1.trades.length).toBeGreaterThan(0);
-        }
       });
 
       it('should return the same order if creating twice with the same idempotency key', async () => {

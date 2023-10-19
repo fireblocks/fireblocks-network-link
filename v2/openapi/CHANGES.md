@@ -1,14 +1,17 @@
 # Changelog
 
-## 0.3.0 - 2023-10-1
+## 0.3.0 - 2023-10-19
 
 ### Breaking changes
 
-- Obligatory `side` property was added to `MarketEntry` object in the trading API
+- Obligatory `side` property was added to `MarketEntry` object in the trading API.
+- Trading order status `PARTIALLY_FILLED` was renamed to `EXPIRED`. Any order that was 
+  not explicitly canceled user, but still stopped trading, should have the status 
+  `EXPIRED`.
 
 ### Minor improvements
 
-- `asset` property was removed from `MarketEntry` object in the trading API
+- `asset` property was removed from `MarketEntry` object in the trading API.
 
 ## 0.2.0 - 2023-09-19
 
