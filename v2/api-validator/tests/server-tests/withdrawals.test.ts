@@ -7,7 +7,6 @@ import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 import {
   ApiError,
   AssetBalance,
-  AssetReference,
   BadRequestError,
   BlockchainWithdrawalRequest,
   CrossAccountTransferCapability,
@@ -51,24 +50,28 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
     return response.capabilities;
   };
 
-  let isKnownAsset: (assetId: AssetReference) => boolean;
-
   beforeAll(async () => {
-    client = new Client();
     assets = await AssetsDirectory.fetch();
+
+    client = new Client();
     accountCapabilitiesMap = await getResponsePerIdMapping(
       getCapabilities,
       transfersCapableAccountIds
     );
-    isKnownAsset = assets.isKnownAsset.bind(assets);
   });
 
   describe('Capabilities', () => {
     it('should return only known assets in response', () => {
       for (const capabilities of accountCapabilitiesMap.values()) {
         for (const capability of capabilities) {
-          expect(capability.balanceAsset).toSatisfy(isKnownAsset);
-          expect(capability.withdrawal.asset).toSatisfy(isKnownAsset);
+          expect(
+            assets.isKnownAsset(capability.balanceAsset),
+            JSON.stringify(capability.balanceAsset)
+          ).toBeTruthy();
+          expect(
+            assets.isKnownAsset(capability.withdrawal.asset),
+            JSON.stringify(capability.withdrawal.asset)
+          ).toBeTruthy();
         }
       }
     });
@@ -91,6 +94,9 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
       limit: number,
       startingAfter?: string
     ) => {
+      if (noTransfersSubaccountCapability) {
+        return [];
+      }
       const response = await client.accounts.getSubAccountWithdrawals({
         accountId,
         limit,
@@ -100,6 +106,9 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
     };
 
     const getFiatWithdrawals = async (accountId: string, limit: number, startingAfter?: string) => {
+      if (noTransfersFiatCapability) {
+        return [];
+      }
       const response = await client.transfersFiat.getFiatWithdrawals({
         accountId,
         limit,
@@ -113,6 +122,9 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
       limit: number,
       startingAfter?: string
     ) => {
+      if (noTransfersBlockchainCapability) {
+        return [];
+      }
       const response = await client.transfersBlockchain.getBlockchainWithdrawals({
         accountId,
         limit,
@@ -126,6 +138,9 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
       limit: number,
       startingAfter?: string
     ) => {
+      if (noTransfersPeerAccountsCapability) {
+        return [];
+      }
       const response = await client.transfersPeerAccounts.getPeerAccountWithdrawals({
         accountId,
         limit,
