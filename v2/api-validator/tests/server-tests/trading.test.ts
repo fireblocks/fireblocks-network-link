@@ -167,7 +167,11 @@ describe.skipIf(noTradingCapability)('Trading API tests', () => {
         for await (const order of paginated(getOrders)) {
           // Fulfilled orders should contain their trades
           if (order.status === OrderStatus.FULFILLED) {
-            expect(order.trades.length).toBeGreaterThan(0);
+            const orderWithTrades = await client.trading.getOrderDetails({
+              accountId,
+              id: order.id,
+            });
+            expect(orderWithTrades.trades.length).toBeGreaterThan(0);
           }
 
           if (order.id === expectedOrderId) {

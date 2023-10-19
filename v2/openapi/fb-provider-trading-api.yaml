@@ -461,7 +461,6 @@ paths:
                 baseAssetQuantity: '10'
                 quoteAssetPrice: '20000'
                 createdAt: 2023-06-02T19:45:26.550Z
-                trades: []
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -489,7 +488,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Order'
+                $ref: '#/components/schemas/OrderWithTrades'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -644,16 +643,12 @@ components:
       allOf:
         - $ref: '#/components/schemas/OrderData'
         - type: object
-          required: [ id, status, trades, createdAt ]
+          required: [ id, status, createdAt ]
           properties:
             id:
               type: string
             status:
               $ref: '#/components/schemas/OrderStatus'
-            trades:
-              type: array
-              items:
-                $ref: '#/components/schemas/MarketTrade'
             createdAt:
               description: Time when the order was created.
               type: string
@@ -662,6 +657,17 @@ components:
               description: Time when the order was finalized.
               type: string
               format: date-time
+
+    OrderWithTrades:
+      allOf:
+        - $ref: '#/components/schemas/Order'
+        - type: object
+          required: [ trades ]
+          properties:
+            trades:
+              type: array
+              items:
+                $ref: '#/components/schemas/MarketTrade'
 
     OrderStatus:
       enum:
