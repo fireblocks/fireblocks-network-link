@@ -2705,7 +2705,7 @@ components:
         - TRADING
         - CANCELED
         - REJECTED
-        - PARTIALLY_FILLED
+        - EXPIRED
         - FULFILLED
     AccountHolderDetails:
       type: object
