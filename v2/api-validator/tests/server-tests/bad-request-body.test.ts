@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { JsonValue } from 'type-fest';
 import ApiClient from '../../src/client';
 import { JSONSchemaFaker, Schema } from 'json-schema-faker';
-import { EndpointSchema, getAllEndpointSchemas } from '../../src/schemas';
+import {EndpointSchema, getAllEndpointSchemas} from '../../src/schemas';
 import { deleteDeepProperty, getPropertyPaths } from '../property-extraction';
 import { ApiComponents, ApiError, BadRequestError, RequestPart } from '../../src/client/generated';
 import { getCapableAccountId, hasCapability } from '../utils/capable-accounts';
@@ -18,6 +18,8 @@ describe('Test request bodies missing one required property', () => {
       op.method === 'POST' && op.schema.body && hasCapability(capability as keyof ApiComponents)
     );
   });
+
+  let accountId: string;
 
   let accountId: string;
 
