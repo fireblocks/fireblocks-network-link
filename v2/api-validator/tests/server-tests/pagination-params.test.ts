@@ -2,6 +2,7 @@ import Client from '../../src/client';
 import { fakeObject } from '../faker';
 import { EndpointSchema, getAllEndpointSchemas } from '../../src/schemas';
 import {
+  ApiComponents,
   ApiError,
   BadRequestError,
   PaginationEndingBefore,
@@ -9,6 +10,7 @@ import {
   PaginationStartingAfter,
   RequestPart,
 } from '../../src/client/generated';
+import {getCapableAccountId, hasCapability} from "../utils/capable-accounts";
 
 type PaginationParams = {
   limit?: PaginationLimit;
@@ -28,6 +30,14 @@ describe('Pagination params tests', () => {
       // optional, thay will never be faked here
       const querystring = fakeObject(schema.querystring);
       const params = fakeObject(schema.params);
+
+      try {
+        if (params !== undefined) {
+          params.accountId = getCapableAccountId(schema.tags[0] as keyof ApiComponents)
+        }
+      } catch (e) {
+        // no capable account, use faked account
+      }
 
       try {
         await operationFunction({ ...params, ...querystring, ...paginationParams });
@@ -75,6 +85,8 @@ describe('Pagination params tests', () => {
 
 function getPaginatedEndpoints(): EndpointSchema[] {
   return getAllEndpointSchemas().filter(
-    (endpoint) => (endpoint.schema.querystring as any)?.properties?.limit
+    (endpoint) =>
+      (endpoint.schema.querystring as any)?.properties?.limit &&
+      hasCapability(endpoint.schema.tags[0] as keyof ApiComponents)
   );
 }
