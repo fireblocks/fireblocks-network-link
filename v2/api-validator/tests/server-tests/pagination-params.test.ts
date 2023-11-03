@@ -36,6 +36,14 @@ describe('Pagination params tests', () => {
       }
 
       try {
+        if (params !== undefined) {
+          params.accountId = getCapableAccountId(schema.tags[0] as keyof ApiComponents)
+        }
+      } catch (e) {
+        // no capable account, use faked account
+      }
+
+      try {
         await operationFunction({ ...params, ...querystring, ...paginationParams });
       } catch (err) {
         if (err instanceof ApiError) {
