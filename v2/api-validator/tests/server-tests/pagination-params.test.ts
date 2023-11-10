@@ -31,12 +31,8 @@ describe('Pagination params tests', () => {
       const querystring = fakeObject(schema.querystring);
       const params = fakeObject(schema.params);
 
-      try {
-        if (params !== undefined) {
-          params.accountId = getCapableAccountId(schema.tags[0] as keyof ApiComponents);
-        }
-      } catch (e) {
-        // no capable account, use faked account
+      if (params !== undefined && Object.prototype.hasOwnProperty.call(params, 'accountId')) {
+        params.accountId = getCapableAccountId(schema.tags[0] as keyof ApiComponents);
       }
 
       try {
