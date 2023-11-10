@@ -28,7 +28,10 @@ describe('Not Found tests', () => {
       if (method === 'POST') {
         requestBody = fakeObject(schema.body);
 
-        if (requestBody?.['idempotencyKey']) {
+        if (
+          requestBody !== undefined &&
+          Object.prototype.hasOwnProperty.call(requestBody, 'idempotencyKey')
+        ) {
           requestBody['idempotencyKey'] = randomUUID();
         }
       }
