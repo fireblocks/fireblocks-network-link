@@ -7,16 +7,13 @@ import type { OrderSide } from './OrderSide';
 import type { OrderTimeInForce } from './OrderTimeInForce';
 import type { PositiveAmount } from './PositiveAmount';
 
-export type OrderCommonProperties = ({
+export type OrderCommonProperties = {
     /**
      * ID of the order book.
      */
     bookId: string;
     side: OrderSide;
     timeInForce: OrderTimeInForce;
-} & ({
     baseAssetQuantity: PositiveAmount;
-} | {
-    quoteAssetQuantity: PositiveAmount;
-}));
+};
 

@@ -375,7 +375,7 @@ export class TradingService {
 
     /**
      * Create a new trading order
-     * Either `baseAssetQuantity` or `quoteAssetQuantity` must always be specified. `quoteAssetPrice` must be specified for limit orders, but cannot be used in market orders.
+     * `quoteAssetPrice` must be specified for limit orders, but cannot be used in market orders.
      * @returns Order Newly created book order details
      * @throws ApiError
      */
