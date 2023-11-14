@@ -52,7 +52,7 @@ describe('Test request bodies missing one required property', () => {
             const badBody = _.cloneDeep(goodBody);
             deleteDeepProperty(badBody, propertyPath);
 
-            if (Object.prototype.hasOwnProperty.call(badBody, 'idempotencyKey')) {
+            if (badBody.hasOwnProperty('idempotencyKey')) {
               badBody['idempotencyKey'] = randomUUID();
             }
 
