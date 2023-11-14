@@ -21,8 +21,6 @@ describe('Test request bodies missing one required property', () => {
 
   let accountId: string;
 
-  let accountId: string;
-
   describe.each(postEndpoints)('$method $url', ({ operationId, url, schema }: EndpointSchema) => {
     const [component] = schema.tags;
     accountId = getCapableAccountId(component as keyof ApiComponents);
