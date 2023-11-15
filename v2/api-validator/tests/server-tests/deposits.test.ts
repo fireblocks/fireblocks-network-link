@@ -122,7 +122,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
           expect(error.status).toBe(400);
           expect(error.body.errorType).toBe(BadRequestError.errorType.UNKNOWN_ASSET);
           expect(error.body.requestPart).toBe(RequestPart.BODY);
-          expect(error.body.propertyName).toBe('/destination/asset/assetId');
+          expect(error.body.propertyName).toBe('/transferMethod/asset/assetId');
         }
       });
 
