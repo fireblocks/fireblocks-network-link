@@ -239,7 +239,8 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
       });
     });
 
-    describe('Disable a deposit address', () => {
+    // Skip this, not supported by Luno
+    describe.skip('Disable a deposit address', () => {
       let accountId;
       let disabledDepositAddress: DepositAddress;
 

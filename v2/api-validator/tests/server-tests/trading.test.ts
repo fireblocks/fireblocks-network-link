@@ -256,7 +256,8 @@ describe.skipIf(noTradingCapability)('Trading API tests', () => {
         expect(error?.body?.errorType).toEqual(BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE);
       });
 
-      it('should be able to cancel a trading order only once', async () => {
+      // Market orders cannot be cancelled on Luno
+      it.skipIf(orderType === "MARKET") ('should be able to cancel a trading order only once', async () => {
         const requestBody: OrderRequest = { ...orderData, idempotencyKey: randomUUID() };
         const order1 = await client.trading.createOrder({ accountId, requestBody });
 
