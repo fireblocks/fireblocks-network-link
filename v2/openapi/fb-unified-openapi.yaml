@@ -2951,7 +2951,6 @@ components:
       properties:
         id:
           type: string
-          format: uuid
         destination:
           $ref: '#/components/schemas/DepositDestination'
         status:
@@ -2998,7 +2997,6 @@ components:
       properties:
         id:
           type: string
-          format: uuid
         balanceAsset:
           $ref: '#/components/schemas/AssetReference'
         balanceAmount:
@@ -3007,7 +3005,6 @@ components:
           $ref: '#/components/schemas/Transfer'
         depositAddressId:
           type: string
-          format: uuid
           description: ID of the deposit address, created by posting /transfers/deposits/addresses
         status:
           $ref: '#/components/schemas/DepositStatus'
@@ -3092,7 +3089,6 @@ components:
       properties:
         id:
           type: string
-          format: uuid
         balanceAsset:
           $ref: '#/components/schemas/AssetReference'
         balanceAmount:
