@@ -2,6 +2,7 @@ import { JsonValue } from 'type-fest';
 import { fakeObject } from '../faker';
 import ApiClient from '../../src/client';
 import { AxiosRequestConfig } from 'axios';
+import { hasCapability } from '../utils/capable-accounts';
 import { getAllEndpointSchemas } from '../../src/schemas';
 import { createSecurityHeaders, SecurityHeaders } from '../../src/client/SecureClient';
 import {
@@ -11,7 +12,6 @@ import {
   RequestPart,
   UnauthorizedError,
 } from '../../src/client/generated';
-import {hasCapability} from "../utils/capable-accounts";
 
 type HeadersGenerator = (options: AxiosRequestConfig) => SecurityHeaders;
 
