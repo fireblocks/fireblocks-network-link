@@ -15,6 +15,7 @@
 - Several fixes to tests that were sending requests to endpoints not supported in 
   server capabilities.
 - Fixes to tests that were incorrectly reusing idempotency keys.
+- Fixes to deposit address creation tests expecting wrong error responses. 
 
 -----
 ## 0.3.0 - 2023-10-19
