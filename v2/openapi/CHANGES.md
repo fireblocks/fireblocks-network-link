@@ -7,13 +7,14 @@
 - Trading orders `quoteAssetQuantity` property was removed. From now clients will
   use only `baseAssetQuantity`. Servers should not return `quoteAssetQuantity` in their
   responses.
-
-- Do not restrict IDs to be UUIDs — now any text could be an ID. 
+- Do not restrict IDs to be UUIDs — now any text could be an ID.
+- Documentation improvements.
 
 ### Bug fixes
 
 - Several fixes to tests that were sending requests to endpoints not supported in 
   server capabilities.
+- Fixes to tests that were incorrectly reusing idempotency keys.
 
 -----
 ## 0.3.0 - 2023-10-19
