@@ -1,5 +1,12 @@
 # Changelog
 
+### Breaking changes
+
+- Trading orders requests can only use `baseAssetQuantity`. The `quoteAssetQuantity`
+  property was removed from `OrderCommonProperties` object. Every endpoint that
+  returns `Order` objects can no longer return the `quoteAssetQuantity` property
+  as well.
+
 ## 0.3.0 - 2023-10-19
 
 ### Breaking changes
