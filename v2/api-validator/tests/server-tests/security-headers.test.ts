@@ -2,9 +2,11 @@ import { JsonValue } from 'type-fest';
 import { fakeObject } from '../faker';
 import ApiClient from '../../src/client';
 import { AxiosRequestConfig } from 'axios';
+import { hasCapability } from '../utils/capable-accounts';
 import { getAllEndpointSchemas } from '../../src/schemas';
 import { createSecurityHeaders, SecurityHeaders } from '../../src/client/SecureClient';
 import {
+  ApiComponents,
   ApiError,
   BadRequestError,
   RequestPart,
@@ -34,7 +36,10 @@ function headersWithoutTimestamp(options: AxiosRequestConfig): SecurityHeaders {
 }
 
 describe('Security header tests', () => {
-  const supportedOpenApiEndpoints = getAllEndpointSchemas();
+  const supportedOpenApiEndpoints = getAllEndpointSchemas().filter((op) => {
+    const [capability] = op.schema.tags;
+    return hasCapability(capability as keyof ApiComponents);
+  });
 
   describe.each(supportedOpenApiEndpoints)('$method $url', ({ method, operationId, schema }) => {
     const sendRequest = async (headersGenerator: HeadersGenerator) => {

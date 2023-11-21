@@ -37,6 +37,48 @@ Fireblocks support team.
 
 # API Usage Guide
 
+## IDs
+
+The API uses textual properties to identify its resources. These properties are called
+`id` when they identify the parent resource. ID property names that are prepended by
+a resource name point to some other resource; for example, `assetId` or `accountId`.
+The IDs must uniquely identify each resource. Other than that the API does not require
+the IDs to have any specific structure.
+
+## Idempotency
+
+Servers implementing the API are expected to be
+[idempotent](https://en.wikipedia.org/wiki/Idempotence). That is, a client should be able 
+to safely retransmit the same request, being confident that the server will execute the
+operation only once.
+
+Request idempotence is achieved by adding `idempotencyKey` property to requests that
+create or modify server resources. All retries of the same requests are sent containing 
+the same unique idempotency key. Clients will never reuse an idempotency key for other
+requests.
+
+When a server encounters a request with a previously used idempotency key, it should act
+as follows:
+
+- If the original request is different from the new one, despite having the same
+  idempotency key, the server should respond with HTTP status code 400 and response
+  body containing a JSON object with the following properties:
+  ```json
+  {
+    "message": "<Description of the error>",
+    "errorType": "idempotency-key-reuse",
+    "propertyName": "idempotencyKey",
+    "requestPart": "body"
+  }
+  ```
+- If the original request was handled with HTTP response status code 2xx or 4xx,
+  the server should return exactly the same response with exactly the same status code.
+- If the original request was handled with HTTP response status code 5xx,
+  the server should handle the new request and consider the new response as the original 
+  response when handling any consecutive retires.
+
+Servers are expected to recognize a retry for 7 days, at least, since the last attempt.
+
 ## Capabilities
 
 The API consists of separate optional components with flexible capabilities. Fireblocks

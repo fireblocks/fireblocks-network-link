@@ -4,7 +4,7 @@ servers:
     url: http://0.0.0.0:8000
 info:
   title: 'Fireblocks Provider Connectivity API v2'
-  version: 0.3.0
+  version: 0.3.1
   x-logo:
     url: 'https://drive.google.com/uc?id=1sseKokeIoh7hnUpV8skWYF_VzncF3slT'
     altText: 'Fireblocks logo'

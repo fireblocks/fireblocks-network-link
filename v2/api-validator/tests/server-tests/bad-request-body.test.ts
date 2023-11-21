@@ -1,20 +1,30 @@
 import _ from 'lodash';
+import { randomUUID } from 'crypto';
 import { JsonValue } from 'type-fest';
 import ApiClient from '../../src/client';
 import { JSONSchemaFaker, Schema } from 'json-schema-faker';
 import { EndpointSchema, getAllEndpointSchemas } from '../../src/schemas';
 import { deleteDeepProperty, getPropertyPaths } from '../property-extraction';
-import { ApiError, BadRequestError, RequestPart } from '../../src/client/generated';
+import { getCapableAccountId, hasCapability } from '../utils/capable-accounts';
+import { ApiComponents, ApiError, BadRequestError, RequestPart } from '../../src/client/generated';
 
 JSONSchemaFaker.option('requiredOnly', true);
 
 describe('Test request bodies missing one required property', () => {
   const client = new ApiClient();
-  const postEndpoints = getAllEndpointSchemas().filter(
-    (op) => op.method === 'POST' && op.schema.body
-  );
+  const postEndpoints = getAllEndpointSchemas().filter((op) => {
+    const [capability] = op.schema.tags;
+    return (
+      op.method === 'POST' && op.schema.body && hasCapability(capability as keyof ApiComponents)
+    );
+  });
+
+  let accountId: string;
 
   describe.each(postEndpoints)('$method $url', ({ operationId, url, schema }: EndpointSchema) => {
+    const [component] = schema.tags;
+    accountId = getCapableAccountId(component as keyof ApiComponents);
+
     // Test multiple times due to the randomness of the generated payloads
     describe.each([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])('Attempt %d', () => {
       const goodBody = JSONSchemaFaker.generate(schema.body as Schema);
@@ -24,7 +34,7 @@ describe('Test request bodies missing one required property', () => {
         const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
 
         try {
-          await operationFunction({ requestBody });
+          await operationFunction({ requestBody, accountId });
         } catch (err) {
           if (err instanceof ApiError) {
             return err;
@@ -41,6 +51,11 @@ describe('Test request bodies missing one required property', () => {
           beforeAll(async () => {
             const badBody = _.cloneDeep(goodBody);
             deleteDeepProperty(badBody, propertyPath);
+
+            if (Object.hasOwn(badBody, 'idempotencyKey')) {
+              badBody['idempotencyKey'] = randomUUID();
+            }
+
             apiError = await sendRequest(badBody);
           });
 

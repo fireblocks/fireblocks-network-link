@@ -261,7 +261,6 @@ components:
       properties:
         id:
           type: string
-          format: uuid
         fromAsset:
           $ref: '#/x-schemas/AssetReference'
         fromAmount:

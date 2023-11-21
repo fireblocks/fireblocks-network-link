@@ -1,7 +1,9 @@
 import Client from '../../src/client';
 import { fakeObject } from '../faker';
 import { EndpointSchema, getAllEndpointSchemas } from '../../src/schemas';
+import { getCapableAccountId, hasCapability } from '../utils/capable-accounts';
 import {
+  ApiComponents,
   ApiError,
   BadRequestError,
   PaginationEndingBefore,
@@ -25,9 +27,13 @@ describe('Pagination params tests', () => {
       const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
 
       // Will fake the required query params. Since pagination params are always
-      // optional, thay will never be faked here
+      // optional, they will never be faked here
       const querystring = fakeObject(schema.querystring);
       const params = fakeObject(schema.params);
+
+      if (params && Object.hasOwn(params, 'accountId')) {
+        params.accountId = getCapableAccountId(schema.tags[0] as keyof ApiComponents);
+      }
 
       try {
         await operationFunction({ ...params, ...querystring, ...paginationParams });
@@ -75,6 +81,8 @@ describe('Pagination params tests', () => {
 
 function getPaginatedEndpoints(): EndpointSchema[] {
   return getAllEndpointSchemas().filter(
-    (endpoint) => (endpoint.schema.querystring as any)?.properties?.limit
+    (endpoint) =>
+      (endpoint.schema.querystring as any)?.properties?.limit &&
+      hasCapability(endpoint.schema.tags[0] as keyof ApiComponents)
   );
 }
