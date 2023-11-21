@@ -416,7 +416,7 @@ paths:
                   baseAssetQuantity: '10'
                   quoteAssetPrice: '20000'
               limitBuyOrder:
-                summary: Buy BTC for at most 20,000 USDC each, up to 200,000 USDC in total
+                summary: Buy 1 BTC for at most 20,000 USDC
                 value:
                   idempotencyKey: '03449d61-0966-481e-b12c-df651451c258'
                   bookId: BTC_USDC

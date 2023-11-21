@@ -1,12 +1,21 @@
 # Changelog
 
-### Breaking changes
+## 0.3.1 - 2023-10-19
 
-- Trading orders requests can only use `baseAssetQuantity`. The `quoteAssetQuantity`
-  property was removed from `OrderCommonProperties` object. Every endpoint that
-  returns `Order` objects can no longer return the `quoteAssetQuantity` property
-  as well.
+### Non-breaking improvements
 
+- Trading orders `quoteAssetQuantity` property was removed. From now clients will
+  use only `baseAssetQuantity`. Servers should not return `quoteAssetQuantity` in their
+  responses.
+
+- Do not restrict IDs to be UUIDs — now any text could be an ID. 
+
+### Bug fixes
+
+- Several fixes to tests that were sending requests to endpoints not supported in 
+  server capabilities.
+
+-----
 ## 0.3.0 - 2023-10-19
 
 ### Breaking changes
