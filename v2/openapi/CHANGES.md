@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.1 - 2023-10-19
+## 0.3.1 - 2023-11-21
 
 ### Non-breaking improvements
 
