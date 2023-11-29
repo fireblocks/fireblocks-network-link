@@ -84,7 +84,7 @@ export async function createDepositAddress(
         message: err.message,
         errorType: BadRequestError.errorType.UNKNOWN_ASSET,
         requestPart: RequestPart.BODY,
-        propertyName: '/destination/asset/assetId',
+        propertyName: '/transferMethod/asset/assetId',
       };
       idempotencyHandler.add(body, 400, response);
       return ErrorFactory.badRequest(reply, response);

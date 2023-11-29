@@ -4,7 +4,7 @@ servers:
     url: http://0.0.0.0:8000
 info:
   title: Fireblocks Provider Connectivity API v2
-  version: 0.3.0
+  version: 0.3.1
   x-logo:
     url: https://drive.google.com/uc?id=1sseKokeIoh7hnUpV8skWYF_VzncF3slT
     altText: Fireblocks logo
@@ -849,7 +849,7 @@ paths:
     post:
       operationId: createOrder
       summary: Create a new trading order
-      description: Either `baseAssetQuantity` or `quoteAssetQuantity` must always be specified. `quoteAssetPrice` must be specified for limit orders, but cannot be used in market orders.
+      description: '`quoteAssetPrice` must be specified for limit orders, but cannot be used in market orders.'
       tags:
         - trading
       parameters:
@@ -876,7 +876,7 @@ paths:
                   baseAssetQuantity: '10'
                   quoteAssetPrice: '20000'
               limitBuyOrder:
-                summary: Buy BTC for at most 20,000 USDC each, up to 200,000 USDC in total
+                summary: Buy 1 BTC for at most 20,000 USDC
                 value:
                   idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
                   bookId: BTC_USDC
@@ -884,7 +884,7 @@ paths:
                   orderType: LIMIT
                   timeInForce: GOOD_TILL_CANCELED
                   quoteAssetPrice: '20000'
-                  quoteAssetQuantity: '200000'
+                  baseAssetQuantity: '1'
               marketBuyOrder:
                 summary: Buy BTC at the market price for 200,000 USDC in total
                 value:
@@ -893,7 +893,7 @@ paths:
                   side: BUY
                   orderType: MARKET
                   timeInForce: GOOD_TILL_CANCELED
-                  quoteAssetQuantity: '200000'
+                  baseAssetQuantity: '1'
               marketSellOrder:
                 summary: Sell 10 BTC at the market
                 value:
@@ -2605,6 +2605,7 @@ components:
             - bookId
             - side
             - timeInForce
+            - baseAssetQuantity
           properties:
             bookId:
               description: ID of the order book.
@@ -2613,19 +2614,8 @@ components:
               $ref: '#/components/schemas/OrderSide'
             timeInForce:
               $ref: '#/components/schemas/OrderTimeInForce'
-        - oneOf:
-            - type: object
-              required:
-                - baseAssetQuantity
-              properties:
-                baseAssetQuantity:
-                  $ref: '#/components/schemas/PositiveAmount'
-            - type: object
-              required:
-                - quoteAssetQuantity
-              properties:
-                quoteAssetQuantity:
-                  $ref: '#/components/schemas/PositiveAmount'
+            baseAssetQuantity:
+              $ref: '#/components/schemas/PositiveAmount'
     OrderSide:
       enum:
         - SELL

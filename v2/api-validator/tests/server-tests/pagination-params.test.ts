@@ -1,6 +1,7 @@
 import Client from '../../src/client';
 import { fakeObject } from '../faker';
 import { EndpointSchema, getAllEndpointSchemas } from '../../src/schemas';
+import { getCapableAccountId, hasCapability } from '../utils/capable-accounts';
 import {
   ApiComponents,
   ApiError,
@@ -10,7 +11,6 @@ import {
   PaginationStartingAfter,
   RequestPart,
 } from '../../src/client/generated';
-import { getCapableAccountId, hasCapability } from '../utils/capable-accounts';
 
 type PaginationParams = {
   limit?: PaginationLimit;
@@ -27,11 +27,11 @@ describe('Pagination params tests', () => {
       const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
 
       // Will fake the required query params. Since pagination params are always
-      // optional, thay will never be faked here
+      // optional, they will never be faked here
       const querystring = fakeObject(schema.querystring);
       const params = fakeObject(schema.params);
 
-      if (params !== undefined && Object.prototype.hasOwnProperty.call(params, 'accountId')) {
+      if (params && Object.hasOwn(params, 'accountId')) {
         params.accountId = getCapableAccountId(schema.tags[0] as keyof ApiComponents);
       }
 

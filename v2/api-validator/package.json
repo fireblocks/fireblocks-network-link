@@ -1,6 +1,6 @@
 {
   "name": "fireblocks-netlink-v2-api-validator",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Fireblocks Network Link v2 API Validator",
   "author": "Fireblocks",
   "license": "Apache-2.0",

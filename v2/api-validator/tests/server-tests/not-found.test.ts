@@ -2,9 +2,9 @@ import { randomUUID } from 'crypto';
 import { JsonValue } from 'type-fest';
 import { fakeObject } from '../faker';
 import Client from '../../src/client';
-import { ApiComponents, ApiError, GeneralError } from '../../src/client/generated';
-import { EndpointSchema, getAllEndpointSchemas } from '../../src/schemas';
 import { hasCapability } from '../utils/capable-accounts';
+import { EndpointSchema, getAllEndpointSchemas } from '../../src/schemas';
+import { ApiComponents, ApiError, GeneralError } from '../../src/client/generated';
 
 describe('Not Found tests', () => {
   describe.each(getParamEndpoints())('$method $url', ({ method, operationId, schema }) => {
@@ -28,10 +28,7 @@ describe('Not Found tests', () => {
       if (method === 'POST') {
         requestBody = fakeObject(schema.body);
 
-        if (
-          requestBody !== undefined &&
-          Object.prototype.hasOwnProperty.call(requestBody, 'idempotencyKey')
-        ) {
+        if (requestBody && Object.hasOwn(requestBody, 'idempotencyKey')) {
           requestBody['idempotencyKey'] = randomUUID();
         }
       }

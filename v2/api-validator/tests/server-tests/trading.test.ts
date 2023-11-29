@@ -363,9 +363,12 @@ function generateValidOrderForBook(
   }
 
   const quoteAssetQuantity = new BigNumber(quote.availableAmount);
-  if (quoteAssetQuantity.isGreaterThanOrEqualTo(defaultQuantityToTrade)) {
+  const minimumQuoteAssetQuantityToTrade = new BigNumber(defaultQuantityToTrade).multipliedBy(
+    new BigNumber(quoteAssetPrice)
+  );
+  if (quoteAssetQuantity.isGreaterThanOrEqualTo(minimumQuoteAssetQuantityToTrade)) {
     order['side'] = OrderSide.BUY;
-    order['quoteAssetQuantity'] = defaultQuantityToTrade;
+    order['baseAssetQuantity'] = defaultQuantityToTrade;
     return order as OrderData;
   }
 }
