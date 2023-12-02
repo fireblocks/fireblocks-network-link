@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Account Linking Partners
-  version: "0.9.4"
+  version: "0.9.5"
   contact:
     email: support@fireblocks.com
   license:
@@ -659,6 +659,13 @@ paths:
           schema:
             type: string
             example: false
+        - name: direction
+          in: query
+          required: false
+          nullable: true
+          description: "If this isn't a sub-transfer, will specify the direction of the transaction to query."
+          schema:
+            $ref: '#/components/schemas/NullableDirection'
         - name: coinSymbol
           in: query
           required: true
@@ -1242,6 +1249,19 @@ components:
         CRYPTO_DEPOSIT
     Direction_for_Withdraw:
       type: string
+      description: >
+        Direction of a transfer:
+
+          * `CRYPTO_DEPOSIT` - A crypto deposit operation
+          * `CRYPTO_WITHDRAWAL` - A crypto withdrawal operation
+      enum:
+        - CRYPTO_DEPOSIT
+        - CRYPTO_WITHDRAWAL
+      example:
+        CRYPTO_WITHDRAWAL
+    NullableDirection:
+      type: string
+      nullable: true
       description: >
         Direction of a transfer:
 
