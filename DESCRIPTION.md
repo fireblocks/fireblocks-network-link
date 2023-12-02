@@ -187,6 +187,10 @@ _Note_ that not all error codes need to be in use!
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+### v0.9.5
+> 02 Dec 2023
+* Added an optional direction param for the transaction history endpoint.
+
 ### v0.9.4
 > 06 August 2023
 * Supporting new networks Chiliz 2.0 and Flare.
