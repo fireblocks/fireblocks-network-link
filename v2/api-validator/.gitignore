@@ -6,4 +6,5 @@ node_modules/
 test-results.json
 test-results.html
 jest-html-reporters-attach/
-
+accounts.json
+capabilities.json

@@ -1110,6 +1110,7 @@ paths:
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
+                        addressCreationPolicy: CanCreate
                       - id: adfc2457-1bb7-40d0-9d46-3cfa2dd3a7e1
                         deposit:
                           asset:
@@ -1117,6 +1118,7 @@ paths:
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
+                        addressCreationPolicy: CanCreate
                       - id: eda3dbb8-ef94-400e-8a6b-2a38302b9505
                         deposit:
                           asset:
@@ -1124,6 +1126,7 @@ paths:
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           nationalCurrencyCode: USD
+                        addressCreationPolicy: CannotCreate
                       - id: b9f471f0-4920-464f-9c6a-97929cc31950
                         deposit:
                           asset:
@@ -1131,6 +1134,7 @@ paths:
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
+                        addressCreationPolicy: CannotCreate
                       - id: 53a36de2-f36f-4301-8292-a0ecc1c32cda
                         deposit:
                           asset:
@@ -1138,6 +1142,7 @@ paths:
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
+                        addressCreationPolicy: CanCreate
                       - id: dd59e6d1-c8ca-4499-8b3f-786ce417ed17
                         deposit:
                           asset:
@@ -1145,6 +1150,7 @@ paths:
                           transferMethod: PublicBlockchain
                         balanceAsset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
+                        addressCreationPolicy: CanCreate
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -1854,6 +1860,8 @@ components:
             - deposit-address-disabled
             - order-not-trading
             - idempotency-key-reuse
+            - deposit-address-creation-is-impossible
+            - unsupported-transfer-method
         propertyName:
           description: Name of property that caused the error.
           type: string
@@ -2965,6 +2973,7 @@ components:
         - id
         - deposit
         - balanceAsset
+        - addressCreationPolicy
       properties:
         id:
           type: string
@@ -2975,6 +2984,8 @@ components:
             - $ref: '#/components/schemas/SwiftCapability'
         balanceAsset:
           $ref: '#/components/schemas/AssetReference'
+        addressCreationPolicy:
+          $ref: '#/components/schemas/DepositAddressCreationPolicy'
     Deposit:
       type: object
       required:
@@ -3155,4 +3166,8 @@ components:
         - pending
         - succeeded
         - failed
+    DepositAddressCreationPolicy:
+      enum:
+        - CanCreate
+        - CannotCreate
   securitySchemes: {}

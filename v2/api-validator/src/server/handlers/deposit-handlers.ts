@@ -14,10 +14,12 @@ import {
   RequestPart,
 } from '../../client/generated';
 import {
+  DepositAddressCreationImpossibleError,
   DepositAddressDisabledError,
   DepositAddressNotFoundError,
   DepositController,
   DepositNotFoundError,
+  UnsupportedTransferMethodError,
 } from '../controllers/deposit-controller';
 
 function validateDepositAddressCreationRequest(
@@ -90,6 +92,22 @@ export async function createDepositAddress(
       return ErrorFactory.badRequest(reply, response);
     }
     throw err;
+  }
+
+  try {
+    controller.validateNewAddressCreationPossibility(body.transferMethod);
+  } catch (err) {
+    if (err instanceof UnsupportedTransferMethodError) {
+      return ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD,
+      });
+    } else if (err instanceof DepositAddressCreationImpossibleError) {
+      return ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.DEPOSIT_ADDRESS_CREATION_IS_IMPOSSIBLE,
+      });
+    }
   }
 
   const depositAddress = controller.depositAddressFromDepositAddressRequest(body);

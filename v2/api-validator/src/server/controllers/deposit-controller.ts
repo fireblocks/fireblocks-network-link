@@ -5,6 +5,7 @@ import { AssetsController } from './assets-controller';
 import {
   Deposit,
   DepositAddress,
+  DepositAddressCreationPolicy,
   DepositAddressCreationRequest,
   DepositAddressStatus,
   DepositCapability,
@@ -32,6 +33,18 @@ export class DepositNotFoundError extends XComError {
 export class DepositAddressDisabledError extends XComError {
   constructor(id: string) {
     super('Deposit address is disabled', { id });
+  }
+}
+
+export class DepositAddressCreationImpossibleError extends XComError {
+  constructor() {
+    super('Deposit address creation is impossible for the current transfer method');
+  }
+}
+
+export class UnsupportedTransferMethodError extends XComError {
+  constructor() {
+    super('Unsupported transfer method');
   }
 }
 
@@ -151,6 +164,24 @@ export class DepositController {
 
     depositAddress.status = DepositAddressStatus.DISABLED;
     return depositAddress;
+  }
+
+  public validateNewAddressCreationPossibility(
+    transferMethod: PublicBlockchainCapability | IbanCapability | SwiftCapability
+  ): void {
+    const depositCapabilities = this.getDepositCapabilities();
+    const relevantDepositCapability = depositCapabilities.find(
+      (capability) => capability.deposit === transferMethod
+    );
+    if (relevantDepositCapability === undefined) {
+      throw new UnsupportedTransferMethodError();
+    } else if (
+      relevantDepositCapability.addressCreationPolicy === DepositAddressCreationPolicy.CANNOT_CREATE
+    ) {
+      throw new DepositAddressCreationImpossibleError();
+    } else {
+      /* all good */
+    }
   }
 }
 

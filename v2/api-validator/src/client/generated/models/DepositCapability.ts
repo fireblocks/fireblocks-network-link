@@ -4,6 +4,7 @@
 /* eslint-disable */
 
 import type { AssetReference } from './AssetReference';
+import type { DepositAddressCreationPolicy } from './DepositAddressCreationPolicy';
 import type { IbanCapability } from './IbanCapability';
 import type { PublicBlockchainCapability } from './PublicBlockchainCapability';
 import type { SwiftCapability } from './SwiftCapability';
@@ -15,5 +16,6 @@ export type DepositCapability = {
     id: string;
     deposit: (PublicBlockchainCapability | IbanCapability | SwiftCapability);
     balanceAsset: AssetReference;
+    addressCreationPolicy: DepositAddressCreationPolicy;
 };
 
