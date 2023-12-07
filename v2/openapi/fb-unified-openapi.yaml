@@ -2968,7 +2968,7 @@ components:
             - $ref: '#/components/schemas/SwiftCapability'
     DepositCapability:
       type: object
-      description: Capability to deposit to a balance asset using a specific transfer capability.
+      description: Capability to deposit to a balance asset using a specific transfer capability. `addressCreationPolicy` determines either a new deposit address can be created with `/accounts/{accountId}/transfers/deposits/addresses` or not.
       required:
         - id
         - deposit
