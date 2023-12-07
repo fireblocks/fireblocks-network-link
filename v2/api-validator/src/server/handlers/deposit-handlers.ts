@@ -105,7 +105,7 @@ export async function createDepositAddress(
     } else if (err instanceof DepositAddressCreationImpossibleError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestError.errorType.DEPOSIT_ADDRESS_CREATION_IS_IMPOSSIBLE,
+        errorType: BadRequestError.errorType.DEPOSIT_ADDRESS_CREATION_NOT_ALLOWED,
       });
     }
   }

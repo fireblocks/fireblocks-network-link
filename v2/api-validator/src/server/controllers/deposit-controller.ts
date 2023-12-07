@@ -17,6 +17,7 @@ import {
 import { Repository } from './repository';
 import { fakeSchemaObject } from '../../schemas';
 import { JSONSchemaFaker } from 'json-schema-faker';
+import _ from 'lodash';
 
 export class DepositAddressNotFoundError extends XComError {
   constructor() {
@@ -48,9 +49,9 @@ export class UnsupportedTransferMethodError extends XComError {
   }
 }
 
-const DEFAULT_CAPABILITIES_COUNT = 5;
-const DEFAULT_DEPOSITS_COUNT = 5;
-const DEFAULT_DEPOSIT_ADDRESSES_COUNT = 5;
+const DEFAULT_CAPABILITIES_COUNT = 50;
+const DEFAULT_DEPOSITS_COUNT = 50;
+const DEFAULT_DEPOSIT_ADDRESSES_COUNT = 50;
 
 export class DepositController {
   private readonly depositRepository = new Repository<Deposit>();
@@ -79,6 +80,7 @@ export class DepositController {
     injectKnownAssetIdsToDeposits(knownAssetIds, this.depositRepository);
     injectKnownAssetIdsToDepositAddresses(knownAssetIds, this.depositAddressRepository);
     injectKnownAssetIdsToDepositCapabilities(knownAssetIds, this.depositCapabilitiesRepository);
+    this.depositCapabilitiesRepository.removeDuplicatesBy((dc) => dc.deposit);
   }
 
   public getDepositCapabilities(): DepositCapability[] {
@@ -170,8 +172,8 @@ export class DepositController {
     transferMethod: PublicBlockchainCapability | IbanCapability | SwiftCapability
   ): void {
     const depositCapabilities = this.getDepositCapabilities();
-    const relevantDepositCapability = depositCapabilities.find(
-      (capability) => capability.deposit === transferMethod
+    const relevantDepositCapability = depositCapabilities.find((capability) =>
+      _.isEqual(capability.deposit, transferMethod)
     );
     if (relevantDepositCapability === undefined) {
       throw new UnsupportedTransferMethodError();

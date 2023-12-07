@@ -607,7 +607,7 @@ components:
             - deposit-address-disabled
             - order-not-trading
             - idempotency-key-reuse
-            - deposit-address-creation-is-impossible
+            - deposit-address-creation-not-allowed
             - unsupported-transfer-method
         propertyName:
           description: Name of property that caused the error.
