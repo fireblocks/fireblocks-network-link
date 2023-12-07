@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Account Linking Partners
-  version: "0.9.5"
+  version: "0.9.6"
   contact:
     email: support@fireblocks.com
   license:
@@ -1091,6 +1091,9 @@ components:
         - MARGIN
         - FUTURES
         - OPTIONS
+        - MARGIN_CROSS
+        - USDT_FUTURES
+        - COIN_FUTURES
       example:
         MARGIN
     Account_Type_2:
@@ -1103,6 +1106,9 @@ components:
         - MARGIN
         - FUTURES
         - OPTIONS
+        - MARGIN_CROSS
+        - USDT_FUTURES
+        - COIN_FUTURES
       example:
         SPOT
     Mainnet_Networks:
