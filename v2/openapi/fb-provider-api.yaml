@@ -67,6 +67,7 @@ paths:
                       transfersBlockchain: "*"
                       transfersFiat: "*"
                       transfersPeerAccounts: "*"
+                      transfersInternal: "*"
                       trading: "*"
                       liquidity: "*"
                 allAccountsSupportSomeCapabilities:
@@ -675,6 +676,8 @@ components:
         transfersFiat:
           $ref: '#/components/schemas/AccountsSet'
         transfersPeerAccounts:
+          $ref: '#/components/schemas/AccountsSet'
+        transfersInternal:
           $ref: '#/components/schemas/AccountsSet'
         trading:
           $ref: '#/components/schemas/AccountsSet'

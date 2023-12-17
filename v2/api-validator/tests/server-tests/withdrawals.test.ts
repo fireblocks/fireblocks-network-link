@@ -9,12 +9,14 @@ import {
   AssetBalance,
   BadRequestError,
   BlockchainWithdrawalRequest,
-  CrossAccountTransferCapability,
-  CrossAccountWithdrawalRequest,
   FiatWithdrawalRequest,
   IbanCapability,
+  InternalTransferCapability,
+  InternalWithdrawalRequest,
   Layer1Cryptocurrency,
   NationalCurrencyCode,
+  PeerAccountTransferCapability,
+  PeerAccountWithdrawalRequest,
   PublicBlockchainCapability,
   SwiftCapability,
   Withdrawal,
@@ -97,7 +99,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
       if (noTransfersSubaccountCapability) {
         return [];
       }
-      const response = await client.accounts.getSubAccountWithdrawals({
+      const response = await client.transfersInternal.getSubAccountWithdrawals({
         accountId,
         limit,
         startingAfter,
@@ -215,7 +217,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         for (const withdrawal of withdrawals) {
           if (
             withdrawal.destination.transferMethod ===
-            CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER
+            InternalTransferCapability.transferMethod.INTERNAL_TRANSFER
           ) {
             expect(withdrawal).toSatisfy(existsInSubAccountWithdrawals);
           } else {
@@ -279,7 +281,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           for (const withdrawal of withdrawals) {
             if (
               withdrawal.destination.transferMethod ===
-              CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
+              PeerAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
             ) {
               expect(withdrawal).toSatisfy(existsInPeerAccountWithdrawals);
             } else {
@@ -320,7 +322,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           const subAccountCapabilities = capabilities.filter(
             (capability) =>
               capability.withdrawal.transferMethod ===
-              CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER
+              InternalTransferCapability.transferMethod.INTERNAL_TRANSFER
           );
 
           for (const capability of subAccountCapabilities) {
@@ -334,7 +336,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
               continue;
             }
 
-            const requestBody: CrossAccountWithdrawalRequest = {
+            const requestBody: InternalWithdrawalRequest = {
               idempotencyKey: randomUUID(),
               balanceAmount: minWithdrawalAmount,
               balanceAsset: capability.balanceAsset,
@@ -342,10 +344,10 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                 ...subAccountDestinationConfig,
                 amount: minWithdrawalAmount,
                 asset: capability.withdrawal.asset,
-                transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,
+                transferMethod: InternalTransferCapability.transferMethod.INTERNAL_TRANSFER,
               },
             };
-            const withdrawal = await client.accounts.createSubAccountWithdrawal({
+            const withdrawal = await client.transfersInternal.createSubAccountWithdrawal({
               accountId,
               requestBody,
             });
@@ -356,14 +358,14 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
 
       describe('Idempotency', () => {
         let accountId: string;
-        let withdrawalRequest: CrossAccountWithdrawalRequest;
+        let withdrawalRequest: InternalWithdrawalRequest;
         let withdrawalResponse: Withdrawal | ApiError;
 
         const getSubAccountWithdrawalResponse = async (
-          requestBody: CrossAccountWithdrawalRequest
+          requestBody: InternalWithdrawalRequest
         ): Promise<Withdrawal | ApiError> => {
           try {
-            return await client.accounts.createSubAccountWithdrawal({
+            return await client.transfersInternal.createSubAccountWithdrawal({
               accountId,
               requestBody,
             });
@@ -386,7 +388,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
               ...subAccountDestinationConfig,
               amount: '1',
               asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-              transferMethod: CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER,
+              transferMethod: InternalTransferCapability.transferMethod.INTERNAL_TRANSFER,
             },
           };
           withdrawalResponse = await getSubAccountWithdrawalResponse(withdrawalRequest);
@@ -623,7 +625,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           const subAccountCapabilities = capabilities.filter(
             (capability) =>
               capability.withdrawal.transferMethod ===
-              CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
+              PeerAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
           );
 
           for (const capability of subAccountCapabilities) {
@@ -634,7 +636,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
               assetBalance &&
               Number(assetBalance.availableAmount) > Number(minWithdrawalAmount)
             ) {
-              const requestBody: CrossAccountWithdrawalRequest = {
+              const requestBody: PeerAccountWithdrawalRequest = {
                 idempotencyKey: randomUUID(),
                 balanceAmount: minWithdrawalAmount,
                 balanceAsset: capability.balanceAsset,
@@ -643,7 +645,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                   amount: minWithdrawalAmount,
                   asset: capability.withdrawal.asset,
                   transferMethod:
-                    CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER,
+                    PeerAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER,
                 },
               };
               const withdrawal = await client.transfersPeerAccounts.createPeerAccountWithdrawal({
@@ -658,11 +660,11 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
 
       describe('Idempotency', () => {
         let accountId: string;
-        let withdrawalRequest: CrossAccountWithdrawalRequest;
+        let withdrawalRequest: PeerAccountWithdrawalRequest;
         let withdrawalResponse: Withdrawal | ApiError;
 
         const getPeerAccountWithdrawalResponse = async (
-          requestBody: CrossAccountWithdrawalRequest
+          requestBody: PeerAccountWithdrawalRequest
         ): Promise<Withdrawal | ApiError> => {
           try {
             return await client.transfersPeerAccounts.createPeerAccountWithdrawal({
@@ -688,7 +690,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
               ...peerAccountDestinationConfig,
               amount: '1',
               asset: { nationalCurrencyCode: NationalCurrencyCode.USD },
-              transferMethod: CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER,
+              transferMethod: PeerAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER,
             },
           };
           withdrawalResponse = await getPeerAccountWithdrawalResponse(withdrawalRequest);

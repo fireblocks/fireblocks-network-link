@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CrossAccountTransferCapability } from './CrossAccountTransferCapability';
+import type { InternalTransferCapability } from './InternalTransferCapability';
 import type { PositiveAmount } from './PositiveAmount';
 
-export type CrossAccountTransferDestination = (CrossAccountTransferCapability & {
+export type InternalTransferDestination = (InternalTransferCapability & {
     accountId: string;
     amount: PositiveAmount;
 });

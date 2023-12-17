@@ -15,13 +15,15 @@ import {
 } from './request-types';
 import {
   BlockchainWithdrawalRequest,
-  CrossAccountWithdrawalRequest,
   FiatWithdrawalRequest,
+  InternalWithdrawalRequest,
+  PeerAccountWithdrawalRequest,
   Withdrawal,
   WithdrawalCapability,
 } from '../../client/generated';
 
-type CrossAccountWithdrawalRequestBody = { Body: CrossAccountWithdrawalRequest };
+type PeerAccountWithdrawalRequestBody = { Body: PeerAccountWithdrawalRequest };
+type InternalWithdrawalRequestBody = { Body: InternalWithdrawalRequest };
 type BlockchainWithdrawalRequestBody = { Body: BlockchainWithdrawalRequest };
 type FiatWithdrawalRequestBody = { Body: FiatWithdrawalRequest };
 
@@ -195,11 +197,11 @@ export async function getFiatWithdrawals(
  */
 
 const subAccountIdempotencyHandler = new IdempotencyHandler<
-  CrossAccountWithdrawalRequest,
+  InternalWithdrawalRequest,
   Withdrawal
 >();
 const peerAccountIdempotencyHandler = new IdempotencyHandler<
-  CrossAccountWithdrawalRequest,
+  PeerAccountWithdrawalRequest,
   Withdrawal
 >();
 const blockchainIdempotencyHandler = new IdempotencyHandler<
@@ -209,7 +211,7 @@ const blockchainIdempotencyHandler = new IdempotencyHandler<
 const fiatIdempotencyHandler = new IdempotencyHandler<FiatWithdrawalRequest, Withdrawal>();
 
 export async function createSubAccountWithdrawal(
-  { body, params }: FastifyRequest<CrossAccountWithdrawalRequestBody & AccountIdPathParam>,
+  { body, params }: FastifyRequest<InternalWithdrawalRequestBody & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<Withdrawal> {
   const { accountId } = params;
@@ -230,7 +232,7 @@ export async function createSubAccountWithdrawal(
 }
 
 export async function createPeerAccountWithdrawal(
-  { body, params }: FastifyRequest<CrossAccountWithdrawalRequestBody & AccountIdPathParam>,
+  { body, params }: FastifyRequest<PeerAccountWithdrawalRequestBody & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<Withdrawal> {
   const { accountId } = params;

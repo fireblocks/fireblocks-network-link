@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CrossAccountTransfer } from './CrossAccountTransfer';
+import type { PeerAccountTransfer } from './PeerAccountTransfer';
 import type { WithdrawalCommonProperties } from './WithdrawalCommonProperties';
 
-export type CrossAccountWithdrawal = (WithdrawalCommonProperties & {
-    destination: CrossAccountTransfer;
+export type PeerAccountWithdrawal = (WithdrawalCommonProperties & {
+    destination: PeerAccountTransfer;
 });
 

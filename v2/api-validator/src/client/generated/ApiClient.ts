@@ -15,6 +15,7 @@ import { TradingService } from './services/TradingService';
 import { TransfersService } from './services/TransfersService';
 import { TransfersBlockchainService } from './services/TransfersBlockchainService';
 import { TransfersFiatService } from './services/TransfersFiatService';
+import { TransfersInternalService } from './services/TransfersInternalService';
 import { TransfersPeerAccountsService } from './services/TransfersPeerAccountsService';
 
 type HttpRequestConstructor = new (config: OpenAPIConfig) => BaseHttpRequest;
@@ -30,6 +31,7 @@ export class ApiClient {
     public readonly transfers: TransfersService;
     public readonly transfersBlockchain: TransfersBlockchainService;
     public readonly transfersFiat: TransfersFiatService;
+    public readonly transfersInternal: TransfersInternalService;
     public readonly transfersPeerAccounts: TransfersPeerAccountsService;
 
     public readonly request: BaseHttpRequest;
@@ -56,6 +58,7 @@ export class ApiClient {
         this.transfers = new TransfersService(this.request);
         this.transfersBlockchain = new TransfersBlockchainService(this.request);
         this.transfersFiat = new TransfersFiatService(this.request);
+        this.transfersInternal = new TransfersInternalService(this.request);
         this.transfersPeerAccounts = new TransfersPeerAccountsService(this.request);
     }
 }
