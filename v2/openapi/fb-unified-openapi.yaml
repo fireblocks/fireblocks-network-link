@@ -37,6 +37,8 @@ tags:
     description: National currency fund transfers.
   - name: transfersPeerAccounts
     description: Transfers to a peer account managed by the same provider.
+  - name: transfersInternal
+    description: Transfers to a sub account in the same account.
 paths:
   /capabilities:
     get:
@@ -72,6 +74,7 @@ paths:
                       transfersBlockchain: '*'
                       transfersFiat: '*'
                       transfersPeerAccounts: '*'
+                      transfersInternal: '*'
                       trading: '*'
                       liquidity: '*'
                 allAccountsSupportSomeCapabilities:
@@ -1387,7 +1390,7 @@ paths:
                   withdrawals:
                     type: array
                     items:
-                      $ref: '#/components/schemas/CrossAccountWithdrawal'
+                      $ref: '#/components/schemas/PeerAccountWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -1414,14 +1417,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CrossAccountWithdrawalRequest'
+              $ref: '#/components/schemas/PeerAccountWithdrawalRequest'
       responses:
         '201':
           description: New withdrawal has been successfully created.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CrossAccountWithdrawal'
+                $ref: '#/components/schemas/PeerAccountWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -1435,7 +1438,7 @@ paths:
       operationId: getSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
       tags:
-        - accounts
+        - transfersInternal
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1459,7 +1462,7 @@ paths:
                   withdrawals:
                     type: array
                     items:
-                      $ref: '#/components/schemas/CrossAccountWithdrawal'
+                      $ref: '#/components/schemas/InternalWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -1473,7 +1476,7 @@ paths:
       summary: Create new transfer to another sub-account
       description: Transfers assets between different sub-accounts of the same user. Should reject any withdrawals that are not sub-account transfers.
       tags:
-        - accounts
+        - transfersInternal
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1486,14 +1489,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CrossAccountWithdrawalRequest'
+              $ref: '#/components/schemas/InternalWithdrawalRequest'
       responses:
         '201':
           description: New withdrawal has been successfully created.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CrossAccountWithdrawal'
+                $ref: '#/components/schemas/InternalWithdrawal'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -1928,6 +1931,8 @@ components:
         transfersFiat:
           $ref: '#/components/schemas/AccountsSet'
         transfersPeerAccounts:
+          $ref: '#/components/schemas/AccountsSet'
+        transfersInternal:
           $ref: '#/components/schemas/AccountsSet'
         trading:
           $ref: '#/components/schemas/AccountsSet'
@@ -2880,7 +2885,18 @@ components:
           properties:
             blockchainTxId:
               type: string
-    CrossAccountTransferCapability:
+    PeerAccountTransferCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/AssetReference'
+        transferMethod:
+          enum:
+            - PeerAccountTransfer
+    InternalTransferCapability:
       type: object
       required:
         - asset
@@ -2891,27 +2907,62 @@ components:
         transferMethod:
           enum:
             - InternalTransfer
-            - PeerAccountTransfer
-    CrossAccountTransferDestination:
+    PeerAccountTransferAddress:
       type: object
       allOf:
-        - $ref: '#/components/schemas/CrossAccountTransferCapability'
+        - $ref: '#/components/schemas/PeerAccountTransferCapability'
         - type: object
           required:
             - accountId
-            - amount
           properties:
             accountId:
               type: string
-            amount:
-              $ref: '#/components/schemas/PositiveAmount'
-    CrossAccountTransfer:
+    PeerAccountTransferDestination:
       type: object
       allOf:
-        - $ref: '#/components/schemas/CrossAccountTransferDestination'
+        - $ref: '#/components/schemas/PeerAccountTransferAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    InternalTransferAddress:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/InternalTransferCapability'
+        - type: object
+          required:
+            - accountId
+          properties:
+            accountId:
+              type: string
+    InternalTransferDestination:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/InternalTransferAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    PeerAccountTransfer:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/PeerAccountTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    InternalTransfer:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/InternalTransferDestination'
     TransferCapability:
       oneOf:
-        - $ref: '#/components/schemas/CrossAccountTransferCapability'
+        - $ref: '#/components/schemas/PeerAccountTransferCapability'
+        - $ref: '#/components/schemas/InternalTransferCapability'
         - $ref: '#/components/schemas/PublicBlockchainCapability'
         - $ref: '#/components/schemas/IbanCapability'
         - $ref: '#/components/schemas/SwiftCapability'
@@ -2926,7 +2977,8 @@ components:
         - $ref: '#/components/schemas/OtherFiatTransfer'
     Transfer:
       oneOf:
-        - $ref: '#/components/schemas/CrossAccountTransfer'
+        - $ref: '#/components/schemas/PeerAccountTransfer'
+        - $ref: '#/components/schemas/InternalTransfer'
         - $ref: '#/components/schemas/PublicBlockchainTransaction'
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
@@ -3067,7 +3119,7 @@ components:
               $ref: '#/components/schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
-    CrossAccountWithdrawalRequest:
+    PeerAccountWithdrawalRequest:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
@@ -3078,7 +3130,19 @@ components:
             balanceAsset:
               $ref: '#/components/schemas/AssetReference'
             destination:
-              $ref: '#/components/schemas/CrossAccountTransferDestination'
+              $ref: '#/components/schemas/PeerAccountTransferDestination'
+    InternalWithdrawalRequest:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
+        - type: object
+          required:
+            - balanceAsset
+            - destination
+          properties:
+            balanceAsset:
+              $ref: '#/components/schemas/AssetReference'
+            destination:
+              $ref: '#/components/schemas/InternalTransferDestination'
     WithdrawalCommonProperties:
       type: object
       required:
@@ -3126,7 +3190,7 @@ components:
           properties:
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransaction'
-    CrossAccountWithdrawal:
+    PeerAccountWithdrawal:
       allOf:
         - $ref: '#/components/schemas/WithdrawalCommonProperties'
         - type: object
@@ -3134,10 +3198,20 @@ components:
             - destination
           properties:
             destination:
-              $ref: '#/components/schemas/CrossAccountTransfer'
+              $ref: '#/components/schemas/PeerAccountTransfer'
+    InternalWithdrawal:
+      allOf:
+        - $ref: '#/components/schemas/WithdrawalCommonProperties'
+        - type: object
+          required:
+            - destination
+          properties:
+            destination:
+              $ref: '#/components/schemas/InternalTransfer'
     Withdrawal:
       oneOf:
-        - $ref: '#/components/schemas/CrossAccountWithdrawal'
+        - $ref: '#/components/schemas/PeerAccountWithdrawal'
+        - $ref: '#/components/schemas/InternalWithdrawal'
         - $ref: '#/components/schemas/BlockchainWithdrawal'
         - $ref: '#/components/schemas/FiatWithdrawal'
     WithdrawalEvent:

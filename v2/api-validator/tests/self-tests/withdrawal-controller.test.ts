@@ -1,5 +1,5 @@
 import { fakeSchemaObject } from '../../src/schemas';
-import { CrossAccountWithdrawalRequest, Withdrawal } from '../../src/client/generated';
+import { PeerAccountWithdrawalRequest, Withdrawal } from '../../src/client/generated';
 import { WithdrawalController } from '../../src/server/controllers/withdrawal-controller';
 import _ from 'lodash';
 
@@ -22,8 +22,8 @@ describe('Withdrawal controller', () => {
     let withdrawal: Withdrawal;
     beforeAll(() => {
       const withdrawalRequest = fakeSchemaObject(
-        'CrossAccountWithdrawalRequest'
-      ) as CrossAccountWithdrawalRequest;
+        'PeerAccountWithdrawalRequest'
+      ) as PeerAccountWithdrawalRequest;
       withdrawal = controller.createWithdrawal(withdrawalRequest);
     });
     it('should add withdrawal to account withdrawals', () => {

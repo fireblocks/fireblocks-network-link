@@ -2,22 +2,22 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { PeerAccountWithdrawal } from '../models/PeerAccountWithdrawal';
-import type { PeerAccountWithdrawalRequest } from '../models/PeerAccountWithdrawalRequest';
+import type { InternalWithdrawal } from '../models/InternalWithdrawal';
+import type { InternalWithdrawalRequest } from '../models/InternalWithdrawalRequest';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 
-export class TransfersPeerAccountsService {
+export class TransfersInternalService {
 
     constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
-     * Get list of withdrawals to peer accounts, sorted by creation time
+     * Get list of withdrawals to sub-accounts, sorted by creation time
      * @returns any List of withdrawals.
      * @throws ApiError
      */
-    public getPeerAccountWithdrawals({
+    public getSubAccountWithdrawals({
         xFbapiKey,
         xFbapiNonce,
         xFbapiSignature,
@@ -66,11 +66,11 @@ export class TransfersPeerAccountsService {
          */
         order?: 'asc' | 'desc',
     }): CancelablePromise<{
-        withdrawals: Array<PeerAccountWithdrawal>;
+        withdrawals: Array<InternalWithdrawal>;
     }> {
         return this.httpRequest.request({
             method: 'GET',
-            url: '/accounts/{accountId}/transfers/withdrawals/peeraccount',
+            url: '/accounts/{accountId}/transfers/withdrawals/subaccount',
             path: {
                 'accountId': accountId,
             },
@@ -94,12 +94,12 @@ export class TransfersPeerAccountsService {
     }
 
     /**
-     * Create new withdrawal to a peer account
-     * Should reject any non peer acount withdrawal request.
-     * @returns PeerAccountWithdrawal New withdrawal has been successfully created.
+     * Create new transfer to another sub-account
+     * Transfers assets between different sub-accounts of the same user. Should reject any withdrawals that are not sub-account transfers.
+     * @returns InternalWithdrawal New withdrawal has been successfully created.
      * @throws ApiError
      */
-    public createPeerAccountWithdrawal({
+    public createSubAccountWithdrawal({
         xFbapiKey,
         xFbapiNonce,
         xFbapiSignature,
@@ -131,11 +131,11 @@ export class TransfersPeerAccountsService {
         /**
          * Withdrawal details
          */
-        requestBody: PeerAccountWithdrawalRequest,
-    }): CancelablePromise<PeerAccountWithdrawal> {
+        requestBody: InternalWithdrawalRequest,
+    }): CancelablePromise<InternalWithdrawal> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/accounts/{accountId}/transfers/withdrawals/peeraccount',
+            url: '/accounts/{accountId}/transfers/withdrawals/subaccount',
             path: {
                 'accountId': accountId,
             },
