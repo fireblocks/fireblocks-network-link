@@ -5,15 +5,14 @@
 
 import type { AssetReference } from './AssetReference';
 
-export type CrossAccountTransferCapability = {
+export type PeerAccountTransferCapability = {
     asset: AssetReference;
-    transferMethod: CrossAccountTransferCapability.transferMethod;
+    transferMethod: PeerAccountTransferCapability.transferMethod;
 };
 
-export namespace CrossAccountTransferCapability {
+export namespace PeerAccountTransferCapability {
 
     export enum transferMethod {
-        INTERNAL_TRANSFER = 'InternalTransfer',
         PEER_ACCOUNT_TRANSFER = 'PeerAccountTransfer',
     }
 

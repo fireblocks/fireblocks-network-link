@@ -21,6 +21,7 @@ import {
   TradingService,
   TransfersBlockchainService,
   TransfersFiatService,
+  TransfersInternalService,
   TransfersPeerAccountsService,
   TransfersService,
 } from './generated';
@@ -93,6 +94,7 @@ export class SecureClient {
   public readonly transfersBlockchain: SecureService<TransfersBlockchainService>;
   public readonly transfersFiat: SecureService<TransfersFiatService>;
   public readonly transfersPeerAccounts: SecureService<TransfersPeerAccountsService>;
+  public readonly transfersInternal: SecureService<TransfersInternalService>;
 
   private readonly request: BaseHttpRequest;
 
@@ -119,6 +121,7 @@ export class SecureClient {
     this.transfersPeerAccounts = stripSecurityHeaderArgs(
       new TransfersPeerAccountsService(this.request)
     );
+    this.transfersInternal = stripSecurityHeaderArgs(new TransfersInternalService(this.request));
   }
 
   public async cacheCapabilities(): Promise<void> {

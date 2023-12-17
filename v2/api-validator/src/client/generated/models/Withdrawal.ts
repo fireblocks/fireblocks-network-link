@@ -4,8 +4,9 @@
 /* eslint-disable */
 
 import type { BlockchainWithdrawal } from './BlockchainWithdrawal';
-import type { CrossAccountWithdrawal } from './CrossAccountWithdrawal';
 import type { FiatWithdrawal } from './FiatWithdrawal';
+import type { InternalWithdrawal } from './InternalWithdrawal';
+import type { PeerAccountWithdrawal } from './PeerAccountWithdrawal';
 
-export type Withdrawal = (CrossAccountWithdrawal | BlockchainWithdrawal | FiatWithdrawal);
+export type Withdrawal = (PeerAccountWithdrawal | InternalWithdrawal | BlockchainWithdrawal | FiatWithdrawal);
 

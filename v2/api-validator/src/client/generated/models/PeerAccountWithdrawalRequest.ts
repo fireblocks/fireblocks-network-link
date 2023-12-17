@@ -4,11 +4,11 @@
 /* eslint-disable */
 
 import type { AssetReference } from './AssetReference';
-import type { CrossAccountTransferDestination } from './CrossAccountTransferDestination';
+import type { PeerAccountTransferDestination } from './PeerAccountTransferDestination';
 import type { WithdrawalRequestCommonProperties } from './WithdrawalRequestCommonProperties';
 
-export type CrossAccountWithdrawalRequest = (WithdrawalRequestCommonProperties & {
+export type PeerAccountWithdrawalRequest = (WithdrawalRequestCommonProperties & {
     balanceAsset: AssetReference;
-    destination: CrossAccountTransferDestination;
+    destination: PeerAccountTransferDestination;
 });
 
