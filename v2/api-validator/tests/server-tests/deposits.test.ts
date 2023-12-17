@@ -159,39 +159,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
           expect(error.body.propertyName).toBe('/transferMethod/asset/assetId');
         }
       });
-
-      function testUnknownTransferMethod(
-        fakeCapability: PublicBlockchainCapability | IbanCapability | SwiftCapability
-      ) {
-        return async () => {
-          const requestBody: DepositAddressCreationRequest = {
-            idempotencyKey: randomUUID(),
-            transferMethod: fakeCapability,
-          };
-          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
-            if (capabilities.some((dc) => _.isEqual(dc.deposit, fakeCapability))) {
-              continue;
-            }
-            const error = await getCreateDepositAddressFailureResult(accountId, requestBody);
-
-            expect(error.status).toBe(400);
-            expect(error.body.errorType).toBe(
-              BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD
-            );
-          }
-        };
-      }
-
-      const ITERATIONS_NUMBER = 20;
-      it.each(range(1, ITERATIONS_NUMBER))(
-        'should fail when using an unknown IBAN transfer method - attempt %d',
-        testUnknownTransferMethod(fakeSchemaObject('IbanCapability') as IbanCapability)
-      );
-
-      it.each(range(1, ITERATIONS_NUMBER))(
-        'should fail when using an unknown Swift transfer method - attempt %d',
-        testUnknownTransferMethod(fakeSchemaObject('SwiftCapability') as SwiftCapability)
-      );
+      const ITERATIONS_NUMBER = 10;
 
       const fakeBlockchainCapability = fakeSchemaObject(
         'PublicBlockchainCapability'
@@ -199,9 +167,32 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
       fakeBlockchainCapability.asset = fakeSchemaObject(
         'NativeCryptocurrency'
       ) as NativeCryptocurrency;
-      it.each(range(1, ITERATIONS_NUMBER))(
-        'should fail when using an unknown Public blockchain transfer method - attempt %d',
-        testUnknownTransferMethod(fakeBlockchainCapability)
+      // Test multiple times due to the randomness of the generated transfer method
+      describe.each(range(1, ITERATIONS_NUMBER))(
+        'should fail when using an a unknown transfer method - attempt %d',
+        () => {
+          it.each([
+            fakeSchemaObject('IbanCapability') as IbanCapability,
+            fakeSchemaObject('SwiftCapability') as SwiftCapability,
+            fakeBlockchainCapability,
+          ])('should fail when using an unknown %s transfer method', async (fakeCapability) => {
+            const requestBody: DepositAddressCreationRequest = {
+              idempotencyKey: randomUUID(),
+              transferMethod: fakeCapability,
+            };
+            for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+              if (capabilities.some((dc) => _.isEqual(dc.deposit, fakeCapability))) {
+                continue;
+              }
+              const error = await getCreateDepositAddressFailureResult(accountId, requestBody);
+
+              expect(error.status).toBe(400);
+              expect(error.body.errorType).toBe(
+                BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD
+              );
+            }
+          });
+        }
       );
 
       describe('Using the same idempotency key', () => {
