@@ -3,11 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CrossAccountTransferCapability } from './CrossAccountTransferCapability';
+import type { PeerAccountTransferAddress } from './PeerAccountTransferAddress';
 import type { PositiveAmount } from './PositiveAmount';
 
-export type CrossAccountTransferDestination = (CrossAccountTransferCapability & {
-    accountId: string;
+export type PeerAccountTransferDestination = (PeerAccountTransferAddress & {
     amount: PositiveAmount;
 });
 

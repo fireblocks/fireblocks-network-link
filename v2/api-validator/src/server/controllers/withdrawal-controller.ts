@@ -7,10 +7,12 @@ import { JSONSchemaFaker } from 'json-schema-faker';
 import { AssetsController } from './assets-controller';
 import {
   BlockchainWithdrawalRequest,
-  CrossAccountTransferCapability,
-  CrossAccountWithdrawalRequest,
   FiatWithdrawalRequest,
   IbanCapability,
+  InternalTransferCapability,
+  InternalWithdrawalRequest,
+  PeerAccountTransferCapability,
+  PeerAccountWithdrawalRequest,
   PublicBlockchainCapability,
   SwiftCapability,
   Withdrawal,
@@ -21,7 +23,8 @@ import {
 export type WithdrawalRequest =
   | FiatWithdrawalRequest
   | BlockchainWithdrawalRequest
-  | CrossAccountWithdrawalRequest;
+  | PeerAccountWithdrawalRequest
+  | InternalWithdrawalRequest;
 
 type Order = 'asc' | 'desc';
 
@@ -90,7 +93,7 @@ export class WithdrawalController {
     return withdrawals.filter(
       (withdrawal) =>
         withdrawal.destination.transferMethod ===
-        CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER
+        InternalTransferCapability.transferMethod.INTERNAL_TRANSFER
     );
   }
 
@@ -99,7 +102,7 @@ export class WithdrawalController {
     return withdrawals.filter(
       (withdrawal) =>
         withdrawal.destination.transferMethod ===
-        CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
+        PeerAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
     );
   }
 
