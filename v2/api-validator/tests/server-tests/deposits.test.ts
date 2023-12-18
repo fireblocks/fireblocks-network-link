@@ -9,12 +9,18 @@ import {
   BadRequestError,
   Deposit,
   DepositAddress,
+  DepositAddressCreationPolicy,
   DepositAddressCreationRequest,
   DepositAddressStatus,
   DepositCapability,
+  IbanCapability,
+  NativeCryptocurrency,
   PublicBlockchainCapability,
   RequestPart,
+  SwiftCapability,
 } from '../../src/client/generated';
+import { fakeSchemaObject } from '../../src/schemas';
+import _, { range } from 'lodash';
 
 const noTransfersCapability = !hasCapability('transfers');
 const accountIds = getAllCapableAccountIds('transfers');
@@ -34,12 +40,19 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
     return response.capabilities;
   };
 
-  const findFirstAccountCapability = ():
+  const findFirstAccountCapabilityWithCanCreatePolicy = ():
     | { accountId: string; capability: DepositCapability }
-    | undefined => {
+    | undefined =>
+    findFirstAccountCapability(
+      (capability) => capability.addressCreationPolicy === DepositAddressCreationPolicy.CAN_CREATE
+    );
+  const findFirstAccountCapability = (
+    condition: (capability: DepositCapability) => boolean
+  ): { accountId: string; capability: DepositCapability } | undefined => {
     for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
-      if (capabilities.length) {
-        return { accountId, capability: capabilities[0] };
+      const capability = capabilities.find(condition);
+      if (capability !== undefined) {
+        return { accountId, capability: capability };
       }
     }
   };
@@ -82,9 +95,11 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
     };
 
     describe('Create new deposit address', () => {
-      it('should succeed with every listed capability', async () => {
+      it('should succeed with every listed capability with CAN_CREATE deposit address creation policy', async () => {
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
-          for (const capability of capabilities) {
+          for (const capability of capabilities.filter(
+            (dc) => dc.addressCreationPolicy === DepositAddressCreationPolicy.CAN_CREATE
+          )) {
             try {
               const depositAddress = await client.transfers.createDepositAddress({
                 accountId,
@@ -108,6 +123,25 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
         }
       });
 
+      it('should fail with every listed capability with CANNOT_CREATE deposit address creation policy', async () => {
+        for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+          for (const capability of capabilities.filter(
+            (dc) => dc.addressCreationPolicy === DepositAddressCreationPolicy.CANNOT_CREATE
+          )) {
+            const requestBody: DepositAddressCreationRequest = {
+              idempotencyKey: capability.id,
+              transferMethod: capability.deposit,
+            };
+            const error = await getCreateDepositAddressFailureResult(accountId, requestBody);
+
+            expect(error.status).toBe(400);
+            expect(error.body.errorType).toBe(
+              BadRequestError.errorType.DEPOSIT_ADDRESS_CREATION_NOT_ALLOWED
+            );
+          }
+        }
+      });
+
       it('should fail when using an unknown asset', async () => {
         const requestBody: DepositAddressCreationRequest = {
           idempotencyKey: randomUUID(),
@@ -125,6 +159,41 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
           expect(error.body.propertyName).toBe('/transferMethod/asset/assetId');
         }
       });
+      const ITERATIONS_NUMBER = 10;
+
+      const fakeBlockchainCapability = fakeSchemaObject(
+        'PublicBlockchainCapability'
+      ) as PublicBlockchainCapability;
+      fakeBlockchainCapability.asset = fakeSchemaObject(
+        'NativeCryptocurrency'
+      ) as NativeCryptocurrency;
+      // Test multiple times due to the randomness of the generated transfer method
+      describe.each(range(1, ITERATIONS_NUMBER))(
+        'should fail when using an a unknown transfer method - attempt %d',
+        () => {
+          it.each([
+            fakeSchemaObject('IbanCapability') as IbanCapability,
+            fakeSchemaObject('SwiftCapability') as SwiftCapability,
+            fakeBlockchainCapability,
+          ])('should fail when using an unknown %s transfer method', async (fakeCapability) => {
+            const requestBody: DepositAddressCreationRequest = {
+              idempotencyKey: randomUUID(),
+              transferMethod: fakeCapability,
+            };
+            for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+              if (capabilities.some((dc) => _.isEqual(dc.deposit, fakeCapability))) {
+                continue;
+              }
+              const error = await getCreateDepositAddressFailureResult(accountId, requestBody);
+
+              expect(error.status).toBe(400);
+              expect(error.body.errorType).toBe(
+                BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD
+              );
+            }
+          });
+        }
+      );
 
       describe('Using the same idempotency key', () => {
         let accountId: string;
@@ -134,7 +203,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
         let failureResponse: ApiError;
 
         beforeAll(async () => {
-          const accountCapability = findFirstAccountCapability();
+          const accountCapability = findFirstAccountCapabilityWithCanCreatePolicy();
 
           // Accounting for the possible scenario where there aren't any deposit capabilities for any account
           if (!accountCapability) {
@@ -262,7 +331,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
       };
 
       beforeAll(async () => {
-        const accountCapability = findFirstAccountCapability();
+        const accountCapability = findFirstAccountCapabilityWithCanCreatePolicy();
 
         if (!accountCapability?.accountId) {
           return;

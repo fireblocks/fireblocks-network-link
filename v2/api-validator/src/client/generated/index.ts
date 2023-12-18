@@ -39,6 +39,7 @@ export type { CryptocurrencySymbol } from './models/CryptocurrencySymbol';
 export type { CryptocurrencySymbolQueryParam } from './models/CryptocurrencySymbolQueryParam';
 export type { Deposit } from './models/Deposit';
 export type { DepositAddress } from './models/DepositAddress';
+export { DepositAddressCreationPolicy } from './models/DepositAddressCreationPolicy';
 export type { DepositAddressCreationRequest } from './models/DepositAddressCreationRequest';
 export { DepositAddressStatus } from './models/DepositAddressStatus';
 export type { DepositCapability } from './models/DepositCapability';
