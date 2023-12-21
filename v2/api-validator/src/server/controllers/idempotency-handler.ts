@@ -3,7 +3,7 @@ import { XComError } from '../../error';
 import { BadRequestError } from '../../client/generated';
 
 type IdempotencyKey = string;
-type IdempotentRequest = {
+export type IdempotentRequest = {
   idempotencyKey: IdempotencyKey;
 };
 

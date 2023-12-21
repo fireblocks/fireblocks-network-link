@@ -10,6 +10,8 @@ import {
   FiatWithdrawalRequest,
   IbanCapability,
   InternalTransferCapability,
+  InternalTransferDestination,
+  InternalWithdrawal,
   InternalWithdrawalRequest,
   PeerAccountTransferCapability,
   PeerAccountWithdrawalRequest,
@@ -19,6 +21,10 @@ import {
   WithdrawalCapability,
   WithdrawalStatus,
 } from '../../client/generated';
+import transferMethod = InternalTransferCapability.transferMethod;
+import logger from '../../logging';
+import { createFiatWithdrawal } from '../handlers';
+import { AccountsController } from './accounts-controller';
 
 export type WithdrawalRequest =
   | FiatWithdrawalRequest
@@ -34,8 +40,22 @@ export class WithdrawalNotFoundError extends XComError {
   }
 }
 
+export class TransferNotSupportedError extends XComError {
+  constructor() {
+    super('Transfer not supported');
+  }
+}
+
+export class TransferDestinationNotAllowed extends XComError {
+  constructor() {
+    super('Transfer destination is not allowed');
+  }
+}
+
 const DEFAULT_CAPABILITIES_COUNT = 50;
-const DEFAULT_WITHDRAWALS_COUNT = 5;
+const DEFAULT_WITHDRAWALS_COUNT = 30;
+
+const log = logger('server:WithdrawalController');
 
 export class WithdrawalController {
   private readonly withdrawalRepository = new Repository<Withdrawal>();
@@ -126,7 +146,51 @@ export class WithdrawalController {
     );
   }
 
-  public createWithdrawal(request: WithdrawalRequest): Withdrawal {
+  private validateParentOnlyTransfer(
+    destination: InternalTransferDestination,
+    srcAccountId: string
+  ): void {
+    if (
+      destination.limitations?.parentOnly &&
+      !AccountsController.isParentAccount(srcAccountId, destination.accountId)
+    ) {
+      throw new TransferDestinationNotAllowed();
+    }
+  }
+
+  public createSubAccountWithdrawal(
+    request: InternalWithdrawalRequest,
+    accountId: string
+  ): Withdrawal {
+    this.validateParentOnlyTransfer(request.destination, accountId);
+    return this.createWithdrawal(request);
+  }
+
+  public createPeerAccountWithdrawal(request: PeerAccountWithdrawalRequest): Withdrawal {
+    return this.createWithdrawal(request);
+  }
+
+  public createBlockchainWithdrawal(request: BlockchainWithdrawalRequest): Withdrawal {
+    return this.createWithdrawal(request);
+  }
+
+  public createFiatWithdrawal(request: FiatWithdrawalRequest): Withdrawal {
+    return this.createWithdrawal(request);
+  }
+
+  public createWithdrawal<R extends WithdrawalRequest>(request: R): Withdrawal {
+    const capability = this.withdrawalCapabilityRepository.findBy(
+      (wc) =>
+        wc.withdrawal.transferMethod === request.destination.transferMethod &&
+        _.isEqual(wc.balanceAsset, request.balanceAsset)
+    );
+
+    if (capability === undefined) {
+      throw new TransferNotSupportedError();
+    }
+
+    log.info(typeof request);
+
     const withdrawal = this.withdrawalFromWithdrawalRequest(request);
     this.withdrawalRepository.create(withdrawal);
     return withdrawal;
