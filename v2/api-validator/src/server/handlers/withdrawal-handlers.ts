@@ -1,11 +1,14 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { IdempotencyHandler } from '../controllers/idempotency-handler';
+import { IdempotencyHandler, IdempotentRequest } from '../controllers/idempotency-handler';
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { ControllersContainer } from '../controllers/controllers-container';
 import {
+  TransferNotSupportedError,
+  TransferDestinationNotAllowed,
   WithdrawalController,
   WithdrawalNotFoundError,
+  WithdrawalRequest,
 } from '../controllers/withdrawal-controller';
 import {
   AccountIdPathParam,
@@ -14,13 +17,16 @@ import {
   PaginationQuerystring,
 } from './request-types';
 import {
+  BadRequestError,
   BlockchainWithdrawalRequest,
   FiatWithdrawalRequest,
   InternalWithdrawalRequest,
   PeerAccountWithdrawalRequest,
+  RequestPart,
   Withdrawal,
   WithdrawalCapability,
 } from '../../client/generated';
+import logger from '../../logging';
 
 type PeerAccountWithdrawalRequestBody = { Body: PeerAccountWithdrawalRequest };
 type InternalWithdrawalRequestBody = { Body: InternalWithdrawalRequest };
@@ -28,6 +34,8 @@ type BlockchainWithdrawalRequestBody = { Body: BlockchainWithdrawalRequest };
 type FiatWithdrawalRequestBody = { Body: FiatWithdrawalRequest };
 
 const controllers = new ControllersContainer(() => new WithdrawalController());
+
+const log = logger('server:WithdrawalHandler');
 
 /**
  * GET Endpoints
@@ -198,18 +206,51 @@ export async function getFiatWithdrawals(
 
 const subAccountIdempotencyHandler = new IdempotencyHandler<
   InternalWithdrawalRequest,
-  Withdrawal
+  Withdrawal | BadRequestError
 >();
 const peerAccountIdempotencyHandler = new IdempotencyHandler<
   PeerAccountWithdrawalRequest,
-  Withdrawal
+  Withdrawal | BadRequestError
 >();
 const blockchainIdempotencyHandler = new IdempotencyHandler<
   BlockchainWithdrawalRequest,
-  Withdrawal
+  Withdrawal | BadRequestError
 >();
-const fiatIdempotencyHandler = new IdempotencyHandler<FiatWithdrawalRequest, Withdrawal>();
+const fiatIdempotencyHandler = new IdempotencyHandler<
+  FiatWithdrawalRequest,
+  Withdrawal | BadRequestError
+>();
 
+async function createWithdrawal<R extends IdempotentRequest & WithdrawalRequest>(
+  createWithdrawalFunc: (body: R, accountId: string) => Withdrawal,
+  idempotencyHandlerAdder: (req: R, code: number, res: Withdrawal | BadRequestError) => void,
+  body: R,
+  accountId: string,
+  reply: FastifyReply
+): Promise<Withdrawal> {
+  try {
+    const withdrawal = createWithdrawalFunc(body, accountId);
+    idempotencyHandlerAdder(body, 200, withdrawal);
+    return withdrawal;
+  } catch (err) {
+    if (err instanceof TransferNotSupportedError) {
+      const response = {
+        message: err.message,
+        errorType: BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD,
+      };
+      idempotencyHandlerAdder(body, 400, response);
+      return ErrorFactory.badRequest(reply, response);
+    } else if (err instanceof TransferDestinationNotAllowed) {
+      const response = {
+        message: err.message,
+        errorType: BadRequestError.errorType.TRANSFER_DESTINATION_NOT_ALLOWED,
+      };
+      idempotencyHandlerAdder(body, 400, response);
+      return ErrorFactory.badRequest(reply, response);
+    }
+    throw err;
+  }
+}
 export async function createSubAccountWithdrawal(
   { body, params }: FastifyRequest<InternalWithdrawalRequestBody & AccountIdPathParam>,
   reply: FastifyReply
@@ -225,10 +266,28 @@ export async function createSubAccountWithdrawal(
     return subAccountIdempotencyHandler.reply(body, reply);
   }
 
-  const withdrawal = controller.createWithdrawal(body);
-  subAccountIdempotencyHandler.add(body, 200, withdrawal);
-
-  return withdrawal;
+  return createWithdrawal(
+    (req, accountId) => controller.createSubAccountWithdrawal(req, accountId),
+    (req, code, response) => subAccountIdempotencyHandler.add(req, code, response),
+    body,
+    accountId,
+    reply
+  );
+  // try {
+  //   const withdrawal = controller.createWithdrawal(body);
+  //   subAccountIdempotencyHandler.add(body, 200, withdrawal);
+  //   return withdrawal;
+  // } catch (err) {
+  //   if (err instanceof TransferNotSupportedError) {
+  //     const response = {
+  //       message: err.message,
+  //       errorType: BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD,
+  //     };
+  //     subAccountIdempotencyHandler.add(body, 400, response);
+  //     return ErrorFactory.badRequest(reply, response);
+  //   }
+  //   throw err;
+  // }
 }
 
 export async function createPeerAccountWithdrawal(
@@ -246,10 +305,13 @@ export async function createPeerAccountWithdrawal(
     return peerAccountIdempotencyHandler.reply(body, reply);
   }
 
-  const withdrawal = controller.createWithdrawal(body);
-  peerAccountIdempotencyHandler.add(body, 200, withdrawal);
-
-  return withdrawal;
+  return createWithdrawal(
+    (req) => controller.createPeerAccountWithdrawal(req),
+    (req, code, response) => peerAccountIdempotencyHandler.add(req, code, response),
+    body,
+    accountId,
+    reply
+  );
 }
 
 export async function createBlockchainWithdrawal(
@@ -267,10 +329,13 @@ export async function createBlockchainWithdrawal(
     return blockchainIdempotencyHandler.reply(body, reply);
   }
 
-  const withdrawal = controller.createWithdrawal(body);
-  blockchainIdempotencyHandler.add(body, 200, withdrawal);
-
-  return withdrawal;
+  return createWithdrawal(
+    (req) => controller.createBlockchainWithdrawal(req),
+    (req, code, response) => blockchainIdempotencyHandler.add(req, code, response),
+    body,
+    accountId,
+    reply
+  );
 }
 
 export async function createFiatWithdrawal(
@@ -288,8 +353,11 @@ export async function createFiatWithdrawal(
     return fiatIdempotencyHandler.reply(body, reply);
   }
 
-  const withdrawal = controller.createWithdrawal(body);
-  fiatIdempotencyHandler.add(body, 200, withdrawal);
-
-  return withdrawal;
+  return createWithdrawal(
+    (req) => controller.createFiatWithdrawal(req),
+    (req, code, response) => fiatIdempotencyHandler.add(req, code, response),
+    body,
+    accountId,
+    reply
+  );
 }

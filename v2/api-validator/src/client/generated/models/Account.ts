@@ -12,5 +12,6 @@ export type Account = {
     description?: string;
     balances?: Balances;
     status: AccountStatus;
+    parentId?: string;
 };
 

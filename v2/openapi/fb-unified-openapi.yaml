@@ -1865,6 +1865,7 @@ components:
             - idempotency-key-reuse
             - deposit-address-creation-not-allowed
             - unsupported-transfer-method
+            - transfer-destination-not-allowed
         propertyName:
           description: Name of property that caused the error.
           type: string
@@ -1971,6 +1972,8 @@ components:
           $ref: '#/components/schemas/Balances'
         status:
           $ref: '#/components/schemas/AccountStatus'
+        parentId:
+          type: string
     Balances:
       type: array
       description: Maps balance assets to their balances.
@@ -2983,6 +2986,13 @@ components:
         transferMethod:
           enum:
             - InternalTransfer
+        limitations:
+          $ref: '#/components/schemas/InternalTransferCapabilityLimitation'
+    InternalTransferCapabilityLimitation:
+      type: object
+      properties:
+        parentOnly:
+          type: boolean
     PeerAccountTransferAddress:
       type: object
       allOf:

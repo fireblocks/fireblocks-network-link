@@ -950,6 +950,14 @@ components:
         transferMethod:
           enum:
             - InternalTransfer
+        limitations:
+          $ref: '#/components/schemas/InternalTransferCapabilityLimitation'
+
+    InternalTransferCapabilityLimitation:
+      type: object
+      properties:
+        parentOnly:
+          type: boolean
 
     PeerAccountTransferAddress:
       type: object

@@ -610,6 +610,7 @@ components:
             - idempotency-key-reuse
             - deposit-address-creation-not-allowed
             - unsupported-transfer-method
+            - transfer-destination-not-allowed
         propertyName:
           description: Name of property that caused the error.
           type: string
@@ -720,6 +721,8 @@ components:
           $ref: '#/components/schemas/Balances'
         status:
           $ref: '#/components/schemas/AccountStatus'
+        parentId:
+          type: string
 
     Balances:
       type: array

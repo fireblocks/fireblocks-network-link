@@ -55,6 +55,7 @@ export type { IbanTransferDestination } from './models/IbanTransferDestination';
 export type { InternalTransfer } from './models/InternalTransfer';
 export type { InternalTransferAddress } from './models/InternalTransferAddress';
 export { InternalTransferCapability } from './models/InternalTransferCapability';
+export type { InternalTransferCapabilityLimitation } from './models/InternalTransferCapabilityLimitation';
 export type { InternalTransferDestination } from './models/InternalTransferDestination';
 export type { InternalWithdrawal } from './models/InternalWithdrawal';
 export type { InternalWithdrawalRequest } from './models/InternalWithdrawalRequest';
