@@ -11,7 +11,6 @@ import {
   IbanCapability,
   InternalTransferCapability,
   InternalTransferDestination,
-  InternalWithdrawal,
   InternalWithdrawalRequest,
   PeerAccountTransferCapability,
   PeerAccountWithdrawalRequest,
@@ -21,10 +20,9 @@ import {
   WithdrawalCapability,
   WithdrawalStatus,
 } from '../../client/generated';
-import transferMethod = InternalTransferCapability.transferMethod;
 import logger from '../../logging';
-import { createFiatWithdrawal } from '../handlers';
 import { AccountsController } from './accounts-controller';
+import { InternalTransferDestinationPolicy } from '../../client/generated/models/InternalTransferDestinationPolicy';
 
 export type WithdrawalRequest =
   | FiatWithdrawalRequest
@@ -146,13 +144,13 @@ export class WithdrawalController {
     );
   }
 
-  private validateParentOnlyTransfer(
+  private validateDirectParentOnlyTransfer(
     destination: InternalTransferDestination,
     srcAccountId: string
   ): void {
     if (
-      destination.limitations?.parentOnly &&
-      !AccountsController.isParentAccount(srcAccountId, destination.accountId)
+      destination.destinationPolicy == InternalTransferDestinationPolicy.DIRECT_PARENT_ACCOUNT &&
+      !AccountsController.isParentAccount(srcAccountId, destination.accountId, 1)
     ) {
       throw new TransferDestinationNotAllowed();
     }
@@ -162,7 +160,7 @@ export class WithdrawalController {
     request: InternalWithdrawalRequest,
     accountId: string
   ): Withdrawal {
-    this.validateParentOnlyTransfer(request.destination, accountId);
+    this.validateDirectParentOnlyTransfer(request.destination, accountId);
     return this.createWithdrawal(request);
   }
 

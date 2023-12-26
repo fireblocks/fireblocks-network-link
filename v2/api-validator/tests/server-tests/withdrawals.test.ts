@@ -27,6 +27,7 @@ import _ from 'lodash';
 import { WithdrawalRequest } from '../../src/server/controllers/withdrawal-controller';
 import { arrayFromAsyncGenerator, paginated } from '../utils/pagination';
 import { isParentAccount } from '../../src/utils/account-helper';
+import { InternalTransferDestinationPolicy } from '../../src/client/generated/models/InternalTransferDestinationPolicy';
 
 const noTransfersCapability = !hasCapability('transfers');
 const noTransfersBlockchainCapability = !hasCapability('transfersBlockchain');
@@ -334,7 +335,8 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         noRelevantCapability: noTransfersSubaccountCapability,
         additionalFilters: [
           (capability: WithdrawalCapability) =>
-            (capability.withdrawal as InternalTransferCapability).limitations?.parentOnly !== true,
+            (capability.withdrawal as InternalTransferCapability).destinationPolicy ===
+            InternalTransferDestinationPolicy.ANY_ACCOUNT,
         ],
       },
       {
@@ -547,7 +549,8 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
               (capability) =>
                 capability.withdrawal.transferMethod ===
                   InternalTransferCapability.transferMethod.INTERNAL_TRANSFER &&
-                capability.withdrawal.limitations?.parentOnly === true
+                capability.withdrawal.destinationPolicy ===
+                  InternalTransferDestinationPolicy.DIRECT_PARENT_ACCOUNT
             );
 
             for (const capability of subAccountCapabilities) {
@@ -581,13 +584,14 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
             }
           }
         });
-        it('should fail when making withdrawal to a non valid parent, for each capability where parentOnly is enabled', async () => {
+        it('should fail when making withdrawal to a non valid parent, for each capability where DIRECT_PARENT_ACCOUNT is enabled', async () => {
           for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
             const subAccountCapabilities = capabilities.filter(
               (capability) =>
                 capability.withdrawal.transferMethod ===
                   InternalTransferCapability.transferMethod.INTERNAL_TRANSFER &&
-                capability.withdrawal.limitations?.parentOnly === true
+                capability.withdrawal.destinationPolicy ===
+                  InternalTransferDestinationPolicy.DIRECT_PARENT_ACCOUNT
             );
 
             for (const capability of subAccountCapabilities) {
@@ -599,7 +603,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                 continue;
               }
               const noParent = Array.from(accountsMap.values()).find(
-                (a) => !isParentAccount(accountId, a.id, accountsMap.get.bind(accountsMap))
+                (a) => !isParentAccount(accountId, a.id, accountsMap.get.bind(accountsMap), 1)
               )?.id;
               if (noParent === undefined) {
                 continue;

@@ -4,12 +4,12 @@
 /* eslint-disable */
 
 import type { AssetReference } from './AssetReference';
-import type { InternalTransferCapabilityLimitation } from './InternalTransferCapabilityLimitation';
+import type { InternalTransferDestinationPolicy } from './InternalTransferDestinationPolicy';
 
 export type InternalTransferCapability = {
     asset: AssetReference;
     transferMethod: InternalTransferCapability.transferMethod;
-    limitations?: InternalTransferCapabilityLimitation;
+    destinationPolicy: InternalTransferDestinationPolicy;
 };
 
 export namespace InternalTransferCapability {

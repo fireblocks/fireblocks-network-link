@@ -2980,19 +2980,19 @@ components:
       required:
         - asset
         - transferMethod
+        - destinationPolicy
       properties:
         asset:
           $ref: '#/components/schemas/AssetReference'
         transferMethod:
           enum:
             - InternalTransfer
-        limitations:
-          $ref: '#/components/schemas/InternalTransferCapabilityLimitation'
-    InternalTransferCapabilityLimitation:
-      type: object
-      properties:
-        parentOnly:
-          type: boolean
+        destinationPolicy:
+          $ref: '#/components/schemas/InternalTransferDestinationPolicy'
+    InternalTransferDestinationPolicy:
+      enum:
+        - AnyAccount
+        - DirectParentAccount
     PeerAccountTransferAddress:
       type: object
       allOf:

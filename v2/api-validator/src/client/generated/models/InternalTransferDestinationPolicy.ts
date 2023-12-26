@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type InternalTransferCapabilityLimitation = {
-    parentOnly?: boolean;
-};
-
+export enum InternalTransferDestinationPolicy {
+    ANY_ACCOUNT = 'AnyAccount',
+    DIRECT_PARENT_ACCOUNT = 'DirectParentAccount',
+}

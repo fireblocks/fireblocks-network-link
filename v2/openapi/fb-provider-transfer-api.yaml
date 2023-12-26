@@ -943,21 +943,20 @@ components:
 
     InternalTransferCapability:
       type: object
-      required: [ asset, transferMethod ]
+      required: [ asset, transferMethod, destinationPolicy ]
       properties:
         asset:
           $ref: '#/x-schemas/AssetReference'
         transferMethod:
           enum:
             - InternalTransfer
-        limitations:
-          $ref: '#/components/schemas/InternalTransferCapabilityLimitation'
+        destinationPolicy:
+          $ref: '#/components/schemas/InternalTransferDestinationPolicy'
 
-    InternalTransferCapabilityLimitation:
-      type: object
-      properties:
-        parentOnly:
-          type: boolean
+    InternalTransferDestinationPolicy:
+      enum:
+        - AnyAccount
+        - DirectParentAccount
 
     PeerAccountTransferAddress:
       type: object

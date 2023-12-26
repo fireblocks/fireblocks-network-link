@@ -59,11 +59,16 @@ export class AccountsController {
     return !!AccountsController.repository.find(accountId);
   }
 
-  public static isParentAccount(childAccountId: string, parentAccountId: string): boolean {
+  public static isParentAccount(
+    childAccountId: string,
+    parentAccountId: string,
+    maxDepth?: number
+  ): boolean {
     const result = isParentAccount(
       childAccountId,
       parentAccountId,
-      AccountsController.getSubAccount
+      AccountsController.getSubAccount,
+      maxDepth
     );
     if (result === undefined) {
       throw new AccountNotExistError();

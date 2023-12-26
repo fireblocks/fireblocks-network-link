@@ -26,9 +26,16 @@ describe('Account helper tests', () => {
 
     const result = isParentAccount(childAccountId, parentAccountId, accounts.get.bind(accounts));
     expect(result).toBeTrue();
+    const resultWithMaxDepth1 = isParentAccount(
+      childAccountId,
+      parentAccountId,
+      accounts.get.bind(accounts),
+      1
+    );
+    expect(resultWithMaxDepth1).toBeTrue();
   });
 
-  it('should return true when child account is a non direct descendant of the parent', () => {
+  it('should return true when child account is a non direct descendant of the parent, only if the maxDepth allows it', () => {
     const childWithParent = { ...child };
     childWithParent.parentId = middleAccountId;
     accounts.set(childAccountId, childWithParent);
@@ -37,8 +44,19 @@ describe('Account helper tests', () => {
     accounts.set(middleAccountId, middleWithParent);
     accounts.set(parentAccountId, parent);
 
-    const result = isParentAccount(childAccountId, parentAccountId, accounts.get.bind(accounts));
-    expect(result).toBeTrue();
+    const resultNonDirectParent = isParentAccount(
+      childAccountId,
+      parentAccountId,
+      accounts.get.bind(accounts)
+    );
+    expect(resultNonDirectParent).toBeTrue();
+    const resultDirectParent = isParentAccount(
+      childAccountId,
+      parentAccountId,
+      accounts.get.bind(accounts),
+      1
+    );
+    expect(resultDirectParent).toBeFalse();
   });
 
   it('should return false when child account is not a descendant of the parent', () => {
@@ -52,6 +70,13 @@ describe('Account helper tests', () => {
 
     const result = isParentAccount(childAccountId, parentAccountId, accounts.get.bind(accounts));
     expect(result).toBeFalse();
+    const resultWithMaxDepth1 = isParentAccount(
+      childAccountId,
+      parentAccountId,
+      accounts.get.bind(accounts),
+      1
+    );
+    expect(resultWithMaxDepth1).toBeFalse();
   });
 
   it.each([
