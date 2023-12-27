@@ -56,7 +56,6 @@ export enum CryptocurrencySymbol {
     SMR = 'SMR',
     SOL = 'SOL',
     SONGBIRD = 'SONGBIRD',
-    SONGBIRD_LEGACY = 'SONGBIRD_LEGACY',
     SXNETWORK = 'SXNETWORK',
     TKX = 'TKX',
     TRX = 'TRX',

@@ -919,7 +919,6 @@ components:
         - Shimmer
         - Solana
         - Songbird Canary-Network
-        - Songbird Canary-Network (Legacy derivation)
         - Stellar
         - SX Network
         - Terra 2.0
@@ -988,7 +987,6 @@ components:
         - SMR
         - SOL
         - SONGBIRD
-        - SONGBIRD_LEGACY
         - SXNETWORK
         - TKX
         - TRX
