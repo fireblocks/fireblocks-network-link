@@ -2,8 +2,7 @@ import {
   Account,
   AssetBalance,
   Balances,
-  Layer1Cryptocurrency,
-  Layer2Cryptocurrency,
+  CryptocurrencySymbol,
   NationalCurrencyCode,
 } from '../../client/generated';
 import { fakeSchemaObject } from '../../schemas';
@@ -52,11 +51,7 @@ function getEveryAssetBalances(knownAdditionalAssetIds: string[]) {
     balances.push(balance);
   }
 
-  const cryptocurrencySymbols = [
-    ...Object.values(Layer1Cryptocurrency),
-    ...Object.values(Layer2Cryptocurrency),
-  ];
-  for (const cryptocurrencySymbol of cryptocurrencySymbols) {
+  for (const cryptocurrencySymbol of Object.values(CryptocurrencySymbol)) {
     const balance = fakeSchemaObject('AssetBalance') as AssetBalance;
     balance.asset = { cryptocurrencySymbol };
     balances.push(balance);

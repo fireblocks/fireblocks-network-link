@@ -13,7 +13,7 @@ import {
   IbanCapability,
   InternalTransferCapability,
   InternalWithdrawalRequest,
-  Layer1Cryptocurrency,
+  CryptocurrencySymbol,
   NationalCurrencyCode,
   PeerAccountTransferCapability,
   PeerAccountWithdrawalRequest,
@@ -484,11 +484,11 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           withdrawalRequest = {
             idempotencyKey: 'some-key',
             balanceAmount: '1',
-            balanceAsset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
+            balanceAsset: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
             destination: {
               ...blockchainDestinationConfig,
               amount: '1',
-              asset: { cryptocurrencySymbol: Layer1Cryptocurrency.BTC },
+              asset: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
               transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
             },
           };

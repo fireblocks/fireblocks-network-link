@@ -14,8 +14,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: 
-    $ref: README.md
+  description: Placeholder for automatic documentation injection from README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -2126,62 +2125,140 @@ components:
       type: string
       enum:
         - Algorand
+        - Arbitrum
+        - Astar
+        - Aurora
         - Avalanche
+        - Axelar
+        - Base
         - Bitcoin
+        - Bitcoin Cash
+        - Bitcoin Cash ABC
+        - Bitcoin SV
+        - Bitkub Chain
         - BNB
+        - Canto
         - Cardano
-        - Casper
+        - Celestia
         - Celo
+        - Chiliz Chain
+        - Chiliz Legacy Chain
+        - Cortex
         - Cosmos
-        - Cronos
+        - Dash
         - Dogecoin
+        - DYDX
+        - eCash
+        - EOS
         - Ethereum
         - Ethereum Classic
+        - EthereumPoW
+        - Evmos
+        - Fantom Opera
+        - Flare
         - Hedera
+        - HT Chain
+        - KAVA
+        - Kusama
         - Litecoin
-        - Monero
-        - Polygon PoS
+        - Moonbeam
+        - Moonriver
+        - NEAR Protocol
+        - NEM NIS1
+        - Oasys
+        - Optimism
+        - Osmosis
+        - Palm
         - Polkadot
-        - Solana
-        - Stellar
-        - Tezos
-        - TRON
+        - Polygon POS
         - XRP
-    Layer1Cryptocurrency:
+        - Ronin
+        - RSK
+        - Shimmer
+        - Solana
+        - Songbird Canary-Network
+        - Songbird Canary-Network (Legacy derivation)
+        - Stellar
+        - SX Network
+        - Terra 2.0
+        - Terra Classic
+        - Tezos
+        - TokenEX
+        - TRON
+        - Velas
+        - WEMIX
+        - XDB Chain
+        - XinFin Network
+        - ZCash
+    CryptocurrencySymbol:
       type: string
       enum:
         - ADA
         - ALGO
+        - ARB
+        - ASTR
         - ATOM
+        - AURORA
         - AVAX
+        - AXL
+        - BASE
+        - BCH
+        - BCHA
+        - BITKUB
         - BNB
+        - BSV
         - BTC
+        - CANTO
+        - CELESTIA
         - CELO
-        - CRO
-        - CSPR
+        - CHZ
+        - CHZ2
+        - CTXC
+        - DASH
         - DOGE
         - DOT
+        - DYDX
+        - EOS
         - ETC
         - ETH
+        - ETHW
+        - EVMOS
+        - FLR
+        - FTM
+        - GLMR
         - HBAR
+        - HT
+        - KAVA
+        - KSM
         - LTC
+        - LUNA
+        - LUNA2
+        - MATIC
+        - MOVR
+        - NEAR
+        - OAS
+        - OPT
+        - OSMO
+        - PALM
+        - RON
+        - RSK
+        - SMR
         - SOL
+        - SONGBIRD
+        - SONGBIRD_LEGACY
+        - SXNETWORK
+        - TKX
         - TRX
+        - VLX
+        - WEMIX
+        - XDB
+        - XDC
+        - XEC
+        - XEM
         - XLM
-        - XMR
         - XRP
         - XTZ
-    Layer2Cryptocurrency:
-      type: string
-      enum:
-        - ARB
-        - IMX
-        - MATIC
-        - SNX
-    CryptocurrencySymbol:
-      anyOf:
-        - $ref: '#/components/schemas/Layer1Cryptocurrency'
-        - $ref: '#/components/schemas/Layer2Cryptocurrency'
+        - ZEC
     NationalCurrencyCode:
       type: string
       description: National currency codes as defined in ISO 4217.

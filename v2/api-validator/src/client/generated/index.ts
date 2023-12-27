@@ -30,7 +30,7 @@ export type { BlockchainWithdrawalRequest } from './models/BlockchainWithdrawalR
 export { BucketAsset } from './models/BucketAsset';
 export type { Capabilities } from './models/Capabilities';
 export type { CryptocurrencyReference } from './models/CryptocurrencyReference';
-export type { CryptocurrencySymbol } from './models/CryptocurrencySymbol';
+export { CryptocurrencySymbol } from './models/CryptocurrencySymbol';
 export type { CryptocurrencySymbolQueryParam } from './models/CryptocurrencySymbolQueryParam';
 export type { Deposit } from './models/Deposit';
 export type { DepositAddress } from './models/DepositAddress';
@@ -58,8 +58,6 @@ export { InternalTransferCapability } from './models/InternalTransferCapability'
 export type { InternalTransferDestination } from './models/InternalTransferDestination';
 export type { InternalWithdrawal } from './models/InternalWithdrawal';
 export type { InternalWithdrawalRequest } from './models/InternalWithdrawalRequest';
-export { Layer1Cryptocurrency } from './models/Layer1Cryptocurrency';
-export { Layer2Cryptocurrency } from './models/Layer2Cryptocurrency';
 export { LimitOrderData } from './models/LimitOrderData';
 export { ListOrderQueryParam } from './models/ListOrderQueryParam';
 export type { MarketEntry } from './models/MarketEntry';
