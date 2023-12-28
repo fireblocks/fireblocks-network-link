@@ -2172,7 +2172,6 @@ components:
         - Palm
         - Polkadot
         - Polygon PoS
-        - XRP
         - Ronin
         - RSK
         - Shimmer
@@ -2189,6 +2188,7 @@ components:
         - WEMIX
         - XDB Chain
         - XinFin Network
+        - XRP
         - ZCash
     CryptocurrencySymbol:
       type: string

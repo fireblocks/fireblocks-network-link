@@ -51,7 +51,6 @@ export enum Blockchain {
     PALM = 'Palm',
     POLKADOT = 'Polkadot',
     POLYGON_PO_S = 'Polygon PoS',
-    XRP = 'XRP',
     RONIN = 'Ronin',
     RSK = 'RSK',
     SHIMMER = 'Shimmer',
@@ -68,5 +67,6 @@ export enum Blockchain {
     WEMIX = 'WEMIX',
     XDB_CHAIN = 'XDB Chain',
     XIN_FIN_NETWORK = 'XinFin Network',
+    XRP = 'XRP',
     ZCASH = 'ZCash',
 }
