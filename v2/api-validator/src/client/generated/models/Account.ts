@@ -3,18 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { AccountStatus } from './AccountStatus';
-import type { Balances } from './Balances';
+import type { AccountData } from './AccountData';
+import type { AccountId } from './AccountId';
 
-export type Account = {
-    id: string;
-    title: string;
-    description?: string;
-    balances?: Balances;
-    status: AccountStatus;
-    /**
-     * The ID of the parent account. If the field is empty, the account is a main account.
-     */
-    parentId?: string;
-};
+export type Account = (AccountId & AccountData);
 
