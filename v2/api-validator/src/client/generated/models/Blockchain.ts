@@ -50,7 +50,7 @@ export enum Blockchain {
     OSMOSIS = 'Osmosis',
     PALM = 'Palm',
     POLKADOT = 'Polkadot',
-    POLYGON_POS = 'Polygon POS',
+    POLYGON_PO_S = 'Polygon PoS',
     XRP = 'XRP',
     RONIN = 'Ronin',
     RSK = 'RSK',
