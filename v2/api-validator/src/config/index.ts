@@ -25,7 +25,7 @@ const config = convict({
   client: {
     serverBaseUrl: {
       doc: 'URL of the server that will be used to run the tests',
-      default: 'http://0.0.0.0:8000',
+      default: 'http://0.0.0.0:8000/v1',
       env: 'SERVER',
     },
   },
@@ -243,5 +243,10 @@ config.validate({ allowed: 'strict' });
 
 config.getUnifiedOpenApiPathname = () =>
   path.join(config.get('openApi').location, config.get('openApi').unifiedFilename);
+
+config.getServerUrlPrefix = () => {
+  const prefix = new URL(config.get('client.serverBaseUrl')).pathname;
+  return prefix.endsWith('/') ? prefix.slice(0, -1) : prefix;
+};
 
 export default config;

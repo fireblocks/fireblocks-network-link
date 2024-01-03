@@ -90,9 +90,10 @@ export class WebApp {
   }
 
   public addRoute(method: HTTPMethods, url: string, handler: RouteOptions['handler']): void {
+    const prefix = config.getServerUrlPrefix();
     this.app.route({
       method,
-      url,
+      url: prefix + url,
       handler,
       schema: getEndpointRequestSchema(method, url),
     });

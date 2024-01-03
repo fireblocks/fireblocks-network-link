@@ -228,7 +228,9 @@ export function createSecurityHeaders(
 
 function getRelativeUrl(url: string) {
   const parsedUrl = new URL(url);
-  return parsedUrl.pathname + parsedUrl.search;
+  const relativeUrl = parsedUrl.pathname + parsedUrl.search;
+  const prefix = config.getServerUrlPrefix();
+  return relativeUrl.replace(prefix, '');
 }
 
 /**
