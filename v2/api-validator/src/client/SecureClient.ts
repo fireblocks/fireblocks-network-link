@@ -25,6 +25,7 @@ import {
   TransfersPeerAccountsService,
   TransfersService,
 } from './generated';
+import { getRelativeUrlWithoutPathPrefix } from '../url-helpers';
 
 export type SecurityHeaders = {
   xFbapiKey: string;
@@ -208,7 +209,7 @@ export function createSecurityHeaders(
   const timestamp =
     overrideOptions?.timestamp === undefined ? Date.now() : overrideOptions.timestamp;
 
-  const relativeUrl = getRelativeUrl(options.url as string);
+  const relativeUrl = getRelativeUrlWithoutPathPrefix(options.url as string);
   const payload = buildSignaturePayload(
     options.method as Method,
     relativeUrl,
@@ -224,13 +225,6 @@ export function createSecurityHeaders(
     xFbapiTimestamp: timestamp,
     xFbapiNonce: nonce,
   };
-}
-
-function getRelativeUrl(url: string) {
-  const parsedUrl = new URL(url);
-  const relativeUrl = parsedUrl.pathname + parsedUrl.search;
-  const prefix = config.getServerUrlPrefix();
-  return relativeUrl.replace(prefix, '');
 }
 
 /**

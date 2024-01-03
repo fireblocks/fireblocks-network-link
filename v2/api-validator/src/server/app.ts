@@ -3,6 +3,7 @@ import logger from '../logging';
 import addFormats from 'ajv-formats';
 import Ajv, { ValidateFunction } from 'ajv';
 import { FastifyError } from '@fastify/error';
+import { getServerUrlPathPrefix } from '../url-helpers';
 import { FastifyBaseLogger } from 'fastify/types/logger';
 import { nonceMiddleware } from './middlewares/nonce-middleware';
 import { apiKeyMiddleware } from './middlewares/api-key-middleware';
@@ -90,7 +91,7 @@ export class WebApp {
   }
 
   public addRoute(method: HTTPMethods, url: string, handler: RouteOptions['handler']): void {
-    const prefix = config.getServerUrlPrefix();
+    const prefix = getServerUrlPathPrefix();
     this.app.route({
       method,
       url: prefix + url,

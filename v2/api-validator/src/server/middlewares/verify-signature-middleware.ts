@@ -4,7 +4,7 @@ import { IncomingHttpHeaders } from 'http';
 import { verifySignature } from '../../security';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import { BadRequestError, RequestPart } from '../../client/generated';
-import config from '../../config';
+import { removeServerPathPrefixFromRelativeUrl } from '../../url-helpers';
 
 const INVALID_SIGNATURE_ERROR: BadRequestError = {
   message: 'Provided signature is invalid',
@@ -20,7 +20,7 @@ export function verifySignatureMiddleware(
 ): void {
   const body = request.body as JsonValue;
   const method = request.method;
-  const url = removeUrlPrefix(request.url);
+  const url = removeServerPathPrefixFromRelativeUrl(request.url);
 
   const { timestamp, nonce, signature } = getSignatureHeaders(request.headers);
 
@@ -41,11 +41,6 @@ function getSignatureHeaders(headers: IncomingHttpHeaders) {
   const nonce = String(headers['x-fbapi-nonce']);
   const signature = String(headers['x-fbapi-signature']);
   return { timestamp, nonce, signature };
-}
-
-function removeUrlPrefix(url: string) {
-  const prefix = config.getServerUrlPrefix();
-  return url.replace(prefix, '');
 }
 
 /**
