@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 import Client from '../../src/client';
+import { hasCapability } from '../utils/capable-accounts';
 import { Pageable, paginated } from '../utils/pagination';
 import { AssetsDirectory } from '../utils/assets-directory';
 import {
@@ -14,6 +15,8 @@ import {
   NationalCurrencyCode,
   RequestPart,
 } from '../../src/client/generated';
+
+const noHistoricBalancesCapability = !hasCapability('historicBalances');
 
 const invalidAssetParamsCombinations = [
   {
@@ -172,7 +175,7 @@ describe('Balances', () => {
     });
   });
 
-  describe('List historic balances', () => {
+  describe.skipIf(noHistoricBalancesCapability)('List historic balances', () => {
     let accountBalancesMap: Map<string, Balances>;
     const time = new Date(Date.now()).toISOString();
 
