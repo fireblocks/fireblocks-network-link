@@ -21,19 +21,19 @@ export class URL implements Encoder {
 
 export class Base64 implements Encoder {
   public encode(payload: string): string {
-    return Buffer.from(payload).toString('base64');
+    return Buffer.from(payload, 'binary').toString('base64');
   }
   public decode(payload: string): string {
-    return Buffer.from(payload, 'base64').toString();
+    return Buffer.from(payload, 'base64').toString('binary');
   }
 }
 
 export class HexStr implements Encoder {
   public encode(payload: string): string {
-    return Buffer.from(payload).toString('hex');
+    return Buffer.from(payload, 'binary').toString('hex');
   }
   public decode(payload: string): string {
-    return Buffer.from(payload, 'hex').toString();
+    return Buffer.from(payload, 'hex').toString('binary');
   }
 }
 
