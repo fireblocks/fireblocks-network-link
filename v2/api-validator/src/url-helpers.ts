@@ -9,6 +9,7 @@ export function removeServerPathPrefixFromRelativeUrl(relativeUrl: string): stri
   const prefix = getServerUrlPathPrefix();
   return relativeUrl.slice(prefix.length);
 }
+
 export function getRelativeUrlWithoutPathPrefix(absoluteUrl: string): string {
   const parsedUrl = new URL(absoluteUrl);
   const relativeUrl = parsedUrl.pathname + parsedUrl.search;
