@@ -10,8 +10,7 @@ import {
   AssetReference,
   BadRequestError,
   Balances,
-  Layer1Cryptocurrency,
-  Layer2Cryptocurrency,
+  CryptocurrencySymbol,
   NationalCurrencyCode,
   RequestPart,
 } from '../../src/client/generated';
@@ -21,20 +20,20 @@ const noHistoricBalancesCapability = !hasCapability('historicBalances');
 const invalidAssetParamsCombinations = [
   {
     nationalCurrencyCode: NationalCurrencyCode.USD,
-    cryptocurrencySymbol: Layer1Cryptocurrency.ETH,
+    cryptocurrencySymbol: CryptocurrencySymbol.ETH,
   },
   {
     assetId: 'any-value-works',
-    cryptocurrencySymbol: Layer1Cryptocurrency.ETH,
-  },
-  {
-    assetId: 'any-value-works',
-    nationalCurrencyCode: NationalCurrencyCode.USD,
+    cryptocurrencySymbol: CryptocurrencySymbol.ETH,
   },
   {
     assetId: 'any-value-works',
     nationalCurrencyCode: NationalCurrencyCode.USD,
-    cryptocurrencySymbol: Layer1Cryptocurrency.ETH,
+  },
+  {
+    assetId: 'any-value-works',
+    nationalCurrencyCode: NationalCurrencyCode.USD,
+    cryptocurrencySymbol: CryptocurrencySymbol.ETH,
   },
 ];
 
@@ -90,7 +89,7 @@ describe('Balances', () => {
       accountId: string,
       assetId?: string,
       nationalCurrencyCode?: NationalCurrencyCode,
-      cryptocurrencySymbol?: Layer1Cryptocurrency | Layer2Cryptocurrency
+      cryptocurrencySymbol?: CryptocurrencySymbol
     ): Promise<ApiError> => {
       try {
         await client.balances.getBalances({
@@ -211,7 +210,7 @@ describe('Balances', () => {
       accountId: string,
       assetId?: string,
       nationalCurrencyCode?: NationalCurrencyCode,
-      cryptocurrencySymbol?: Layer1Cryptocurrency | Layer2Cryptocurrency
+      cryptocurrencySymbol?: CryptocurrencySymbol
     ): Promise<ApiError> => {
       try {
         await client.historicBalances.getHistoricBalances({

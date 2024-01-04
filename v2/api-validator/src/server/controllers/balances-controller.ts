@@ -1,8 +1,7 @@
 import {
   AssetReference,
   Balances,
-  Layer1Cryptocurrency,
-  Layer2Cryptocurrency,
+  CryptocurrencySymbol,
   NationalCurrencyCode,
 } from '../../client/generated';
 import { AssetsController, UnknownAdditionalAssetError } from './assets-controller';
@@ -42,7 +41,7 @@ export class BalancesController {
   public validateAssetQueryParams(
     assetId: string | undefined,
     nationalCurrencyCode: NationalCurrencyCode | undefined,
-    cryptocurrencySymbol: Layer1Cryptocurrency | Layer2Cryptocurrency | undefined
+    cryptocurrencySymbol: CryptocurrencySymbol | undefined
   ): void {
     if (!this.isUpToOneParameterDefined(assetId, nationalCurrencyCode, cryptocurrencySymbol)) {
       throw new InvalidAssetQueryCombinationError();

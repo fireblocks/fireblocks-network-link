@@ -1,7 +1,7 @@
 import {
   DepositAddress,
   DepositAddressStatus,
-  Layer1Cryptocurrency,
+  CryptocurrencySymbol,
   PublicBlockchainCapability,
 } from '../../src/client/generated';
 import {
@@ -17,7 +17,7 @@ describe('Deposit controller', () => {
       status: DepositAddressStatus.ENABLED,
       destination: {
         transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-        asset: { cryptocurrencySymbol: Layer1Cryptocurrency.ETH },
+        asset: { cryptocurrencySymbol: CryptocurrencySymbol.ETH },
         address: 'address1',
       },
     };
