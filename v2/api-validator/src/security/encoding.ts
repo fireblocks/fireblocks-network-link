@@ -39,19 +39,19 @@ export class HexStr implements Encoder {
 
 export class Base32 implements Encoder {
   public encode(payload: string): string {
-    return base32.encode(payload);
+    return base32.encode(Buffer.from(payload, 'binary'));
   }
   public decode(payload: string): string {
-    return base32.decode(payload);
+    return Buffer.from(base32.decode.asBytes(payload)).toString('binary');
   }
 }
 
 export class Base58 implements Encoder {
   public encode(payload: string): string {
-    return base58.encode(new TextEncoder().encode(payload));
+    return base58.encode(Buffer.from(payload, 'binary'));
   }
   public decode(payload: string): string {
-    return new TextDecoder().decode(base58.decode(payload));
+    return Buffer.from(base58.decode(payload)).toString('binary');
   }
 }
 
