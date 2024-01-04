@@ -22,7 +22,6 @@ import {
   WithdrawalCapability,
 } from '../../src/client/generated';
 import { fakeSchemaObject } from '../../src/schemas';
-import { getFailureResult } from '../utils/test-utils';
 import _ from 'lodash';
 import { WithdrawalRequest } from '../../src/server/controllers/withdrawal-controller';
 import { arrayFromAsyncGenerator, paginated } from '../utils/pagination';
@@ -463,16 +462,12 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                     ...capability.withdrawal,
                   },
                 };
-                const error = await getFailureResult(() =>
-                  createWithdrawal(client, {
-                    accountId,
-                    requestBody,
-                  })
-                );
-                expect(error.status).toBe(400);
-                expect(error.body.errorType).toBe(
-                  BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD
-                );
+                await expect(
+                  createWithdrawal(client, { accountId, requestBody })
+                ).rejects.toMatchObject({
+                  status: 400,
+                  body: { errorType: BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD },
+                });
               }
             }
           }
@@ -623,16 +618,12 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                     ...(capability.withdrawal as InternalTransferCapability),
                   },
                 };
-                const error = await getFailureResult(() =>
-                  client.transfersInternal.createSubAccountWithdrawal({
-                    accountId,
-                    requestBody,
-                  })
-                );
-                expect(error.status).toBe(400);
-                expect(error.body.errorType).toBe(
-                  BadRequestError.errorType.TRANSFER_DESTINATION_NOT_ALLOWED
-                );
+                await expect(
+                  client.transfersInternal.createSubAccountWithdrawal({ accountId, requestBody })
+                ).rejects.toMatchObject({
+                  status: 400,
+                  body: { errorType: BadRequestError.errorType.TRANSFER_DESTINATION_NOT_ALLOWED },
+                });
               }
             }
           }

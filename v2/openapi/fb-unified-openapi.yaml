@@ -1974,6 +1974,7 @@ components:
           $ref: '#/components/schemas/AccountStatus'
         parentId:
           type: string
+          description: The ID of the parent account. If the field is empty, the account is a main account.
     Balances:
       type: array
       description: Maps balance assets to their balances.
@@ -2993,6 +2994,10 @@ components:
       enum:
         - AnyAccount
         - DirectParentAccount
+      description: |-
+        Indicates the transfer destination policy:
+          `AnyAccount`: Transfer is possible to any account of the same user.
+          `DirectParentAccount`: Transfer is possible for the direct parent only.
     PeerAccountTransferAddress:
       type: object
       allOf:

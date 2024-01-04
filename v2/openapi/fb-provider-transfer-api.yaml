@@ -957,6 +957,10 @@ components:
       enum:
         - AnyAccount
         - DirectParentAccount
+      description: >-
+        Indicates the transfer destination policy:
+          `AnyAccount`: Transfer is possible to any account of the same user.
+          `DirectParentAccount`: Transfer is possible for the direct parent only.
 
     PeerAccountTransferAddress:
       type: object
