@@ -2989,7 +2989,6 @@ components:
       required:
         - asset
         - transferMethod
-        - destinationPolicy
       properties:
         asset:
           $ref: '#/components/schemas/AssetReference'

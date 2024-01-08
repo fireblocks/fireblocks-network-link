@@ -943,7 +943,7 @@ components:
 
     InternalTransferMethod:
       type: object
-      required: [ asset, transferMethod, destinationPolicy ]
+      required: [ asset, transferMethod ]
       properties:
         asset:
           $ref: '#/x-schemas/AssetReference'
