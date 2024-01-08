@@ -56,6 +56,7 @@ export type { InternalTransfer } from './models/InternalTransfer';
 export type { InternalTransferAddress } from './models/InternalTransferAddress';
 export { InternalTransferCapability } from './models/InternalTransferCapability';
 export type { InternalTransferDestination } from './models/InternalTransferDestination';
+export { InternalTransferDestinationPolicy } from './models/InternalTransferDestinationPolicy';
 export type { InternalWithdrawal } from './models/InternalWithdrawal';
 export type { InternalWithdrawalRequest } from './models/InternalWithdrawalRequest';
 export { LimitOrderData } from './models/LimitOrderData';

@@ -2,6 +2,7 @@ import convict from 'convict';
 import path from 'path';
 import fs from 'fs';
 import { config as dotenvConfig } from 'dotenv';
+import { InternalTransferDestinationPolicy } from '../client/generated';
 
 dotenvConfig();
 
@@ -55,6 +56,11 @@ const config = convict({
         format: String,
         default: 'c5bb0880-523c-4c1c-bfe7-bcf2941517a0',
         env: 'WITHDRAWAL_SUB_ACCOUNT',
+      },
+      destinationPolicy: {
+        format: Object.values(InternalTransferDestinationPolicy),
+        default: InternalTransferDestinationPolicy.ANY_ACCOUNT,
+        env: 'WITHDRAWAL_INTERNAL_TRANSFER_DESTINATION_POLICY',
       },
     },
     blockchain: {

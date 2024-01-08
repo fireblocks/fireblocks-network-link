@@ -943,13 +943,24 @@ components:
 
     InternalTransferCapability:
       type: object
-      required: [ asset, transferMethod ]
+      required: [ asset, transferMethod, destinationPolicy ]
       properties:
         asset:
           $ref: '#/x-schemas/AssetReference'
         transferMethod:
           enum:
             - InternalTransfer
+        destinationPolicy:
+          $ref: '#/components/schemas/InternalTransferDestinationPolicy'
+
+    InternalTransferDestinationPolicy:
+      enum:
+        - AnyAccount
+        - DirectParentAccount
+      description: >-
+        Indicates the transfer destination policy:
+          `AnyAccount`: Transfer is possible to any account of the same user.
+          `DirectParentAccount`: Transfer is possible for the direct parent only.
 
     PeerAccountTransferAddress:
       type: object

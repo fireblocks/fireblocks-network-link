@@ -13,6 +13,10 @@ export class Repository<T extends { id: Id }> {
     return this.data.get(id);
   }
 
+  public findBy(predicate: (item: T) => boolean): T | undefined {
+    return this.list().find(predicate);
+  }
+
   public list(): T[] {
     return Array.from(this.data.values());
   }
