@@ -12,7 +12,9 @@ export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { Account } from './models/Account';
 export type { AccountBalancesQueryParam } from './models/AccountBalancesQueryParam';
+export type { AccountData } from './models/AccountData';
 export type { AccountHolderDetails } from './models/AccountHolderDetails';
+export type { AccountId } from './models/AccountId';
 export type { AccountsSet } from './models/AccountsSet';
 export { AccountStatus } from './models/AccountStatus';
 export type { ApiComponents } from './models/ApiComponents';

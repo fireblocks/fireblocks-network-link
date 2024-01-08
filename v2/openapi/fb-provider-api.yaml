@@ -707,12 +707,10 @@ components:
         - active
         - inactive
 
-    Account:
+    AccountData:
       type: object
-      required: [ id, title, status ]
+      required: [ title, status ]
       properties:
-        id:
-          type: string
         title:
           type: string
         description:
@@ -724,6 +722,18 @@ components:
         parentId:
           type: string
           description: The ID of the parent account. If the field is empty, the account is a main account.
+
+    AccountId:
+      type: object
+      required: [ id ]
+      properties:
+        id:
+          type: string
+
+    Account:
+      allOf:
+        - $ref: '#/components/schemas/AccountId'
+        - $ref: '#/components/schemas/AccountData'
 
     Balances:
       type: array
