@@ -10,10 +10,11 @@ import {
   AssetBalance,
   AssetReference,
   BadRequestError,
+  CryptocurrencySymbol,
   IbanCapability,
   InternalTransferCapability,
+  InternalTransferMethod,
   InternalWithdrawalRequest,
-  CryptocurrencySymbol,
   NationalCurrencyCode,
   PeerAccountTransferCapability,
   PublicBlockchainCapability,
@@ -235,7 +236,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         for (const withdrawal of withdrawals) {
           if (
             withdrawal.destination.transferMethod ===
-            InternalTransferCapability.transferMethod.INTERNAL_TRANSFER
+            InternalTransferMethod.transferMethod.INTERNAL_TRANSFER
           ) {
             expect(withdrawal).toSatisfy(existsInSubAccountWithdrawals);
           } else {
@@ -326,7 +327,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
     };
     describe.each([
       {
-        transferMethod: InternalTransferCapability.transferMethod.INTERNAL_TRANSFER,
+        transferMethod: InternalTransferMethod.transferMethod.INTERNAL_TRANSFER,
         config: subAccountDestinationConfig,
         createWithdrawal: (client: Client, { accountId, requestBody }) =>
           client.transfersInternal.createSubAccountWithdrawal({ accountId, requestBody }),
@@ -543,7 +544,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
             const subAccountCapabilities = capabilities.filter(
               (capability) =>
                 capability.withdrawal.transferMethod ===
-                  InternalTransferCapability.transferMethod.INTERNAL_TRANSFER &&
+                  InternalTransferMethod.transferMethod.INTERNAL_TRANSFER &&
                 capability.withdrawal.destinationPolicy ===
                   InternalTransferDestinationPolicy.DIRECT_PARENT_ACCOUNT
             );
@@ -584,7 +585,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
             const subAccountCapabilities = capabilities.filter(
               (capability) =>
                 capability.withdrawal.transferMethod ===
-                  InternalTransferCapability.transferMethod.INTERNAL_TRANSFER &&
+                  InternalTransferMethod.transferMethod.INTERNAL_TRANSFER &&
                 capability.withdrawal.destinationPolicy ===
                   InternalTransferDestinationPolicy.DIRECT_PARENT_ACCOUNT
             );

@@ -9,8 +9,8 @@ import {
   BlockchainWithdrawalRequest,
   FiatWithdrawalRequest,
   IbanCapability,
-  InternalTransferCapability,
   InternalTransferDestination,
+  InternalTransferMethod,
   InternalWithdrawalRequest,
   PeerAccountTransferCapability,
   PeerAccountWithdrawalRequest,
@@ -22,7 +22,6 @@ import {
 } from '../../client/generated';
 import logger from '../../logging';
 import { AccountsController } from './accounts-controller';
-import { InternalTransferDestinationPolicy } from '../../client/generated/models/InternalTransferDestinationPolicy';
 
 export type WithdrawalRequest =
   | FiatWithdrawalRequest
@@ -111,7 +110,7 @@ export class WithdrawalController {
     return withdrawals.filter(
       (withdrawal) =>
         withdrawal.destination.transferMethod ===
-        InternalTransferCapability.transferMethod.INTERNAL_TRANSFER
+        InternalTransferMethod.transferMethod.INTERNAL_TRANSFER
     );
   }
 
@@ -148,10 +147,8 @@ export class WithdrawalController {
     destination: InternalTransferDestination,
     srcAccountId: string
   ): void {
-    if (
-      destination.destinationPolicy == InternalTransferDestinationPolicy.DIRECT_PARENT_ACCOUNT &&
-      !AccountsController.isParentAccount(srcAccountId, destination.accountId, 1)
-    ) {
+    // Assume all the internal transfer capabilities have the policy DIRECT_PARENT_ACCOUNT
+    if (!AccountsController.isParentAccount(srcAccountId, destination.accountId, 1)) {
       throw new TransferDestinationNotAllowed();
     }
   }

@@ -2984,7 +2984,7 @@ components:
         transferMethod:
           enum:
             - PeerAccountTransfer
-    InternalTransferCapability:
+    InternalTransferMethod:
       type: object
       required:
         - asset
@@ -2996,8 +2996,16 @@ components:
         transferMethod:
           enum:
             - InternalTransfer
-        destinationPolicy:
-          $ref: '#/components/schemas/InternalTransferDestinationPolicy'
+    InternalTransferCapability:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/InternalTransferMethod'
+        - type: object
+          required:
+            - destinationPolicy
+          properties:
+            destinationPolicy:
+              $ref: '#/components/schemas/InternalTransferDestinationPolicy'
     InternalTransferDestinationPolicy:
       enum:
         - AnyAccount
@@ -3029,7 +3037,7 @@ components:
     InternalTransferAddress:
       type: object
       allOf:
-        - $ref: '#/components/schemas/InternalTransferCapability'
+        - $ref: '#/components/schemas/InternalTransferMethod'
         - type: object
           required:
             - accountId

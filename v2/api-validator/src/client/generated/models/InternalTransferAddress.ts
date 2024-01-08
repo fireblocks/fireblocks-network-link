@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { InternalTransferCapability } from './InternalTransferCapability';
+import type { InternalTransferMethod } from './InternalTransferMethod';
 
-export type InternalTransferAddress = (InternalTransferCapability & {
+export type InternalTransferAddress = (InternalTransferMethod & {
     accountId: string;
 });
 

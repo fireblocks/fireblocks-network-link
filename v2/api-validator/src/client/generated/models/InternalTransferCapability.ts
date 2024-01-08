@@ -3,21 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { AssetReference } from './AssetReference';
 import type { InternalTransferDestinationPolicy } from './InternalTransferDestinationPolicy';
+import type { InternalTransferMethod } from './InternalTransferMethod';
 
-export type InternalTransferCapability = {
-    asset: AssetReference;
-    transferMethod: InternalTransferCapability.transferMethod;
+export type InternalTransferCapability = (InternalTransferMethod & {
     destinationPolicy: InternalTransferDestinationPolicy;
-};
-
-export namespace InternalTransferCapability {
-
-    export enum transferMethod {
-        INTERNAL_TRANSFER = 'InternalTransfer',
-    }
-
-
-}
+});
 
