@@ -10,19 +10,20 @@ import {
   FiatWithdrawalRequest,
   IbanCapability,
   InternalTransferCapability,
-  InternalTransferDestination,
+  InternalTransferDestinationPolicy,
+  InternalTransferMethod,
   InternalWithdrawalRequest,
   PeerAccountTransferCapability,
   PeerAccountWithdrawalRequest,
   PublicBlockchainCapability,
   SwiftCapability,
+  TransferCapability,
   Withdrawal,
   WithdrawalCapability,
   WithdrawalStatus,
 } from '../../client/generated';
 import logger from '../../logging';
 import { AccountsController } from './accounts-controller';
-import { InternalTransferDestinationPolicy } from '../../client/generated/models/InternalTransferDestinationPolicy';
 
 export type WithdrawalRequest =
   | FiatWithdrawalRequest
@@ -111,7 +112,7 @@ export class WithdrawalController {
     return withdrawals.filter(
       (withdrawal) =>
         withdrawal.destination.transferMethod ===
-        InternalTransferCapability.transferMethod.INTERNAL_TRANSFER
+        InternalTransferMethod.transferMethod.INTERNAL_TRANSFER
     );
   }
 
@@ -145,12 +146,13 @@ export class WithdrawalController {
   }
 
   private validateDirectParentOnlyTransfer(
-    destination: InternalTransferDestination,
-    srcAccountId: string
+    request: InternalWithdrawalRequest,
+    srcAccountId: string,
+    capability: InternalTransferCapability
   ): void {
     if (
-      destination.destinationPolicy == InternalTransferDestinationPolicy.DIRECT_PARENT_ACCOUNT &&
-      !AccountsController.isParentAccount(srcAccountId, destination.accountId, 1)
+      capability.destinationPolicy == InternalTransferDestinationPolicy.DIRECT_PARENT_ACCOUNT &&
+      !AccountsController.isParentAccount(srcAccountId, request.destination.accountId, 1)
     ) {
       throw new TransferDestinationNotAllowed();
     }
@@ -160,8 +162,7 @@ export class WithdrawalController {
     request: InternalWithdrawalRequest,
     accountId: string
   ): Withdrawal {
-    this.validateDirectParentOnlyTransfer(request.destination, accountId);
-    return this.createWithdrawal(request);
+    return this.createWithdrawal(request, accountId, this.validateDirectParentOnlyTransfer);
   }
 
   public createPeerAccountWithdrawal(request: PeerAccountWithdrawalRequest): Withdrawal {
@@ -176,7 +177,11 @@ export class WithdrawalController {
     return this.createWithdrawal(request);
   }
 
-  public createWithdrawal<R extends WithdrawalRequest>(request: R): Withdrawal {
+  public createWithdrawal<R extends WithdrawalRequest, C extends TransferCapability>(
+    request: R,
+    accountId?: string,
+    validator?: (req: R, accountId: string, capability: C) => void
+  ): Withdrawal {
     const capability = this.withdrawalCapabilityRepository.findBy(
       (wc) =>
         wc.withdrawal.transferMethod === request.destination.transferMethod &&
@@ -185,6 +190,10 @@ export class WithdrawalController {
 
     if (capability === undefined) {
       throw new TransferNotSupportedError();
+    }
+
+    if (validator && accountId) {
+      validator(request, accountId, capability.withdrawal as C);
     }
 
     log.info(typeof request);

@@ -4,8 +4,8 @@ import { IdempotencyHandler, IdempotentRequest } from '../controllers/idempotenc
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { ControllersContainer } from '../controllers/controllers-container';
 import {
-  TransferNotSupportedError,
   TransferDestinationNotAllowed,
+  TransferNotSupportedError,
   WithdrawalController,
   WithdrawalNotFoundError,
   WithdrawalRequest,
@@ -22,11 +22,9 @@ import {
   FiatWithdrawalRequest,
   InternalWithdrawalRequest,
   PeerAccountWithdrawalRequest,
-  RequestPart,
   Withdrawal,
   WithdrawalCapability,
 } from '../../client/generated';
-import logger from '../../logging';
 
 type PeerAccountWithdrawalRequestBody = { Body: PeerAccountWithdrawalRequest };
 type InternalWithdrawalRequestBody = { Body: InternalWithdrawalRequest };
@@ -34,8 +32,6 @@ type BlockchainWithdrawalRequestBody = { Body: BlockchainWithdrawalRequest };
 type FiatWithdrawalRequestBody = { Body: FiatWithdrawalRequest };
 
 const controllers = new ControllersContainer(() => new WithdrawalController());
-
-const log = logger('server:WithdrawalHandler');
 
 /**
  * GET Endpoints
@@ -251,6 +247,7 @@ async function createWithdrawal<R extends IdempotentRequest & WithdrawalRequest>
     throw err;
   }
 }
+
 export async function createSubAccountWithdrawal(
   { body, params }: FastifyRequest<InternalWithdrawalRequestBody & AccountIdPathParam>,
   reply: FastifyReply
@@ -273,21 +270,6 @@ export async function createSubAccountWithdrawal(
     accountId,
     reply
   );
-  // try {
-  //   const withdrawal = controller.createWithdrawal(body);
-  //   subAccountIdempotencyHandler.add(body, 200, withdrawal);
-  //   return withdrawal;
-  // } catch (err) {
-  //   if (err instanceof TransferNotSupportedError) {
-  //     const response = {
-  //       message: err.message,
-  //       errorType: BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD,
-  //     };
-  //     subAccountIdempotencyHandler.add(body, 400, response);
-  //     return ErrorFactory.badRequest(reply, response);
-  //   }
-  //   throw err;
-  // }
 }
 
 export async function createPeerAccountWithdrawal(
