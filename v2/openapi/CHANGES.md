@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.4.0 - 2024-01-08
+
+### Breaking changes
+
+- New capability `transfersInternal` was added to the `getCapabilities` endpoint. The new
+  capability indicates account's ability to transfer funds to another sub-account/wallet of
+  the same user. 
+  This change does not affect the endpoints at `/accounts/{accountId}/transfers/withdrawals/subaccount`
+  but adds a way to tell if the operations are supported.
+- New required property `destinationPolicy` for internal transfer capabilities, when returned by
+  `getWithdrawalMethods`. The policy property allows limiting transfers only to parent accounts.
+- New required property `addressCreationPolicy` was added to the deposit capability object.
+  the property allows servers to specify that it does not support creation of new deposit addresses
+  for a given deposit capability. For example, in many cases there are deposit addresses for fiat
+  deposits, but there is no option to create new fiat deposit addresses.
+- Removed support for cryptocurrencies: CRO(Cronos), CSPR(Casper), IMX(Immutable), SNX(Synthetix).
+
+### Non-breaking improvements
+
+- Support for additional cryptocurrencies: ASTR, AURORA, AXL, BASE, BCH, BCHA, BITKUB, BSV, CANTO,
+  CELESTIA, CHZ, CHZ2, CTXC, DASH, DYDX, EOS, ETHW, EVMOS, FLR, FTM, GLMR, HT, KAVA, KSM, LUNA, 
+  LUNA2, MOVR, NEAR, OAS, OPT, OSMO, PALM, RON, RSK, SMR, SONGBIRD, SXNETWORK, TKX, VLX, WEMIX, 
+  XDB, XDC, XEC, XEM, ZEC.
+- New request error types: `deposit-address-creation-not-allowed`, `unsupported-transfer-method`,
+  `transfer-destination-not-allowed`.
+- Validation tool stability improvements.
+  
+-----
 ## 0.3.1 - 2023-11-21
 
 ### Non-breaking improvements
