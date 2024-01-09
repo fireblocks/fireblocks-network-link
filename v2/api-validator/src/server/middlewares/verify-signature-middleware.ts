@@ -4,6 +4,7 @@ import { IncomingHttpHeaders } from 'http';
 import { verifySignature } from '../../security';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import { BadRequestError, RequestPart } from '../../client/generated';
+import { removeServerPathPrefixFromRelativeUrl } from '../../url-helpers';
 
 const INVALID_SIGNATURE_ERROR: BadRequestError = {
   message: 'Provided signature is invalid',
@@ -19,7 +20,7 @@ export function verifySignatureMiddleware(
 ): void {
   const body = request.body as JsonValue;
   const method = request.method;
-  const url = request.url;
+  const url = removeServerPathPrefixFromRelativeUrl(request.url);
 
   const { timestamp, nonce, signature } = getSignatureHeaders(request.headers);
 

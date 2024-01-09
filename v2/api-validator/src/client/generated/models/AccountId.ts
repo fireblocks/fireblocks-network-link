@@ -3,9 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export enum Layer2Cryptocurrency {
-    ARB = 'ARB',
-    IMX = 'IMX',
-    MATIC = 'MATIC',
-    SNX = 'SNX',
-}
+export type AccountId = {
+    id: string;
+};
+

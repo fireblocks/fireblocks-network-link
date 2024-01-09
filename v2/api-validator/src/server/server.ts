@@ -3,7 +3,6 @@ import { createWebApp } from './app';
 import { AccountsController } from './controllers/accounts-controller';
 import { AssetsController } from './controllers/assets-controller';
 import { BooksController } from './controllers/books-controller';
-import { registerRoutes } from './routes';
 
 const log = logger('server');
 
@@ -29,7 +28,6 @@ process.on('unhandledRejection', handleError);
 async function start() {
   try {
     const app = await createWebApp();
-    registerRoutes(app);
     AssetsController.generateAdditionalAssets();
     AccountsController.generateAccounts();
     BooksController.loadBooks();

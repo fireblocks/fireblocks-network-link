@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto';
 import Client from '../../src/client';
+import { hasCapability } from '../utils/capable-accounts';
 import { Pageable, paginated } from '../utils/pagination';
 import { AssetsDirectory } from '../utils/assets-directory';
 import {
@@ -9,29 +10,30 @@ import {
   AssetReference,
   BadRequestError,
   Balances,
-  Layer1Cryptocurrency,
-  Layer2Cryptocurrency,
+  CryptocurrencySymbol,
   NationalCurrencyCode,
   RequestPart,
 } from '../../src/client/generated';
 
+const noHistoricBalancesCapability = !hasCapability('historicBalances');
+
 const invalidAssetParamsCombinations = [
   {
     nationalCurrencyCode: NationalCurrencyCode.USD,
-    cryptocurrencySymbol: Layer1Cryptocurrency.ETH,
+    cryptocurrencySymbol: CryptocurrencySymbol.ETH,
   },
   {
     assetId: 'any-value-works',
-    cryptocurrencySymbol: Layer1Cryptocurrency.ETH,
-  },
-  {
-    assetId: 'any-value-works',
-    nationalCurrencyCode: NationalCurrencyCode.USD,
+    cryptocurrencySymbol: CryptocurrencySymbol.ETH,
   },
   {
     assetId: 'any-value-works',
     nationalCurrencyCode: NationalCurrencyCode.USD,
-    cryptocurrencySymbol: Layer1Cryptocurrency.ETH,
+  },
+  {
+    assetId: 'any-value-works',
+    nationalCurrencyCode: NationalCurrencyCode.USD,
+    cryptocurrencySymbol: CryptocurrencySymbol.ETH,
   },
 ];
 
@@ -87,7 +89,7 @@ describe('Balances', () => {
       accountId: string,
       assetId?: string,
       nationalCurrencyCode?: NationalCurrencyCode,
-      cryptocurrencySymbol?: Layer1Cryptocurrency | Layer2Cryptocurrency
+      cryptocurrencySymbol?: CryptocurrencySymbol
     ): Promise<ApiError> => {
       try {
         await client.balances.getBalances({
@@ -172,7 +174,7 @@ describe('Balances', () => {
     });
   });
 
-  describe('List historic balances', () => {
+  describe.skipIf(noHistoricBalancesCapability)('List historic balances', () => {
     let accountBalancesMap: Map<string, Balances>;
     const time = new Date(Date.now()).toISOString();
 
@@ -208,7 +210,7 @@ describe('Balances', () => {
       accountId: string,
       assetId?: string,
       nationalCurrencyCode?: NationalCurrencyCode,
-      cryptocurrencySymbol?: Layer1Cryptocurrency | Layer2Cryptocurrency
+      cryptocurrencySymbol?: CryptocurrencySymbol
     ): Promise<ApiError> => {
       try {
         await client.historicBalances.getHistoricBalances({

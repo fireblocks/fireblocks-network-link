@@ -21,9 +21,11 @@ import {
   TradingService,
   TransfersBlockchainService,
   TransfersFiatService,
+  TransfersInternalService,
   TransfersPeerAccountsService,
   TransfersService,
 } from './generated';
+import { getRelativeUrlWithoutPathPrefix } from '../url-helpers';
 
 export type SecurityHeaders = {
   xFbapiKey: string;
@@ -93,6 +95,7 @@ export class SecureClient {
   public readonly transfersBlockchain: SecureService<TransfersBlockchainService>;
   public readonly transfersFiat: SecureService<TransfersFiatService>;
   public readonly transfersPeerAccounts: SecureService<TransfersPeerAccountsService>;
+  public readonly transfersInternal: SecureService<TransfersInternalService>;
 
   private readonly request: BaseHttpRequest;
 
@@ -119,6 +122,7 @@ export class SecureClient {
     this.transfersPeerAccounts = stripSecurityHeaderArgs(
       new TransfersPeerAccountsService(this.request)
     );
+    this.transfersInternal = stripSecurityHeaderArgs(new TransfersInternalService(this.request));
   }
 
   public async cacheCapabilities(): Promise<void> {
@@ -205,7 +209,7 @@ export function createSecurityHeaders(
   const timestamp =
     overrideOptions?.timestamp === undefined ? Date.now() : overrideOptions.timestamp;
 
-  const relativeUrl = getRelativeUrl(options.url as string);
+  const relativeUrl = getRelativeUrlWithoutPathPrefix(options.url as string);
   const payload = buildSignaturePayload(
     options.method as Method,
     relativeUrl,
@@ -221,11 +225,6 @@ export function createSecurityHeaders(
     xFbapiTimestamp: timestamp,
     xFbapiNonce: nonce,
   };
-}
-
-function getRelativeUrl(url: string) {
-  const parsedUrl = new URL(url);
-  return parsedUrl.pathname + parsedUrl.search;
 }
 
 /**

@@ -7,21 +7,29 @@ import { JSONSchemaFaker } from 'json-schema-faker';
 import { AssetsController } from './assets-controller';
 import {
   BlockchainWithdrawalRequest,
-  CrossAccountTransferCapability,
-  CrossAccountWithdrawalRequest,
   FiatWithdrawalRequest,
   IbanCapability,
+  InternalTransferCapability,
+  InternalTransferDestinationPolicy,
+  InternalTransferMethod,
+  InternalWithdrawalRequest,
+  PeerAccountTransferCapability,
+  PeerAccountWithdrawalRequest,
   PublicBlockchainCapability,
   SwiftCapability,
+  TransferCapability,
   Withdrawal,
   WithdrawalCapability,
   WithdrawalStatus,
 } from '../../client/generated';
+import logger from '../../logging';
+import { AccountsController } from './accounts-controller';
 
 export type WithdrawalRequest =
   | FiatWithdrawalRequest
   | BlockchainWithdrawalRequest
-  | CrossAccountWithdrawalRequest;
+  | PeerAccountWithdrawalRequest
+  | InternalWithdrawalRequest;
 
 type Order = 'asc' | 'desc';
 
@@ -31,8 +39,22 @@ export class WithdrawalNotFoundError extends XComError {
   }
 }
 
+export class TransferNotSupportedError extends XComError {
+  constructor() {
+    super('Transfer not supported');
+  }
+}
+
+export class TransferDestinationNotAllowed extends XComError {
+  constructor() {
+    super('Transfer destination is not allowed');
+  }
+}
+
 const DEFAULT_CAPABILITIES_COUNT = 50;
-const DEFAULT_WITHDRAWALS_COUNT = 5;
+const DEFAULT_WITHDRAWALS_COUNT = 30;
+
+const log = logger('server:WithdrawalController');
 
 export class WithdrawalController {
   private readonly withdrawalRepository = new Repository<Withdrawal>();
@@ -90,7 +112,7 @@ export class WithdrawalController {
     return withdrawals.filter(
       (withdrawal) =>
         withdrawal.destination.transferMethod ===
-        CrossAccountTransferCapability.transferMethod.INTERNAL_TRANSFER
+        InternalTransferMethod.transferMethod.INTERNAL_TRANSFER
     );
   }
 
@@ -99,7 +121,7 @@ export class WithdrawalController {
     return withdrawals.filter(
       (withdrawal) =>
         withdrawal.destination.transferMethod ===
-        CrossAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
+        PeerAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
     );
   }
 
@@ -123,7 +145,59 @@ export class WithdrawalController {
     );
   }
 
-  public createWithdrawal(request: WithdrawalRequest): Withdrawal {
+  private validateDirectParentOnlyTransfer(
+    request: InternalWithdrawalRequest,
+    srcAccountId: string,
+    capability: InternalTransferCapability
+  ): void {
+    if (
+      capability.destinationPolicy == InternalTransferDestinationPolicy.DIRECT_PARENT_ACCOUNT &&
+      !AccountsController.isParentAccount(srcAccountId, request.destination.accountId, 1)
+    ) {
+      throw new TransferDestinationNotAllowed();
+    }
+  }
+
+  public createSubAccountWithdrawal(
+    request: InternalWithdrawalRequest,
+    accountId: string
+  ): Withdrawal {
+    return this.createWithdrawal(request, accountId, this.validateDirectParentOnlyTransfer);
+  }
+
+  public createPeerAccountWithdrawal(request: PeerAccountWithdrawalRequest): Withdrawal {
+    return this.createWithdrawal(request);
+  }
+
+  public createBlockchainWithdrawal(request: BlockchainWithdrawalRequest): Withdrawal {
+    return this.createWithdrawal(request);
+  }
+
+  public createFiatWithdrawal(request: FiatWithdrawalRequest): Withdrawal {
+    return this.createWithdrawal(request);
+  }
+
+  public createWithdrawal<R extends WithdrawalRequest, C extends TransferCapability>(
+    request: R,
+    accountId?: string,
+    validator?: (req: R, accountId: string, capability: C) => void
+  ): Withdrawal {
+    const capability = this.withdrawalCapabilityRepository.findBy(
+      (wc) =>
+        wc.withdrawal.transferMethod === request.destination.transferMethod &&
+        _.isEqual(wc.balanceAsset, request.balanceAsset)
+    );
+
+    if (capability === undefined) {
+      throw new TransferNotSupportedError();
+    }
+
+    if (validator && accountId) {
+      validator(request, accountId, capability.withdrawal as C);
+    }
+
+    log.info(typeof request);
+
     const withdrawal = this.withdrawalFromWithdrawalRequest(request);
     this.withdrawalRepository.create(withdrawal);
     return withdrawal;

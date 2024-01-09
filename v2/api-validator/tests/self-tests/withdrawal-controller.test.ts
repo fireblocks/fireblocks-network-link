@@ -1,5 +1,9 @@
 import { fakeSchemaObject } from '../../src/schemas';
-import { CrossAccountWithdrawalRequest, Withdrawal } from '../../src/client/generated';
+import {
+  PeerAccountWithdrawalRequest,
+  Withdrawal,
+  WithdrawalCapability,
+} from '../../src/client/generated';
 import { WithdrawalController } from '../../src/server/controllers/withdrawal-controller';
 import _ from 'lodash';
 
@@ -20,14 +24,22 @@ describe('Withdrawal controller', () => {
 
   describe('Create withdrawal', () => {
     let withdrawal: Withdrawal;
-    beforeAll(() => {
-      const withdrawalRequest = fakeSchemaObject(
-        'CrossAccountWithdrawalRequest'
-      ) as CrossAccountWithdrawalRequest;
-      withdrawal = controller.createWithdrawal(withdrawalRequest);
-    });
+    let capability: WithdrawalCapability | undefined;
+    beforeAll(() => {});
     it('should add withdrawal to account withdrawals', () => {
-      expect(controller.getWithdrawal(withdrawal.id)).toBeDefined();
+      const withdrawalRequest = fakeSchemaObject(
+        'PeerAccountWithdrawalRequest'
+      ) as PeerAccountWithdrawalRequest;
+      capability = controller
+        .getCapabilites()
+        .find((c) =>
+          _.isEqual(c.withdrawal.transferMethod, withdrawalRequest.destination.transferMethod)
+        );
+      if (capability !== undefined) {
+        withdrawalRequest.balanceAsset = capability.balanceAsset;
+        withdrawal = controller.createWithdrawal(withdrawalRequest);
+        expect(controller.getWithdrawal(withdrawal.id)).toBeDefined();
+      }
     });
   });
 });

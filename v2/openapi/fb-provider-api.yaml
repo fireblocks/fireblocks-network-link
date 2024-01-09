@@ -67,6 +67,7 @@ paths:
                       transfersBlockchain: "*"
                       transfersFiat: "*"
                       transfersPeerAccounts: "*"
+                      transfersInternal: "*"
                       trading: "*"
                       liquidity: "*"
                 allAccountsSupportSomeCapabilities:
@@ -607,6 +608,9 @@ components:
             - deposit-address-disabled
             - order-not-trading
             - idempotency-key-reuse
+            - deposit-address-creation-not-allowed
+            - unsupported-transfer-method
+            - transfer-destination-not-allowed
         propertyName:
           description: Name of property that caused the error.
           type: string
@@ -674,6 +678,8 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         transfersPeerAccounts:
           $ref: '#/components/schemas/AccountsSet'
+        transfersInternal:
+          $ref: '#/components/schemas/AccountsSet'
         trading:
           $ref: '#/components/schemas/AccountsSet'
         liquidity:
@@ -701,12 +707,10 @@ components:
         - active
         - inactive
 
-    Account:
+    AccountData:
       type: object
-      required: [ id, title, status ]
+      required: [ title, status ]
       properties:
-        id:
-          type: string
         title:
           type: string
         description:
@@ -715,6 +719,21 @@ components:
           $ref: '#/components/schemas/Balances'
         status:
           $ref: '#/components/schemas/AccountStatus'
+        parentId:
+          type: string
+          description: The ID of the parent account. If the field is empty, the account is a main account.
+
+    AccountId:
+      type: object
+      required: [ id ]
+      properties:
+        id:
+          type: string
+
+    Account:
+      allOf:
+        - $ref: '#/components/schemas/AccountId'
+        - $ref: '#/components/schemas/AccountData'
 
     Balances:
       type: array
@@ -862,66 +881,139 @@ components:
       type: string
       enum:
         - Algorand
+        - Arbitrum
+        - Astar
+        - Aurora
         - Avalanche
+        - Axelar
+        - Base
         - Bitcoin
+        - Bitcoin Cash
+        - Bitcoin Cash ABC
+        - Bitcoin SV
+        - Bitkub Chain
         - BNB
+        - Canto
         - Cardano
-        - Casper
+        - Celestia
         - Celo
+        - Chiliz Chain
+        - Chiliz Legacy Chain
+        - Cortex
         - Cosmos
-        - Cronos
+        - Dash
         - Dogecoin
+        - DYDX
+        - eCash
+        - EOS
         - Ethereum
         - Ethereum Classic
+        - EthereumPoW
+        - Evmos
+        - Fantom Opera
+        - Flare
         - Hedera
+        - HT Chain
+        - KAVA
+        - Kusama
         - Litecoin
-        - Monero
-        - Polygon PoS
+        - Moonbeam
+        - Moonriver
+        - NEAR Protocol
+        - NEM NIS1
+        - Oasys
+        - Optimism
+        - Osmosis
+        - Palm
         - Polkadot
+        - Polygon PoS
+        - Ronin
+        - RSK
+        - Shimmer
         - Solana
+        - Songbird Canary-Network
         - Stellar
+        - SX Network
+        - Terra 2.0
+        - Terra Classic
         - Tezos
+        - TokenEX
         - TRON
+        - Velas
+        - WEMIX
+        - XDB Chain
+        - XinFin Network
         - XRP
+        - ZCash
 
-    Layer1Cryptocurrency:
+    CryptocurrencySymbol:
       type: string
       enum:
         - ADA
         - ALGO
+        - ARB
+        - ASTR
         - ATOM
+        - AURORA
         - AVAX
+        - AXL
+        - BASE
+        - BCH
+        - BCHA
+        - BITKUB
         - BNB
+        - BSV
         - BTC
+        - CANTO
+        - CELESTIA
         - CELO
-        - CRO
-        - CSPR
+        - CHZ
+        - CHZ2
+        - CTXC
+        - DASH
         - DOGE
         - DOT
+        - DYDX
+        - EOS
         - ETC
         - ETH
+        - ETHW
+        - EVMOS
+        - FLR
+        - FTM
+        - GLMR
         - HBAR
+        - HT
+        - KAVA
+        - KSM
         - LTC
+        - LUNA
+        - LUNA2
+        - MATIC
+        - MOVR
+        - NEAR
+        - OAS
+        - OPT
+        - OSMO
+        - PALM
+        - RON
+        - RSK
+        - SMR
         - SOL
+        - SONGBIRD
+        - SXNETWORK
+        - TKX
         - TRX
+        - VLX
+        - WEMIX
+        - XDB
+        - XDC
+        - XEC
+        - XEM
         - XLM
-        - XMR
         - XRP
         - XTZ
-
-    Layer2Cryptocurrency:
-      type: string
-      enum:
-        - ARB
-        - IMX
-        - MATIC
-        - SNX
-
-    CryptocurrencySymbol:
-      anyOf:
-        - $ref: '#/components/schemas/Layer1Cryptocurrency'
-        - $ref: '#/components/schemas/Layer2Cryptocurrency'
-
+        - ZEC
 
     NationalCurrencyCode:
       type: string

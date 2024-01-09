@@ -3,11 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CrossAccountTransfer } from './CrossAccountTransfer';
 import type { IbanTransfer } from './IbanTransfer';
+import type { InternalTransfer } from './InternalTransfer';
 import type { OtherFiatTransfer } from './OtherFiatTransfer';
+import type { PeerAccountTransfer } from './PeerAccountTransfer';
 import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction';
 import type { SwiftTransfer } from './SwiftTransfer';
 
-export type Transfer = (CrossAccountTransfer | PublicBlockchainTransaction | IbanTransfer | SwiftTransfer | OtherFiatTransfer);
+export type Transfer = (PeerAccountTransfer | InternalTransfer | PublicBlockchainTransaction | IbanTransfer | SwiftTransfer | OtherFiatTransfer);
 

@@ -34,6 +34,9 @@ export namespace BadRequestError {
         DEPOSIT_ADDRESS_DISABLED = 'deposit-address-disabled',
         ORDER_NOT_TRADING = 'order-not-trading',
         IDEMPOTENCY_KEY_REUSE = 'idempotency-key-reuse',
+        DEPOSIT_ADDRESS_CREATION_NOT_ALLOWED = 'deposit-address-creation-not-allowed',
+        UNSUPPORTED_TRANSFER_METHOD = 'unsupported-transfer-method',
+        TRANSFER_DESTINATION_NOT_ALLOWED = 'transfer-destination-not-allowed',
     }
 
 

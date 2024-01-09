@@ -3,14 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { AccountStatus } from './AccountStatus';
-import type { Balances } from './Balances';
+import type { AccountData } from './AccountData';
+import type { AccountId } from './AccountId';
 
-export type Account = {
-    id: string;
-    title: string;
-    description?: string;
-    balances?: Balances;
-    status: AccountStatus;
-};
+export type Account = (AccountId & AccountData);
 

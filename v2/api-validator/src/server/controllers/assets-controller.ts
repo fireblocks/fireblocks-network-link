@@ -1,8 +1,7 @@
 import {
   AssetDefinition,
   AssetReference,
-  Layer1Cryptocurrency,
-  Layer2Cryptocurrency,
+  CryptocurrencySymbol,
   NationalCurrencyCode,
 } from '../../client/generated';
 import { XComError } from '../../error';
@@ -49,10 +48,7 @@ export class AssetsController {
       return AssetsController.isKnownAdditionalAsset(asset.assetId);
     }
     if ('cryptocurrencySymbol' in asset) {
-      return (
-        !!Layer1Cryptocurrency[asset.cryptocurrencySymbol] ||
-        !!Layer2Cryptocurrency[asset.cryptocurrencySymbol]
-      );
+      return !!CryptocurrencySymbol[asset.cryptocurrencySymbol];
     }
     if ('nationalCurrencyCode' in asset) {
       return !!NationalCurrencyCode[asset.nationalCurrencyCode];

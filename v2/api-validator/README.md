@@ -70,11 +70,12 @@ values.
 If the tests fail catastrophically, it is possible to run the tests in three separate
 groups:
 
-1. `npm run test:self` unit-tests validation tool's code. If these tests fail, there 
+1. Ensure you use Node.js v18.14.2
+2. `npm run test:self` unit-tests validation tool's code. If these tests fail, there 
    is something wrong with the tool itself.
-2. `npm run test:sanity` tests server functionality that is critical for the rest of 
+3. `npm run test:sanity` tests server functionality that is critical for the rest of 
    the tests. If these tests fail, there is either a configuration problem or the 
    server doesn't work properly. Usually, if these tests fail, most of the server 
    tests will fail too.
-3. `npm run test:server` runs the rest of the tests. These tests assume the sanity 
+4. `npm run test:server` runs the rest of the tests. These tests assume the sanity 
    tests pass.

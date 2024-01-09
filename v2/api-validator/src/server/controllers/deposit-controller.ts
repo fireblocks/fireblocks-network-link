@@ -5,6 +5,7 @@ import { AssetsController } from './assets-controller';
 import {
   Deposit,
   DepositAddress,
+  DepositAddressCreationPolicy,
   DepositAddressCreationRequest,
   DepositAddressStatus,
   DepositCapability,
@@ -16,6 +17,7 @@ import {
 import { Repository } from './repository';
 import { fakeSchemaObject } from '../../schemas';
 import { JSONSchemaFaker } from 'json-schema-faker';
+import _ from 'lodash';
 
 export class DepositAddressNotFoundError extends XComError {
   constructor() {
@@ -35,9 +37,21 @@ export class DepositAddressDisabledError extends XComError {
   }
 }
 
-const DEFAULT_CAPABILITIES_COUNT = 5;
-const DEFAULT_DEPOSITS_COUNT = 5;
-const DEFAULT_DEPOSIT_ADDRESSES_COUNT = 5;
+export class DepositAddressCreationImpossibleError extends XComError {
+  constructor() {
+    super('Deposit address creation is impossible for the current transfer method');
+  }
+}
+
+export class UnsupportedTransferMethodError extends XComError {
+  constructor() {
+    super('Unsupported transfer method');
+  }
+}
+
+const DEFAULT_CAPABILITIES_COUNT = 50;
+const DEFAULT_DEPOSITS_COUNT = 50;
+const DEFAULT_DEPOSIT_ADDRESSES_COUNT = 50;
 
 export class DepositController {
   private readonly depositRepository = new Repository<Deposit>();
@@ -66,6 +80,7 @@ export class DepositController {
     injectKnownAssetIdsToDeposits(knownAssetIds, this.depositRepository);
     injectKnownAssetIdsToDepositAddresses(knownAssetIds, this.depositAddressRepository);
     injectKnownAssetIdsToDepositCapabilities(knownAssetIds, this.depositCapabilitiesRepository);
+    this.depositCapabilitiesRepository.removeDuplicatesBy((dc) => dc.deposit);
   }
 
   public getDepositCapabilities(): DepositCapability[] {
@@ -151,6 +166,24 @@ export class DepositController {
 
     depositAddress.status = DepositAddressStatus.DISABLED;
     return depositAddress;
+  }
+
+  public validateNewAddressCreationPossibility(
+    transferMethod: PublicBlockchainCapability | IbanCapability | SwiftCapability
+  ): void {
+    const depositCapabilities = this.getDepositCapabilities();
+    const relevantDepositCapability = depositCapabilities.find((capability) =>
+      _.isEqual(capability.deposit, transferMethod)
+    );
+    if (relevantDepositCapability === undefined) {
+      throw new UnsupportedTransferMethodError();
+    } else if (
+      relevantDepositCapability.addressCreationPolicy === DepositAddressCreationPolicy.CANNOT_CREATE
+    ) {
+      throw new DepositAddressCreationImpossibleError();
+    } else {
+      /* all good */
+    }
   }
 }
 

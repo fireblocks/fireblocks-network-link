@@ -1,6 +1,6 @@
 import {
   Blockchain,
-  Layer1Cryptocurrency,
+  CryptocurrencySymbol,
   MarketEntry,
   NationalCurrencyCode,
   OrderBook,
@@ -15,7 +15,7 @@ export const books: OrderBook[] = [
     description: 'Bitcoin book',
     baseAsset: {
       blockchain: Blockchain.BITCOIN,
-      cryptocurrencySymbol: Layer1Cryptocurrency.BTC,
+      cryptocurrencySymbol: CryptocurrencySymbol.BTC,
     },
     quoteAsset: {
       assetId: 'f0844d82-7097-4521-95bc-d843724a893e',

@@ -16,6 +16,7 @@ export type ApiComponents = {
     transfersBlockchain?: AccountsSet;
     transfersFiat?: AccountsSet;
     transfersPeerAccounts?: AccountsSet;
+    transfersInternal?: AccountsSet;
     trading?: AccountsSet;
     liquidity?: AccountsSet;
 };
