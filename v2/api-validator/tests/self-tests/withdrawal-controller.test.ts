@@ -6,11 +6,13 @@ import {
 } from '../../src/client/generated';
 import { WithdrawalController } from '../../src/server/controllers/withdrawal-controller';
 import _ from 'lodash';
+import { AssetsController } from '../../src/server/controllers/assets-controller';
 
 describe('Withdrawal controller', () => {
   let controller: WithdrawalController;
 
   beforeAll(() => {
+    AssetsController.generateAdditionalAssets();
     controller = new WithdrawalController();
   });
 
@@ -36,6 +38,7 @@ describe('Withdrawal controller', () => {
           _.isEqual(c.withdrawal.transferMethod, withdrawalRequest.destination.transferMethod)
         );
       if (capability !== undefined) {
+        withdrawalRequest.destination.asset = capability.withdrawal.asset;
         withdrawalRequest.balanceAsset = capability.balanceAsset;
         withdrawal = controller.createWithdrawal(withdrawalRequest);
         expect(controller.getWithdrawal(withdrawal.id)).toBeDefined();

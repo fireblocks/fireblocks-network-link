@@ -39,6 +39,12 @@ export class WithdrawalNotFoundError extends XComError {
   }
 }
 
+export class UnknownAssetError extends XComError {
+  constructor() {
+    super('Unknown asset');
+  }
+}
+
 export class TransferNotSupportedError extends XComError {
   constructor() {
     super('Transfer not supported');
@@ -52,7 +58,7 @@ export class TransferDestinationNotAllowed extends XComError {
 }
 
 const DEFAULT_CAPABILITIES_COUNT = 50;
-const DEFAULT_WITHDRAWALS_COUNT = 30;
+const DEFAULT_WITHDRAWALS_COUNT = 100;
 
 const log = logger('server:WithdrawalController');
 
@@ -75,6 +81,12 @@ export class WithdrawalController {
 
     injectKnownAssetIdsToWithdrawals(knownAssetIds, this.withdrawalRepository);
     injectKnownAssetIdsToWithdrawalCapabilities(knownAssetIds, this.withdrawalCapabilityRepository);
+    this.withdrawalCapabilityRepository.removeDuplicatesBy((dc) => {
+      return {
+        asset: dc.withdrawal.asset,
+        transferMethod: dc.withdrawal.transferMethod,
+      };
+    });
   }
 
   private withdrawalFromWithdrawalRequest(request: WithdrawalRequest): Withdrawal {
@@ -149,13 +161,15 @@ export class WithdrawalController {
     request: InternalWithdrawalRequest,
     srcAccountId: string,
     capability: InternalTransferCapability
-  ): void {
+  ): XComError[] {
+    const errors: XComError[] = [];
     if (
       capability.destinationPolicy == InternalTransferDestinationPolicy.DIRECT_PARENT_ACCOUNT &&
       !AccountsController.isParentAccount(srcAccountId, request.destination.accountId, 1)
     ) {
-      throw new TransferDestinationNotAllowed();
+      errors.push(new TransferDestinationNotAllowed());
     }
+    return errors;
   }
 
   public createSubAccountWithdrawal(
@@ -180,23 +194,32 @@ export class WithdrawalController {
   public createWithdrawal<R extends WithdrawalRequest, C extends TransferCapability>(
     request: R,
     accountId?: string,
-    validator?: (req: R, accountId: string, capability: C) => void
+    validator?: (req: R, accountId: string, capability: C) => XComError[]
   ): Withdrawal {
     const capability = this.withdrawalCapabilityRepository.findBy(
       (wc) =>
         wc.withdrawal.transferMethod === request.destination.transferMethod &&
-        _.isEqual(wc.balanceAsset, request.balanceAsset)
+        _.isEqual(wc.withdrawal.asset, request.destination.asset)
     );
 
+    const errors: XComError[] = [];
+
+    if (
+      !AssetsController.isKnownAsset(request.destination.asset) ||
+      !AssetsController.isKnownAsset(request.balanceAsset)
+    ) {
+      errors.push(new UnknownAssetError());
+    }
+
     if (capability === undefined) {
-      throw new TransferNotSupportedError();
+      errors.push(new TransferNotSupportedError());
+    } else if (validator && accountId) {
+      errors.push(...validator(request, accountId, capability.withdrawal as C));
     }
 
-    if (validator && accountId) {
-      validator(request, accountId, capability.withdrawal as C);
+    if (errors.length > 0) {
+      throw JSONSchemaFaker.random.pick(errors) as XComError;
     }
-
-    log.info(typeof request);
 
     const withdrawal = this.withdrawalFromWithdrawalRequest(request);
     this.withdrawalRepository.create(withdrawal);
