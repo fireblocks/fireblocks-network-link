@@ -19,6 +19,7 @@ import {
   PeerAccountTransferCapability,
   PublicBlockchainCapability,
   SwiftCapability,
+  type TransferCapability,
   Withdrawal,
   WithdrawalCapability,
 } from '../../src/client/generated';
@@ -49,6 +50,11 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
     IbanCapability.transferMethod.IBAN,
     SwiftCapability.transferMethod.SWIFT,
   ];
+
+  const findParentOf = (accountId: string) =>
+    Array.from(accountsMap.values()).find((a) =>
+      isParentAccount(accountId, a.id, accountsMap.get.bind(accountsMap), 1)
+    )?.id;
 
   const getCapabilities = async (accountId: string, limit: number, startingAfter?) => {
     const response = await client.capabilities.getWithdrawalMethods({
@@ -338,6 +344,12 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
             (capability.withdrawal as InternalTransferCapability).destinationPolicy ===
             InternalTransferDestinationPolicy.ANY_ACCOUNT,
         ],
+        specialDestinationFieldsForErrorTests: (accountId: string) => {
+          return {
+            accountId: findParentOf(accountId),
+          };
+        },
+        withdrawalCapabilityName: 'InternalTransferCapability',
       },
       {
         transferMethod: PeerAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER,
@@ -346,6 +358,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           client.transfersPeerAccounts.createPeerAccountWithdrawal({ accountId, requestBody }),
         assetExample: { nationalCurrencyCode: NationalCurrencyCode.USD },
         noRelevantCapability: noTransfersPeerAccountsCapability,
+        withdrawalCapabilityName: 'PeerAccountTransferCapability',
       },
       {
         transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
@@ -354,6 +367,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           client.transfersBlockchain.createBlockchainWithdrawal({ accountId, requestBody }),
         assetExample: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
         noRelevantCapability: noTransfersBlockchainCapability,
+        withdrawalCapabilityName: 'PublicBlockchainCapability',
       },
       {
         transferMethod: SwiftCapability.transferMethod.SWIFT,
@@ -362,6 +376,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           client.transfersFiat.createFiatWithdrawal({ accountId, requestBody }),
         assetExample: { nationalCurrencyCode: NationalCurrencyCode.USD },
         noRelevantCapability: noTransfersFiatCapability,
+        withdrawalCapabilityName: 'SwiftCapability',
       },
       {
         transferMethod: IbanCapability.transferMethod.IBAN,
@@ -370,6 +385,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           client.transfersFiat.createFiatWithdrawal({ accountId, requestBody }),
         assetExample: { nationalCurrencyCode: NationalCurrencyCode.USD },
         noRelevantCapability: noTransfersFiatCapability,
+        withdrawalCapabilityName: 'IbanCapability',
       },
     ])(
       '$transferMethod withdrawal',
@@ -380,6 +396,8 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         assetExample,
         noRelevantCapability,
         additionalFilters,
+        specialDestinationFieldsForErrorTests,
+        withdrawalCapabilityName,
       }) => {
         it.skipIf(noRelevantCapability)(
           'should succeed making withdrawal for every capability that the account has sufficient balance for',
@@ -426,30 +444,116 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           }
         );
 
-        it.skipIf(noRelevantCapability)(
-          'should fail making withdrawal when the transfer capability not exists',
-          async () => {
+        const skipSupportedTransferMethod = (
+          withdrawal: TransferCapability,
+          capabilities: WithdrawalCapability[],
+          assetReference: AssetReference
+        ) => {
+          return (
+            capabilities.find((c) => _.isEqual(c.balanceAsset, assetReference)) ||
+            capabilities.find(
+              (c) =>
+                _.isEqual(c.withdrawal.asset, withdrawal.asset) &&
+                _.isEqual(c.withdrawal.transferMethod, withdrawal.transferMethod)
+            )
+          );
+        };
+
+        const skipNotSupportedTransferMethod = (
+          withdrawal: TransferCapability,
+          capabilities: WithdrawalCapability[],
+          assetReference: AssetReference
+        ) => !skipSupportedTransferMethod(withdrawal, capabilities, assetReference);
+
+        const skipUnknownAsset = (asset: AssetReference) => !assets.isKnownAsset(asset);
+
+        const skipKnownAsset = (asset: AssetReference) => !skipUnknownAsset(asset);
+
+        it.skipIf(noRelevantCapability).each([
+          {
+            skip: (
+              withdrawal: TransferCapability,
+              capabilities: WithdrawalCapability[],
+              assetReference: AssetReference
+            ) =>
+              skipKnownAsset(withdrawal.asset) ||
+              skipKnownAsset(assetReference) ||
+              skipSupportedTransferMethod(withdrawal, capabilities, assetReference),
+            testCase: 'the transfer capability not exists AND asset is unknown',
+            errorTypes: [
+              BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD,
+              BadRequestError.errorType.UNKNOWN_ASSET,
+            ],
+          },
+          {
+            skip: (
+              withdrawal: TransferCapability,
+              capabilities: WithdrawalCapability[],
+              assetReference: AssetReference
+            ) =>
+              skipUnknownAsset(withdrawal.asset) ||
+              skipUnknownAsset(assetReference) ||
+              skipSupportedTransferMethod(withdrawal, capabilities, withdrawal.asset),
+            testCase: 'the transfer capability not exists',
+            errorTypes: [BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD],
+          },
+          {
+            skip: (
+              withdrawal: TransferCapability,
+              capabilities: WithdrawalCapability[],
+              assetReference: AssetReference
+            ) =>
+              skipKnownAsset(withdrawal.asset) ||
+              skipUnknownAsset(assetReference) ||
+              skipNotSupportedTransferMethod(withdrawal, capabilities, withdrawal.asset),
+            testCase: 'destination asset is unknown',
+            errorTypes: [BadRequestError.errorType.UNKNOWN_ASSET],
+          },
+          {
+            skip: (
+              withdrawal: TransferCapability,
+              capabilities: WithdrawalCapability[],
+              assetReference: AssetReference
+            ) =>
+              skipUnknownAsset(withdrawal.asset) ||
+              skipKnownAsset(assetReference) ||
+              skipNotSupportedTransferMethod(withdrawal, capabilities, assetReference),
+            testCase: 'balance asset is unknown',
+            errorTypes: [BadRequestError.errorType.UNKNOWN_ASSET],
+          },
+        ])(
+          'should fail making withdrawal when $testCase - should throw one of relevant errors',
+          async ({ skip, errorTypes }) => {
             for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
               const transferMethodSpecificCapabilities = capabilities.filter(
-                (capability) =>
-                  capability.withdrawal.transferMethod === transferMethod &&
-                  (additionalFilters === undefined ||
-                    additionalFilters.map((f) => f(capability)).every((v) => v === true))
+                (capability) => capability.withdrawal.transferMethod === transferMethod
               );
 
               for (const capability of transferMethodSpecificCapabilities) {
                 const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
                 const assetBalance = await getCapabilityAssetBalance(accountId, capability);
 
+                const withdrawal = fakeSchemaObject(withdrawalCapabilityName) as TransferCapability;
+
                 const fakeAssetReference = fakeSchemaObject('AssetReference') as AssetReference;
 
                 if (
-                  !assetBalance ||
-                  Number(assetBalance.availableAmount) < Number(minWithdrawalAmount) ||
-                  transferMethodSpecificCapabilities.find((c) =>
-                    _.isEqual(c.balanceAsset, fakeAssetReference)
-                  ) !== undefined
+                  specialDestinationFieldsForErrorTests !== undefined &&
+                  Object.values(specialDestinationFieldsForErrorTests(accountId)).find(
+                    (field) => field === undefined
+                  )
                 ) {
+                  continue;
+                }
+
+                if (
+                  !assetBalance ||
+                  Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
+                ) {
+                  continue;
+                }
+
+                if (skip(withdrawal, capabilities, fakeAssetReference)) {
                   continue;
                 }
 
@@ -459,15 +563,17 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                   balanceAsset: fakeAssetReference,
                   destination: {
                     ...config,
+                    ...specialDestinationFieldsForErrorTests,
                     amount: minWithdrawalAmount,
-                    ...capability.withdrawal,
+                    ...withdrawal,
                   },
                 };
                 await expect(
                   createWithdrawal(client, { accountId, requestBody })
-                ).rejects.toMatchObject({
-                  status: 400,
-                  body: { errorType: BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD },
+                ).rejects.toSatisfy<ApiError>((response) => {
+                  const status = response.status === 400;
+                  const errorType = errorTypes.includes(response.body.errorType);
+                  return status && errorType;
                 });
               }
             }
@@ -534,6 +640,24 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           });
         });
       }
+    );
+
+    describe.skipIf(noTransfersCapability)('Withdrawal capabilities validations', () =>
+      it('should check withdrawal capabilities duplications', async () => {
+        for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+          const duplicates = Object.values(
+            _.groupBy(
+              capabilities,
+              (x) =>
+                JSON.stringify(x.withdrawal.asset) + JSON.stringify(x.withdrawal.transferMethod)
+            )
+          ).filter((c) => c.length > 1);
+          expect(
+            duplicates,
+            `For accountId = ${accountId}. Actual duplications: ${JSON.stringify(duplicates)}`
+          ).toBeEmpty();
+        }
+      })
     );
 
     describe.skipIf(noTransfersSubaccountCapability)(
