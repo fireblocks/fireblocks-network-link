@@ -38,7 +38,7 @@ const idempotencyHandler = new IdempotencyHandler<
   DepositAddress | BadRequestError
 >();
 
-const controllers = new ControllersContainer(() => new DepositController());
+const controllers = new ControllersContainer((accountId) => new DepositController(accountId));
 
 export async function getDepositMethods(
   request: FastifyRequest<PaginationQuerystring & AccountIdPathParam>,

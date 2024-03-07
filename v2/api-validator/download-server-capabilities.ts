@@ -58,7 +58,7 @@ async function downloadCapabilities() {
   await downloadJsonFile('books', getBooks);
 
   const getAccounts = makeDownloader(async (limit: number, startingAfter?: string) => {
-    const response = await client.accounts.getAccounts({ limit, startingAfter });
+    const response = await client.accounts.getAccounts({ limit, startingAfter, balances: true });
     return response.accounts;
   });
   await downloadJsonFile('accounts', getAccounts);

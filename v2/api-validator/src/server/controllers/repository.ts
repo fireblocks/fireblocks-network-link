@@ -9,6 +9,10 @@ export class Repository<T extends { id: Id }> {
     this.data.set(newRecord.id, newRecord);
   }
 
+  public clear(): void {
+    this.data.clear();
+  }
+
   public find(id: Id): T | undefined {
     return this.data.get(id);
   }

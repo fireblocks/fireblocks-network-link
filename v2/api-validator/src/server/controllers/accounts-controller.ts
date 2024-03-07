@@ -25,7 +25,7 @@ export class AccountsController {
   private static readonly repository = new Repository<Account>();
   private static accountsLoaded = false;
 
-  public static loadAccounts() {
+  public static loadAccounts(): void {
     if (this.accountsLoaded) {
       return;
     }

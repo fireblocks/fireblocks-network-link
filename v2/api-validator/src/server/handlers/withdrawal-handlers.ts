@@ -32,7 +32,7 @@ type InternalWithdrawalRequestBody = { Body: InternalWithdrawalRequest };
 type BlockchainWithdrawalRequestBody = { Body: BlockchainWithdrawalRequest };
 type FiatWithdrawalRequestBody = { Body: FiatWithdrawalRequest };
 
-const controllers = new ControllersContainer(() => new WithdrawalController());
+const controllers = new ControllersContainer((accountId) => new WithdrawalController(accountId));
 
 /**
  * GET Endpoints

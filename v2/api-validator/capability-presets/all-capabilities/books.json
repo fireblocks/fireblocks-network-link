@@ -1,0 +1,22 @@
+[
+  {
+    "id": "BTC/USDC",
+    "description": "Bitcoin book",
+    "baseAsset": {
+      "blockchain": "Bitcoin",
+      "cryptocurrencySymbol": "BTC"
+    },
+    "quoteAsset": {
+      "assetId": "4624c059-4400-4104-8773-20e65186a9d8"
+    }
+  },
+  {
+    "id": "GBP/USDC",
+    "baseAsset": {
+      "nationalCurrencyCode": "GBP"
+    },
+    "quoteAsset": {
+      "assetId": "4624c059-4400-4104-8773-20e65186a9d8"
+    }
+  }
+]
