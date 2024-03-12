@@ -33,8 +33,11 @@
     "build-docs": "npx @redocly/cli build-docs ../openapi/fb-unified-openapi.yaml --output ../openapi/docs.html",
     "download-server-capabilities": "ts-node download-server-capabilities.ts"
   },
+  "overrides": {
+    "@apidevtools/json-schema-ref-parser": "^11.1.0"
+  },
   "dependencies": {
-    "@apidevtools/json-schema-ref-parser": "^10.1.0",
+    "@apidevtools/json-schema-ref-parser": "^11.1.0",
     "ajv": "^8.12.0",
     "ajv-formats": "^2.1.1",
     "axios": "^1.4.0",
