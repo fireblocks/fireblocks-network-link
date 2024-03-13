@@ -645,13 +645,14 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
     describe.skipIf(noTransfersCapability)('Withdrawal capabilities validations', () =>
       it('should check withdrawal capabilities duplications', async () => {
         for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
-          const duplicates = Object.values(
+          const capabilityGroups = _.values(
             _.groupBy(
               capabilities,
               (x) =>
                 JSON.stringify(x.withdrawal.asset) + JSON.stringify(x.withdrawal.transferMethod)
             )
-          ).filter((c) => c.length > 1);
+          );
+          const duplicates = capabilityGroups.filter((c) => c.length > 1);
           expect(
             duplicates,
             `For accountId = ${accountId}. Actual duplications: ${JSON.stringify(duplicates)}`

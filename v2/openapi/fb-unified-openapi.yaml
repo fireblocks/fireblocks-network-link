@@ -3136,10 +3136,7 @@ components:
         id:
           type: string
         deposit:
-          oneOf:
-            - $ref: '#/components/schemas/PublicBlockchainCapability'
-            - $ref: '#/components/schemas/IbanCapability'
-            - $ref: '#/components/schemas/SwiftCapability'
+          $ref: '#/components/schemas/TransferCapability'
         balanceAsset:
           $ref: '#/components/schemas/AssetReference'
         addressCreationPolicy:
