@@ -1,4 +1,5 @@
 import config from '../config';
+import logger from '../logging';
 import { randomUUID } from 'crypto';
 import { ResponseSchemaValidationFailed, XComError } from '../error';
 import { buildRequestSignature } from '../security';
@@ -26,6 +27,8 @@ import {
   TransfersService,
 } from './generated';
 import { getRelativeUrlWithoutPathPrefix } from '../url-helpers';
+
+const log = logger('api-client');
 
 export type SecurityHeaders = {
   xFbapiKey: string;
@@ -156,6 +159,23 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
     super(openAPIConfig);
 
     this.axiosClient = axios.create();
+
+    this.axiosClient.interceptors.request.use((request) => {
+      log.debug('Sending HTTP request', { request });
+      return request;
+    });
+
+    this.axiosClient.interceptors.response.use(
+      (response) => {
+        log.debug('Received HTTP response', { response });
+        return response;
+      },
+      (error) => {
+        log.debug('Received HTTP error', { error });
+        return Promise.reject(error);
+      }
+    );
+
     const originalRequestMethod = this.axiosClient.request.bind(this.axiosClient);
 
     this.axiosClient.request = <T = any, R = AxiosResponse<T>, D = any>(
