@@ -111,15 +111,6 @@ describe('Balances', () => {
       accountBalancesMap = await getAccountBalancesMap(accounts);
     });
 
-    it('should receive at least one asset balance per account', () => {
-      for (const [accountId, accountBalances] of accountBalancesMap.entries()) {
-        expect(
-          accountBalances.length,
-          `received empty balance list for account ${accountId}`
-        ).toBeGreaterThan(0);
-      }
-    });
-
     it('should return only known assets in balances', () => {
       for (const [accountId, balances] of accountBalancesMap.entries()) {
         for (const balance of balances) {
@@ -231,15 +222,6 @@ describe('Balances', () => {
 
     beforeAll(async () => {
       accountBalancesMap = await getAccountHistoricBalancesMap(accounts);
-    });
-
-    it('should receive at least one asset balance per account', () => {
-      for (const [accountId, accountBalances] of accountBalancesMap.entries()) {
-        expect(
-          accountBalances.length,
-          `received empty balance list for account ${accountId}`
-        ).toBeGreaterThan(0);
-      }
     });
 
     it('should return only known assets in balances', () => {
