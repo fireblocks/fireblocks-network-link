@@ -79,6 +79,37 @@ as follows:
 
 Servers are expected to recognize a retry for 7 days, at least, since the last attempt.
 
+## Pagination
+
+All API endpoint returning lists of entities use pagination to limit the number of items 
+returned in a response. The pagination is controlled by the following query parameters:
+
+| Parameter       | Description                                                                                    |
+|-----------------|------------------------------------------------------------------------------------------------|
+| `limit`         | The maximum number of items to return in a single response.                                    |
+| `startingAfter` | Item ID. Instructs to return the items immediately following this object and not including it. |
+| `endingBefore`  | Item ID. Instructs to return the items immediately preceding this object and not including it. |
+
+- Notice that all the endpoints returning lists of items are defined to return an object 
+  with a property containing the list.
+- If the requested query parameters result in an empty list, the server should still 
+  return the defined object with the list property set to an empty array.
+- All the pagination query parameters are optional. If not provided, the server should 
+  return the first page of items.
+- The returned dataset should never contain the item specified by the `startingAfter` or 
+  `endingBefore` parameter.
+- `endingBefore` and `startingAfter` are mutually exclusive. If both are provided, the 
+  server should respond with HTTP status code 400 and response body containing a JSON 
+  object with the following properties:
+  ```json
+  {
+    "message": "Only one of the parameters 'startingAfter' and 'endingBefore' can be used.",
+    "errorType": "invalid-query-parameters",
+    "propertyName": "startingAfter",
+    "requestPart": "query"
+  }
+  ```
+
 ## Capabilities
 
 The API consists of separate optional components with flexible capabilities. Fireblocks
