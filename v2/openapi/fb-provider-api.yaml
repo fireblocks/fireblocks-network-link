@@ -614,8 +614,15 @@ components:
             - unsupported-transfer-method
             - transfer-destination-not-allowed
         propertyName:
-          description: Name of property that caused the error.
+          description: >-
+            Name of property that caused the error.
+            By convention, should always start with a slash ("/").
+            If the property is nested, the path should be separated by slashes.
+            
+            This property is required if the error type is caused by a missing or wrong
+            property in the request.
           type: string
+          example: '/topLevelProperyName/childPropertyName/thirdLevelPropertyName'
         requestPart:
           $ref: '#/components/schemas/RequestPart'
 
