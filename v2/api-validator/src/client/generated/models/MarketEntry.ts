@@ -9,7 +9,7 @@ import type { PositiveAmount } from './PositiveAmount';
 export type MarketEntry = {
     id: string;
     /**
-     * Amount of the base asset traded
+     * Amount of the base asset traded.
      */
     amount: PositiveAmount;
     price: PositiveAmount;

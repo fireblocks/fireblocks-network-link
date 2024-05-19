@@ -71,7 +71,7 @@ export class TradingService {
 
     /**
      * Get active sell orders in an order book
-     * List active sell orders in an order book, sorted ascending by the sell price.
+     * List active sell orders in an order book, sorted ascending by the sell price. Each entry is sum of all the asks at the specific price point.
      * @returns any Active sell orders.
      * @throws ApiError
      */
@@ -111,11 +111,11 @@ export class TradingService {
          */
         limit?: number,
         /**
-         * Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
+         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
          */
         startingAfter?: string,
         /**
-         * Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
+         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
     }): CancelablePromise<{
@@ -147,7 +147,7 @@ export class TradingService {
 
     /**
      * Get active buy orders in an order book
-     * List active buy orders in an order book, sorted descending by the buy price.
+     * List active buy orders in an order book, sorted descending by the buy price. Each entry is sum of all the bids at the specific price point.
      * @returns any Active buy orders.
      * @throws ApiError
      */
@@ -187,11 +187,11 @@ export class TradingService {
          */
         limit?: number,
         /**
-         * Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
+         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
          */
         startingAfter?: string,
         /**
-         * Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
+         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
     }): CancelablePromise<{
@@ -263,11 +263,11 @@ export class TradingService {
          */
         limit?: number,
         /**
-         * Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
+         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
          */
         startingAfter?: string,
         /**
-         * Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
+         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
     }): CancelablePromise<{
@@ -339,11 +339,11 @@ export class TradingService {
          */
         limit?: number,
         /**
-         * Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
+         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
          */
         startingAfter?: string,
         /**
-         * Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
+         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
     }): CancelablePromise<{
