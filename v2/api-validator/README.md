@@ -37,10 +37,6 @@ The tests generate report files in the validation tool root directory in JSON an
 
 ### Use your own server
 
-```shell
-SERVER="my-server-base-url" npm run test
-```
-
 When testing your own server, you will usually need to configure the withdrawal 
 destinations, the credentials of the user connecting to the server and the request signing
 method the server uses. All these parameters could be configured using environment 

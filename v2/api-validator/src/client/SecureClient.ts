@@ -167,7 +167,8 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
 
     this.axiosClient.interceptors.response.use(
       (response) => {
-        log.debug('Received HTTP response', { response });
+        const { config, status, statusText, data } = response;
+        log.debug('Received HTTP response', { config, status, statusText, data });
         return response;
       },
       (error) => {
