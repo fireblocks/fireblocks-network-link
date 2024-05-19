@@ -641,7 +641,7 @@ paths:
     get:
       operationId: getBookAsks
       summary: Get active sell orders in an order book
-      description: List active sell orders in an order book, sorted ascending by the sell price.
+      description: List active sell orders in an order book, sorted ascending by the sell price. Each entry is sum of all the asks at the specific price point.
       tags:
         - trading
       parameters:
@@ -709,7 +709,7 @@ paths:
     get:
       operationId: getBookBids
       summary: Get active buy orders in an order book
-      description: List active buy orders in an order book, sorted descending by the buy price.
+      description: List active buy orders in an order book, sorted descending by the buy price. Each entry is sum of all the bids at the specific price point.
       tags:
         - trading
       parameters:
@@ -2683,7 +2683,7 @@ components:
         amount:
           allOf:
             - $ref: '#/components/schemas/PositiveAmount'
-          description: Amount of the base asset traded
+          description: Amount of the base asset traded.
         price:
           $ref: '#/components/schemas/PositiveAmount'
         totalPrice:
