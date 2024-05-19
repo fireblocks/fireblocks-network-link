@@ -153,7 +153,8 @@ sent with each HTTP request:
 ### Signature
 
 HTTP request signature is calculated by applying a sequence of operations to the request
-data.
+data. The cryptographic keys and the specific operations used by a server are defined
+during the server on-boarding.
 
 #### Building the message to sign
 
@@ -184,7 +185,7 @@ be: `1691606624184c3d5f400-0e7e-4f94-a199-44b8cc7b6b81GET/accounts/A1234/balance
 
 The signature is computed by applying a pre-encoding function, a signing algorithm and
 a post-encoding function to the message. A server can implement one of the several
-supported options and specify the choice during the on-boarding process. The same 
+supported options and specify the choice during the server on-boarding process. The same 
 signing method will be used for all the requests.
 
 These are the supported algorithms:
