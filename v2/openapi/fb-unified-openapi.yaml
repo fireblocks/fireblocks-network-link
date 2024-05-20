@@ -4,7 +4,7 @@ servers:
     url: http://0.0.0.0:8000
 info:
   title: Fireblocks Provider Connectivity API v2
-  version: 0.3.1
+  version: 0.4.1
   x-logo:
     url: https://drive.google.com/uc?id=1sseKokeIoh7hnUpV8skWYF_VzncF3slT
     altText: Fireblocks logo
@@ -641,7 +641,7 @@ paths:
     get:
       operationId: getBookAsks
       summary: Get active sell orders in an order book
-      description: List active sell orders in an order book, sorted ascending by the sell price.
+      description: List active sell orders in an order book, sorted ascending by the sell price. Each entry is sum of all the asks at the specific price point.
       tags:
         - trading
       parameters:
@@ -709,7 +709,7 @@ paths:
     get:
       operationId: getBookBids
       summary: Get active buy orders in an order book
-      description: List active buy orders in an order book, sorted descending by the buy price.
+      description: List active buy orders in an order book, sorted descending by the buy price. Each entry is sum of all the bids at the specific price point.
       tags:
         - trading
       parameters:
@@ -1760,13 +1760,13 @@ components:
     PaginationStartingAfter:
       name: startingAfter
       in: query
-      description: Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
+      description: Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
       schema:
         type: string
     PaginationEndingBefore:
       name: endingBefore
       in: query
-      description: Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
+      description: Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
       schema:
         type: string
     AssetIdQueryParam:
@@ -1867,8 +1867,11 @@ components:
             - unsupported-transfer-method
             - transfer-destination-not-allowed
         propertyName:
-          description: Name of property that caused the error.
+          description: |-
+            Name of property that caused the error. By convention, should always start with a slash ("/"). If the property is nested, the path should be separated by slashes.
+            This property is required if the error type is caused by a missing or wrong property in the request.
           type: string
+          example: /topLevelProperyName/childPropertyName/thirdLevelPropertyName
         requestPart:
           $ref: '#/components/schemas/RequestPart'
     UnauthorizedError:
@@ -2680,7 +2683,7 @@ components:
         amount:
           allOf:
             - $ref: '#/components/schemas/PositiveAmount'
-          description: Amount of the base asset traded
+          description: Amount of the base asset traded.
         price:
           $ref: '#/components/schemas/PositiveAmount'
         totalPrice:
@@ -3136,10 +3139,7 @@ components:
         id:
           type: string
         deposit:
-          oneOf:
-            - $ref: '#/components/schemas/PublicBlockchainCapability'
-            - $ref: '#/components/schemas/IbanCapability'
-            - $ref: '#/components/schemas/SwiftCapability'
+          $ref: '#/components/schemas/TransferCapability'
         balanceAsset:
           $ref: '#/components/schemas/AssetReference'
         addressCreationPolicy:

@@ -1,0 +1,210 @@
+[
+  {
+    "id": "bcd54bf9-db49-4e71-adad-71b5090db7fb",
+    "name": "id fugiat nulla",
+    "symbol": "in et sit",
+    "description": "Excepteur proident occaecat eiusmod consequat",
+    "decimalPlaces": 59848902,
+    "testAsset": true,
+    "type": "BucketAsset"
+  },
+  {
+    "id": "d9790799-5539-4c54-803b-d7d998cf38f6",
+    "name": "ipsum dolore incididunt tempor fugiat",
+    "symbol": "consectetur adipisicing aute",
+    "description": "dolor ut anim officia",
+    "decimalPlaces": 12321058,
+    "testAsset": false,
+    "type": "Erc20Token",
+    "blockchain": "Arbitrum",
+    "contractAddress": "mollit amet reprehenderit ut"
+  },
+  {
+    "id": "fe0b63b1-19cc-4611-ab04-a458d125dd2a",
+    "name": "culpa commodo Ut et",
+    "symbol": "ullamco Excepteur eiusmod",
+    "description": "non commodo qui",
+    "decimalPlaces": -12964055,
+    "testAsset": true,
+    "type": "Erc20Token",
+    "blockchain": "Polygon PoS",
+    "contractAddress": "ut incididunt ut in"
+  },
+  {
+    "id": "dfca1e49-6e0d-4a87-82b1-8a129ac7790e",
+    "name": "incididunt magna",
+    "symbol": "dolor quis elit nisi nulla",
+    "description": "occaecat",
+    "decimalPlaces": 19775433,
+    "testAsset": true,
+    "type": "BucketAsset"
+  },
+  {
+    "id": "ac7d9d17-1f88-41f7-9cda-c074f800ba05",
+    "name": "nostrud",
+    "symbol": "mollit occaecat nisi minim",
+    "description": "enim consequat occaecat",
+    "decimalPlaces": 38720464,
+    "testAsset": false,
+    "type": "Erc20Token",
+    "blockchain": "DYDX",
+    "contractAddress": "ea adipisicing"
+  },
+  {
+    "id": "ed0cd5cb-5195-41a6-8ef5-3ab3c79ef394",
+    "name": "anim Lorem",
+    "symbol": "ut ut Ut",
+    "description": "elit Lorem eiusmod",
+    "decimalPlaces": -95196254,
+    "testAsset": false,
+    "type": "StellarToken",
+    "blockchain": "Optimism",
+    "issuerAddress": "exercitation Excepteur",
+    "stellarCurrencyCode": "amet"
+  },
+  {
+    "id": "d9c9c65b-bf14-4c3b-a5a5-f64621cc8ec7",
+    "name": "aute Ut eu dolore",
+    "symbol": "reprehenderit ut aliquip",
+    "description": "Excepteur culpa",
+    "decimalPlaces": -52245999,
+    "testAsset": true,
+    "type": "BucketAsset"
+  },
+  {
+    "id": "1b78a94e-fb30-4d58-a76b-e55d9b118df6",
+    "name": "aute",
+    "symbol": "proident veniam laboris fugiat",
+    "description": "sint labore",
+    "decimalPlaces": -54011048,
+    "testAsset": false,
+    "type": "Erc20Token",
+    "blockchain": "eCash",
+    "contractAddress": "Ut"
+  },
+  {
+    "id": "076e2789-8c85-4c66-95f0-fe8947d03b00",
+    "name": "aliquip",
+    "symbol": "sit aliqua ut amet",
+    "description": "pariatur id veniam Ut proident",
+    "decimalPlaces": -65581261,
+    "testAsset": true,
+    "type": "StellarToken",
+    "blockchain": "Optimism",
+    "issuerAddress": "deserunt",
+    "stellarCurrencyCode": "voluptate dolore"
+  },
+  {
+    "id": "4858e4b6-f8ff-4111-8b18-2330262c4983",
+    "name": "aliquip consectetur fugiat",
+    "symbol": "Excepteur non reprehenderit labore",
+    "description": "mollit Lorem elit",
+    "decimalPlaces": 36281079,
+    "testAsset": false,
+    "type": "Bep20Token",
+    "blockchain": "KAVA",
+    "contractAddress": "aute veniam ex"
+  },
+  {
+    "id": "a2258cfd-c31b-44f1-ba31-201713c76f05",
+    "name": "laboris voluptate dolore mollit deserunt",
+    "symbol": "cupidatat Lorem",
+    "description": "reprehenderit aute pariatur in",
+    "decimalPlaces": -95708447,
+    "testAsset": false,
+    "type": "BucketAsset"
+  },
+  {
+    "id": "a71fd97e-956b-4c50-bef8-13ad655ef4c1",
+    "name": "quis incididunt",
+    "symbol": "reprehenderit tempor quis dolor dolore",
+    "description": "consequat nulla anim sed sint",
+    "decimalPlaces": -95960590,
+    "testAsset": false,
+    "type": "BucketAsset"
+  },
+  {
+    "id": "386be067-d2bc-4b3e-be6c-8325dab9985f",
+    "name": "ea tempor mollit",
+    "symbol": "sit Lorem dolore nisi",
+    "description": "dolore dolor proident est",
+    "decimalPlaces": -20847628,
+    "testAsset": false,
+    "type": "StellarToken",
+    "blockchain": "NEAR Protocol",
+    "issuerAddress": "consectetur culpa Excepteur cillum",
+    "stellarCurrencyCode": "in veniam cillum qui"
+  },
+  {
+    "id": "28b70764-f7ec-4116-9283-0dfbd39db79c",
+    "name": "aliquip irure proident Duis pariatur",
+    "symbol": "sint",
+    "description": "id ullamco ea labore",
+    "decimalPlaces": 5465713,
+    "testAsset": false,
+    "type": "Erc20Token",
+    "blockchain": "NEM NIS1",
+    "contractAddress": "qui ut"
+  },
+  {
+    "id": "af2f0d9e-de1e-4a28-9f54-f7cdb5b6bac5",
+    "name": "sit ullamco ut sunt in",
+    "symbol": "aliqua mollit consequat",
+    "description": "reprehenderit et esse",
+    "decimalPlaces": -89948222,
+    "testAsset": true,
+    "type": "Erc20Token",
+    "blockchain": "Aurora",
+    "contractAddress": "ea"
+  },
+  {
+    "id": "94d65a5a-ffcb-4905-a3f7-1a7b0133350d",
+    "name": "elit proident consequat fugiat officia",
+    "symbol": "ad tempor exercitation sunt",
+    "description": "proident nulla quis veniam minim",
+    "decimalPlaces": 84072727,
+    "testAsset": true,
+    "type": "BucketAsset"
+  },
+  {
+    "id": "cabba90f-dc5a-477b-a645-6da78a63a805",
+    "name": "occaecat elit",
+    "symbol": "anim ex aliqua",
+    "description": "esse irure non",
+    "decimalPlaces": 97925188,
+    "testAsset": false,
+    "type": "Erc20Token",
+    "blockchain": "WEMIX",
+    "contractAddress": "et proident"
+  },
+  {
+    "id": "bc9e1ca4-4edd-4b31-ade8-18d095ef9a89",
+    "name": "est",
+    "symbol": "sit deserunt officia",
+    "description": "officia id aliqua dolore",
+    "decimalPlaces": -55716808,
+    "testAsset": false,
+    "type": "StellarToken",
+    "blockchain": "Bitcoin Cash ABC",
+    "issuerAddress": "nulla esse fugiat",
+    "stellarCurrencyCode": "id"
+  },
+  {
+    "id": "92ca683f-7c00-4c18-9349-2be61d4182f0",
+    "name": "occaecat reprehenderit",
+    "symbol": "tempor sit dolore",
+    "description": "magna eiusmod",
+    "decimalPlaces": -82167433,
+    "testAsset": false,
+    "type": "BucketAsset"
+  },
+  {
+    "id": "6b733c5d-51b6-4523-b787-cba710120417",
+    "name": "eiusmod amet adipisicing et esse",
+    "symbol": "in in commodo cillum voluptate",
+    "description": "magna irure",
+    "decimalPlaces": -30540099,
+    "testAsset": true,
+    "type": "BucketAsset"
+  }
+]

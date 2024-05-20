@@ -14,16 +14,29 @@ import {
   DepositAddressStatus,
   DepositCapability,
   IbanCapability,
+  InternalTransferCapability,
+  InternalTransferMethod,
   NativeCryptocurrency,
+  PeerAccountTransferCapability,
   PublicBlockchainCapability,
   RequestPart,
   SwiftCapability,
+  type TransferCapability,
 } from '../../src/client/generated';
 import { fakeSchemaObject } from '../../src/schemas';
 import _, { range } from 'lodash';
 
 const noTransfersCapability = !hasCapability('transfers');
 const accountIds = getAllCapableAccountIds('transfers');
+
+function isInternalOrP2PTransfer(
+  capability: TransferCapability
+): capability is PeerAccountTransferCapability | InternalTransferCapability {
+  return (
+    capability.transferMethod === InternalTransferMethod.transferMethod.INTERNAL_TRANSFER ||
+    capability.transferMethod === PeerAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER
+  );
+}
 
 describe.skipIf(noTransfersCapability)('Deposits', () => {
   let client: Client;
@@ -40,19 +53,18 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
     return response.capabilities;
   };
 
-  const findFirstAccountCapabilityWithCanCreatePolicy = ():
-    | { accountId: string; capability: DepositCapability }
-    | undefined =>
-    findFirstAccountCapability(
-      (capability) => capability.addressCreationPolicy === DepositAddressCreationPolicy.CAN_CREATE
-    );
-  const findFirstAccountCapability = (
-    condition: (capability: DepositCapability) => boolean
-  ): { accountId: string; capability: DepositCapability } | undefined => {
+  const findDepositCapabilitySupportingAddressCreation = ():
+    | {
+        accountId: string;
+        capability: PublicBlockchainCapability | IbanCapability | SwiftCapability;
+      }
+    | undefined => {
     for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
-      const capability = capabilities.find(condition);
-      if (capability !== undefined) {
-        return { accountId, capability: capability };
+      const capability = capabilities.find(
+        (c) => c.addressCreationPolicy === DepositAddressCreationPolicy.CAN_CREATE
+      );
+      if (capability && !isInternalOrP2PTransfer(capability.deposit)) {
+        return { accountId, capability: capability.deposit };
       }
     }
   };
@@ -100,6 +112,10 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
           for (const capability of capabilities.filter(
             (dc) => dc.addressCreationPolicy === DepositAddressCreationPolicy.CAN_CREATE
           )) {
+            if (isInternalOrP2PTransfer(capability.deposit)) {
+              continue;
+            }
+
             try {
               const depositAddress = await client.transfers.createDepositAddress({
                 accountId,
@@ -128,6 +144,10 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
           for (const capability of capabilities.filter(
             (dc) => dc.addressCreationPolicy === DepositAddressCreationPolicy.CANNOT_CREATE
           )) {
+            if (isInternalOrP2PTransfer(capability.deposit)) {
+              continue;
+            }
+
             const requestBody: DepositAddressCreationRequest = {
               idempotencyKey: capability.id,
               transferMethod: capability.deposit,
@@ -203,7 +223,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
         let failureResponse: ApiError;
 
         beforeAll(async () => {
-          const accountCapability = findFirstAccountCapabilityWithCanCreatePolicy();
+          const accountCapability = findDepositCapabilitySupportingAddressCreation();
 
           // Accounting for the possible scenario where there aren't any deposit capabilities for any account
           if (!accountCapability) {
@@ -213,7 +233,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
           accountId = accountCapability.accountId;
           successBody = {
             idempotencyKey: randomUUID(),
-            transferMethod: accountCapability.capability.deposit,
+            transferMethod: accountCapability.capability,
           };
 
           failureBody = {
@@ -331,16 +351,22 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
       };
 
       beforeAll(async () => {
-        const accountCapability = findFirstAccountCapabilityWithCanCreatePolicy();
+        const accountCapability = findDepositCapabilitySupportingAddressCreation();
 
         if (!accountCapability?.accountId) {
+          return;
+        }
+        if (isInternalOrP2PTransfer(accountCapability.capability)) {
+          expect({ accountCapability }).fail(
+            'Internal and p2p transfers cannot have CanCreate deposit address creation policy'
+          );
           return;
         }
 
         accountId = accountCapability.accountId;
         const requestBody = {
           idempotencyKey: randomUUID(),
-          transferMethod: accountCapability.capability.deposit,
+          transferMethod: accountCapability.capability,
         };
 
         const { id } = await client.transfers.createDepositAddress({

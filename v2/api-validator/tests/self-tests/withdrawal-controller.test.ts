@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { fakeSchemaObject } from '../../src/schemas';
 import {
   PeerAccountWithdrawalRequest,
@@ -5,15 +6,14 @@ import {
   WithdrawalCapability,
 } from '../../src/client/generated';
 import { WithdrawalController } from '../../src/server/controllers/withdrawal-controller';
-import _ from 'lodash';
 import { AssetsController } from '../../src/server/controllers/assets-controller';
 
 describe('Withdrawal controller', () => {
   let controller: WithdrawalController;
 
   beforeAll(() => {
-    AssetsController.generateAdditionalAssets();
-    controller = new WithdrawalController();
+    AssetsController.loadAdditionalAssets();
+    controller = new WithdrawalController('account1');
   });
 
   describe('List withdrawals', () => {
@@ -27,7 +27,7 @@ describe('Withdrawal controller', () => {
   describe('Create withdrawal', () => {
     let withdrawal: Withdrawal;
     let capability: WithdrawalCapability | undefined;
-    beforeAll(() => {});
+
     it('should add withdrawal to account withdrawals', () => {
       const withdrawalRequest = fakeSchemaObject(
         'PeerAccountWithdrawalRequest'

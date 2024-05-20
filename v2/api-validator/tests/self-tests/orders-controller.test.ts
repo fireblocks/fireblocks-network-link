@@ -22,7 +22,7 @@ describe('Orders controller', () => {
   let orderDetails: OrderData;
 
   beforeAll(() => {
-    AssetsController.generateAdditionalAssets();
+    AssetsController.loadAdditionalAssets();
     BooksController.loadBooks();
     book = BooksController.getAllBooks()[0];
     orderDetails = {

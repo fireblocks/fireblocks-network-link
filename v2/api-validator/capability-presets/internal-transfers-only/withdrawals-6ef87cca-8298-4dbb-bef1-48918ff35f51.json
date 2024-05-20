@@ -1,0 +1,28 @@
+[
+  {
+    "id": "214de18c-6d68-4e0c-93fc-9a151f0f5d24",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "EUR"
+      },
+      "transferMethod": "InternalTransfer"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "EUR"
+    },
+    "minWithdrawalAmount": "0.5"
+  },
+  {
+    "id": "8d1bb418-c940-4121-9311-4f9cfe5bf0cd",
+    "withdrawal": {
+      "asset": {
+        "assetId": "360de0ad-9ba1-45d5-8074-22453f193d65"
+      },
+      "transferMethod": "InternalTransfer"
+    },
+    "balanceAsset": {
+      "assetId": "360de0ad-9ba1-45d5-8074-22453f193d65"
+    },
+    "minWithdrawalAmount": "0.5"
+  }
+]

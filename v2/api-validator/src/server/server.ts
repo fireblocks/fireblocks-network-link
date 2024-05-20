@@ -1,3 +1,4 @@
+import config from '../config';
 import logger from '../logging';
 import { createWebApp } from './app';
 import { AccountsController } from './controllers/accounts-controller';
@@ -26,10 +27,20 @@ process.on('uncaughtException', handleError);
 process.on('unhandledRejection', handleError);
 
 async function start() {
+  if (config.get('mockServerCapabilitiesDir')) {
+    log.info('Will load server capabilities from preset', {
+      presetDir: config.get('mockServerCapabilitiesDir'),
+    });
+  } else {
+    log.warn('Will generate random server capabilities', {
+      presetDir: config.get('mockServerCapabilitiesDir'),
+    });
+  }
+
   try {
     const app = await createWebApp();
-    AssetsController.generateAdditionalAssets();
-    AccountsController.generateAccounts();
+    AssetsController.loadAdditionalAssets();
+    AccountsController.loadAccounts();
     BooksController.loadBooks();
     await app.start();
   } catch (err: unknown) {

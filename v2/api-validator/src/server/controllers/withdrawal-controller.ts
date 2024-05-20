@@ -22,8 +22,8 @@ import {
   WithdrawalCapability,
   WithdrawalStatus,
 } from '../../client/generated';
-import logger from '../../logging';
 import { AccountsController } from './accounts-controller';
+import { loadCapabilitiesJson } from './capabilities-loader';
 
 export type WithdrawalRequest =
   | FiatWithdrawalRequest
@@ -60,21 +60,15 @@ export class TransferDestinationNotAllowed extends XComError {
 const DEFAULT_CAPABILITIES_COUNT = 50;
 const DEFAULT_WITHDRAWALS_COUNT = 100;
 
-const log = logger('server:WithdrawalController');
-
 export class WithdrawalController {
   private readonly withdrawalRepository = new Repository<Withdrawal>();
   private readonly withdrawalCapabilityRepository = new Repository<WithdrawalCapability>();
 
-  constructor() {
-    for (let i = 0; i < DEFAULT_CAPABILITIES_COUNT; i++) {
-      this.withdrawalRepository.create(fakeSchemaObject('Withdrawal') as Withdrawal);
-    }
+  constructor(private readonly accountId: string) {
+    this.loadWithdrawalCapabilities();
 
     for (let i = 0; i < DEFAULT_WITHDRAWALS_COUNT; i++) {
-      this.withdrawalCapabilityRepository.create(
-        fakeSchemaObject('WithdrawalCapability') as WithdrawalCapability
-      );
+      this.withdrawalRepository.create(fakeSchemaObject('Withdrawal') as Withdrawal);
     }
 
     const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
@@ -87,6 +81,28 @@ export class WithdrawalController {
         transferMethod: dc.withdrawal.transferMethod,
       };
     });
+  }
+
+  private loadWithdrawalCapabilities() {
+    const capabilities =
+      loadCapabilitiesJson(`withdrawals-${this.accountId}.json`) ??
+      WithdrawalController.generateWithdrawalCapabilities();
+
+    this.withdrawalCapabilityRepository.clear();
+
+    for (const capability of capabilities) {
+      this.withdrawalCapabilityRepository.create(capability);
+    }
+  }
+
+  private static generateWithdrawalCapabilities() {
+    const capabilities: WithdrawalCapability[] = [];
+
+    for (let i = 0; i < DEFAULT_CAPABILITIES_COUNT; i++) {
+      capabilities.push(fakeSchemaObject('WithdrawalCapability') as WithdrawalCapability);
+    }
+
+    return capabilities;
   }
 
   private withdrawalFromWithdrawalRequest(request: WithdrawalRequest): Withdrawal {

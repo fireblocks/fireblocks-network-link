@@ -1,0 +1,28 @@
+[
+  {
+    "id": "d53bea5d-d6b5-4320-95fe-28244ac9dda0",
+    "addressCreationPolicy": "CannotCreate",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "EUR"
+      },
+      "transferMethod": "InternalTransfer"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "EUR"
+    }
+  },
+  {
+    "id": "4ea5d2a0-22b9-4937-96d5-7264129b204e",
+    "addressCreationPolicy": "CannotCreate",
+    "deposit": {
+      "asset": {
+        "assetId": "360de0ad-9ba1-45d5-8074-22453f193d65"
+      },
+      "transferMethod": "InternalTransfer"
+    },
+    "balanceAsset": {
+      "assetId": "360de0ad-9ba1-45d5-8074-22453f193d65"
+    }
+  }
+]

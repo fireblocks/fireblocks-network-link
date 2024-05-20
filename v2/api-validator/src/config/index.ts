@@ -232,6 +232,12 @@ const config = convict({
       default: 'src/client/generated',
     },
   },
+  mockServerCapabilitiesDir: {
+    doc: 'The directory where the mock server capabilities are defined. If not set, will be randomly generated',
+    format: String,
+    default: 'capability-presets/all-capabilities',
+    env: 'CAPABILITIES_DIR',
+  },
 });
 
 function filename(f: string) {

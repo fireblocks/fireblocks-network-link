@@ -1,7 +1,7 @@
 import {
+  CryptocurrencySymbol,
   DepositAddress,
   DepositAddressStatus,
-  CryptocurrencySymbol,
   PublicBlockchainCapability,
 } from '../../src/client/generated';
 import {
@@ -22,7 +22,7 @@ describe('Deposit controller', () => {
       },
     };
     beforeEach(() => {
-      depositController = new DepositController();
+      depositController = new DepositController('account1');
     });
 
     describe('Add new deposit address', () => {
