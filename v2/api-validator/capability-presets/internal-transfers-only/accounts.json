@@ -1,0 +1,114 @@
+[
+  {
+    "id": "193fdf50-4bd9-4355-829f-019f8ede6429",
+    "title": "Account M",
+    "description": "This is the main account",
+    "status": "active",
+    "balances": [
+      {
+        "id": "e5afd0f6-3c70-4344-a8cb-9ded58b11b87",
+        "asset": {
+          "assetId": "360de0ad-9ba1-45d5-8074-22453f193d65"
+        },
+        "availableAmount": "1000",
+        "lockedAmount": "0"
+      },
+      {
+        "id": "b0582ac6-49bb-49eb-8d9b-dc1d6b6a80b5",
+        "asset": {
+          "nationalCurrencyCode": "USD"
+        },
+        "availableAmount": "2000",
+        "lockedAmount": "0"
+      },
+      {
+        "id": "3a11facf-b0a7-4e48-b0af-fa37963fb056",
+        "asset": {
+          "nationalCurrencyCode": "EUR"
+        },
+        "availableAmount": "500",
+        "lockedAmount": "0"
+      }
+    ]
+  },
+  {
+    "id": "2aea6377-3795-4569-9d3d-9e3cc0b2a929",
+    "title": "Account A",
+    "description": "laborum esse",
+    "status": "active",
+    "balances": [
+      {
+        "id": "d614682f-1e62-4170-81fb-bf9665681cf2",
+        "asset": {
+          "assetId": "360de0ad-9ba1-45d5-8074-22453f193d65"
+        },
+        "availableAmount": "1000",
+        "lockedAmount": "0"
+      },
+      {
+        "id": "e5bfe2e9-336f-46de-8cde-92b767d98a43",
+        "asset": {
+          "nationalCurrencyCode": "USD"
+        },
+        "availableAmount": "2000",
+        "lockedAmount": "0"
+      }
+    ]
+  },
+  {
+    "id": "6ef87cca-8298-4dbb-bef1-48918ff35f51",
+    "title": "Account B",
+    "description": "culpa irure velit dolore",
+    "status": "active",
+    "balances": [
+      {
+        "id": "24991f51-0c83-4aa8-b82c-498411bbf33f",
+        "asset": {
+          "assetId": "360de0ad-9ba1-45d5-8074-22453f193d65"
+        },
+        "availableAmount": "1000",
+        "lockedAmount": "0"
+      },
+      {
+        "id": "1e1e343e-3122-48f4-bf96-5348819ff3cc",
+        "asset": {
+          "nationalCurrencyCode": "EUR"
+        },
+        "availableAmount": "2000",
+        "lockedAmount": "0"
+      }
+    ]
+  },
+  {
+    "id": "280F83EE-4A07-4996-BBFD-E58F523E9E36",
+    "title": "Account X",
+    "description": "Account without transfer capabilities",
+    "status": "active",
+    "balances": [
+      {
+        "id": "2FD8F0D4-EC9F-40EF-8A4D-3BC1CCD1FC61",
+        "asset": {
+          "assetId": "360de0ad-9ba1-45d5-8074-22453f193d65"
+        },
+        "availableAmount": "1000",
+        "lockedAmount": "0"
+      },
+      {
+        "id": "E50753B6-E9D6-4076-A866-6783390B73AF",
+        "asset": {
+          "nationalCurrencyCode": "USD"
+        },
+        "availableAmount": "2000",
+        "lockedAmount": "0"
+      },
+      {
+        "id": "3326A69C-0430-40E3-96E7-976507F1BE2D",
+        "asset": {
+          "nationalCurrencyCode": "EUR"
+        },
+        "availableAmount": "500",
+        "lockedAmount": "0"
+      }
+    ]
+  }
+]

@@ -1,0 +1,737 @@
+[
+  {
+    "id": "d12c48b5-8b9f-41d5-92f7-3dd8b0c8b7ce",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "LKR",
+        "testAsset": false
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "blockchain": "Velas",
+      "cryptocurrencySymbol": "HT",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "20378"
+  },
+  {
+    "id": "2d43ea83-3e75-4e4f-b91c-2f0fd1675c5a",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "USN",
+        "testAsset": false
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "blockchain": "Palm",
+      "cryptocurrencySymbol": "MATIC",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "795625276"
+  },
+  {
+    "id": "4fee9bb4-5bc4-4530-b55c-e0980f0caf97",
+    "withdrawal": {
+      "asset": {
+        "assetId": "d9c9c65b-bf14-4c3b-a5a5-f64621cc8ec7"
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "MZE",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "4787042"
+  },
+  {
+    "id": "8c24b294-361d-4692-9ac2-f6c0b724a401",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "TRY",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "ROK",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "730193888.2683210648"
+  },
+  {
+    "id": "cf946324-e543-4993-83ce-a6256f96978b",
+    "withdrawal": {
+      "asset": {
+        "blockchain": "Fantom Opera",
+        "cryptocurrencySymbol": "KSM",
+        "testAsset": true
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "blockchain": "WEMIX",
+      "cryptocurrencySymbol": "HBAR",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "57220275"
+  },
+  {
+    "id": "8a6e21d2-8e18-4ae2-8f4a-ede43ea9a4aa",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "BUK",
+        "testAsset": true
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "PLN",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "21278"
+  },
+  {
+    "id": "e1553dc3-ead7-425a-93d8-d6e5d11c3d51",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "STD",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "GNS",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "9.79569"
+  },
+  {
+    "id": "31b69ac5-a35c-4060-b59f-c11cea0f17e2",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "MMK",
+        "testAsset": true
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "assetId": "076e2789-8c85-4c66-95f0-fe8947d03b00"
+    },
+    "minWithdrawalAmount": "08201071.3208274190"
+  },
+  {
+    "id": "9f1d2c32-8224-4143-b6ea-b68754e103c9",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "ESA",
+        "testAsset": true
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "HRK",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "0638"
+  },
+  {
+    "id": "d6fbc611-9ddc-4110-b3b9-f2c0a38281df",
+    "withdrawal": {
+      "asset": {
+        "assetId": "d9c9c65b-bf14-4c3b-a5a5-f64621cc8ec7"
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "assetId": "92ca683f-7c00-4c18-9349-2be61d4182f0"
+    },
+    "minWithdrawalAmount": "15324510.702"
+  },
+  {
+    "id": "295759fc-eaa6-4582-845a-7190b222d92c",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "TOP",
+        "testAsset": true
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "blockchain": "Chiliz Chain",
+      "cryptocurrencySymbol": "XTZ",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "85458482"
+  },
+  {
+    "id": "64b4f86b-6247-4ede-9372-a207c99f7026",
+    "withdrawal": {
+      "asset": {
+        "assetId": "1b78a94e-fb30-4d58-a76b-e55d9b118df6"
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "assetId": "fe0b63b1-19cc-4611-ab04-a458d125dd2a"
+    },
+    "minWithdrawalAmount": "61041"
+  },
+  {
+    "id": "bc58641d-45d5-4ce5-98ea-5f3782b5cf71",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "SHP",
+        "testAsset": true
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "blockchain": "NEM NIS1",
+      "cryptocurrencySymbol": "TRX",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "267354468.73"
+  },
+  {
+    "id": "57e83b86-3f67-4a29-98ff-4b342c1aa6fa",
+    "withdrawal": {
+      "asset": {
+        "blockchain": "Songbird Canary-Network",
+        "cryptocurrencySymbol": "XDC",
+        "testAsset": true
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "ILP",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "494440"
+  },
+  {
+    "id": "90a9bf2f-3260-4b33-9120-097fac1f062d",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "TMT",
+        "testAsset": false
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "SIT",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "052559422.2342904291"
+  },
+  {
+    "id": "31ac62be-d955-4118-b459-6f1df11abeb8",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "EEK",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "MTP",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "682883"
+  },
+  {
+    "id": "fbdee244-d227-48bd-82e5-03f7c0dca716",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "HRK",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "assetId": "6b733c5d-51b6-4523-b787-cba710120417"
+    },
+    "minWithdrawalAmount": "0.9386093"
+  },
+  {
+    "id": "a80eee30-fcad-4b2c-8efa-4e0a0f650138",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "KMF",
+        "testAsset": true
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "assetId": "386be067-d2bc-4b3e-be6c-8325dab9985f"
+    },
+    "minWithdrawalAmount": "450855607.7258078391"
+  },
+  {
+    "id": "2eef2b3f-b206-44d8-b943-495d53d8735e",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "SRD",
+        "testAsset": true
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "blockchain": "Algorand",
+      "cryptocurrencySymbol": "FTM",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "57712989"
+  },
+  {
+    "id": "81500e78-8f90-402e-bdc8-25c7e3efc7df",
+    "withdrawal": {
+      "asset": {
+        "assetId": "386be067-d2bc-4b3e-be6c-8325dab9985f"
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "AnyAccount"
+    },
+    "balanceAsset": {
+      "blockchain": "Palm",
+      "cryptocurrencySymbol": "OAS",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "11704659"
+  },
+  {
+    "id": "11e6c3ac-079f-4253-9976-1af5be5df22a",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "GNS",
+        "testAsset": true
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "AnyAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "DDM",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "7.8339073"
+  },
+  {
+    "id": "e618a551-a6df-4ea9-a61a-00b7be7ca46f",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "ETB",
+        "testAsset": true
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "ARP",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "338364274.762"
+  },
+  {
+    "id": "69eb98f3-e830-4c57-9c3a-663eed05ae85",
+    "withdrawal": {
+      "asset": {
+        "blockchain": "Terra 2.0",
+        "cryptocurrencySymbol": "LUNA2",
+        "testAsset": false
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "CVE",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "94374425"
+  },
+  {
+    "id": "3307208b-b883-4781-98d8-929dbac9e9b7",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "ECS",
+        "testAsset": true
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "blockchain": "Fantom Opera",
+      "cryptocurrencySymbol": "XDC",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "0938814801"
+  },
+  {
+    "id": "14fbbd31-12e9-441c-b03b-bd74e6629401",
+    "withdrawal": {
+      "asset": {
+        "blockchain": "Algorand",
+        "cryptocurrencySymbol": "VLX",
+        "testAsset": false
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "blockchain": "KAVA",
+      "cryptocurrencySymbol": "EOS",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "08840"
+  },
+  {
+    "id": "1f09634c-ae13-404b-aa4e-47790f3ab2ff",
+    "withdrawal": {
+      "asset": {
+        "assetId": "ed0cd5cb-5195-41a6-8ef5-3ab3c79ef394"
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "USS",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "8"
+  },
+  {
+    "id": "fc92b7e5-3e45-483a-98bb-aa5f1e45d3be",
+    "withdrawal": {
+      "asset": {
+        "blockchain": "Osmosis",
+        "cryptocurrencySymbol": "AVAX",
+        "testAsset": true
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "assetId": "076e2789-8c85-4c66-95f0-fe8947d03b00"
+    },
+    "minWithdrawalAmount": "582975"
+  },
+  {
+    "id": "e24f9927-aff2-4867-a82f-a6dfa54b8300",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "TOP",
+        "testAsset": true
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "AnyAccount"
+    },
+    "balanceAsset": {
+      "assetId": "94d65a5a-ffcb-4905-a3f7-1a7b0133350d"
+    },
+    "minWithdrawalAmount": "1592352"
+  },
+  {
+    "id": "701cafd4-45b3-4aaf-87da-1e3692f43f1c",
+    "withdrawal": {
+      "asset": {
+        "blockchain": "Optimism",
+        "cryptocurrencySymbol": "LTC",
+        "testAsset": true
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "assetId": "4858e4b6-f8ff-4111-8b18-2330262c4983"
+    },
+    "minWithdrawalAmount": "123554"
+  },
+  {
+    "id": "06e52b10-9120-4ae7-a094-9eab949a94bd",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "SZL",
+        "testAsset": false
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "assetId": "a2258cfd-c31b-44f1-ba31-201713c76f05"
+    },
+    "minWithdrawalAmount": "489.73372752"
+  },
+  {
+    "id": "1117948d-7a2f-47ab-a617-cf4c5426c193",
+    "withdrawal": {
+      "asset": {
+        "blockchain": "Hedera",
+        "cryptocurrencySymbol": "SMR",
+        "testAsset": true
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "blockchain": "Arbitrum",
+      "cryptocurrencySymbol": "ATOM",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "07555015.0707064"
+  },
+  {
+    "id": "0da88328-35d0-4d96-a533-f4c2d0f6aee1",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "MMK",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "CUC",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "2150983483.7"
+  },
+  {
+    "id": "e87f9a5d-7679-4ea0-814a-1364162c2b95",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "DJF",
+        "testAsset": true
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "AnyAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "EUR",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "72809.397525718"
+  },
+  {
+    "id": "f53fb292-2e1f-48b5-9019-47b749c63713",
+    "withdrawal": {
+      "asset": {
+        "assetId": "fe0b63b1-19cc-4611-ab04-a458d125dd2a"
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "IQD",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "71333269622.5036878727"
+  },
+  {
+    "id": "6caa5281-24fc-4cee-b2a5-c002610545e8",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "ILS",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "blockchain": "Dogecoin",
+      "cryptocurrencySymbol": "RON",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "66.602"
+  },
+  {
+    "id": "025f37b3-ac7c-4601-b4ee-c16faf69d7b2",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "ZWL",
+        "testAsset": true
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "blockchain": "Axelar",
+      "cryptocurrencySymbol": "ARB",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "9291"
+  },
+  {
+    "id": "ded729b8-4fa0-4a71-9bf0-37d3f5a4cd4d",
+    "withdrawal": {
+      "asset": {
+        "blockchain": "Avalanche",
+        "cryptocurrencySymbol": "WEMIX",
+        "testAsset": true
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "PES",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "8678798651.4082907625"
+  },
+  {
+    "id": "089e63cb-f27e-4d00-bcfc-63a946d746ee",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "CSD",
+        "testAsset": true
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "GNE",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "940"
+  },
+  {
+    "id": "12e80ee3-8cf1-49cd-925b-9b765252d6cb",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "JMD",
+        "testAsset": true
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "blockchain": "NEAR Protocol",
+      "cryptocurrencySymbol": "ETHW",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "17.423872012"
+  },
+  {
+    "id": "6049347e-5fd1-4b93-a21a-688a429b96a0",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "TWD",
+        "testAsset": false
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "blockchain": "ZCash",
+      "cryptocurrencySymbol": "BSV",
+      "testAsset": false
+    },
+    "minWithdrawalAmount": "87418030.0441"
+  },
+  {
+    "id": "f165b994-5ca9-4bbc-8124-91f8ed9fdadd",
+    "withdrawal": {
+      "asset": {
+        "blockchain": "Bitcoin SV",
+        "cryptocurrencySymbol": "TRX",
+        "testAsset": false
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "assetId": "af2f0d9e-de1e-4a28-9f54-f7cdb5b6bac5"
+    },
+    "minWithdrawalAmount": "8807892916"
+  },
+  {
+    "id": "4848e1f2-ad31-45c6-bad9-6789e492b59f",
+    "withdrawal": {
+      "asset": {
+        "assetId": "6b733c5d-51b6-4523-b787-cba710120417"
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "assetId": "28b70764-f7ec-4116-9283-0dfbd39db79c"
+    },
+    "minWithdrawalAmount": "009868217"
+  },
+  {
+    "id": "f6fe9083-eb79-4bf9-8faf-26c4cab4ec99",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "BRR",
+        "testAsset": false
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "blockchain": "Palm",
+      "cryptocurrencySymbol": "FLR",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "4"
+  },
+  {
+    "id": "87b1eeee-5514-4195-bcc4-a6ed1cae5f9e",
+    "withdrawal": {
+      "asset": {
+        "blockchain": "Celo",
+        "cryptocurrencySymbol": "FLR",
+        "testAsset": true
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "assetId": "ac7d9d17-1f88-41f7-9cda-c074f800ba05"
+    },
+    "minWithdrawalAmount": "0423"
+  },
+  {
+    "id": "ccf69e5e-b6db-4b45-be2f-2901018d35bc",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "USD",
+        "testAsset": true
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "assetId": "076e2789-8c85-4c66-95f0-fe8947d03b00"
+    },
+    "minWithdrawalAmount": "5.70338111888"
+  },
+  {
+    "id": "4db28843-3a95-44b2-9829-59cad99fbb8e",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "ARY",
+        "testAsset": true
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "assetId": "dfca1e49-6e0d-4a87-82b1-8a129ac7790e"
+    },
+    "minWithdrawalAmount": "27.0771936"
+  },
+  {
+    "id": "a42c366b-9090-4f51-a1fa-44095535612f",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "ZMW",
+        "testAsset": false
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "TOP",
+      "testAsset": true
+    },
+    "minWithdrawalAmount": "23122.0972"
+  },
+  {
+    "id": "b2420db2-367a-425f-926e-03cb2d41f55d",
+    "withdrawal": {
+      "asset": {
+        "nationalCurrencyCode": "BGN",
+        "testAsset": false
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "assetId": "28b70764-f7ec-4116-9283-0dfbd39db79c"
+    },
+    "minWithdrawalAmount": "50.45083907433"
+  }
+]

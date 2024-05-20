@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.1 - 2024-05-20
+
+### Non-breaking improvements
+
+- Internal and p2p transfers are now valid deposit capabilities.
+- Validation tool mock server now supports multiple configuration presets.
+- Added script downloading server capabilities.
+- Documentation improvements.
+- Stability improvements.
+
+-----
 ## 0.4.0 - 2024-01-08
 
 ### Breaking changes

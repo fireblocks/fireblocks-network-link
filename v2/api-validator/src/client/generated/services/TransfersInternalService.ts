@@ -54,11 +54,11 @@ export class TransfersInternalService {
          */
         limit?: number,
         /**
-         * Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
+         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
          */
         startingAfter?: string,
         /**
-         * Object ID. Instructs to return the items immediately preceding this object. Cannot be used together with `startingAfter`.
+         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
         /**

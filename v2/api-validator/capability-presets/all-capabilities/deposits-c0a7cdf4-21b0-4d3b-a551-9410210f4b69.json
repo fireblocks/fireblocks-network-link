@@ -1,0 +1,761 @@
+[
+  {
+    "id": "06f78a7d-a10b-480e-b512-059c110ee582",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "FJD",
+        "testAsset": true
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "assetId": "076e2789-8c85-4c66-95f0-fe8947d03b00"
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "df8d5892-ea8c-48b5-bfff-5c032926f6ad",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "VEB",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "blockchain": "HT Chain",
+      "cryptocurrencySymbol": "ATOM",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "32d6eaa6-1695-497f-9c71-e5d9982abed7",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "ESP",
+        "testAsset": false
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "blockchain": "Palm",
+      "cryptocurrencySymbol": "XLM",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "fc5b04a5-3bc8-47a6-9da4-7d793d5f2ab3",
+    "deposit": {
+      "asset": {
+        "blockchain": "Celestia",
+        "cryptocurrencySymbol": "ETH",
+        "testAsset": true
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "AnyAccount"
+    },
+    "balanceAsset": {
+      "assetId": "386be067-d2bc-4b3e-be6c-8325dab9985f"
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "6268e01f-39c2-44b5-9fa2-5e168c489675",
+    "deposit": {
+      "asset": {
+        "blockchain": "Cortex",
+        "cryptocurrencySymbol": "CTXC",
+        "testAsset": false
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "assetId": "af2f0d9e-de1e-4a28-9f54-f7cdb5b6bac5"
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "62479cde-9e65-4b02-98fc-fa29a402ef1d",
+    "deposit": {
+      "asset": {
+        "blockchain": "Bitcoin Cash",
+        "cryptocurrencySymbol": "CHZ2",
+        "testAsset": true
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "assetId": "af2f0d9e-de1e-4a28-9f54-f7cdb5b6bac5"
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "4d847a37-aeed-41f5-b9a6-84e7a67f0e3c",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "XPF",
+        "testAsset": false
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "assetId": "ac7d9d17-1f88-41f7-9cda-c074f800ba05"
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "ebfe1c4a-2794-4afb-8ace-1d132197cdd8",
+    "deposit": {
+      "asset": {
+        "assetId": "af2f0d9e-de1e-4a28-9f54-f7cdb5b6bac5"
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "AnyAccount"
+    },
+    "balanceAsset": {
+      "blockchain": "Litecoin",
+      "cryptocurrencySymbol": "XEM",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "addfb4be-363a-43bb-a987-95992525c121",
+    "deposit": {
+      "asset": {
+        "assetId": "bcd54bf9-db49-4e71-adad-71b5090db7fb"
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "AnyAccount"
+    },
+    "balanceAsset": {
+      "blockchain": "XRP",
+      "cryptocurrencySymbol": "GLMR",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "3cc95909-e5c9-44b1-ad38-bda9eb96e350",
+    "deposit": {
+      "asset": {
+        "blockchain": "Bitcoin Cash ABC",
+        "cryptocurrencySymbol": "BNB",
+        "testAsset": true
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "USD",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "7cbdf34a-feb0-492c-b468-b31d119badfd",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "VNC",
+        "testAsset": false
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "blockchain": "Avalanche",
+      "cryptocurrencySymbol": "BSV",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "82e864da-09c3-4210-92a3-ca23d3c53b23",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "MTP",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "blockchain": "Tezos",
+      "cryptocurrencySymbol": "LUNA2",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "2829a18b-a09d-4015-b66c-cd26df1c6afb",
+    "deposit": {
+      "asset": {
+        "assetId": "6b733c5d-51b6-4523-b787-cba710120417"
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "assetId": "cabba90f-dc5a-477b-a645-6da78a63a805"
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "aff46fae-4395-415f-bee3-9913686dab4e",
+    "deposit": {
+      "asset": {
+        "blockchain": "BNB",
+        "cryptocurrencySymbol": "DOT",
+        "testAsset": false
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "assetId": "1b78a94e-fb30-4d58-a76b-e55d9b118df6"
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "d464cffd-2afe-4a25-bafd-e71bd8b6d966",
+    "deposit": {
+      "asset": {
+        "assetId": "386be067-d2bc-4b3e-be6c-8325dab9985f"
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "SDD",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "d4e09491-36ad-43b1-9cf4-f6f3911a2c6d",
+    "deposit": {
+      "asset": {
+        "blockchain": "BNB",
+        "cryptocurrencySymbol": "XLM",
+        "testAsset": true
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "blockchain": "TRON",
+      "cryptocurrencySymbol": "LTC",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "eaa6ac6b-b8c1-4846-9bbe-6c482785e066",
+    "deposit": {
+      "asset": {
+        "blockchain": "Shimmer",
+        "cryptocurrencySymbol": "BSV",
+        "testAsset": true
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "FKP",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "c0546fc7-fb70-4d6a-9a0d-d171ab5aafac",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "XCD",
+        "testAsset": false
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "ZWR",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "822b18e5-aa99-4023-b851-522b4f038599",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "BBD",
+        "testAsset": true
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "blockchain": "Terra Classic",
+      "cryptocurrencySymbol": "ASTR",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "2a1c67ec-47b8-44b2-a5cf-58e356b3f360",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "SZL",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "FKP",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "08f0e126-9d57-428a-9d0b-89f70b16466d",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "ILP",
+        "testAsset": false
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "AnyAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "MTL",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "cd0ea478-ce3f-4310-b519-9f7fddadbad6",
+    "deposit": {
+      "asset": {
+        "assetId": "92ca683f-7c00-4c18-9349-2be61d4182f0"
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "assetId": "6b733c5d-51b6-4523-b787-cba710120417"
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "1828cd68-b5d0-4e15-bc1a-2c5a1b924ac9",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "BND",
+        "testAsset": true
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "assetId": "bcd54bf9-db49-4e71-adad-71b5090db7fb"
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "906fafc7-abc4-45b4-883e-7fd8f1d03c3f",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "FKP",
+        "testAsset": true
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "AnyAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "TPE",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "5e2c57d4-e72e-4f3a-aee3-603bb07ad1d6",
+    "deposit": {
+      "asset": {
+        "assetId": "076e2789-8c85-4c66-95f0-fe8947d03b00"
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "assetId": "4858e4b6-f8ff-4111-8b18-2330262c4983"
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "570a961d-43e1-498b-b71c-342807cac93d",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "LUC",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "THB",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "26d54ac6-648e-4cdc-830e-ba32f689b96a",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "CHC",
+        "testAsset": true
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "blockchain": "Ethereum",
+      "cryptocurrencySymbol": "ETH",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "8de6d2ed-aa4d-4c9a-833c-334bf5475f6c",
+    "deposit": {
+      "asset": {
+        "assetId": "076e2789-8c85-4c66-95f0-fe8947d03b00"
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "blockchain": "Base",
+      "cryptocurrencySymbol": "DYDX",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "a6e8e75a-4da1-4c34-9807-d0bd1a3f71a0",
+    "deposit": {
+      "asset": {
+        "assetId": "ed0cd5cb-5195-41a6-8ef5-3ab3c79ef394"
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "BEC",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "2c6523f5-2334-4895-b91e-75aaaa129e3c",
+    "deposit": {
+      "asset": {
+        "assetId": "d9c9c65b-bf14-4c3b-a5a5-f64621cc8ec7"
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "blockchain": "KAVA",
+      "cryptocurrencySymbol": "CANTO",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "0f8c6174-0bac-4675-857f-7e357440f7eb",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "FKP",
+        "testAsset": true
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "assetId": "fe0b63b1-19cc-4611-ab04-a458d125dd2a"
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "95aa65bb-008b-43f9-baef-13f295e91180",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "CNY",
+        "testAsset": false
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "assetId": "28b70764-f7ec-4116-9283-0dfbd39db79c"
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "ff9d9ba4-82ec-4d77-b31f-10e66a4f6b35",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "SVC",
+        "testAsset": true
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "blockchain": "WEMIX",
+      "cryptocurrencySymbol": "GLMR",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "294870e4-7461-4f75-a04a-7fb9879eb04d",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "SBD",
+        "testAsset": false
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "blockchain": "Astar",
+      "cryptocurrencySymbol": "CANTO",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "5a21e65b-91a9-430c-96d0-4d6236056f1c",
+    "deposit": {
+      "asset": {
+        "assetId": "ed0cd5cb-5195-41a6-8ef5-3ab3c79ef394"
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "blockchain": "Ethereum",
+      "cryptocurrencySymbol": "MOVR",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "8839566f-be39-4be0-80fd-4ba459dcae00",
+    "deposit": {
+      "asset": {
+        "assetId": "fe0b63b1-19cc-4611-ab04-a458d125dd2a"
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "assetId": "92ca683f-7c00-4c18-9349-2be61d4182f0"
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "74e170b2-b5c7-4392-9f8b-07a5976b8cb9",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "ARA",
+        "testAsset": true
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "blockchain": "Palm",
+      "cryptocurrencySymbol": "LTC",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "e9fe06e6-899a-4f1f-a751-b5db27be1104",
+    "deposit": {
+      "asset": {
+        "assetId": "cabba90f-dc5a-477b-a645-6da78a63a805"
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "blockchain": "Cosmos",
+      "cryptocurrencySymbol": "ALGO",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "e3517332-b869-47f5-ad98-c76b51b8eea1",
+    "deposit": {
+      "asset": {
+        "blockchain": "Moonriver",
+        "cryptocurrencySymbol": "ETHW",
+        "testAsset": false
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "blockchain": "EthereumPoW",
+      "cryptocurrencySymbol": "VLX",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "634033b0-db3b-4eaf-99f0-ab8672113a8d",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "TJR",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "blockchain": "Celestia",
+      "cryptocurrencySymbol": "OAS",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "d3bfb13e-ac4e-438e-a1dd-09e3e8da177b",
+    "deposit": {
+      "asset": {
+        "blockchain": "eCash",
+        "cryptocurrencySymbol": "SONGBIRD",
+        "testAsset": false
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "assetId": "bc9e1ca4-4edd-4b31-ade8-18d095ef9a89"
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "3554ec4b-b79c-49a5-bc52-1f7d3e65fba3",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "DEM",
+        "testAsset": false
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "NGN",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "68912722-f41f-49cd-9ea7-4932aed527de",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "BYN",
+        "testAsset": false
+      },
+      "transferMethod": "Iban"
+    },
+    "balanceAsset": {
+      "blockchain": "DYDX",
+      "cryptocurrencySymbol": "XRP",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "eecfad36-c982-4a0f-bcb7-a34edf8a05db",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "EUR",
+        "testAsset": false
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "AnyAccount"
+    },
+    "balanceAsset": {
+      "assetId": "d9c9c65b-bf14-4c3b-a5a5-f64621cc8ec7"
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "6b565ff4-6ac7-43a6-adc3-d76bd07e3fb4",
+    "deposit": {
+      "asset": {
+        "assetId": "d9c9c65b-bf14-4c3b-a5a5-f64621cc8ec7"
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "assetId": "076e2789-8c85-4c66-95f0-fe8947d03b00"
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "cc164503-07de-48a8-a51c-f9e0f6dfeabe",
+    "deposit": {
+      "asset": {
+        "nationalCurrencyCode": "LSM",
+        "testAsset": false
+      },
+      "transferMethod": "Swift"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "DJF",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CanCreate"
+  },
+  {
+    "id": "fd1d1ef6-b5a9-4382-8487-8860bb533ec6",
+    "deposit": {
+      "asset": {
+        "assetId": "28b70764-f7ec-4116-9283-0dfbd39db79c"
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "blockchain": "Bitcoin SV",
+      "cryptocurrencySymbol": "EVMOS",
+      "testAsset": false
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "4c3266cd-d96e-4de8-a202-622597b6bfcd",
+    "deposit": {
+      "asset": {
+        "assetId": "94d65a5a-ffcb-4905-a3f7-1a7b0133350d"
+      },
+      "transferMethod": "PeerAccountTransfer"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "RON",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "100157f6-b946-4b96-abc2-b61d37ecdb06",
+    "deposit": {
+      "asset": {
+        "blockchain": "XRP",
+        "cryptocurrencySymbol": "VLX",
+        "testAsset": false
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "DirectParentAccount"
+    },
+    "balanceAsset": {
+      "assetId": "a2258cfd-c31b-44f1-ba31-201713c76f05"
+    },
+    "addressCreationPolicy": "CannotCreate"
+  },
+  {
+    "id": "55e61883-d77d-4fd9-a748-7b8d575e8571",
+    "deposit": {
+      "asset": {
+        "assetId": "dfca1e49-6e0d-4a87-82b1-8a129ac7790e"
+      },
+      "transferMethod": "InternalTransfer",
+      "destinationPolicy": "AnyAccount"
+    },
+    "balanceAsset": {
+      "nationalCurrencyCode": "MWK",
+      "testAsset": true
+    },
+    "addressCreationPolicy": "CannotCreate"
+  }
+]

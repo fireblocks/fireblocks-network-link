@@ -79,6 +79,37 @@ as follows:
 
 Servers are expected to recognize a retry for 7 days, at least, since the last attempt.
 
+## Pagination
+
+All API endpoint returning lists of entities use pagination to limit the number of items 
+returned in a response. The pagination is controlled by the following query parameters:
+
+| Parameter       | Description                                                                                    |
+|-----------------|------------------------------------------------------------------------------------------------|
+| `limit`         | The maximum number of items to return in a single response.                                    |
+| `startingAfter` | Item ID. Instructs to return the items immediately following this object and not including it. |
+| `endingBefore`  | Item ID. Instructs to return the items immediately preceding this object and not including it. |
+
+- Notice that all the endpoints returning lists of items are defined to return an object 
+  with a property containing the list.
+- If the requested query parameters result in an empty list, the server should still 
+  return the defined object with the list property set to an empty array.
+- All the pagination query parameters are optional. If not provided, the server should 
+  return the first page of items.
+- The returned dataset should never contain the item specified by the `startingAfter` or 
+  `endingBefore` parameter.
+- `endingBefore` and `startingAfter` are mutually exclusive. If both are provided, the 
+  server should respond with HTTP status code 400 and response body containing a JSON 
+  object with the following properties:
+  ```json
+  {
+    "message": "Only one of the parameters 'startingAfter' and 'endingBefore' can be used.",
+    "errorType": "invalid-query-parameters",
+    "propertyName": "startingAfter",
+    "requestPart": "query"
+  }
+  ```
+
 ## Capabilities
 
 The API consists of separate optional components with flexible capabilities. Fireblocks
@@ -153,7 +184,8 @@ sent with each HTTP request:
 ### Signature
 
 HTTP request signature is calculated by applying a sequence of operations to the request
-data.
+data. The cryptographic keys and the specific operations used by a server are defined
+during the server on-boarding.
 
 #### Building the message to sign
 
@@ -184,7 +216,7 @@ be: `1691606624184c3d5f400-0e7e-4f94-a199-44b8cc7b6b81GET/accounts/A1234/balance
 
 The signature is computed by applying a pre-encoding function, a signing algorithm and
 a post-encoding function to the message. A server can implement one of the several
-supported options and specify the choice during the on-boarding process. The same 
+supported options and specify the choice during the server on-boarding process. The same 
 signing method will be used for all the requests.
 
 These are the supported algorithms:

@@ -7,6 +7,7 @@ import {
 import { XComError } from '../../error';
 import { fakeSchemaObject } from '../../schemas';
 import { Repository } from './repository';
+import { loadCapabilitiesJson } from './capabilities-loader';
 
 export class UnknownAdditionalAssetError extends XComError {
   constructor() {
@@ -20,15 +21,29 @@ export class AssetsController {
   private static readonly repository = new Repository<AssetDefinition>();
   private static assetsLoaded = false;
 
-  public static generateAdditionalAssets(): void {
-    if (this.assetsLoaded) {
+  public static loadAdditionalAssets(): void {
+    if (AssetsController.assetsLoaded) {
       return;
     }
 
-    for (let i = 0; i < ADDITIONAL_ASSETS_COUNT; i++) {
-      this.repository.create(fakeSchemaObject('AssetDefinition') as AssetDefinition);
+    const assets =
+      loadCapabilitiesJson('assets.json') ?? AssetsController.generateAdditionalAssets();
+
+    for (const asset of assets) {
+      AssetsController.repository.create(asset);
     }
-    this.assetsLoaded = true;
+
+    AssetsController.assetsLoaded = true;
+  }
+
+  private static generateAdditionalAssets() {
+    const assets: AssetDefinition[] = [];
+
+    for (let i = 0; i < ADDITIONAL_ASSETS_COUNT; i++) {
+      assets.push(fakeSchemaObject('AssetDefinition') as AssetDefinition);
+    }
+
+    return assets;
   }
 
   public static getAllAdditionalAssets(): AssetDefinition[] {

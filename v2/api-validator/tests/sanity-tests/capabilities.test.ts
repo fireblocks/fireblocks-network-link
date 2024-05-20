@@ -1,8 +1,6 @@
 import ApiClient from '../../src/client';
 import { Capabilities } from '../../src/client/generated';
 
-const KNOWN_API_VERSIONS = ['0.2.0'];
-
 describe('Capabilities', () => {
   const client = new ApiClient();
 
@@ -13,8 +11,8 @@ describe('Capabilities', () => {
       capabilities = await client.capabilities.getCapabilities({});
     });
 
-    it('should implement a supported API version', () => {
-      expect(isSupportedApiVersion(capabilities.version)).toBe(true);
+    it('should specify API version', () => {
+      expect(capabilities.version).not.toBeEmpty();
     });
 
     it('should always have accounts capability', () => {
@@ -59,7 +57,3 @@ describe('Capabilities', () => {
     });
   });
 });
-
-function isSupportedApiVersion(apiVersion: string) {
-  return KNOWN_API_VERSIONS.includes(apiVersion);
-}

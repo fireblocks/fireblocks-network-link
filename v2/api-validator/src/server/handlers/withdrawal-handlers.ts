@@ -6,6 +6,7 @@ import { ControllersContainer } from '../controllers/controllers-container';
 import {
   TransferDestinationNotAllowed,
   TransferNotSupportedError,
+  UnknownAssetError,
   WithdrawalController,
   WithdrawalNotFoundError,
   WithdrawalRequest,
@@ -31,7 +32,7 @@ type InternalWithdrawalRequestBody = { Body: InternalWithdrawalRequest };
 type BlockchainWithdrawalRequestBody = { Body: BlockchainWithdrawalRequest };
 type FiatWithdrawalRequestBody = { Body: FiatWithdrawalRequest };
 
-const controllers = new ControllersContainer(() => new WithdrawalController());
+const controllers = new ControllersContainer((accountId) => new WithdrawalController(accountId));
 
 /**
  * GET Endpoints
@@ -229,6 +230,14 @@ async function createWithdrawal<R extends IdempotentRequest & WithdrawalRequest>
     idempotencyHandlerAdder(body, 200, withdrawal);
     return withdrawal;
   } catch (err) {
+    if (err instanceof UnknownAssetError) {
+      const response = {
+        message: err.message,
+        errorType: BadRequestError.errorType.UNKNOWN_ASSET,
+      };
+      idempotencyHandlerAdder(body, 400, response);
+      return ErrorFactory.badRequest(reply, response);
+    }
     if (err instanceof TransferNotSupportedError) {
       const response = {
         message: err.message,

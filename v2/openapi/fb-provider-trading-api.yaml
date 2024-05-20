@@ -155,7 +155,8 @@ paths:
       summary: Get active sell orders in an order book
       description: >-
         List active sell orders in an order book, sorted ascending
-        by the sell price.
+        by the sell price. Each entry is sum of all the asks at the
+        specific price point.
       tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -235,7 +236,8 @@ paths:
       summary: Get active buy orders in an order book
       description: >-
         List active buy orders in an order book, sorted descending
-        by the buy price.
+        by the buy price. Each entry is sum of all the bids at the
+        specific price point.
       tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -543,7 +545,7 @@ components:
         amount:
           allOf:
             - $ref: '#/x-schemas/PositiveAmount'
-          description: "Amount of the base asset traded"
+          description: Amount of the base asset traded.
         price:
           $ref: '#/x-schemas/PositiveAmount'
         totalPrice:

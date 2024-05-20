@@ -17,6 +17,7 @@ import {
 import { Repository } from './repository';
 import { fakeSchemaObject } from '../../schemas';
 import { JSONSchemaFaker } from 'json-schema-faker';
+import { loadCapabilitiesJson } from './capabilities-loader';
 import _ from 'lodash';
 
 export class DepositAddressNotFoundError extends XComError {
@@ -60,7 +61,9 @@ export class DepositController {
   private readonly swiftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
   private readonly ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
 
-  constructor() {
+  constructor(private readonly accountId: string) {
+    this.loadDepositCapabilities();
+
     for (let i = 0; i < DEFAULT_DEPOSITS_COUNT; i++) {
       this.depositRepository.create(fakeSchemaObject('Deposit') as Deposit);
     }
@@ -69,18 +72,34 @@ export class DepositController {
       this.depositAddressRepository.create(fakeSchemaObject('DepositAddress') as DepositAddress);
     }
 
-    for (let i = 0; i < DEFAULT_CAPABILITIES_COUNT; i++) {
-      this.depositCapabilitiesRepository.create(
-        fakeSchemaObject('DepositCapability') as DepositCapability
-      );
-    }
-
     const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
 
     injectKnownAssetIdsToDeposits(knownAssetIds, this.depositRepository);
     injectKnownAssetIdsToDepositAddresses(knownAssetIds, this.depositAddressRepository);
     injectKnownAssetIdsToDepositCapabilities(knownAssetIds, this.depositCapabilitiesRepository);
     this.depositCapabilitiesRepository.removeDuplicatesBy((dc) => dc.deposit);
+  }
+
+  public loadDepositCapabilities(): void {
+    const capabilities =
+      loadCapabilitiesJson(`deposits-${this.accountId}.json`) ??
+      DepositController.generateDepositCapabilities();
+
+    this.depositCapabilitiesRepository.clear();
+
+    for (const capability of capabilities) {
+      this.depositCapabilitiesRepository.create(capability);
+    }
+  }
+
+  private static generateDepositCapabilities() {
+    const capabilities: DepositCapability[] = [];
+
+    for (let i = 0; i < DEFAULT_CAPABILITIES_COUNT; i++) {
+      capabilities.push(fakeSchemaObject('DepositCapability') as DepositCapability);
+    }
+
+    return capabilities;
   }
 
   public getDepositCapabilities(): DepositCapability[] {

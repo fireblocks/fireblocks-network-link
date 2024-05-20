@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "components": {
+    "accounts": "*",
+    "balances": "*",
+    "historicBalances": "*",
+    "transfers": "*",
+    "transfersBlockchain": "*",
+    "transfersFiat": "*",
+    "transfersPeerAccounts": "*",
+    "trading": "*",
+    "liquidity": "*"
+  }
+}

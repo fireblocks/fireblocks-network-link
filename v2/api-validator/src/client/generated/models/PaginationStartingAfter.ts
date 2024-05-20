@@ -4,6 +4,6 @@
 /* eslint-disable */
 
 /**
- * Object ID. Instructs to return the items immediately following this object. Cannot be used together with `endingBefore`.
+ * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
  */
 export type PaginationStartingAfter = string;
