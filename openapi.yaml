@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Account Linking Partners
-  version: "0.9.6"
+  version: "0.9.7"
   contact:
     email: support@fireblocks.com
   license:
@@ -1146,6 +1146,7 @@ components:
       - Eco Smart
       - EOS.IO
       - Ethereum Classic
+      - Oasys
       - Evmos
       - Songbird
       - Smart Bitcoin Cash
@@ -1200,6 +1201,7 @@ components:
         - Eco Smart
         - EOS.IO
         - Ethereum Classic
+        - Oasys
         - Smart Bitcoin Cash
         - Hedera
         - Bitkub Chain
