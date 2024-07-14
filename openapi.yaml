@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Account Linking Partners
-  version: "0.9.7"
+  version: "0.9.8"
   contact:
     email: support@fireblocks.com
   license:
@@ -1120,6 +1120,7 @@ components:
       - Chiliz
       - Chiliz 2.0
       - Flare
+      - Oasys
       - BNB Chain
       - Polygon
       - Arbitrum
@@ -1138,9 +1139,11 @@ components:
       - RSK
       - Bitcoin SV
       - Bitcoin
+      - Linea
       - Celo
       - Cortex
       - Dash
+      - Base
       - Dogecoin
       - Polkadot
       - Eco Smart
@@ -1185,6 +1188,7 @@ components:
         - Solana
         - Cardano
         - Algorand
+        - Oasys
         - Optimism
         - Tron
         - Arbitrum Rinkeby
