@@ -61,6 +61,26 @@ values.
 - `tests` contains the API validation tests.
   - The tests use the client in `src/client` to communicate with the server.
 
+## How to make changes to the API
+
+The API is described using OpenAPI 3.0.0. You will have to know how to write
+OpenAPI specifications to be able to make changes effectively. Use these resources
+to learn more about OpenAPI:
+
+- [OpenAPI documentation](https://learn.openapis.org/)
+- [Best practices](https://learn.openapis.org/best-practices.html)
+- [OpenAPI Specification v3.0.0](https://spec.openapis.org/oas/v3.0.0)
+
+1. Make sure all the tests pass before making any changes:
+   1. Run the mock server: `npm run server`
+   2. In a separate shell, run the tests: `npm run test`
+2. Make the changes to the relevant `fb-provider*api.yaml` files. Do not change
+   `fb-unified-openapi.yaml` – it will be generated automatically.
+3. `npm run make-unified-openapi`
+4. `npm run generate-openapi-client`
+5. Restart the mock server.
+6. Run all the tests.
+
 ## Troubleshooting
 
 If the tests fail catastrophically, it is possible to run the tests in three separate
