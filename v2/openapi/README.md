@@ -333,3 +333,50 @@ described as follows:
     └───────────┘    └───────────┘    └──────────────┘    └───────────┘    └──────────────┘
 Example: MXN              MXN                                  USD               USDC
 ```
+
+### Transfer method definition in the API spec
+
+Let's look in detail at how a transfer method is defined and used throughout the API.
+All the transfer methods use the same pattern. We will take the IBAN transfer method 
+as an example.
+
+There are four objects, extending one another, that define the IBAN transfer method:
+
+1. `IbanCapability` – used to define that an asset can be transferred using IBAN. For 
+   example, this object is returned by the withdrawal capabilities (getWithdrawalMethods) 
+   and deposit capabilities (getDepositMethods) endpoints.
+2. `IbanAddress` – extends `IbanCapability` and adds to it the IBAN address property and
+   account holder details. This object is used in deposit address management endpoints,
+   for example in createDepositAddress and getDepositAddresses.
+3. `IbanTransferDestination` - extends `IbanAddress` and adds to it the amount property.
+   This object is used in for creation of fiat withdrawals (createFiatWithdrawal 
+   endpoint). Notice how `IbanAddress` is not enough for withdrawals but is enough for
+   deposits, where the amount property is not needed.
+4. `IbanTransfer` – used to describe existing fiat withdrawal, for example in
+   getFiatWithdrawals endpoint. It extends `IbanTransferDestination` and adds to it the
+   reference ID property to help correlate a withdrawal to a specific transaction on the
+   transaction recipient side.
+![IBAN objects hierarchy](doc-assets/network-link-iban.png "IBAN objects hierarchy")
+
+When a client retrieves a withdrawal details, an `IbanTransfer` object is returned in the
+`destination` property; for example:
+
+```json5
+{
+    "asset": {                                  // defined in IbanCapability
+        "nationalCurrencyCode": "USD"           // defined in NationalCurrency
+    },
+    "transferMethod": "Iban",                   // defined in IbanCapability
+    "iban": "GB33BUKB20201555555555",           // defined in IbanAddress
+    "accountHolder": {                          // defined in IbanAddress
+        "name": "Stephen Vincent Strange",      // defined in AccountHolderDetails
+        "city": "New York City",                // defined in AccountHolderDetails
+        "country": "USA",                       // defined in AccountHolderDetails
+        "subdivision": "NY",                    // defined in AccountHolderDetails
+        "address": "177A Bleecker Street",      // defined in AccountHolderDetails
+        "postalCode": "10012-1406"              // defined in AccountHolderDetails
+    },
+    "amount": "13.37",                          // defined in IbanTransferDestination
+    "referenceId": "f9ff7738-92ea-48c8-8e80-68112d46f424"  // defined in IbanTransfer
+}
+```
