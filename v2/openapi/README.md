@@ -356,6 +356,7 @@ There are four objects, extending one another, that define the IBAN transfer met
    getFiatWithdrawals endpoint. It extends `IbanTransferDestination` and adds to it the
    reference ID property to help correlate a withdrawal to a specific transaction on the
    transaction recipient side.
+
 ![IBAN objects hierarchy](doc-assets/network-link-iban.png "IBAN objects hierarchy")
 
 When a client retrieves a withdrawal details, an `IbanTransfer` object is returned in the

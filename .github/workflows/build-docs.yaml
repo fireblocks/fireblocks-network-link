@@ -14,6 +14,8 @@ jobs:
       run: npx @redocly/cli build-docs openapi.yaml --output index.html
     - name: Build redoc for v2
       run:  npx @redocly/cli build-docs v2/openapi/fb-unified-openapi.yaml --output v2/docs.html
+    - name: Copy v2 assets
+      run:  mkdir -p v2/doc-assets && cp v2/openapi/doc-assets/* v2/doc-assets/
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
