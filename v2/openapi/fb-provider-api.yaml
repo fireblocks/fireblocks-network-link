@@ -37,7 +37,7 @@ paths:
       summary: Describe server capabilities
       description: >-
         Returns the API version and all the capabilities that the server supports.  
-          
+        
         The capabilities are specified as a map. The map keys are the capability
         names and the values are lists of account IDs. If all the accounts support
         a capability, an asterisk could be used, instead of listing all the accounts.
@@ -68,6 +68,7 @@ paths:
                       transfersFiat: "*"
                       transfersPeerAccounts: "*"
                       transfersInternal: "*"
+                      transfersCrossTransfer: "*"
                       trading: "*"
                       liquidity: "*"
                 allAccountsSupportSomeCapabilities:
@@ -122,7 +123,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [assets]
+                required: [ assets ]
                 properties:
                   assets:
                     type: array
@@ -279,6 +280,308 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         '5XX':
           $ref: '#/components/responses/ErrorResponse'
+
+  /accounts/external:
+    get:
+      operationId: listExternalAccounts
+      summary: Get list of external accounts
+      tags: [ accounts ]
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
+        - in: query
+          name: customerId
+          required: false
+          description: ID of the customer whose external accounts are to be listed.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of external accounts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExternalAccount'
+              example:
+                accounts:
+                  - id: "76a33ed9-8aa2-4781-93f8-d2369c0c2b14"
+                    currency:
+                      "nationalCurrencyCode": "USD"
+                    servicedBy: "Bank of America"
+                    account:
+                      type: "SWIFT"
+                      accountNumber: "GB29NWBK60161331926819"
+                      bic: "NWBKGB2L"
+                      country: "GB"
+                      address:
+                        streetLine1: "1 Churchill Place"
+                        city: "London"
+                        postalCode: "E14 5HP"
+                        country: "GB"
+                    accountHolder:
+                      type: "Business"
+                      businessName: "Acme Inc."
+                      address:
+                        streetLine1: "1 Churchill Place"
+                        city: "London"
+                        postalCode: "E14 5HP"
+                        country: "GB"
+                    category: "Client"
+                    purpose: "IntraGroupTransfer"
+                    shortBusinessDescription: "Payment for goods and services"
+
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/components/responses/ErrorResponse'
+        '5XX':
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      operationId: createExternalAccount
+      summary: Create a new external account.
+      tags: [ accounts ]
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ idempotencyKey, customerId ]
+              properties:
+                idempotencyKey:
+                  type: string
+                  example: 123e4567-e89b-12d3-a456-426614174000
+                  description: Unique identifier of the request.
+                customerId:
+                  description: ID of the customer who will be account holder.
+                  example: 123e4567-e89b-12d3-a456-426614174000
+                  type: string
+                currency:
+                  $ref: '#/components/schemas/AssetReference'
+                servicedBy:
+                  type: string
+                  description: Name of the external service provider (e.g. bank name).
+                  example: 'Bank of America'
+                account:
+                  $ref: '#/components/schemas/ExternalAccountDetails'
+                accountHolder:
+                  oneOf:
+                    - $ref: '#/components/schemas/BusinessAccountHolder'
+                    - $ref: '#/components/schemas/IndividualAccountHolder'
+      responses:
+        '200':
+          description: Sub-account created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalAccount'
+              examples:
+                swiftExternalAccount:
+                  $ref: '#/components/examples/swiftExternalAccount'
+                iBANExternalAccount:
+                  $ref: '#/components/examples/iBANExternalAccount'
+                usBankExternalAccount:
+                  $ref: '#/components/examples/usBankExternalAccount'
+
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/components/responses/ErrorResponse'
+        '5XX':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /accounts/external/{accountId}:
+    get:
+      operationId: getExternalAccountDetails
+      summary: Get external account details
+      tags: [ accounts ]
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - in: path
+          name: accountId
+          required: true
+          description: External account identifier.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: External account details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalAccount'
+              examples:
+                swiftExternalAccount:
+                  $ref: '#/components/examples/swiftExternalAccount'
+                iBANExternalAccount:
+                  $ref: '#/components/examples/iBANExternalAccount'
+                usBankExternalAccount:
+                  $ref: '#/components/examples/usBankExternalAccount'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/components/responses/ErrorResponse'
+        '5XX':
+          $ref: '#/components/responses/ErrorResponse'
+    put:
+      operationId: updateExternalAccount
+      summary: Update external account details
+      tags: [ accounts ]
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - in: path
+          name: accountId
+          required: true
+          description: External account identifier.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ idempotencyKey ]
+              properties:
+                idempotencyKey:
+                  type: string
+                  example: 123e4567-e89b-12d3-a456-426614174000
+                  description: Unique identifier of the request.
+                account:
+                  type: object
+                  description: Update US bank account details.
+                  properties:
+                    accountType:
+                      description: Type of the account.
+                      type: string
+                      enum:
+                        - Checking
+                        - Savings
+                      example: 'Checking'
+                accountHolder:
+                  type: object
+                  description: Update account holder address.
+                  properties:
+                    address:
+                      $ref: '#/components/schemas/Address'
+      responses:
+        '200':
+          description: External account updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalAccount'
+              examples:
+                swiftExternalAccount:
+                  $ref: '#/components/examples/swiftExternalAccount'
+                iBANExternalAccount:
+                  $ref: '#/components/examples/iBANExternalAccount'
+                usBankExternalAccount:
+                  $ref: '#/components/examples/usBankExternalAccount'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/components/responses/ErrorResponse'
+        '5XX':
+          $ref: '#/components/responses/ErrorResponse'
+    delete:
+      operationId: deleteExternalAccount
+      summary: Delete external account
+      tags: [ accounts ]
+      parameters:
+          - $ref: '#/components/parameters/X-FBAPI-KEY'
+          - $ref: '#/components/parameters/X-FBAPI-NONCE'
+          - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+          - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+          - in: path
+            name: accountId
+            required: true
+            description: External account identifier.
+            schema:
+              type: string
+      responses:
+        '201':
+          description: External account deleted.
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/components/responses/ErrorResponse'
+        '5XX':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /accounts/crosstransfer:
+    post:
+      operationId: createCrossTransferAccount
+      summary: Create a new cross transfer sub-account.
+      tags: [ accounts ]
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+      requestBody:
+        description: >-
+          The request body must contain the title of the new sub-account.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ idempotencyKey, customerId, source, destination  ]
+              properties:
+                idempotencyKey:
+                  type: string
+                  example: 123e4567-e89b-12d3-a456-426614174000
+                  description: Unique identifier of the request.
+                customerId:
+                  description: ID of the customer who will be account holder.
+                  example: 123e4567-e89b-12d3-a456-426614174000
+                  type: string
+                accountConfig:
+                  $ref: '#/components/schemas/CrossTransferAccountConfig'
+                source:
+                  $ref: '#/components/schemas/AssetReference'
+                destination:
+                  $ref: '#/components/schemas/CrossTransferDestination'
+
+      responses:
+        '200':
+          description: Sub-account created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountId'
 
   /accounts/{accountId}/balances:
     get:
@@ -519,7 +822,7 @@ components:
       in: query
       schema:
         type: string
-    
+
     NationalCurrencyCodeQueryParam:
       name: nationalCurrencyCode
       description: >-
@@ -744,6 +1047,338 @@ components:
         - $ref: '#/components/schemas/AccountId'
         - $ref: '#/components/schemas/AccountData'
 
+    CrossTransferAccountConfig:
+      description: >-
+        Configuration of the new account.
+        - OnRamp: Source will be fiat, destination must be crypto wallet, developerFee is required.
+        - OffRamp: Source will be crypto wallet, destination must be fiat, developerFee is required.
+        - CrossChain: Source and destination must be crypto wallets, developerFee is required.
+      oneOf:
+        - $ref: '#/components/schemas/OnRampAccountConfig'
+        - $ref: '#/components/schemas/OffRampAccountConfig'
+        - $ref: '#/components/schemas/CrossChainAccountConfig'
+      discriminator:
+        propertyName: type
+        mapping:
+          OnRamp: '#/components/schemas/OnRampAccountConfig'
+          OffRamp: '#/components/schemas/OffRampAccountConfig'
+          CrossChain: '#/components/schemas/CrossChainAccountConfig'
+
+    OnRampAccountConfig:
+      type: object
+      required: [ type, developerFee ]
+      properties:
+        type:
+          type: string
+          example: 'OnRamp'
+          default: 'OnRamp'
+          enum:
+            - OnRamp
+        developerFee:
+          $ref: '#/components/schemas/PositiveAmount'
+
+    OffRampAccountConfig:
+      type: object
+      required: [ type, developerFee ]
+      properties:
+        type:
+          type: string
+          example: 'OffRamp'
+          enum:
+            - OffRamp
+        developerFee:
+          $ref: '#/components/schemas/PositiveAmount'
+
+    CrossChainAccountConfig:
+      type: object
+      required: [ type, developerFee ]
+      properties:
+        type:
+          type: string
+          example: 'CrossChain'
+          enum:
+            - CrossChain
+        developerFee:
+          $ref: '#/components/schemas/PositiveAmount'
+
+    CrossTransferDestination:
+      description: >-
+        Destination of the cross transfer.
+        - CryptoAccount: Destination must be a crypto account.
+        - FiatAccount: Destination must be a fiat account.
+      oneOf:
+        - $ref: '#/components/schemas/CrossTransferDestinationCryptoAccount'
+        - $ref: '#/components/schemas/CrossTransferDestinationFiatAccount'
+      discriminator:
+        propertyName: type
+        mapping:
+          CryptoAccount: '#/components/schemas/CrossTransferDestinationCryptoAccount'
+          FiatAccount: '#/components/schemas/CrossTransferDestinationFiatAccount'
+
+
+    CrossTransferDestinationCryptoAccount:
+      type: object
+      required: [ type, currency, address ]
+      properties:
+          type:
+            description: Type of the destination account.
+            type: string
+            example: 'CryptoAccount'
+            enum:
+              - CryptoAccount
+          currency:
+            $ref: '#/components/schemas/AssetReference'
+          address:
+            description: Address of the destination account.
+            type: string
+          memo:
+            description: >-
+              Memo field for the destination address.
+              Required for some blockchains.
+            type: string
+
+    CrossTransferDestinationFiatAccount:
+      type: object
+      required: [ type, currency  ]
+      properties:
+        type:
+          description: Type of the destination account.
+          type: string
+          example: 'FiatAccount'
+          enum:
+          - FiatAccount
+        currency:
+          $ref: '#/components/schemas/NationalCurrency'
+        externalAccountId:
+          $ref: '#/components/schemas/ExternalAccountId'
+        blockchain:
+          $ref: '#/components/schemas/Blockchain'
+        destinationSepaReference:
+          type: string
+          description: >-
+            SEPA reference for the destination account.
+            Required for SEPA transfers.
+        destinationWireMessage:
+          type: string
+          description: >-
+            Wire transfer message for the destination account.
+            Required for wire transfers.
+        destinationAchRefernce:
+          type: string
+          description: >-
+            ACH reference for the destination account.
+            Required for ACH transfers.
+        destinationPaymentRail:
+          $ref: '#/components/schemas/FiatRail'
+        destinationCurrency:
+          $ref: '#/components/schemas/NationalCurrency'
+        developerFeePrecent:
+          type: number
+          description: >-
+            Custom developer fee in percents.
+            Optional, if not provided, the default fee will be used.
+          
+            
+    
+
+    ExternalAccountId:
+      description: >-
+        ID of the account in the external system.
+      type: string
+      example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
+
+    USBankAccountDetails:
+      type: object
+      required: [ type, accountNumber, routingNumber ]
+      properties:
+        type:
+          type: string
+          example: 'US'
+          description: Type of the account.
+          enum:
+            - US
+        accountNumber:
+          type: string
+          example: '123456789'
+          description: 'Account number of the US bank account.'
+        routingNumber:
+          type: string
+          example: '123456789'
+          description: 'Routing number of the US bank account.'
+        accountType:
+          type: string
+          enum:
+            - Checking
+            - Savings
+          example: 'Checking'
+
+    iBanAccountDetails:
+      type: object
+      required: [ type, accountNumber, bic, country ]
+      properties:
+        type:
+          type: string
+          description: Type of the account.
+          example: 'IBAN'
+          enum:
+            - IBAN
+        accountNumber:
+          description: International Bank Account Number (iBAN).
+          type: string
+          example: 'DE89370400440532013000'
+        bic:
+          description: Bank Identifier Code (BIC).
+          type: string
+          example: 'DEUTDEFF'
+        country:
+          description: ISO 3166-1 alpha-2 country code.
+          type: string
+          example: 'DE'
+
+    Address:
+      type: object
+      required: [ streetLine1, city, country ]
+      description: >-
+        Address details for the SWIFT transfer.
+      properties:
+        streetLine1:
+          type: string
+          example: '1 Churchill Place'
+        streetLine2:
+          type: string
+          example: 'Canary Wharf'
+        city:
+          type: string
+          example: 'London'
+        state:
+          type: string
+        postalCode:
+          type: string
+          example: 'E14 5HP'
+        country:
+          description: ISO 3166-1 alpha-2 country code.
+          type: string
+          example: 'GB'
+
+    SwiftAccountDetails:
+      type: object
+      description: >-
+        Account details for the SWIFT transfer.
+      required: [ accountNumber, bic , address ]
+      properties:
+        type:
+          type: string
+          example: 'SWIFT'
+          description: Type of the account.
+          enum:
+            - Swift
+        accountNumber:
+          description: International Bank Account Number (iBAN).
+          type: string
+          example: 'GB29NWBK60161331926819'
+        bic:
+          description: Bank Identifier Code (BIC).
+          type: string
+          example: 'NWBKGB2L'
+        country:
+          description: ISO 3166-1 alpha-2 country code.
+          type: string
+          example: 'GB'
+        address:
+          $ref: '#/components/schemas/Address'
+        category:
+          description: The context of business operations
+          type: string
+          enum:
+            - Client
+            - ParentCompany
+            - Subsidiary
+            - Affiliate
+            - Supplier
+        purpose:
+          type: string
+          description: The nature of the transactions this account will participate in
+          enum:
+            - IntraGroupTransfer
+            - InvoiceForGoodsAndServices
+        shortBusinessDescription:
+          type: string
+          description: How the business uses the funds
+          example: 'Payment for goods and services'
+
+    ExternalAccountDetails:
+      oneOf:
+        - $ref: '#/components/schemas/SwiftAccountDetails'
+        - $ref: '#/components/schemas/USBankAccountDetails'
+        - $ref: '#/components/schemas/iBanAccountDetails'
+      discriminator:
+        propertyName: type
+        mapping:
+          Swift: '#/components/schemas/SwiftAccountDetails'
+          US: '#/components/schemas/USBankAccountDetails'
+          IBAN: '#/components/schemas/iBanAccountDetails'
+
+    IndividualAccountHolder:
+      description: >-
+        Individual account holder details.
+      type: object
+      required: [ type, firstName, lastName, address ]
+      properties:
+        type:
+          type: string
+          enum:
+            - Individual
+        firstName:
+          type: string
+        lastName:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+
+    BusinessAccountHolder:
+        description: >-
+            Business account holder details.
+        type: object
+        required: [ type, businessName, address ]
+        properties:
+          type:
+            type: string
+            enum:
+            - Business
+          businessName:
+            type: string
+            example: 'Acme Inc.'
+          address:
+            $ref: '#/components/schemas/Address'
+
+    ExternalAccount:
+      type: object
+      required: [ id, currency, customerId, servicedBy, account, accountHolder ]
+      properties:
+        id:
+          $ref: '#/components/schemas/ExternalAccountId'
+        currency:
+          $ref: '#/components/schemas/AssetReference'
+        customerId:
+          type: string
+          description: 'ID of the customer who will be account holder.'
+          example: 123e4567-e89b-12d3-a456-426614174000
+        servicedBy:
+          type: string
+          description: 'Name of the external service provider (e.g. bank name).'
+          example: 'Bank of America'
+        account:
+          $ref: '#/components/schemas/ExternalAccountDetails'
+        accountHolder:
+          oneOf:
+            - $ref: '#/components/schemas/BusinessAccountHolder'
+            - $ref: '#/components/schemas/IndividualAccountHolder'
+          discriminator:
+            propertyName: type
+            mapping:
+              Individual: '#/components/schemas/IndividualAccountHolder'
+              Business: '#/components/schemas/BusinessAccountHolder'
+
     Balances:
       type: array
       description: >-
@@ -885,6 +1520,21 @@ components:
         - $ref: '#/components/schemas/NationalCurrency'
         - $ref: '#/components/schemas/NativeCryptocurrency'
         - $ref: '#/components/schemas/OtherAssetReference'
+
+    FiatRail:
+      type: string
+      example: 'SWIFT'
+      enum:
+        - ACH
+        - SEPA
+        - SWIFT
+        - IBAN
+        - Wire
+
+    Rail:
+      oneOf:
+        - $ref: '#/components/schemas/Blockchain'
+        - $ref: '#/components/schemas/FiatRail'
 
     Blockchain:
       type: string
@@ -1315,3 +1965,84 @@ components:
         - ZWL
         - ZWN
         - ZWR
+
+  examples:
+    usBankExternalAccount:
+      summary: US bank account
+      description: >-
+        Example of a US bank account.
+      value:
+        id: "4ff63424-7e09-4cdf-b7f1-da7b7c65eabe"
+        currency:
+          "nationalCurrencyCode": "USD"
+        servicedBy: "Bank of America"
+        account:
+          type: "US"
+          accountNumber: "1234567890"
+          routingNumber: "123456789"
+          accountType: "Checking"
+        accountHolder:
+          type: "Individual"
+          firstName: "John"
+          lastName: "Doe"
+          address:
+              streetLine1: "1 Churchill Place"
+              city: "London"
+              postalCode: "E14 5HP"
+              country: "GB"
+
+    iBANExternalAccount:
+      summary: iBAN account
+      description: >-
+        Example of an iBAN account.
+      value:
+        id: "76a33ed9-8aa2-4781-93f8-d2369c0c2b14"
+        currency:
+          "nationalCurrencyCode": "EUR"
+        servicedBy: "Deutsche Bank"
+        account:
+          type: "IBAN"
+          accountNumber: "DE89370400440532013000"
+          bic: "DEUTDEFF"
+          country: "DE"
+        accountHolder:
+          type: "Individual"
+          firstName: "John"
+          lastName: "Doe"
+          address:
+            streetLine1: "1 Churchill Place"
+            city: "London"
+            postalCode: "E14 5HP"
+            country: "GB"
+
+    swiftExternalAccount:
+        summary: SWIFT account
+        description: >-
+            Example of a SWIFT account.
+        value:
+            id: "76a33ed9-8aa2-4781-93f8-d2369c0c2b14"
+            currency:
+              "nationalCurrencyCode": "USD"
+            servicedBy: "Bank of America"
+            account:
+              type: "SWIFT"
+              accountNumber: "GB29NWBK60161331926819"
+              bic: "NWBKGB2L"
+              country: "GB"
+              address:
+                streetLine1: "1 Churchill Place"
+                city: "London"
+                postalCode: "E14 5HP"
+                country: "GB"
+            accountHolder:
+              type: "Business"
+              businessName: "Acme Inc."
+              address:
+                streetLine1: "1 Churchill Place"
+                city: "London"
+                postalCode: "E14 5HP"
+                country: "GB"
+            category: "Client"
+            purpose: "IntraGroupTransfer"
+            shortBusinessDescription: "Payment for goods and services"
+

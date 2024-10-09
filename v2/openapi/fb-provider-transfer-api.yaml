@@ -20,6 +20,8 @@ tags:
     description: Transfers to a peer account managed by the same provider.
   - name: transfersInternal
     description: Transfers to a sub account in the same account.
+  - name: transfersCross
+    description: Cross rail transfers within same provider.
 
 x-path-params:
   EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
@@ -750,6 +752,23 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
+  /accounts/{acountId}/transfers/cross:
+    get:
+      operationId: getCrossTransfers
+      summary: Get list of cross transfers sorted by creation time
+      tags: [ transfersCross ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      responses:
+        200:
+          $ref: '#/components/responses/CrossTransfersResponse'
 components:
   responses:
     WithdrawalsResponse:
@@ -764,6 +783,19 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Withdrawal'
+
+    CrossTransfersResponse:
+      description: List of cross transfers.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [ transfers ]
+            properties:
+              transfers:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CrossTransfer'
 
   schemas:
     AccountHolderDetails:
@@ -786,6 +818,11 @@ components:
           type: string
         postalCode:
           type: string
+
+    CrossTransfer:
+      type: object
+      required: [ id, amount, userId, asset, source, destination, status, createdAt ]
+
 
     Iban:
       type: string
@@ -979,7 +1016,7 @@ components:
           properties:
             accountId:
               type: string
-    
+
     PeerAccountTransferDestination:
       type: object
       allOf:
@@ -999,7 +1036,7 @@ components:
           properties:
             accountId:
               type: string
-    
+
     InternalTransferDestination:
       type: object
       allOf:
