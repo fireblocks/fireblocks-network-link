@@ -68,7 +68,9 @@ paths:
                       transfersFiat: "*"
                       transfersPeerAccounts: "*"
                       transfersInternal: "*"
-                      transfersCrossTransfer: "*"
+                      transfersOnRamp: "*"
+                      transfersOffRamp: "*"
+                      transfersBridging: "*"
                       trading: "*"
                       liquidity: "*"
                 allAccountsSupportSomeCapabilities:
@@ -1088,7 +1090,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/AccountId'
         - $ref: '#/components/schemas/AccountData'
-    
+
     OnRampSourceParameters:
       type: object
       required: [ currency ]
@@ -1156,6 +1158,7 @@ components:
             propertyName: type
             mapping:
               ExternalAccount: '#/components/schemas/ExternalAccountId'
+              Account: '#/components/schemas/AccountRef'
 
     BridgingDestination:
       type: object
@@ -1201,7 +1204,7 @@ components:
           example: 'ExternalAccount'
         externalAccountId:
           $ref: '#/components/schemas/ExternalAccountId'
-    
+
     AccountRef:
       type: object
       required: [ type, accountId ]

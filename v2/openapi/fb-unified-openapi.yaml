@@ -76,7 +76,9 @@ paths:
                       transfersFiat: '*'
                       transfersPeerAccounts: '*'
                       transfersInternal: '*'
-                      transfersCrossTransfer: '*'
+                      transfersOnRamp: '*'
+                      transfersOffRamp: '*'
+                      transfersBridging: '*'
                       trading: '*'
                       liquidity: '*'
                 allAccountsSupportSomeCapabilities:
@@ -2385,6 +2387,7 @@ components:
             propertyName: type
             mapping:
               ExternalAccount: '#/components/schemas/ExternalAccountId'
+              Account: '#/components/schemas/AccountRef'
     BridgingDestination:
       type: object
       required:
