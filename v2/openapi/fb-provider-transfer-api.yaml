@@ -20,8 +20,6 @@ tags:
     description: Transfers to a peer account managed by the same provider.
   - name: transfersInternal
     description: Transfers to a sub account in the same account.
-  - name: transfersCross
-    description: Cross rail transfers within same provider.
 
 x-path-params:
   EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
@@ -40,10 +38,10 @@ x-header-params:
   X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
 
 x-schemas:
-  PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
-  AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference'}
-  CryptocurrencyReference: { $ref: './fb-provider-api.yaml#/components/schemas/CryptocurrencyReference'}
-  Blockchain: { $ref: './fb-provider-api.yaml#/components/schemas/Blockchain'}
+  PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount' }
+  AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference' }
+  CryptocurrencyReference: { $ref: './fb-provider-api.yaml#/components/schemas/CryptocurrencyReference' }
+  Blockchain: { $ref: './fb-provider-api.yaml#/components/schemas/Blockchain' }
   NationalCurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrency' }
 
 x-responses:
@@ -168,7 +166,7 @@ paths:
               examples:
                 allUsdcToBucket:
                   summary: USDCs deposit into a bucket or USD
-                  description: >- 
+                  description: >-
                     This response indicates that all USDC token on the various blockchains
                     could be deposited either into the USDC bucket balance or into the USD
                     balance. The USD balance can be specified directly while token and
@@ -536,7 +534,7 @@ paths:
     post:
       operationId: createSubAccountWithdrawal
       summary: Create new transfer to another sub-account
-      description: >- 
+      description: >-
         Transfers assets between different sub-accounts of the same user.
         Should reject any withdrawals that are not sub-account transfers.
       tags: [ transfersInternal ]
@@ -751,7 +749,7 @@ paths:
           $ref: '#/x-responses/ErrorResponse'
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
-          
+
 components:
   responses:
     WithdrawalsResponse:

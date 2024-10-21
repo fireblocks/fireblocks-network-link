@@ -39,8 +39,6 @@ tags:
     description: Transfers to a peer account managed by the same provider.
   - name: transfersInternal
     description: Transfers to a sub account in the same account.
-  - name: transfersCross
-    description: Cross rail transfers within same provider.
 paths:
   /capabilities:
     get:
