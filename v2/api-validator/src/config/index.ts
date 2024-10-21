@@ -221,6 +221,7 @@ const config = convict({
         'fb-provider-liquidity-api.yaml',
         'fb-provider-trading-api.yaml',
         'fb-provider-transfer-api.yaml',
+        'fb-provider-crosstransfer-api.yaml',
       ],
     },
     unifiedFilename: {
