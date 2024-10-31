@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Account Linking Partners
-  version: "0.9.8"
+  version: "0.9.9"
   contact:
     email: support@fireblocks.com
   license:
@@ -1122,6 +1122,8 @@ components:
       - Flare
       - Oasys
       - Core DAO
+      - CELESTIA
+      - Injective Chain
       - BNB Chain
       - Polygon
       - Arbitrum
