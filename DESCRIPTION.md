@@ -187,6 +187,10 @@ _Note_ that not all error codes need to be in use!
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+### v0.9.9
+> 31 October 2024
+* Supporting CELESTIA and Injective Chain networks on Mainnet.
+
 ### v0.9.8
 > 14 July 2024
 * Supporting new network Linea and Base on Mainnet.
