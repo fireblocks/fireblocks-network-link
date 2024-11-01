@@ -38,10 +38,10 @@ x-header-params:
   X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
 
 x-schemas:
-  PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
-  AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference'}
-  CryptocurrencyReference: { $ref: './fb-provider-api.yaml#/components/schemas/CryptocurrencyReference'}
-  Blockchain: { $ref: './fb-provider-api.yaml#/components/schemas/Blockchain'}
+  PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount' }
+  AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference' }
+  CryptocurrencyReference: { $ref: './fb-provider-api.yaml#/components/schemas/CryptocurrencyReference' }
+  Blockchain: { $ref: './fb-provider-api.yaml#/components/schemas/Blockchain' }
   NationalCurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrency' }
 
 x-responses:
@@ -166,7 +166,7 @@ paths:
               examples:
                 allUsdcToBucket:
                   summary: USDCs deposit into a bucket or USD
-                  description: >- 
+                  description: >-
                     This response indicates that all USDC token on the various blockchains
                     could be deposited either into the USDC bucket balance or into the USD
                     balance. The USD balance can be specified directly while token and
@@ -534,7 +534,7 @@ paths:
     post:
       operationId: createSubAccountWithdrawal
       summary: Create new transfer to another sub-account
-      description: >- 
+      description: >-
         Transfers assets between different sub-accounts of the same user.
         Should reject any withdrawals that are not sub-account transfers.
       tags: [ transfersInternal ]
@@ -979,7 +979,7 @@ components:
           properties:
             accountId:
               type: string
-    
+
     PeerAccountTransferDestination:
       type: object
       allOf:
@@ -999,7 +999,7 @@ components:
           properties:
             accountId:
               type: string
-    
+
     InternalTransferDestination:
       type: object
       allOf:

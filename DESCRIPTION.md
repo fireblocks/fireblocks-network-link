@@ -10,7 +10,7 @@
 *   Optimize the platform load for requests from Fireblocks
 
 ## How Fireblocks customers access 3rd parties
-Fireblocks customers use the Fireblocks web-based console to connect their third-party accounts such as crypto 3rd partyie. This requires generating an API Key and an API Secret from their 3rd party portals, logging into their Fireblocks Console, adding an 3rd party account, selecting the 3rd party by a name and a logo, and then entering their account API Key, API Secret, and login details.
+Fireblocks customers use the Fireblocks web-based console to connect their third-party accounts such as crypto 3rd parties. This requires generating an API Key and an API Secret from their 3rd party portals, logging into their Fireblocks Console, adding an 3rd party account, selecting the 3rd party by a name and a logo, and then entering their account API Key, API Secret, and login details.
 
 Once the third-party account is connected, Fireblocks customers can use the Fireblocks Console and API to:
 
