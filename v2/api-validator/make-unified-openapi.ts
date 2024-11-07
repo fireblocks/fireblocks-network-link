@@ -16,6 +16,7 @@ interface OpenAPI {
   components: {
     securitySchemes: Record<string, any>;
     parameters: Record<string, any>;
+    headers: Record<string, any>;
     responses: Record<string, any>;
     schemas: Record<string, any>;
   };
@@ -64,6 +65,10 @@ async function makeUnifiedOpenApi() {
       completeOpenAPI.components.parameters,
       serviceOpenAPI.components.parameters
     );
+    completeOpenAPI.components.headers = _.merge(
+      completeOpenAPI.components.headers,
+      serviceOpenAPI.components.headers
+    );
     completeOpenAPI.components.schemas = _.merge(
       completeOpenAPI.components.schemas,
       serviceOpenAPI.components.schemas
@@ -82,6 +87,9 @@ async function makeUnifiedOpenApi() {
         }
         if (key.endsWith('-responses')) {
           refReplacements[key] = 'components/responses';
+        }
+        if (key.endsWith('-headers')) {
+          refReplacements[key] = 'components/headers';
         }
       }
     }

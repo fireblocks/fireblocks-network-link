@@ -41,6 +41,8 @@ x-schemas:
   PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
   AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference'}
   CryptocurrencyReference: { $ref: './fb-provider-api.yaml#/components/schemas/CryptocurrencyReference'}
+  PublicBlockchainCapability: { $ref: './fb-provider-api.yaml#/components/schemas/PublicBlockchainCapability'}
+  PublicBlockchainAddress: { $ref: './fb-provider-api.yaml#/components/schemas/PublicBlockchainAddress'}
   Blockchain: { $ref: './fb-provider-api.yaml#/components/schemas/Blockchain'}
   NationalCurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrency' }
 
@@ -892,30 +894,10 @@ components:
         referenceId:
           type: string
 
-    PublicBlockchainCapability:
-      type: object
-      required: [ asset, transferMethod ]
-      properties:
-        asset:
-          $ref: '#/x-schemas/CryptocurrencyReference'
-        transferMethod:
-          enum: [ PublicBlockchain ]
-
-    PublicBlockchainAddress:
-      allOf:
-        - $ref: '#/components/schemas/PublicBlockchainCapability'
-        - type: object
-          required: [ address ]
-          properties:
-            address:
-              type: string
-            addressTag:
-              type: string
-
     PublicBlockchainTransactionDestination:
       type: object
       allOf:
-        - $ref: '#/components/schemas/PublicBlockchainAddress'
+        - $ref: '#/x-schemas/PublicBlockchainAddress'
         - type: object
           required: [ amount ]
           properties:
@@ -979,7 +961,7 @@ components:
           properties:
             accountId:
               type: string
-    
+
     PeerAccountTransferDestination:
       type: object
       allOf:
@@ -999,7 +981,7 @@ components:
           properties:
             accountId:
               type: string
-    
+
     InternalTransferDestination:
       type: object
       allOf:
@@ -1030,7 +1012,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/PeerAccountTransferCapability'
         - $ref: '#/components/schemas/InternalTransferCapability'
-        - $ref: '#/components/schemas/PublicBlockchainCapability'
+        - $ref: '#/x-schemas/PublicBlockchainCapability'
         - $ref: '#/components/schemas/IbanCapability'
         - $ref: '#/components/schemas/SwiftCapability'
 
@@ -1056,7 +1038,7 @@ components:
 
     DepositDestination:
       oneOf:
-        - $ref: '#/components/schemas/PublicBlockchainAddress'
+        - $ref: '#/x-schemas/PublicBlockchainAddress'
         - $ref: '#/components/schemas/IbanAddress'
         - $ref: '#/components/schemas/SwiftAddress'
 
@@ -1084,7 +1066,7 @@ components:
           type: string
         transferMethod:
           oneOf:
-            - $ref: '#/components/schemas/PublicBlockchainCapability'
+            - $ref: '#/x-schemas/PublicBlockchainCapability'
             - $ref: '#/components/schemas/IbanCapability'
             - $ref: '#/components/schemas/SwiftCapability'
 

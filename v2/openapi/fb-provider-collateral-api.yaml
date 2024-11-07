@@ -1,0 +1,939 @@
+openapi: 3.0.0
+info:
+  title: '[Draft] Fireblocks Provider Collateral API'
+  version: 0.0.1
+
+  contact:
+    name: Fireblocks
+    url: https://fireblocks.com
+
+tags:
+  - name: capabilities
+    description: Server capabilities discovery operations.
+  - name: collateral
+    description: Collateral management operations.
+
+x-path-params:
+  EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
+  SubAccountIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/SubAccountIdPathParam' }
+
+x-query-params:
+  PaginationLimit: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationLimit' }
+  PaginationStartingAfter: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationStartingAfter' }
+  PaginationEndingBefore: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationEndingBefore' }
+  ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
+
+x-header-params:
+  X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
+  X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
+  X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
+  X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
+  X-FB-PLATFORM-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FB-PLATFORM-SIGNATURE' }
+
+x-headers:
+  X-PROVIDER-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/headers/X-PROVIDER-SIGNATURE' }
+
+x-schemas:
+  PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount' }
+  NativeCryptocurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NativeCryptocurrency' }
+  OtherAssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/OtherAssetReference' }
+  CryptocurrencyReference: { $ref: './fb-provider-api.yaml#/components/schemas/CryptocurrencyReference' }
+  PublicBlockchainAddress: { $ref: './fb-provider-api.yaml#/components/schemas/PublicBlockchainAddress' }
+  Blockchain: { $ref: './fb-provider-api.yaml#/components/schemas/Blockchain' }
+  NationalCurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrency' }
+
+x-responses:
+  BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
+  ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
+
+paths:
+  /accounts/{accountId}/collateral/link:
+    post:
+      tags: [ collateral ]
+      summary: Initiate collateral account link
+      description: >
+        Creates a new link between a collateral account and a provider account.
+      operationId: createCollateralAccountLink
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+      requestBody:
+        description: Collateral account link details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollateralAccount'
+      responses:
+        200:
+          description: Link created successfully
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollateralAccountLink'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    get:
+      operationId: getCollateralAccountLinks
+      summary: Get list of collateral account links
+      tags: [ collateral ]
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+      responses:
+        '200':
+          description: List of collateral account links
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ collateralLinks ]
+                properties:
+                  collateralLinks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CollateralAccountLink'
+              examples:
+                activeLink:
+                  summary: Active collateral account link
+                  description: >-
+                    This response indicates that the provider account is linked to a collateral account.
+                  value:
+                    collateralLinks:
+                      - collateralId: "f861c6ca-f4c8-44dd-a02e-081a38745623.95e40c1e-407e-405c-871e-d69218611a79.4cd3e66b-4ee4-4750-bcfd-d2d43054fc5d"
+                        collateralSigners: [ "4cd3e66b-4ee4-4750-bcfd-d2d43054fc5d" ]
+                        eligibleCollateralAssets:
+                          - blockchain: "Bitcoin"
+                            cryptocurrencySymbol: "BTC"
+                            testAsset: false
+                          - assetId: "360de0ad-9ba1-45d5-8074-22453f193d65"
+                        status: Linked
+                        env: prod
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/collateral/{collateralId}/addresses:
+    get:
+      operationId: getCollateralDepositAddresses
+      summary: Get list of collateral account deposit addresses
+      tags: [ collateral ]
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+      responses:
+        '200':
+          description: List of collateral deposit addresses
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollateralDepositAddresses'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+  /accounts/{accountId}/collateral/{collateralId}/addresses/{fireblocksAssetId}:
+    post:
+      tags: [ collateral ]
+      summary: Create/register a collateral deposit address for a specific asset
+      description: >
+        Notifies the provider to have a new collateral deposit address for a specific asset.
+        The provider is expected to listen to this address and credit the account accordingly, 
+        or sending the funds to this address if a withdrawal is requested.
+      operationId: createCollateralDepositAddressForAsset
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+        - $ref: '#/components/parameters/FireblocksAssetIdPathParam'
+      requestBody:
+        description: Collateral deposit address details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollateralAddress'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollateralDepositAddresses'
+        '400':
+          description: Return Bad Request.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+    get:
+      operationId: getCollateralDepositAddressesForAsset
+      summary: Get list of collateral account deposit addresses for a specific asset
+      tags: [ collateral ]
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+        - $ref: '#/components/parameters/FireblocksAssetIdPathParam'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+      responses:
+        '200':
+          description: List of collateral deposit addresses
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  addresses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CollateralAddress'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/collateral/{collateralId}/deposits:
+    post:
+      tags: [ collateral ]
+      summary: Register a collateral deposit transaction
+      description: >
+        Notifies the provider to have start listening to a new collateral deposit transaction.
+        The provider is expected to listen to this address and credit the account accordingly
+      operationId: registerCollateralDepositTransaction
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+      requestBody:
+        description: Collateral deposit transaction details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollateralDepositTransaction'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollateralDepositTransaction'
+        '400':
+          description: Return Bad Request.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+    get:
+      operationId: getCollateralDepositTransactions
+      summary: Get list of collateral account deposit transactions sorted by creation time
+      tags: [ collateral ]
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+      responses:
+        '200':
+          description: List of collateral deposit transactions
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CollateralDepositTransaction'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+  /accounts/{accountId}/collateral/{collateralId}/deposits/{collateralTxId}:
+    get:
+      operationId: getCollateralDepositTransactionDetails
+      summary: Get a collateral account deposit transaction details
+      tags: [ collateral ]
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+        - $ref: '#/components/parameters/CollateralTxIdPathParam'
+      responses:
+        '200':
+          description: A collateral deposit transaction details
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollateralDepositTransaction'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/collateral/{collateralId}/withdrawals:
+    post:
+      tags: [ collateral ]
+      summary: Initiate a withdrawal from a collateral account
+      description: >
+        Initiates a withdrawal request from the customers collateral account. 
+        The withdrawal must be confirmed by the provider before it can be signed by the customer. 
+        Once the provider approve the withdrawal, it can be reduced from the customers available balance in the provider main account based on the withdrawal amount.
+      operationId: initiateCollateralWithdrawalTransaction
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+      requestBody:
+        description: Collateral withdrawal transaction details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollateralWithdrawalTransactionRequest'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollateralWithdrawalTransaction'
+        '400':
+          description: Return Bad Request.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+    get:
+      operationId: getCollateralWithdrawalTransactions
+      summary: Get list of collateral withdrawal transactions sorted by creation time
+      tags: [ collateral ]
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+      responses:
+        '200':
+          description: List of collateral withdrawal transactions
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transactions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CollateralWithdrawalTransaction'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+  /accounts/{accountId}/collateral/{collateralId}/withdrawals/{collateralTxId}:
+    get:
+      operationId: getCollateralWithdrawalTransactionDetails
+      summary: Get a collateral withdrawal transaction details
+      tags: [ collateral ]
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+        - $ref: '#/components/parameters/CollateralTxIdPathParam'
+      responses:
+        '200':
+          description: A collateral withdrawal transaction details
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollateralWithdrawalTransaction'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/collateral/{collateralId}/settlement:
+    post:
+      tags: [ collateral ]
+      summary: Initiate a settlement request from the provider
+      description: Request a settlement from the provider.
+      operationId: initiateSettlement
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+      requestBody:
+        description: Collateral withdrawal transaction details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettlementRequest'
+      responses:
+        '200':
+          description: Settlement instructions
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettlementInstructions'
+        '400':
+          description: Return Bad Request.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+    get:
+      operationId: getCurrentSettlementInstructions
+      summary: Get current Instructions for settlement
+      description: >
+        Gets a list of required transactions to finalize the settlement
+      tags: [ collateral ]
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+      responses:
+        '200':
+          description: Settlement instructions
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettlementInstructions'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+  /accounts/{accountId}/collateral/{collateralId}/settlements/{settlementVersion}:
+    get:
+      operationId: getSettlementDetails
+      summary: Get a settlement details
+      tags: [ collateral ]
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+        - $ref: '#/components/parameters/SettlementVersionPathParam'
+      responses:
+        '200':
+          description: A specific settlement details
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettlementState'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+components:
+  parameters:
+    FireblocksAssetIdPathParam:
+      name: fireblocksAssetId
+      description: ID of a Fireblocks asset.
+      in: path
+      required: true
+      schema:
+        type: string
+    CollateralIdPathParam:
+      name: collateralId
+      description: >-
+        ID of a collateral account
+      in: path
+      required: true
+      schema:
+        type: string
+    CollateralTxIdPathParam:
+      name: collateralTxId
+      description: >-
+        A Fireblocks' ID of a collateral transaction
+      in: path
+      required: true
+      schema:
+        type: string
+    SettlementVersionPathParam:
+      name: settlementVersion
+      description: >-
+        A provider version ID of a settlement state
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    CollateralId:
+      type: string
+      description: "Unique string representing the collateral account Id (<cvaTenantId>.<accountId>.<tenantId>)"
+      example: "f861c6ca-f4c8-44dd-a02e-081a38745623.95e40c1e-407e-405c-871e-d69218611a79.4cd3e66b-4ee4-4750-bcfd-d2d43054fc5d"
+    CollateralSignerId:
+      type: string
+      description: "Unique Id of the collateral signer"
+      example: "4cd3e66b-4ee4-4750-bcfd-d2d43054fc5d"
+    Environment:
+      type: string
+      enum:
+        - "prod"
+        - "sandbox"
+        - "stage"
+      description: >
+        Environment field describes which environment is being run at the moment 
+
+    CollateralLinkStatus:
+      type: string
+      enum:
+        - Eligible
+        - Linked
+        - Disabled
+        - Failed
+      description: >
+        - **Eligible** - The provider account is eligible for linking to a collateral account
+        
+        - **Linked** - The provider account is linked to a collateral account
+        
+        - **Disabled** - The link is disabled at the moment, but can be re-enabled
+        
+        - **Failed** - The link creation failed
+
+
+
+    CollateralAsset:
+      oneOf:
+        - $ref: '#/x-schemas/NativeCryptocurrency'
+        - $ref: '#/x-schemas/OtherAssetReference'
+    CollateralAssetMapping:
+      type: object
+      required: [ asset, fireblocksAssetId ]
+      properties:
+        asset:
+          $ref: '#/components/schemas/CollateralAsset'
+        fireblocksAssetId:
+          type: string
+    CollateralAccount:
+      type: object
+      required:
+        - collateralId
+        - collateralSigners
+        - env
+      properties:
+        collateralId:
+          $ref: '#/components/schemas/CollateralId'
+        collateralSigners:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollateralSignerId'
+        env:
+          $ref: '#/components/schemas/Environment'
+    CollateralAccountLink:
+      allOf:
+        - $ref: '#/components/schemas/CollateralAccount'
+        - type: object
+          required:
+            - status
+            - eligibleCollateralAssets
+          properties:
+            status:
+              $ref: '#/components/schemas/CollateralLinkStatus'
+            eligibleCollateralAssets:
+              type: array
+              items:
+                $ref: '#/components/schemas/CollateralAsset'
+            rejectionReason:
+              type: string
+    CollateralAddress:
+      type: object
+      required: [ address, recoveryAccountId ]
+      properties:
+        address:
+          $ref: '#/x-schemas/PublicBlockchainAddress'
+        recoveryAccountId:
+          type: string
+          description: "An account ID used when recovering the assets of an off-exchange client"
+          example: "12"
+    CollateralAssetAddress:
+      allOf:
+        - $ref: '#/components/schemas/CollateralAddress'
+        - $ref: '#/components/schemas/CollateralAssetMapping'
+    CollateralDepositAddresses:
+      type: object
+      required:
+        - addresses
+      properties:
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollateralAssetAddress'
+
+    CollateralDepositTransactionStatus:
+      type: string
+      enum:
+        - Pending
+        - Credited
+        - Rejected
+      description: >
+        - **Pending** - The transaction is pending and has not been credited to the provider's account yet
+        
+        - **Credited** - The transaction has been completed successfully and the account has been credited
+        
+        - **Rejected** - The transaction has been rejected and the account has not been credited
+    CollateralDepositTransaction:
+      type: object
+      required: [ fireblocksAssetId, collateralTxId ]
+      properties:
+        collateralTxId:
+          type: string
+          description: >
+            A unique identifier of the transaction to track.
+            This field will contain information to help the provider poll the status of the transaction from Fireblocks.
+          example: "0.8e4cfce8-0182-4c6d-b9dd-a291c105e1d2.0.5a814998-ec0f-4f1c-92bf-fb5f7dc09ea2"
+        fireblocksAssetId:
+          type: string
+          description: "ID of the Fireblocks asset"
+        amount:
+          $ref: '#/x-schemas/PositiveAmount'
+        status:
+          $ref: '#/components/schemas/CollateralDepositTransactionStatus'
+
+    CollateralWithdrawalTransactionStatus:
+      type: string
+      enum:
+        - Pending
+        - Approved
+        - Rejected
+      description: >
+        - **Pending** - The withdrawal transaction is pending the provider's approval
+        
+        - **Approved** - The withdrawal transaction has been approved and it is in progress
+        
+        - **Rejected** - The withdrawal transaction has been rejected
+    CollateralWithdrawalTransaction:
+      type: object
+      required: [ collateralTxId, status ]
+      properties:
+        collateralTxId:
+          type: string
+          description: >
+            A unique identifier of the transaction to track.
+            This field will contain information to help Fireblocks poll the status of the transaction from the provider.
+          example: "0.8e4cfce8-0182-4c6d-b9dd-a291c105e1d2.0.5a814998-ec0f-4f1c-92bf-fb5f7dc09ea2"
+        status:
+          $ref: '#/components/schemas/CollateralWithdrawalTransactionStatus'
+        withdrawalTxBlockchainId:
+          type: string
+        rejectionReason:
+          type: string
+          nullable: true
+    CollateralWithdrawalTransactionRequest:
+      type: object
+      required: [ fireblocksAssetId, amount, destinationAddress ]
+      properties:
+        fireblocksAssetId:
+          type: string
+          description: "ID of the Fireblocks asset"
+        amount:
+          $ref: '#/x-schemas/PositiveAmount'
+        destinationAddress:
+          $ref: '#/x-schemas/PublicBlockchainAddress'
+
+    SettlementTransactionStatus:
+      type: string
+      enum:
+        - NOT_FOUND
+        - PROCESSING
+        - CANCELLED
+        - FAILED
+        - PENDING_MANUAL_APPROVAL
+        - PENDING_SERVICE_MANUAL_APPROVAL
+        - REJECTED
+        - COMPLETED
+      description: >
+        - **NOT_FOUND** - The transaction was not found
+        
+        - **PROCESSING** - The transaction is being processed
+        
+        - **CANCELLED** - The transaction was cancelled
+        
+        - **FAILED** - The transaction failed
+        
+        - **PENDING_MANUAL_APPROVAL** - The transaction is pending manual approval
+        
+        - **PENDING_SERVICE_MANUAL_APPROVAL** - The transaction is pending service manual approval
+        
+        - **REJECTED** - The transaction was rejected
+        
+        - **COMPLETED** - The transaction was completed
+
+    SettlementWithdrawInstruction:
+      type: object
+      required: [ fireblocksAssetId, amount, sourceAddress ]
+      properties:
+        fireblocksAssetId:
+          type: string
+          description: "ID of the Fireblocks asset"
+        amount:
+          $ref: '#/x-schemas/PositiveAmount'
+        fee:
+          $ref: '#/x-schemas/PositiveAmount'
+        sourceAddress:
+          $ref: '#/x-schemas/PublicBlockchainAddress'
+    SettlementDepositInstruction:
+      type: object
+      required: [ fireblocksAssetId, amount, destinationAddress ]
+      properties:
+        fireblocksAssetId:
+          type: string
+          description: "ID of the Fireblocks asset"
+        amount:
+          $ref: '#/x-schemas/PositiveAmount'
+        destinationAddress:
+          $ref: '#/x-schemas/PublicBlockchainAddress'
+    SettlementWithdrawTransaction:
+      allOf:
+        - $ref: '#/components/schemas/SettlementWithdrawInstruction'
+        - type: object
+          required: [ status ]
+          properties:
+            status:
+              $ref: '#/components/schemas/SettlementTransactionStatus'
+            rejectionReason:
+              type: string
+              nullable: true
+    SettlementDepositTransaction:
+      allOf:
+        - $ref: '#/components/schemas/SettlementDepositInstruction'
+        - type: object
+          required: [ status ]
+          properties:
+            status:
+              $ref: '#/components/schemas/SettlementTransactionStatus'
+            rejectionReason:
+              type: string
+              nullable: true
+    SettlementInstructions:
+      type: object
+      required: [ withdrawInstructions, depositInstructions ]
+      properties:
+        settlementVersion:
+          type: string
+        withdrawInstructions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SettlementWithdrawInstruction'
+        depositInstructions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SettlementDepositInstruction'
+    SettlementState:
+      type: object
+      properties:
+        settlementVersion:
+          type: string
+        withdrawTransactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SettlementWithdrawTransaction'
+        depositTransactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SettlementDepositTransaction'
+        status:
+          type: string
+          enum:
+              - Invalid
+              - Pending
+              - InProgress
+              - Completed
+              - Failed
+          description: >
+              - **Invalid** - The settlement state is invalid and cannot be processed, usually due to balance changes
+            
+              - **Pending** - The settlement is pending and has not started yet
+              
+              - **InProgress** - The settlement is in progress
+              
+              - **Completed** - The settlement has been completed successfully
+              
+              - **Failed** - The settlement has failed
+
+    SettlementRequest:
+      type: object
+      description: Settlement to be created
+      required:
+        - settlementId
+      properties:
+        settlementId:
+          type: string
+        settlementVersion:
+          type: string
+          description: >
+            A unique identifier of the settlement state version.
+            This field is optional and can be used to indicate the version of the settlement state the client is referring to.
