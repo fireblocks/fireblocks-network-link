@@ -7,7 +7,10 @@ Fireblocks connects businesses across the crypto world as the digital asset infr
 for over 1,800 leading trading desks, hedge funds, brokerages, custodians, 3rd parties,
 and banks. To meet the demand for third-party services that want to access the liquidity
 of institutional investors and traders, Fireblocks is opening its platform for fast
-third-party integration. Reach out to us for a partnership agreement and add a Connector
+third-party integration. 
+As part of an initiative to make sure that the end user still has complete control over their own assets, the provider can offer an Off Exchange solution. 
+This way, the end user can enjoy the various benefits of the exchange while avoiding the risk of a centralized malfunction, all through the Fireblocks platform.
+Reach out to us for a partnership agreement and add a Connector
 to have your product integrated.
 
 ## How Fireblocks customers access third-party accounts
@@ -26,6 +29,9 @@ Fireblocks API to:
 * Convert cryptocurrencies to and from fiat currencies (for on/off-ramping).
 * Track the status of their withdrawals and deposits.
 * View and audit their transaction history.
+* With the off-exchange solution, the provider can serve its end user with:
+  * A complete control on their funds
+  * A trustable relationship, where the customer safely continues their work with the exchange
 
 ## How to register as a service provider?
 
@@ -381,3 +387,171 @@ When a client retrieves a withdrawal details, an `IbanTransfer` object is return
     "referenceId": "f9ff7738-92ea-48c8-8e80-68112d46f424"  // defined in IbanTransfer
 }
 ```
+
+
+## Off-Exchange (Collateral)
+
+### Background
+The purpose of the Fireblocks collateral account is to enable a middle ground for Traders and Exchanges where Traders assets are not stored in Exchange’s private ledger, yet the exchange get the comfort to lend against the collateral account assets, by having the collateral assets locked by Fireblocks, preventing the Trader from removing collateral assets without getting Exchange confirmation first.
+
+### Two-way integration
+The collateral capability is a two-way integration between Fireblocks and the provider.
+Fireblocks will send requests to the provider for most cases, but some actions or data fetch will be initiated by the provider.
+
+The Fireblocks -> Provider requests are described in this API specification.
+The Provider -> Fireblocks requests are listed below (refer to the Fireblocks' API specification for the full details):
+  * `GET /v1/collateral/transactions/{collateralTxId}`
+  * `POST /v1/collateral/settlements`
+  * `GET /v1/collateral/settlements/{settlementId}/transactions`
+  * `GET /v1/collateral/address/{assetId}`
+  * `PUT`/`GET`/`DELETE`/`POST` `/v1/collateral/settlements/force`
+  * `POST /v1/collateral/signers/token`
+  * `GET /v1/collateral/workspaces`
+  * `GET /v1/collateral/signers/data`
+  * `POST /v1/collateral/notify`
+
+### Account structure and account linking (API key replace)
+Fireblocks enables users to link their provider accounts to their workspace. 
+
+Once the account is connected, the user can at run the supported actions from the Fireblocks workspace.
+
+For the collateral assets, Fireblocks will open a dedicated vault account which will be called Collateral Vault Account (CVA). 
+Any assets added to the CVA will be locked by the Fireblocks Policy and removing collateral assets from the CVA will require the provider’s confirmation.
+
+Fireblocks users will be able to add collateral for main accounts only (MA).
+
+There is a 1:1 relation between a CVA and a main account (MA).
+
+The expected flow is for traders to add collateral for an MA, gain credit on their MA balance, and then allocate assets to the various MA sub-accounts.
+
+The provider is expected to register a `collateralId` to an internal `accountId` and in case of an API key replacement, to respond to a CVA list request with the existing `collateralId`.
+
+For settlements, traders would need to transfer assets up to the MA as settlements will be executed on the CVA and MA balances only.
+
+### Deposit/Withdraw Vs Remove/Add
+The collateral functionality should apply to any main account of a customer that has enabled this functionality. 
+Meaning, once a customer is eligible and onboarded, all the existing main accounts of this customer should be enabled for gaining credit against CVA assets, while maintaining the usual deposit and withdrawal functionality.
+
+We use the terms ‘add collateral’ and ‘remove collateral’ to distinguish between the CVA and the MA. For the MA, we keep referring with the usual deposit and withdraw terminology.
+
+Please be aware that Fireblocks expect the deposits and withdrawals to and from the MA to remain active and available for CVA-linked MAs.
+
+If a withdrawal from a MA is denied due to outstanding MA credit or customer-level credit, the provider is expected to respond with a ‘settlement is required’ status.
+
+### Post Address and Addresses list
+As mentioned, FB will send a POST request each time a collateral is added via the FB system. 
+The request will include the address(es) to which the collateral assets are deposited. 
+The provider is expected to identify whether the address(es) are new and if so, add the new addresses to the CVA addresses list. 
+
+### Balance types
+Once a CVA is created for a MA, Fireblocks will start presenting Traders with 3 types of provider balance.
+1. MA Total/Available balance.
+  * This is the usual balance that is presented to non-CVA users as well.
+2. MA credit balance.
+  * This is a new type of balance, supplied to Fireblocks by the provider, and reflects the outstanding credit the MA gained from the provider treasury in accordance with the locked CVA assets.
+  * The credit balance does not have to be equal to the CVA balance.
+    * For example, if Trader adds 100 BTC as collateral but provider decides to credit the MA with 40 BTC only, due to risk management considerations and Trader cross-accounts credit utilization, then the credit balance would be 40 BTC while 100 BTC are stored in the CVA.
+      * In this case, if Trader asks to remove the 60 BTC surplus from the CVA, provider should confirm this collateral removal.
+3. MA collateral balance.
+  * This is in fact the CVA balance which is being managed by Fiireblocks.
+
+### Capabilities and features
+Initiation - we send Collateral ID and we want to get back a success with Collateral ID. If the API Key we use is of an account that already has a collateral ID, we want the success message to contain the existing collateral ID and we will not use the new one.
+
+### Network fees
+Settlement transactions are on-chain transactions. provider should estimate future fees once crediting a Trader account relying on the CVA locked assets.
+
+provider A may choose to credit 1:1 (e.g 1 BTC credit for each 1 BTC in CVA), but to ask for settlements earlier than provider B that chooses to credit 0.8:1 in order to keep aside an amount to cover settlement transactions’ network fees.
+
+### Gas
+Settlements that involve gas-powered assets transferred from a CVA to an provider OTA, require the Trader to make sure there’s enough gas.
+
+As a fallback, provider can deposit gas to the CVA by querying for the Ethereum address or any other base asset address.
+
+At this time, Fireblocks will not manage gas stations for CVAs.
+
+### Collateral ID
+The identifier of the CVA is called ‘collateral ID’ and is represented as a series of 3 uuid4 formats separated with a . delimiter.
+
+### Supported Assets
+Fireblocks keeps a record of each provider supported assets. On each deposit into the CVA, Fireblocks sends a POST call to the provider with the address to which the asset is being deposited, the name of the asset and network as the provider defined them, and the unique fireblocksAssetId which the provider needs to track in order to communicate with Fireblocks about this asset.
+
+Fireblocks will not allow users to add unsupported assets as collateral. A caveat to that rule is that a user may transfer funds to a CVA not via the Fireblocks UI/API. In that case, the provider would not get a POST ‘address’, and may ignore that deposit, not credit against it, and confirm its removal once asked for.
+
+Assets that Fireblocks do not support cannot be included in settlements.
+If a non-supported asset is at the MA and needs to settle, the provider wouldn't be able to include it in the settlement as there isn’t any Fireblocks Asset Id for assets that Fireblocks do not support.
+
+### Settlements
+As settlement transactions are on-chain transactions, frequency based settlements are not recommended, to minimize network fees. Instead, the best practice for providers to trigger settlements would be based on the value difference between the CVA assets and the total provider account value (including unrealised P&L).
+Traders may trigger settlements after spot trading where the value difference may be minimal, but for the provider-side settlement-logic, risk appetite for a specific
+
+### Auto-sign settlement transactions
+The following description is for the available auto-sign mechanism for settlement transactions that customers do not respond to.
+
+providers can choose to require some or all customers to create an API-based user in the Collaterals Workspace, for the provider to run on an provider owned and operated machine. This is a user from a Collaterals Signer role, which is limited, cannot fetch balances, cannot initiate transactions, but can sign some settlement transactions as described below.
+
+If a customer does not sign and does not deny settlement transactions during the SLA that was defined by the provider for the customers to respond to settlement transactions, then at the end of this SLA time, these transactions which the customer did not sign nor deny, will be sent by Fireblocks to the provider Collaterals Signer user to be automatically signed.
+
+No development is required, only operations of deploying and running a machine for the Collaterals Signer user to be online ready to sign transactions if needed.
+
+Customers can create a Collaterals Signer user after getting a CSR from the provider.
+
+If customers deny a settlement transaction, the denied transaction will not be sent to the Collaterals Signer for auto-sign.
+
+### Forced Settlement
+For providers that want to prevent continuous ‘deny’ situations with customers, Fireblocks enables the Forced Settlement flow, which like the Auto-sign flow, requires the provider to run
+a Collaterals Signer machine.
+
+At the end of the Auto-sign SLA, if customers have denied some or all of the settlement transactions, the provider can mark the settlement as a Forced Settlement candidate. We strongly recommend the provider to contact the customer and get to an agreed upon settlement terms, Fireblocks will anyway alert the customer about any settlement that is being marked for enforcement.
+
+Marking a settlement as a ​​Forced Settlement candidate means that all of the non-completed transactions that were part of the settlement ID will be enforced. Per-transaction marking is not supported, but a new settlement can be created if as a result of discussing with the customer, some of the transactions from the original settlement have changed.
+
+The marking is done by sending a PUT request to Fireblocks settlements/force endpoint, and can be done for the last settlement only. A request to mark a settlement ID which is not the last settlement ID created, will be failed.
+Once a settlement has been marked as a Forced Settlement candidate, no other settlement can be initiated before either the marking is canceled, or the Forced Settlement is completed. Only one settlement can be marked at a given time.
+
+Once a settlement has been marked as a Forced Settlement candidate, Fireblocks stops Off-provider operations (Add collateral, Remove collateral, GET/POST Settlement request from the customer).
+
+Canceling the marking is done by sending a DEL request to Fireblocks settlements/force endpoint.
+
+An Enforcement SLA should be set by the provider and communicated to customers.
+
+During the time between marking a settlement and forcing it at the end of the SLA, the provider can get information about a marked settlement by sending a GET request to Fireblocks settlements/force endpoint.
+
+At the end of the Enforcement SLA, the provider can force all the non-completed transactions from the original settlement by sending a POST request to Fireblocks settlements/force endpoint. This request starts an asynchronous process. This request will not be answered before the following process ends. Once Fireblocks get the POST Force req, Fireblcoks send a POST request to the provider on the settlements/force endpoint on the provider side, with a list of the transactions to be created. If the provider approves the transactions list, Fireblocks creates a new settlement ID, new transaction IDs, and those are included in the response to the POST request from the provider that started this asynchronous process.
+
+We will enable providers to mark the last settlement ID for up to 7 days since the settlement ID creation.
+
+We will enable providers to force a settlement for up to 10 days since the settlement ID creation.
+
+### Collateral Signer Creation Automation
+To ensure a seamless onboarding process the off-exchange clients, we have developed an automation for creating the Collateral Signer user.
+This user is created right after the creation of a collateral workspace that will hold the CVAs.
+The creation process for the Collateral Signer user entails pairing it with a designated co-signer that runs on a Partner’s owned machine.
+This pairing procedure utilizes a user pairing token, which can be pulled from Fireblocks.
+Upon completion of the user creation process, Fireblocks will notify the Partner that a Collateral Signer user is ready, and its pairing token can be pulled.
+Afterwards, the pairing token can be added as a new Collateral Signer user to the Partner’s Collateral Signer machine.
+
+### Diagrams
+#### Setup
+![Setup](./images/setup.png)
+#### Deposit
+![Deposit](./images/deposit.png)
+
+#### Withdrawal
+![Withdrawal](./images/withdrawal.png)
+
+#### Settlement
+![Settlement](./images/settlement.png)
+
+#### Collateral Signer Automation Flow
+![CSA](./images/CSA.png)
+
+#### Forced Settlement
+#### High-Level Flow Diagram
+![FlowForced](./images/flow_forced_settlement.png)
+
+#### In-depth - Marking a settlement as a candidate for enforcement
+![FlowMarked](./images/flow_marked_enforcement.png)
+
+#### In-depth - Forcing a settlement
+![FlowInvoked](./images/flow_invoked_enforcement.png)

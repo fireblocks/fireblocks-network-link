@@ -409,6 +409,14 @@ paths:
 
 components:
   parameters:
+    X-FB-PLATFORM-SIGNATURE:
+      name: X-FB-PLATFORM-SIGNATURE
+      in: header
+      required: true
+      description: Authentication signature of Fireblocks as the originator of the request
+      schema:
+        type: string
+
     X-FBAPI-KEY:
       name: X-FBAPI-KEY
       in: header
@@ -519,7 +527,7 @@ components:
       in: query
       schema:
         type: string
-    
+
     NationalCurrencyCodeQueryParam:
       name: nationalCurrencyCode
       description: >-
@@ -546,6 +554,13 @@ components:
         Balances are not returned by default for account endpoints.
       schema:
         type: boolean
+
+  headers:
+    X-PROVIDER-SIGNATURE:
+      required: true
+      description: Response signature using the chosen cryptographic algorithm.
+      schema:
+        type: string
 
   responses:
     BadRequestResponse:
@@ -693,6 +708,8 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         liquidity:
           $ref: '#/components/schemas/AccountsSet'
+        collateral:
+          $ref: '#/components/schemas/AccountsSet'
 
     AccountsSet:
       description: >-
@@ -749,7 +766,9 @@ components:
       description: >-
         Maps balance assets to their balances.
       items:
-        $ref: '#/components/schemas/AssetBalance'
+        oneOf:
+          - $ref: '#/components/schemas/AssetBalance'
+          - $ref: '#/components/schemas/AssetCreditBalance'
 
     AssetBalance:
       type: object
@@ -763,6 +782,15 @@ components:
           $ref: '#/components/schemas/PositiveAmount'
         lockedAmount:
           $ref: '#/components/schemas/PositiveAmount'
+
+    AssetCreditBalance:
+      allOf:
+        - $ref: '#/components/schemas/AssetBalance'
+        - type: object
+          required: [ creditAmount ]
+          properties:
+            creditAmount:
+              $ref: '#/components/schemas/PositiveAmount'
 
     AssetCommonProperties:
       type: object
@@ -879,6 +907,27 @@ components:
       oneOf:
         - $ref: '#/components/schemas/NativeCryptocurrency'
         - $ref: '#/components/schemas/OtherAssetReference'
+
+
+    PublicBlockchainCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/components/schemas/CryptocurrencyReference'
+        transferMethod:
+          enum: [ PublicBlockchain ]
+
+    PublicBlockchainAddress:
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainCapability'
+        - type: object
+          required: [ address ]
+          properties:
+            address:
+              type: string
+            addressTag:
+              type: string
 
     AssetReference:
       oneOf:
