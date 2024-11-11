@@ -533,25 +533,25 @@ Afterwards, the pairing token can be added as a new Collateral Signer user to th
 
 ### Diagrams
 #### Setup
-![Setup](./images/setup.png)
+![Setup](doc-assets/setup.png)
 #### Deposit
-![Deposit](./images/deposit.png)
+![Deposit](doc-assets/deposit.png)
 
 #### Withdrawal
-![Withdrawal](./images/withdrawal.png)
+![Withdrawal](doc-assets/withdrawal.png)
 
 #### Settlement
-![Settlement](./images/settlement.png)
+![Settlement](doc-assets/settlement.png)
 
 #### Collateral Signer Automation Flow
-![CSA](./images/CSA.png)
+![CSA](doc-assets/CSA.png)
 
 #### Forced Settlement
 #### High-Level Flow Diagram
-![FlowForced](./images/flow_forced_settlement.png)
+![FlowForced](doc-assets/flow_forced_settlement.png)
 
 #### In-depth - Marking a settlement as a candidate for enforcement
-![FlowMarked](./images/flow_marked_enforcement.png)
+![FlowMarked](doc-assets/flow_marked_enforcement.png)
 
 #### In-depth - Forcing a settlement
-![FlowInvoked](./images/flow_invoked_enforcement.png)
+![FlowInvoked](doc-assets/flow_invoked_enforcement.png)
