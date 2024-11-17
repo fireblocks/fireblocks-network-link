@@ -32,6 +32,7 @@ export class WebApp {
 
     this.app = Fastify({
       logger: loggerForFastify,
+      ajv: { customOptions: { strictSchema: false } },
     });
 
     this.app.setErrorHandler(errorHandler);

@@ -14,7 +14,7 @@
     "node": ">=18.x"
   },
   "scripts": {
-    "server": "NODE_ENV=development ts-node src/server/server.ts | pino-pretty",
+    "server": "NODE_ENV=development ts-node src/server/server.ts | pino-pretty; [ \"${PIPESTATUS[0]}\" -ne 0 ] && (echo \"\\nServer execution failed. There should be an error log above ^\"; exit 1)",
     "lint": "eslint src tests",
     "lint:fix": "eslint src tests --fix",
     "test": "NODE_ENV=test jest --verbose --json --outputFile=test-results.json",
@@ -46,7 +46,7 @@
     "convict": "^6.2.4",
     "dotenv": "^16.3.1",
     "fastify": "^4.19.2",
-    "fastify-openapi-glue": "^2.7.2 ",
+    "fastify-openapi-glue": "^2.8.0",
     "form-data": "^4.0.0",
     "hi-base32": "^0.5.1",
     "http-status-codes": "^2.2.0",
