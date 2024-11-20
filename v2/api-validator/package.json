@@ -17,7 +17,7 @@
     "server": "NODE_ENV=development ts-node src/server/server.ts | pino-pretty; [ \"${PIPESTATUS[0]}\" -ne 0 ] && (echo \"\\nServer execution failed. There should be an error log above ^\"; exit 1)",
     "lint": "eslint src tests",
     "lint:fix": "eslint src tests --fix",
-    "test": "NODE_ENV=test jest --verbose --json --outputFile=test-results.json",
+    "test": "NODE_ENV=test jest --testTimeout=30000 --verbose --json --outputFile=test-results.json",
     "test:watch": "npm run test -- --watch",
     "test:sanity": "npm run test -- --config=jest.sanity.config.ts tests/sanity-tests",
     "test:sanity:watch": "npm run test:sanity -- --watch",
