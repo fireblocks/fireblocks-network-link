@@ -15,6 +15,7 @@ import {
   BaseHttpRequest,
   CancelablePromise,
   CapabilitiesService,
+  CollateralService,
   HistoricBalancesService,
   LiquidityService,
   OpenAPI,
@@ -27,6 +28,7 @@ import {
   TransfersService,
 } from './generated';
 import { getRelativeUrlWithoutPathPrefix } from '../url-helpers';
+import { platform } from 'os';
 
 const log = logger('api-client');
 
@@ -35,6 +37,7 @@ export type SecurityHeaders = {
   xFbapiNonce: string;
   xFbapiTimestamp: number;
   xFbapiSignature: string;
+  xFbPlatformSignature: string;
 };
 
 type Func = (arg) => any;
@@ -68,6 +71,7 @@ function stripSecurityHeaderArgs<ServiceType extends object>(
     xFbapiNonce: '',
     xFbapiTimestamp: 0,
     xFbapiSignature: '',
+    xFbPlatformSignature: '',
   };
 
   const securedService = {};
@@ -99,6 +103,7 @@ export class SecureClient {
   public readonly transfersFiat: SecureService<TransfersFiatService>;
   public readonly transfersPeerAccounts: SecureService<TransfersPeerAccountsService>;
   public readonly transfersInternal: SecureService<TransfersInternalService>;
+  public readonly collateral: SecureService<CollateralService>;
 
   private readonly request: BaseHttpRequest;
 
@@ -118,6 +123,7 @@ export class SecureClient {
     this.liquidity = stripSecurityHeaderArgs(new LiquidityService(this.request));
     this.trading = stripSecurityHeaderArgs(new TradingService(this.request));
     this.transfers = stripSecurityHeaderArgs(new TransfersService(this.request));
+    this.collateral = stripSecurityHeaderArgs(new CollateralService(this.request));
     this.transfersBlockchain = stripSecurityHeaderArgs(
       new TransfersBlockchainService(this.request)
     );
@@ -245,6 +251,7 @@ export function createSecurityHeaders(
     xFbapiSignature: signature,
     xFbapiTimestamp: timestamp,
     xFbapiNonce: nonce,
+    xFbPlatformSignature: signature
   };
 }
 
