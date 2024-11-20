@@ -157,20 +157,20 @@ components:
     CryptoPaymentAccountParams:
       allOf:
         - $ref: '#/x-schemas/NativeCryptocurrency'
-      type: object
-      required: [ developerFee ]
-      properties:
-        developerFee:
-          $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'
+        - type: object
+          required: [ developerFee ]
+          properties:
+            developerFee:
+              $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'
 
     FiatPaymentAccountParams:
       allOf:
         - $ref: '#/x-schemas/NationalCurrency'
-      type: object
-      required: [ developerFee ]
-      properties:
-        developerFee:
-          $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'
+        - type: object
+          required: [ developerFee ]
+          properties:
+            developerFee:
+              $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'
 
     CreateBridgingRequest:
       type: object

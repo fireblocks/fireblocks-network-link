@@ -4140,21 +4140,21 @@ components:
     CryptoPaymentAccountParams:
       allOf:
         - $ref: '#/components/schemas/NativeCryptocurrency'
-      type: object
-      required:
-        - developerFee
-      properties:
-        developerFee:
-          $ref: ./fb-provider-api.yaml#/components/schemas/PositiveAmount
+        - type: object
+          required:
+            - developerFee
+          properties:
+            developerFee:
+              $ref: ./fb-provider-api.yaml#/components/schemas/PositiveAmount
     FiatPaymentAccountParams:
       allOf:
         - $ref: '#/components/schemas/NationalCurrency'
-      type: object
-      required:
-        - developerFee
-      properties:
-        developerFee:
-          $ref: ./fb-provider-api.yaml#/components/schemas/PositiveAmount
+        - type: object
+          required:
+            - developerFee
+          properties:
+            developerFee:
+              $ref: ./fb-provider-api.yaml#/components/schemas/PositiveAmount
     CreateBridgingRequest:
       type: object
       required:
