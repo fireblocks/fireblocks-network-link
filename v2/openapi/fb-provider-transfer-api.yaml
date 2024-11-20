@@ -766,26 +766,6 @@ components:
                   $ref: '#/components/schemas/Withdrawal'
 
   schemas:
-    AccountHolderDetails:
-      type: object
-      required: [ name ]
-      properties:
-        name:
-          description: Full name of the account holder.
-          type: string
-        city:
-          type: string
-        country:
-          description: Country code, as specified in ISO 3166-1 alpha-2.
-          type: string
-        subdivision:
-          description: Country administrative subdivision, as specified in ISO 3166-2.
-          type: string
-        address:
-          description: Account holder street address.
-          type: string
-        postalCode:
-          type: string
 
     Iban:
       type: string
@@ -807,7 +787,7 @@ components:
           required: [ accountHolder, iban ]
           properties:
             accountHolder:
-              $ref: '#/components/schemas/AccountHolderDetails'
+              $ref: './fb-provider-api.yaml#/components/schemas/AccountHolderDetails'
             iban:
               $ref: '#/components/schemas/Iban'
 
@@ -848,7 +828,7 @@ components:
           required: [ accountHolder, swiftCode, routingNumber ]
           properties:
             accountHolder:
-              $ref: '#/components/schemas/AccountHolderDetails'
+              $ref: './fb-provider-api.yaml#/components/schemas/AccountHolderDetails'
             swiftCode:
               $ref: '#/components/schemas/SwiftCode'
             routingNumber:

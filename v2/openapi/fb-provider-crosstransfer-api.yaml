@@ -8,8 +8,6 @@ info:
     url: https://fireblocks.com
 
 tags:
-  - name: capabilities
-    description: Server capabilities discovery operations.
   - name: crosstransfers
     description: Fund transfers from fiat to digital assets, digital assets to fiat or digital to digital assets.
 
@@ -37,16 +35,15 @@ x-schemas:
   NationalCurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrency' }
   NativeCryptocurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NativeCryptocurrency' }
   AccountId: { './fb-provider-api.yaml#/components/schemas/AccountId' }
-  AccountRef: { './fb-provider-api.yaml#/components/schemas/AccountRef' }
-  ExternalAccountRef: { './fb-provider-api.yaml#/components/schemas/ExternalAccountRef' }
-  FiatRail: { './fb-provider-api.yaml#/components/schemas/FiatRail' }
+  
+
 x-responses:
   BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
   UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
   ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
 
 paths:
-  /crosstransfer/onramp:
+  /crosstransfers/onramp/standingorders:
     post:
       operationId: createCrossTransferOnRampRouting
       summary: >-
@@ -83,7 +80,7 @@ paths:
           $ref: '#/x-responses/ErrorResponse'
 
 
-  /crosstransfer/offramp:
+  /crosstransfers/offramp/standingorders:
     post:
       operationId: createCrossTransferOffRampRouting
       summary: >-
@@ -118,9 +115,9 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
-  /crosstransfer/bridging:
+  /crosstransfers/bridging/standingorders:
     post:
-      operationId: createCrossTransferBridging
+      operationId: createCrossTransferBridgingRouting
       summary: >-
         Creates deposit-only crypto account as a source, configures trigger and stores 
         payment instruction details about destination crypto address. As a result, the user will be
@@ -156,6 +153,24 @@ paths:
 
 components:
   schemas:
+    CryptoPaymentAccountParams:
+      allOf:
+        - $ref: '#/x-schemas/NativeCryptocurrency'
+      type: object
+      required: [ developerFee ]
+      properties:
+        developerFee:
+          $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'
+
+    FiatPaymentAccountParams:
+      allOf:
+        - $ref: '#/x-schemas/NationalCurrency'
+      type: object
+      required: [ developerFee ]
+      properties:
+        developerFee:
+          $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'
+
     CreateBridgingRequest:
       type: object
       required: [ idempotencyKey, customerId, source, destination, ]
@@ -167,9 +182,10 @@ components:
           type: string
           example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
         source:
-          $ref: '#/components/schemas/BridgingSourceParameters'
+          $ref: '#/components/schemas/CryptoPaymentAccountParams'
         destination:
           $ref: '#/components/schemas/BridgingDestination'
+
     BridgingDestination:
       type: object
       required:
@@ -187,16 +203,7 @@ components:
         memo:
           description: Memo field for the destination address. Required for some blockchains.
           type: string
-    BridgingSourceParameters:
-      type: object
-      required: [ currency ]
-      properties:
-        chain:
-          $ref: '#/x-schemas/Blockchain'
-        currency:
-          $ref: '#/x-schemas/NativeCryptocurrency'
-        developerFee:
-          $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'
+
     CreateOnRampRoutingRequest:
       type: object
       required:
@@ -212,9 +219,10 @@ components:
           type: string
           example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
         source:
-          $ref: '#/components/schemas/OnRampSourceParameters'
+          $ref: '#/components/schemas/FiatPaymentAccountParams'
         destination:
           $ref: '#/components/schemas/OnRampDestination'
+
     OnRampDestination:
       type: object
       required:
@@ -232,62 +240,18 @@ components:
         memo:
           description: Memo field for the destination address. Required for some blockchains.
           type: string
-    OnRampSourceParameters:
-      type: object
-      required:
-        - currency
-      properties:
-        currency:
-          $ref: '#/x-schemas/NativeCryptocurrency'
-        developerFee:
-          $ref: '#/x-schemas/PositiveAmount'
-    OffRampSourceParameters:
-      type: object
-      required: [ chain, currency ]
-      properties:
-        chain:
-          $ref: '#/x-schemas/Blockchain'
-        currency:
-          $ref: '#/x-schemas/NativeCryptocurrency'
-        developerFee:
-          $ref: '#/x-schemas/PositiveAmount'
-        returnAddress:
-          type: string
-          description: >-
-            Blockchain address to return the funds in case of a failed transaction. 
-            MUST be on same blockchain network that is selected in the chain field.
-            Field will be ignored in case of Stellar chain.
+
     OffRampDestination:
       type: object
-      required: [ rail, currency, account ]
       properties:
-        rail:
-          $ref: '#/x-schemas/FiatRail'
-        currency:
-          $ref: '#/x-schemas/NationalCurrency'
-        message:
-          type: string
-          description: >-
-            A message to be sent with a wire transfer. 
-            It can have at most 3 lines (separated by "\n"),
-            each line with a max length of 35 chars
-          maxLength: 109
+        externalAccountId:
+          $ref: '#/x-schemas/AccountId'
+        accountId:
+          $ref: '#/x-schemas/AccountId'
         reference:
           type: string
-          description: >-
-            If rail is SEPA, this is the SEPA reference and must be from 6 to 140 characters. 
-            The allowed characters are a-z, A-Z, 0-9, spaces, ampersand (&), hyphen (-), 
-            full stop (.), and solidus (/). If rail is ACH, this is the ACH reference and
-            can be at most 10 characters, A-Z, a-z, 0-9, and spaces.
-        account:
-          oneOf:
-            - $ref: '#/x-schemas/ExternalAccountRef'
-            - $ref: '#/x-schemas/AccountRef'
-          discriminator:
-            propertyName: type
-            mapping:
-              ExternalAccount: '#/x-schemas/ExternalAccountRef'
-              Account: '#/components/schemas/AccountRef'
+          description: Optional reference to be included in transaction.
+
     CreateOffRampRoutingRequest:
       type: object
       required: [ idempotencyKey, customerId, source, destination, ]
@@ -299,6 +263,6 @@ components:
           type: string
           example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
         source:
-          $ref: '#/components/schemas/OffRampSourceParameters'
+          $ref: '#/components/schemas/CryptoPaymentAccountParams'
         destination:
           $ref: '#/components/schemas/OffRampDestination'

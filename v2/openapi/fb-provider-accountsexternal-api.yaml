@@ -1,0 +1,420 @@
+openapi: 3.0.0
+info:
+  title: '[Draft] Fireblocks Provider CrossTransfer API'
+  version: 0.0.1
+
+  contact:
+    name: Fireblocks
+    url: https://fireblocks.com
+
+tags:
+  - name: crosstransfers
+    description: CrossTransfer API
+
+x-path-params:
+  EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
+  SubAccountIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/SubAccountIdPathParam' }
+
+x-query-params:
+  PaginationLimit: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationLimit' }
+  PaginationStartingAfter: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationStartingAfter' }
+  PaginationEndingBefore: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationEndingBefore' }
+  ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
+
+x-header-params:
+  X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
+  X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
+  X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
+  X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
+
+x-responses:
+  BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
+  ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
+
+x-schemas:
+  Address: { $ref: './fb-provider-api.yaml#/components/schemas/Address' }
+  AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference' }
+  AccountHolderDetails: { $ref: './fb-provider-api.yaml#/components/schemas/AccountHolderDetails' }
+  SwiftAddress: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/SwiftAddress' }
+  IbanAddress: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/IbanAddress' }
+
+
+paths:
+  /accounts/external:
+    get:
+      operationId: listExternalAccounts
+      summary: Get list of external accounts
+      tags: [ accounts ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - in: query
+          name: customerId
+          required: false
+          description: ID of the customer whose external accounts are to be listed.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of external accounts.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accounts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ExternalAccount'
+              example:
+                accounts:
+                  - id: "76a33ed9-8aa2-4781-93f8-d2369c0c2b14"
+                    customerId: "123e4567-e89b-12d3-a456-426614174000"
+                    servicedBy: "Bank of America"
+                    asset: 
+                      nationalCurrencyCode: "USD"
+                    swiftCode: "NWBKGB2L"
+                    routingNumber: "123456789"
+                    transferMethod: "Swift"
+                    accountHolder:
+                      type: "Company"
+                      name: "Acme Inc."
+                      country: "US"
+                      city: "New York"
+                      postalCode: "10001"
+                      address: "123 Main St."
+
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    post:
+      operationId: createExternalAccount
+      summary: Create a new external account.
+      tags: [ accounts ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExternalAccount'
+      responses:
+        '200':
+          description: Sub-account created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalAccount'
+              # examples:
+              #   swiftExternalAccount:
+              #     $ref: '#/components/examples/swiftExternalAccount'
+              #   ibanExternalAccount:
+              #     $ref: '#/components/examples/ibanExternalAccount'
+              #   UsBankExternalAccount:
+              #     $ref: '#/components/examples/usBankExternalAccount'
+
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/external/{accountId}:
+    get:
+      operationId: getExternalAccountDetails
+      summary: Get external account details
+      tags: [ accounts ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - in: path
+          name: accountId
+          required: true
+          description: External account identifier.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: External account details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalAccount'
+              # examples:
+              #   swiftExternalAccount:
+              #     $ref: '#/components/examples/swiftExternalAccount'
+              #   iBANExternalAccount:
+              #     $ref: '#/components/examples/ibanExternalAccount'
+              #   usBankExternalAccount:
+              #     $ref: '#/components/examples/usBankExternalAccount'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    put:
+      operationId: updateExternalAccount
+      summary: Update external account details
+      tags: [ accounts ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - in: path
+          name: accountId
+          required: true
+          description: External account identifier.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateExternalAccount'
+      responses:
+        '200':
+          description: External account updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExternalAccount'
+              # examples:
+              #   swiftExternalAccount:
+              #     $ref: '#/components/examples/swiftExternalAccount'
+              #   iBANExternalAccount:
+              #     $ref: '#/components/examples/ibanExternalAccount'
+              #   usBankExternalAccount:
+              #     $ref: '#/components/examples/usBankExternalAccount'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    delete:
+      operationId: deleteExternalAccount
+      summary: Delete external account
+      tags: [ accounts ]
+      parameters:
+          - $ref: '#/x-header-params/X-FBAPI-KEY'
+          - $ref: '#/x-header-params/X-FBAPI-NONCE'
+          - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+          - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+          - in: path
+            name: accountId
+            required: true
+            description: External account identifier.
+            schema:
+              type: string
+      responses:
+        '200':
+          description: External account deleted.
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+components:
+  schemas:
+    ExternalAccountId:
+      description: >-
+        ID of the account in the external system.
+      type: string
+      example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
+
+    CreateExternalAccount:
+      description: >-
+        Create a new external account.
+      type: object
+      required: [ idempotencyKey, customerId ]
+      properties:
+        idempotencyKey:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: Unique identifier of the request.
+        customerId:
+          description: ID of the customer who will be account holder.
+          example: 123e4567-e89b-12d3-a456-426614174000
+          type: string
+        currency:
+          $ref: '#/x-schemas/AssetReference'
+        servicedBy:
+          type: string
+          description: Name of the external service provider (e.g. bank name).
+          example: 'Bank of America'
+        account:
+          $ref: '#/components/schemas/ExternalAccountDetails'
+        accountHolder:
+          allOf:
+            - $ref: '#/x-schemas/AccountHolderDetails'
+            - type: object
+              required:
+                - type
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - Individual
+                    - Company
+
+    ExternalAccountDetails:
+      oneOf:
+        - $ref: '#/x-schemas/SwiftAddress'
+        - $ref: '#/x-schemas/IbanAddress'
+
+    ExternalAccount:
+      description: >-
+        External account details.
+      allOf:
+        - $ref: '#/components/schemas/ExternalAccountDetails'
+        - type: object
+          required: [ id, customerId, servicedBy ]
+          properties:
+            id:
+              $ref: '#/components/schemas/ExternalAccountId'
+            customerId:
+              type: string
+              description: 'ID of the customer who will be account holder.'
+              example: 123e4567-e89b-12d3-a456-426614174000
+            servicedBy:
+              type: string
+              description: 'Name of the external service provider (e.g. bank name).'
+              example: 'Bank of America'
+
+    UpdateExternalAccount:
+      description: >-
+        Update external account details.
+      type: object
+      required: [ idempotencyKey ]
+      properties:
+        idempotencyKey:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: Unique identifier of the request.
+        account:
+          type: object
+          description: Update US bank account details.
+          properties:
+            accountType:
+              description: Type of the account.
+              type: string
+              enum:
+                - Checking
+                - Savings
+              example: 'Checking'
+        accountHolder:
+          type: object
+          description: Update account holder address.
+          properties:
+            address:
+              $ref: '#/x-schemas/Address'
+  examples: {}
+    # usBankExternalAccount:
+    #   summary: US bank account
+    #   description: >-
+    #     Example of a US bank account.
+    #   value:
+    #     id: "4ff63424-7e09-4cdf-b7f1-da7b7c65eabe"
+    #     customerId: "76a33ed9-8aa2-4781-93f8-d2369c0c2b14"
+    #     currency:
+    #       "nationalCurrencyCode": "USD"
+    #     servicedBy: "Bank of America"
+    #     account:
+    #       type: "US"
+    #       accountNumber: "1234567890"
+    #       routingNumber: "123456789"
+    #       accountType: "Checking"
+    #     accountHolder:
+    #       type: "Individual"
+    #       name: "John Doe"
+    #       address: "123 Main St."
+    #       city: "Anytown"
+    #       postalCode: "12345"
+    #       country: "US"
+
+    # ibanExternalAccount:
+    #   summary: iBAN account
+    #   description: >-
+    #     Example of an iBAN account.
+    #   value:
+    #     id: "76a33ed9-8aa2-4781-93f8-d2369c0c2b14"
+    #     customerId: "76a33ed9-8aa2-4781-93f8-d2369c0c2b14"
+    #     currency:
+    #       "nationalCurrencyCode": "EUR"
+    #     servicedBy: "Deutsche Bank"
+    #     account:
+    #       type: "IBAN"
+    #       accountNumber: "DE89370400440532013000"
+    #       bic: "DEUTDEFF"
+    #       country: "DE"
+    #     accountHolder:
+    #       type: "Individual"
+    #       name: "John Mc. Doe"
+    #       address: "123 Main St."
+    #       city: "Anytown"
+    #       postalCode: "12345"
+    #       country: "DE"
+          
+
+    # swiftExternalAccount:
+    #     summary: SWIFT account
+    #     description: >-
+    #         Example of a SWIFT account.
+    #     value:
+    #       id: "76a33ed9-8aa2-4781-93f8-d2369c0c2b14"
+    #       customerId: "2e7b3b9b-8aa2-4781-93f8-d2369c0c2b14"
+    #       currency:
+    #         "nationalCurrencyCode": "USD"
+    #       servicedBy: "Bank of America"
+    #       account:
+    #         type: "Swift"
+    #         accountNumber: "GB29NWBK60161331926819"
+    #         bic: "NWBKGB2L"
+    #         country: "GB"
+    #         address:
+    #           streetLine1: "1 Churchill Place"
+    #           city: "London"
+    #           postalCode: "E14 5HP"
+    #           country: "GB"
+    #       accountHolder:
+    #         type: "Business"
+    #         businessName: "Acme Inc."
+    #         address:
+    #           streetLine1: "1 Churchill Place"
+    #           city: "London"
+    #           postalCode: "E14 5HP"
+    #           country: "GB"
+    #       category: "Client"
+    #       purpose: "IntraGroupTransfer"
+    #       shortBusinessDescription: "Payment for goods and services"

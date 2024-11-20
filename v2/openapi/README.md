@@ -131,7 +131,10 @@ this response indicates that all the capabilities are supported:
     "transfersBlockchain": "*",
     "transfersFiat": "*",
     "transfersPeerAccounts": "*",
-    "transfersCrossTransfer": "*",
+    "crosstransfers": "*",
+    "crosstransfersOnRamp": '*',
+    "crosstransfersOffRamp": '*',
+    "crosstransfersBridging": '*',
     "trading": "*",
     "liquidity": "*"
   }
@@ -158,6 +161,15 @@ be replaced by a list of account IDs:
 
 Based on the response, Fireblocks platform will use the endpoints specific to each
 component to discover the specific capabilities for each component.
+
+Note that the `crosstransfers` component is used to define the capabilities for 
+on-ramp, off-ramp, and bridging without specifying a concrete account. 
+The actual transfers are executed using the **omnibus account**, which implies 
+the capabilities of that account. 
+
+For individual accounts (customer accounts), the capabilities are defined in the 
+`crosstransfersOnRamp`, `crosstransfersOffRamp`, and `crosstransfersBridging` components. 
+So it is possible to have different capabilities for different customer accounts.
 
 ## Mandatory endpoints
 

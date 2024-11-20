@@ -1,0 +1,413 @@
+openapi: 3.0.0
+info:
+  title: 'FB Provider Customers API'
+  version: 0.0.1
+  contact:
+    name: Fireblocks
+    url: https://fireblocks.com
+tags:
+  - name: customers
+    description: |-
+      Customers API
+      This API is used to manage customers and their KYC processes. Kyc processes can be started, updated and checked for status.
+
+x-path-params:
+  EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
+  SubAccountIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/SubAccountIdPathParam' }
+
+x-query-params:
+  PaginationLimit: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationLimit' }
+  PaginationStartingAfter: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationStartingAfter' }
+  PaginationEndingBefore: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationEndingBefore' }
+  ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
+
+
+x-header-params:
+  X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
+  X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
+  X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
+  X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
+
+x-responses:
+  BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
+  ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
+
+
+paths:
+  /customers:
+    get:
+      operationId: listCustomers
+      summary: List customers
+      tags: [ customers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-query-params/ListOrderQueryParam'
+      responses:
+        '200':
+          description: List of customers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerList'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        'default':
+          $ref: '#/x-responses/ErrorResponse'
+  /customers/{customerId}:
+    get:
+      operationId: getCustomer
+      summary: Get customer details
+      tags: [ customers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Customer ID
+      responses:
+        '200':
+          description: Customer details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        'default':
+          $ref: '#/x-responses/ErrorResponse'
+  /customers/{customerId}/kyc:
+    put:
+      operationId: updateCustomerKycTier
+      summary: Update customer KYC tier
+      tags: [ customers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - name: customerId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Customer ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerUpdateKycTier'
+      responses:
+        '200':
+          description: KYC tier upgrade process started.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerKycTierResponse'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        'default':
+          $ref: '#/x-responses/ErrorResponse'
+  /kyc:
+    get:
+      operationId: listKycProcesses
+      summary: List KYC processes
+      tags: [ customers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-query-params/ListOrderQueryParam'
+      responses:
+        '200':
+          description: List of KYC processes.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  kycProcesses:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CustomerKycTierResponse'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        'default':
+          $ref: '#/x-responses/ErrorResponse'
+    post:
+      operationId: registerCustomer
+      summary: Register a new customer
+      tags: [ customers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterCustomer'
+      responses:
+        '200':
+          description: Customer registration process started.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerKycTierResponse'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        'default':
+          $ref: '#/x-responses/ErrorResponse'
+  /kyc/{kycId}:
+    get:
+      operationId: getKycProcessStatus
+      summary: Get KYC process details and status
+      tags: [ customers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - name: kycId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: KYC process reference ID
+      responses:
+        '200':
+          description: KYC process status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerKycTierResponse'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        'default':
+          $ref: '#/x-responses/ErrorResponse'
+
+components:
+  schemas:
+    CustomerList:
+      type: object
+      properties:
+        customers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Customer'
+      required:
+        - customers
+
+    CustomerStatus:
+      type: string
+      description: |-
+        Status of the customer:
+        - Draft: Customer is in draft state. Not yet submitted for review.
+        - Pending: Customer details are submitted for review. Awaiting approval.
+        - Incomplete: Customer details are incomplete. KYC is not yet completed requres that customer resolve input issues.
+        - InReview: Customer details are under review.
+        - Active: Customer is approved and active.
+        - Inactive: Customer is inactive and cannot be used.
+        - Rejected: Customer is rejected and cannot be used.
+      enum:
+        - Draft
+        - Pending
+        - Incomplete
+        - InReview
+        - Active
+        - Inactive
+        - Rejected
+
+    CustomerType:
+      type: string
+      description: |-
+        Type of the customer:
+        - Individual: Customer is an individual person.
+        - Business: Customer is a business entity.
+      enum:
+        - Individual
+        - Business
+
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Customer ID
+          format: uuid
+        name:
+          type: string
+          description: Customer full name
+        email:
+          type: string
+          description: Customer email address
+        status:
+          $ref: '#/components/schemas/CustomerStatus'
+        type:
+          $ref: '#/components/schemas/CustomerType'
+      required:
+        - id
+        - name
+        - email
+        - status
+        - type
+
+    RegisterCustomer:
+      type: object
+      properties:
+        idempotencyKey:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: Unique identifier of the request. Used to prevent duplicate requests.
+        name:
+          type: string
+          description: Customer full name
+        email:
+          type: string
+          description: Customer email address
+        type:
+          $ref: '#/components/schemas/CustomerType'
+        kycTier:
+          type: string
+          description: KYC tier validation to use when registering the customer
+      required:
+        - idempotencyKey
+        - name
+        - email
+        - type
+
+    CustomerUpdateKycTier:
+      type: object
+      properties:
+        idempotencyKey:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+          description: Unique identifier of the request. Used to prevent duplicate requests.
+        kycTier:
+          type: string
+          description: KYC tier to which the customer is upgrading
+      required:
+        - idempotencyKey
+        - kycTier
+    
+    CustomerKycTierResponse:
+      type: object
+      required: [ id, name, email, type, kycTier, kycLink, status, tosLink, tosStatus ]
+      properties:
+        id:
+          type: string
+          description: ID unique for each started KYC process. Registration or KYC tier upgrade.
+          format: uuid
+        customerId:
+          type: string
+          description: |-
+            Customer ID. 
+            If the KYC process is for a new customer, this field is empty until the 
+            customer is registered and first kyc tier is set.
+          format: uuid
+        name:
+          type: string
+          description: Customer full name
+          # this must accept all letters, cirilc, latin, chinese, etc then numbers and apostrophes dashes and spaces
+          example: 'John Doe'
+        email:
+          type: string
+          description: Customer email address
+          example: 'john.doe@example.com'
+        type:
+          $ref: '#/components/schemas/CustomerType'
+        kycTier:
+          type: string
+          description: KYC tier to which the customer is upgrading
+          example: 'Tier 2'
+        kycLink: 
+          type: string
+          description: URL to the KYC process
+        status:
+          $ref: '#/components/schemas/KycStatus'
+        tosLink:
+          type: string
+          description: URL to the terms of service agreement
+        tosStatus:
+          $ref: '#/components/schemas/TosStatus'
+        rejection:
+          description: |-
+            KYC rejection details.
+          type: array
+          items:
+            $ref: '#/components/schemas/KycRejectionReason' 
+    
+    TosStatus:
+      type: string
+      description: |-
+        Status of the terms of service agreement:
+        - Pending: Terms of service agreement is pending customer acceptance.
+        - Accepted: Terms of service agreement is accepted by the customer.
+      enum:
+        - Pending
+        - Accepted
+          
+    KycRejectionReason:
+      type: object
+      description: |-
+        Reason for KYC rejection.
+      properties:
+        reason:
+          type: string
+          description: Reason for KYC rejection
+        details:
+          type: string
+          description: Additional details about the rejection reason
+        rejectedAt:
+          type: string
+          description: Date and time when the KYC was rejected
+          format: date-time
+
+    KycStatus:
+      description: |-
+        Status of the KYC process:
+        - Pending: KYC is pending.
+        - InReview: KYC is under review.
+        - AwaitingCustomer: KYC is awaiting customer input.
+        - Approved: KYC is approved.
+        - Rejected: KYC is rejected.
+      type: string
+      enum:
+        - Pending
+        - InReview
+        - AwaitingCustomer
+        - Approved
+        - Rejected
