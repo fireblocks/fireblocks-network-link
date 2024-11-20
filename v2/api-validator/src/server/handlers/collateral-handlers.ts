@@ -1,13 +1,21 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../http-error-factory';
-import { CollateralAccountNotExist, CollateralController } from '../controllers/collateral-controller';
-import { CollateralAccount, BadRequestError, RequestPart, CollateralAccountLink, CollateralLinkStatus} from '../../client/generated';
+import {
+  CollateralAccountNotExist,
+  CollateralController,
+} from '../controllers/collateral-controller';
+import {
+  CollateralAccount,
+  BadRequestError,
+  RequestPart,
+  CollateralAccountLink,
+  CollateralLinkStatus,
+} from '../../client/generated';
 
 const collateralController = new CollateralController();
 
 type CreateCollateralAccountLinkRequest = {
-  Body: CollateralAccount
-    & {status: CollateralLinkStatus};
+  Body: CollateralAccount & { status: CollateralLinkStatus };
   Params: { accountId: string };
 };
 
@@ -31,21 +39,25 @@ export async function createCollateralAccountLink(
     const status = request.body.status;
 
     if (!accountId || !collateralAccount) {
-        ErrorFactory.notFound(reply);
+      ErrorFactory.notFound(reply);
       return;
     }
 
-    const newLink = collateralController.createCollateralAccountLink(status, accountId, collateralAccount);
+    const newLink = collateralController.createCollateralAccountLink(
+      status,
+      accountId,
+      collateralAccount
+    );
     reply.status(200).send(newLink);
   } catch (err) {
-        if (err instanceof CollateralAccountNotExist) {
-            return ErrorFactory.badRequest(reply, {
-                message: err.message,
-                errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
-                requestPart: RequestPart.BODY,
-            });
+    if (err instanceof CollateralAccountNotExist) {
+      return ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
+        requestPart: RequestPart.BODY,
+      });
     }
-}
+  }
 }
 
 export async function getCollateralAccountLinks(
@@ -57,12 +69,11 @@ export async function getCollateralAccountLinks(
     reply.status(200).send({ collateralLinks: links });
   } catch (err) {
     if (err instanceof CollateralAccountNotExist) {
-        return ErrorFactory.badRequest(reply, {
-            message: err.message,
-            errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
-            requestPart: RequestPart.BODY,
-        });
+      return ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
+        requestPart: RequestPart.BODY,
+      });
     }
-    }
+  }
 }
-

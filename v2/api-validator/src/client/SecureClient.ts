@@ -28,7 +28,6 @@ import {
   TransfersService,
 } from './generated';
 import { getRelativeUrlWithoutPathPrefix } from '../url-helpers';
-import { platform } from 'os';
 
 const log = logger('api-client');
 
@@ -251,7 +250,7 @@ export function createSecurityHeaders(
     xFbapiSignature: signature,
     xFbapiTimestamp: timestamp,
     xFbapiNonce: nonce,
-    xFbPlatformSignature: signature
+    xFbPlatformSignature: signature,
   };
 }
 

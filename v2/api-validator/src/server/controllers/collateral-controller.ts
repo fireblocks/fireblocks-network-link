@@ -1,32 +1,27 @@
 import { Repository } from './repository';
-import { 
-    CollateralAccountLink, 
-    CollateralAccount, 
-    CollateralLinkStatus, 
-    Environment, 
-    CollateralAsset,
-    Blockchain,
-    CryptocurrencySymbol,
- } from '../../client/generated';
-import { randomUUID } from 'crypto';
+import {
+  CollateralAccountLink,
+  CollateralAccount,
+  CollateralLinkStatus,
+  Environment,
+  CollateralAsset,
+  Blockchain,
+  CryptocurrencySymbol,
+} from '../../client/generated';
 import { XComError } from '../../error';
 
-
 export class CollateralAccountNotExist extends XComError {
-    constructor() {
-      super('Collateral Account Not Found');
-    }
+  constructor() {
+    super('Collateral Account Not Found');
+  }
 }
 
 type CollateralAccountLinkWithId = CollateralAccountLink & { id: string };
 
-
 export class CollateralController {
   private readonly collateralRepository = new Repository<CollateralAccountLinkWithId>();
 
-  constructor() {
-
-  }
+  constructor() {}
 
   public generateCollateralAssets(numAssets: number, env: Environment): CollateralAsset[] {
     const assets: CollateralAsset[] = [];
@@ -39,7 +34,7 @@ export class CollateralController {
   }
 
   private createCollateralAsset(env: Environment): CollateralAsset {
-    const isTestAsset: boolean = env === Environment.SANDBOX ? true : false
+    const isTestAsset: boolean = env === Environment.SANDBOX ? true : false;
     return {
       blockchain: Blockchain.BITCOIN,
       cryptocurrencySymbol: CryptocurrencySymbol.BTC,
@@ -47,7 +42,11 @@ export class CollateralController {
     };
   }
 
-  public createCollateralAccountLink(status: CollateralLinkStatus, accountId, collateralAccount: CollateralAccount): CollateralAccountLinkWithId {
+  public createCollateralAccountLink(
+    status: CollateralLinkStatus,
+    accountId,
+    collateralAccount: CollateralAccount
+  ): CollateralAccountLinkWithId {
     const newCollateralAccountLink: CollateralAccountLinkWithId = {
       id: accountId,
       collateralId: collateralAccount.collateralId,
@@ -56,14 +55,13 @@ export class CollateralController {
       status: status,
       env: collateralAccount.env,
     };
-     status == CollateralLinkStatus.FAILED ? newCollateralAccountLink.rejectionReason = 'Rejected: unknown account' 
-      :  status == CollateralLinkStatus.DISABLED ? newCollateralAccountLink.rejectionReason = 'Rejected: account is disabled'
-      :
-
-    this.collateralRepository.create(newCollateralAccountLink);
+    status == CollateralLinkStatus.FAILED
+      ? (newCollateralAccountLink.rejectionReason = 'Rejected: unknown account')
+      : status == CollateralLinkStatus.DISABLED
+      ? (newCollateralAccountLink.rejectionReason = 'Rejected: account is disabled')
+      : this.collateralRepository.create(newCollateralAccountLink);
     return newCollateralAccountLink;
   }
-
 
   public getCollateralAccountLinks(): CollateralAccountLink[] {
     return this.collateralRepository.list();

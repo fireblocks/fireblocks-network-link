@@ -1,5 +1,4 @@
 import { Account } from '../client/generated';
-import _ from 'lodash';
 
 export function isParentAccount(
   childAccountId: string,
