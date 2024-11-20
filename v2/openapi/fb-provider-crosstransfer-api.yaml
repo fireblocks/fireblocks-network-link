@@ -35,6 +35,7 @@ x-schemas:
   NationalCurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrency' }
   NativeCryptocurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NativeCryptocurrency' }
   AccountId: { './fb-provider-api.yaml#/components/schemas/AccountId' }
+  PublicBlockchainAddress: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainAddress' }
   
 
 x-responses:
@@ -184,25 +185,7 @@ components:
         source:
           $ref: '#/components/schemas/CryptoPaymentAccountParams'
         destination:
-          $ref: '#/components/schemas/BridgingDestination'
-
-    BridgingDestination:
-      type: object
-      required:
-        - chain
-        - currency
-        - address
-      properties:
-        chain:
-          $ref: '#/x-schemas/Blockchain'
-        currency:
-          $ref: '#/x-schemas/NativeCryptocurrency'
-        address:
-          description: Address of the destination account.
-          type: string
-        memo:
-          description: Memo field for the destination address. Required for some blockchains.
-          type: string
+          $ref: '#/x-schemas/PublicBlockchainAddress'
 
     CreateOnRampRoutingRequest:
       type: object
@@ -221,25 +204,7 @@ components:
         source:
           $ref: '#/components/schemas/FiatPaymentAccountParams'
         destination:
-          $ref: '#/components/schemas/OnRampDestination'
-
-    OnRampDestination:
-      type: object
-      required:
-        - chain
-        - currency
-        - address
-      properties:
-        chain:
-          $ref: '#/x-schemas/Blockchain'
-        currency:
-          $ref: '#/x-schemas/NativeCryptocurrency'
-        address:
-          description: Address of the destination account.
-          type: string
-        memo:
-          description: Memo field for the destination address. Required for some blockchains.
-          type: string
+          $ref: '#/x-schemas/PublicBlockchainAddress'
 
     OffRampDestination:
       type: object

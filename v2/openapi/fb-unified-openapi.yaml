@@ -2073,7 +2073,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /crosstransfer/routing/onramp:
+  /crosstransfers/onramp/standingorders:
     post:
       operationId: createCrossTransferOnRampRouting
       summary: Creates deposit-only fiat account as a source, configures trigger and stores  payment instruction details about destination crypto account. As a result, the user will be able to deposit fiat to the source account and receive payment in crypto to the  destination account.
@@ -2105,7 +2105,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /crosstransfer/routing/offramp:
+  /crosstransfers/offramp/standingorders:
     post:
       operationId: createCrossTransferOffRampRouting
       summary: Creates deposit-only crypto account as a source, configures trigger and stores  payment instruction details about destination fiat account. As a result, the user will be able to deposit crypto to the source account and receive fiat to the destination account.
@@ -2137,7 +2137,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /crosstransfer/routing/bridging:
+  /crosstransfers/bridging/standingorders:
     post:
       operationId: createCrossTransferBridgingRouting
       summary: Creates deposit-only crypto account as a source, configures trigger and stores  payment instruction details about destination crypto address. As a result, the user will be able to deposit crypto to the source account and receive exchanged value to destination address  in selected cryptocurrency.
@@ -4172,24 +4172,7 @@ components:
         source:
           $ref: '#/components/schemas/CryptoPaymentAccountParams'
         destination:
-          $ref: '#/components/schemas/BridgingDestination'
-    BridgingDestination:
-      type: object
-      required:
-        - chain
-        - currency
-        - address
-      properties:
-        chain:
-          $ref: '#/components/schemas/Blockchain'
-        currency:
-          $ref: '#/components/schemas/NativeCryptocurrency'
-        address:
-          description: Address of the destination account.
-          type: string
-        memo:
-          description: Memo field for the destination address. Required for some blockchains.
-          type: string
+          $ref: '#/components/schemas/PublicBlockchainAddress'
     CreateOnRampRoutingRequest:
       type: object
       required:
@@ -4207,24 +4190,7 @@ components:
         source:
           $ref: '#/components/schemas/FiatPaymentAccountParams'
         destination:
-          $ref: '#/components/schemas/OnRampDestination'
-    OnRampDestination:
-      type: object
-      required:
-        - chain
-        - currency
-        - address
-      properties:
-        chain:
-          $ref: '#/components/schemas/Blockchain'
-        currency:
-          $ref: '#/components/schemas/NativeCryptocurrency'
-        address:
-          description: Address of the destination account.
-          type: string
-        memo:
-          description: Memo field for the destination address. Required for some blockchains.
-          type: string
+          $ref: '#/components/schemas/PublicBlockchainAddress'
     OffRampDestination:
       type: object
       properties:
