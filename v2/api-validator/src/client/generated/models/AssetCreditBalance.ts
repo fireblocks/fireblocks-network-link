@@ -4,9 +4,9 @@
 /* eslint-disable */
 
 import type { AssetBalance } from './AssetBalance';
-import type { AssetCreditBalance } from './AssetCreditBalance';
+import type { PositiveAmount } from './PositiveAmount';
 
-/**
- * Maps balance assets to their balances.
- */
-export type Balances = Array<(AssetBalance | AssetCreditBalance)>;
+export type AssetCreditBalance = (AssetBalance & {
+    creditAmount: PositiveAmount;
+});
+

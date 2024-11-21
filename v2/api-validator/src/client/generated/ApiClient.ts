@@ -9,6 +9,7 @@ import { AxiosHttpRequest } from './core/AxiosHttpRequest';
 import { AccountsService } from './services/AccountsService';
 import { BalancesService } from './services/BalancesService';
 import { CapabilitiesService } from './services/CapabilitiesService';
+import { CollateralService } from './services/CollateralService';
 import { HistoricBalancesService } from './services/HistoricBalancesService';
 import { LiquidityService } from './services/LiquidityService';
 import { TradingService } from './services/TradingService';
@@ -25,6 +26,7 @@ export class ApiClient {
     public readonly accounts: AccountsService;
     public readonly balances: BalancesService;
     public readonly capabilities: CapabilitiesService;
+    public readonly collateral: CollateralService;
     public readonly historicBalances: HistoricBalancesService;
     public readonly liquidity: LiquidityService;
     public readonly trading: TradingService;
@@ -52,6 +54,7 @@ export class ApiClient {
         this.accounts = new AccountsService(this.request);
         this.balances = new BalancesService(this.request);
         this.capabilities = new CapabilitiesService(this.request);
+        this.collateral = new CollateralService(this.request);
         this.historicBalances = new HistoricBalancesService(this.request);
         this.liquidity = new LiquidityService(this.request);
         this.trading = new TradingService(this.request);
