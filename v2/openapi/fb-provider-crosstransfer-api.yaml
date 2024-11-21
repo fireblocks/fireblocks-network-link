@@ -36,7 +36,10 @@ x-schemas:
   NativeCryptocurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NativeCryptocurrency' }
   AccountId: { './fb-provider-api.yaml#/components/schemas/AccountId' }
   PublicBlockchainAddress: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainAddress' }
-  
+  FiatTransfer: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/FiatTransfer'}
+  PublicBlockchainTransaction: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction' }
+  DepositStatus: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/DepositStatus' }
+  WithdrawalStatus: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/WithdrawalStatus' }
 
 x-responses:
   BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
@@ -44,6 +47,43 @@ x-responses:
   ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
 
 paths:
+  /crosstransfers:
+    get:
+      operationId: listCrossTransfers
+      summary: >-
+        Lists all cross transfers.
+      tags: [ crosstransfers ]
+      parameters:
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-query-params/ListOrderQueryParam'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - name: orderId
+          in: query
+          description: Filter by order ID.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of cross transfers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCrossTransfersResult'
+                
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
   /crosstransfers/onramp/standingorders:
     post:
       operationId: createCrossTransferOnRampRouting
@@ -79,7 +119,6 @@ paths:
           $ref: '#/x-responses/ErrorResponse'
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
-
 
   /crosstransfers/offramp/standingorders:
     post:
@@ -154,6 +193,101 @@ paths:
 
 components:
   schemas:
+    ListCrossTransfersResult:
+      type: object
+      properties:
+        crossTransfers:
+          type: array
+          items: 
+            $ref: '#/components/schemas/CrsossTransfer'
+
+    CrsossTransfer:
+      oneOf:
+      - $ref: '#/components/schemas/OnRampCrossTransfer'
+      - $ref: '#/components/schemas/OffRampCrossTransfer'
+      - $ref: '#/components/schemas/BridgingCrossTransfer'
+
+    OnRampCrossTransfer:
+      type: object
+      required: [ orderType, payment, order ]
+      properties:
+        id:
+          type: string
+          example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
+        orderType:
+          type: string
+          enum: [ OnRamp ]
+        payment:
+          allOf:
+            - $ref: '#/x-schemas/FiatTransfer'
+            - type: object
+              required: [ status ]
+              properties:
+                status:
+                  $ref: '#/x-schemas/DepositStatus'
+        order:
+          allOf:
+            - $ref: '#/x-schemas/PublicBlockchainTransaction'
+            - type: object
+              required: [ status ]
+              properties:
+                status:
+                  $ref: '#/x-schemas/WithdrawalStatus'
+
+    OffRampCrossTransfer:
+      type: object
+      required: [ orderType, payment, order ]
+      properties:
+        id:
+          type: string
+          example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
+        orderType:
+          type: string
+          enum: [ OnRamp ]
+        payment:
+          allOf:
+            - $ref: '#/x-schemas/PublicBlockchainTransaction'
+            - type: object
+              required: [ status ]
+              properties:
+                status:
+                  $ref: '#/x-schemas/DepositStatus'
+        order:
+          allOf:
+            - $ref: '#/x-schemas/FiatTransfer'
+            - type: object
+              required: [ status ]
+              properties:
+                status:
+                  $ref: '#/x-schemas/WithdrawalStatus'
+
+    BridgingCrossTransfer:
+      type: object
+      required: [ orderType, payment, order ]
+      properties:
+        id:
+          type: string
+          example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
+        orderType:
+          type: string
+          enum: [ OnRamp ]
+        payment:
+          allOf:
+            - $ref: '#/x-schemas/PublicBlockchainTransaction'
+            - type: object
+              required: [ status ]
+              properties:
+                status:
+                  $ref: '#/x-schemas/DepositStatus'
+        order:
+          allOf:
+            - $ref: '#/x-schemas/PublicBlockchainTransaction'
+            - type: object
+              required: [ status ]
+              properties:
+                status:
+                  $ref: '#/x-schemas/WithdrawalStatus'
+        
     CryptoPaymentAccountParams:
       allOf:
         - $ref: '#/x-schemas/NativeCryptocurrency'

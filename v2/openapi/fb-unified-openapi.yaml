@@ -2073,6 +2073,41 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
+  /crosstransfers:
+    get:
+      operationId: listCrossTransfers
+      summary: Lists all cross transfers.
+      tags:
+        - crosstransfers
+      parameters:
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: '#/components/parameters/ListOrderQueryParam'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - name: orderId
+          in: query
+          description: Filter by order ID.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of cross transfers.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCrossTransfersResult'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
   /crosstransfers/onramp/standingorders:
     post:
       operationId: createCrossTransferOnRampRouting
@@ -4137,6 +4172,114 @@ components:
           properties:
             address:
               $ref: '#/components/schemas/Address'
+    ListCrossTransfersResult:
+      type: object
+      properties:
+        crossTransfers:
+          type: array
+          items:
+            $ref: '#/components/schemas/CrsossTransfer'
+    CrsossTransfer:
+      oneOf:
+        - $ref: '#/components/schemas/OnRampCrossTransfer'
+        - $ref: '#/components/schemas/OffRampCrossTransfer'
+        - $ref: '#/components/schemas/BridgingCrossTransfer'
+    OnRampCrossTransfer:
+      type: object
+      required:
+        - orderType
+        - payment
+        - order
+      properties:
+        id:
+          type: string
+          example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
+        orderType:
+          type: string
+          enum:
+            - OnRamp
+        payment:
+          allOf:
+            - $ref: '#/components/schemas/FiatTransfer'
+            - type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: '#/components/schemas/DepositStatus'
+        order:
+          allOf:
+            - $ref: '#/components/schemas/PublicBlockchainTransaction'
+            - type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: '#/components/schemas/WithdrawalStatus'
+    OffRampCrossTransfer:
+      type: object
+      required:
+        - orderType
+        - payment
+        - order
+      properties:
+        id:
+          type: string
+          example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
+        orderType:
+          type: string
+          enum:
+            - OnRamp
+        payment:
+          allOf:
+            - $ref: '#/components/schemas/PublicBlockchainTransaction'
+            - type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: '#/components/schemas/DepositStatus'
+        order:
+          allOf:
+            - $ref: '#/components/schemas/FiatTransfer'
+            - type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: '#/components/schemas/WithdrawalStatus'
+    BridgingCrossTransfer:
+      type: object
+      required:
+        - orderType
+        - payment
+        - order
+      properties:
+        id:
+          type: string
+          example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
+        orderType:
+          type: string
+          enum:
+            - OnRamp
+        payment:
+          allOf:
+            - $ref: '#/components/schemas/PublicBlockchainTransaction'
+            - type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: '#/components/schemas/DepositStatus'
+        order:
+          allOf:
+            - $ref: '#/components/schemas/PublicBlockchainTransaction'
+            - type: object
+              required:
+                - status
+              properties:
+                status:
+                  $ref: '#/components/schemas/WithdrawalStatus'
     CryptoPaymentAccountParams:
       allOf:
         - $ref: '#/components/schemas/NativeCryptocurrency'
