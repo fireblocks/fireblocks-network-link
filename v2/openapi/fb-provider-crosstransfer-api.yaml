@@ -243,7 +243,7 @@ components:
           example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
         orderType:
           type: string
-          enum: [ OnRamp ]
+          enum: [ OffRamp ]
         payment:
           allOf:
             - $ref: '#/x-schemas/PublicBlockchainTransaction'
@@ -270,7 +270,7 @@ components:
           example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
         orderType:
           type: string
-          enum: [ OnRamp ]
+          enum: [ Bridging ]
         payment:
           allOf:
             - $ref: '#/x-schemas/PublicBlockchainTransaction'
