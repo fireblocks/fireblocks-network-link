@@ -852,6 +852,45 @@ components:
             referenceId:
               type: string
 
+    AchCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          enum: [ Ach ]
+
+    AchAddress:
+      allOf:
+        - $ref: '#/components/schemas/AchCapability'
+        - type: object
+          required: [ accountHolder, routingNumber ]
+          properties:
+            accountHolder:
+              $ref: './fb-provider-api.yaml#/components/schemas/AccountHolderDetails'
+            routingNumber:
+              type: string
+              description: Routing number identifying the bank account.
+
+    AchTransferDestination:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AchAddress'
+        - type: object
+          required: [ amount ]
+          properties:
+            amount:
+              $ref: '#/x-schemas/PositiveAmount'
+
+    AchTransfer:
+      allOf:
+        - $ref: '#/components/schemas/AchTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+
     OtherFiatTransfer:
       type: object
       description: >-
@@ -1013,16 +1052,19 @@ components:
         - $ref: '#/components/schemas/PublicBlockchainCapability'
         - $ref: '#/components/schemas/IbanCapability'
         - $ref: '#/components/schemas/SwiftCapability'
+        - $ref: '#/components/schemas/AchCapability'
 
     FiatTransferDestination:
       oneOf:
         - $ref: '#/components/schemas/IbanTransferDestination'
         - $ref: '#/components/schemas/SwiftTransferDestination'
+        - $ref: '#/components/schemas/AchTransferDestination'
 
     FiatTransfer:
       oneOf:
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
+        - $ref: '#/components/schemas/AchTransfer'
         - $ref: '#/components/schemas/OtherFiatTransfer'
 
     Transfer:
@@ -1032,6 +1074,7 @@ components:
         - $ref: '#/components/schemas/PublicBlockchainTransaction'
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
+        - $ref: '#/components/schemas/AchTransfer'
         - $ref: '#/components/schemas/OtherFiatTransfer'
 
     DepositDestination:
