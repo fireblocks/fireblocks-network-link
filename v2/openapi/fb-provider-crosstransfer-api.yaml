@@ -308,13 +308,14 @@ components:
 
     CreateBridgingRequest:
       type: object
-      required: [ idempotencyKey, customerId, source, destination, ]
+      required: [ idempotencyKey, source, destination, ]
       properties:
         idempotencyKey:
           type: string
           example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
         customerId:
           type: string
+          description: If provided, the standing order will be associated with the customer.
           example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
         source:
           $ref: '#/components/schemas/CryptoPaymentAccountParams'
@@ -323,17 +324,14 @@ components:
 
     CreateOnRampRoutingRequest:
       type: object
-      required:
-        - idempotencyKey
-        - customerId
-        - source
-        - destination
+      required: [ idempotencyKey, source, destination ]
       properties:
         idempotencyKey:
           type: string
           example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
         customerId:
           type: string
+          description: If provided, the standing order will be associated with the customer.
           example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
         source:
           $ref: '#/components/schemas/FiatPaymentAccountParams'
@@ -353,13 +351,14 @@ components:
 
     CreateOffRampRoutingRequest:
       type: object
-      required: [ idempotencyKey, customerId, source, destination, ]
+      required: [ idempotencyKey, source, destination, ]
       properties:
         idempotencyKey:
           type: string
           example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
         customerId:
           type: string
+          description: If provided, the standing order will be associated with the customer.
           example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
         source:
           $ref: '#/components/schemas/CryptoPaymentAccountParams'

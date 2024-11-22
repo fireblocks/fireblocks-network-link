@@ -41,7 +41,7 @@ x-schemas:
 
 
 paths:
-  /accounts/external:
+  /accounts/{accountId}/external:
     get:
       operationId: listExternalAccounts
       summary: Get list of external accounts
@@ -54,10 +54,16 @@ paths:
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
+        - in: path
+          name: accountId
+          required: true
+          description: Account that is parent for searched external accounts.
+          schema:
+            type: string
         - in: query
           name: customerId
           required: false
-          description: ID of the customer whose external accounts are to be listed.
+          description: Filter by customer ID.
           schema:
             type: string
       responses:
@@ -75,7 +81,6 @@ paths:
               example:
                 accounts:
                   - id: "76a33ed9-8aa2-4781-93f8-d2369c0c2b14"
-                    customerId: "123e4567-e89b-12d3-a456-426614174000"
                     servicedBy: "Bank of America"
                     asset: 
                       nationalCurrencyCode: "USD"
@@ -107,6 +112,12 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - in: path
+          name: accountId
+          required: true
+          description: Account that is parent for given external account.
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -137,7 +148,7 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
-  /accounts/external/{accountId}:
+  /accounts/{accountId}/external/{externalAccountId}:
     get:
       operationId: getExternalAccountDetails
       summary: Get external account details
@@ -150,7 +161,13 @@ paths:
         - in: path
           name: accountId
           required: true
-          description: External account identifier.
+          description: Account that is parent for given external account.
+          schema:
+            type: string
+        - in: path
+          name: externalAccountId
+          required: true
+          description: Identifier of external account.
           schema:
             type: string
       responses:
@@ -187,7 +204,13 @@ paths:
         - in: path
           name: accountId
           required: true
-          description: External account identifier.
+          description: Account that is parent for given external account.
+          schema:
+            type: string
+        - in: path
+          name: externalAccountId
+          required: true
+          description: Identifier of external account that should be updated.
           schema:
             type: string
       requestBody:
@@ -230,7 +253,13 @@ paths:
           - in: path
             name: accountId
             required: true
-            description: External account identifier.
+            description: Account that is parent for given external account.
+            schema:
+              type: string
+          - in: path
+            name: externalAccountId
+            required: true
+            description: Identifier of external account that should be deleted.
             schema:
               type: string
       responses:
@@ -257,14 +286,14 @@ components:
       description: >-
         Create a new external account.
       type: object
-      required: [ idempotencyKey, customerId ]
+      required: [ idempotencyKey ]
       properties:
         idempotencyKey:
           type: string
           example: 123e4567-e89b-12d3-a456-426614174000
           description: Unique identifier of the request.
         customerId:
-          description: ID of the customer who will be account holder.
+          description: If specified, this is the ID of the customer who owns the record.
           example: 123e4567-e89b-12d3-a456-426614174000
           type: string
         currency:
@@ -299,13 +328,13 @@ components:
       allOf:
         - $ref: '#/components/schemas/ExternalAccountDetails'
         - type: object
-          required: [ id, customerId, servicedBy ]
+          required: [ id, servicedBy ]
           properties:
             id:
               $ref: '#/components/schemas/ExternalAccountId'
             customerId:
               type: string
-              description: 'ID of the customer who will be account holder.'
+              description: If specified, this is the ID of the customer who owns the record.
               example: 123e4567-e89b-12d3-a456-426614174000
             servicedBy:
               type: string

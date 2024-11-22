@@ -39,10 +39,6 @@ tags:
     description: Transfers to a peer account managed by the same provider.
   - name: transfersInternal
     description: Transfers to a sub account in the same account.
-  - name: customers
-    description: |-
-      Customers API
-      This API is used to manage customers and their KYC processes. Kyc processes can be started, updated and checked for status.
   - name: crosstransfers
     description: CrossTransfer API
 paths:
@@ -1700,196 +1696,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /customers:
-    get:
-      operationId: listCustomers
-      summary: List customers
-      tags:
-        - customers
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/ListOrderQueryParam'
-      responses:
-        '200':
-          description: List of customers.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerList'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-  /customers/{customerId}:
-    get:
-      operationId: getCustomer
-      summary: Get customer details
-      tags:
-        - customers
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - name: customerId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-          description: Customer ID
-      responses:
-        '200':
-          description: Customer details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Customer'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-  /customers/{customerId}/kyc:
-    put:
-      operationId: updateCustomerKycTier
-      summary: Update customer KYC tier
-      tags:
-        - customers
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - name: customerId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-          description: Customer ID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomerUpdateKycTier'
-      responses:
-        '200':
-          description: KYC tier upgrade process started.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerKycTierResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-  /kyc:
-    get:
-      operationId: listKycProcesses
-      summary: List KYC processes
-      tags:
-        - customers
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/ListOrderQueryParam'
-      responses:
-        '200':
-          description: List of KYC processes.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  kycProcesses:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CustomerKycTierResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-    post:
-      operationId: registerCustomer
-      summary: Register a new customer
-      tags:
-        - customers
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RegisterCustomer'
-      responses:
-        '200':
-          description: Customer registration process started.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerKycTierResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-  /kyc/{kycId}:
-    get:
-      operationId: getKycProcessStatus
-      summary: Get KYC process details and status
-      tags:
-        - customers
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - name: kycId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-          description: KYC process reference ID
-      responses:
-        '200':
-          description: KYC process status.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomerKycTierResponse'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        default:
-          $ref: '#/components/responses/ErrorResponse'
-  /accounts/external:
+  /accounts/{accountId}/external:
     get:
       operationId: listExternalAccounts
       summary: Get list of external accounts
@@ -1903,10 +1710,16 @@ paths:
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
+        - in: path
+          name: accountId
+          required: true
+          description: Account that is parent for searched external accounts.
+          schema:
+            type: string
         - in: query
           name: customerId
           required: false
-          description: ID of the customer whose external accounts are to be listed.
+          description: Filter by customer ID.
           schema:
             type: string
       responses:
@@ -1924,7 +1737,6 @@ paths:
               example:
                 accounts:
                   - id: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
-                    customerId: 123e4567-e89b-12d3-a456-426614174000
                     servicedBy: Bank of America
                     asset:
                       nationalCurrencyCode: USD
@@ -1956,6 +1768,12 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - in: path
+          name: accountId
+          required: true
+          description: Account that is parent for given external account.
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -1977,7 +1795,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /accounts/external/{accountId}:
+  /accounts/{accountId}/external/{externalAccountId}:
     get:
       operationId: getExternalAccountDetails
       summary: Get external account details
@@ -1991,7 +1809,13 @@ paths:
         - in: path
           name: accountId
           required: true
-          description: External account identifier.
+          description: Account that is parent for given external account.
+          schema:
+            type: string
+        - in: path
+          name: externalAccountId
+          required: true
+          description: Identifier of external account.
           schema:
             type: string
       responses:
@@ -2022,7 +1846,13 @@ paths:
         - in: path
           name: accountId
           required: true
-          description: External account identifier.
+          description: Account that is parent for given external account.
+          schema:
+            type: string
+        - in: path
+          name: externalAccountId
+          required: true
+          description: Identifier of external account that should be updated.
           schema:
             type: string
       requestBody:
@@ -2059,7 +1889,13 @@ paths:
         - in: path
           name: accountId
           required: true
-          description: External account identifier.
+          description: Account that is parent for given external account.
+          schema:
+            type: string
+        - in: path
+          name: externalAccountId
+          required: true
+          description: Identifier of external account that should be deleted.
           schema:
             type: string
       responses:
@@ -3940,193 +3776,6 @@ components:
       enum:
         - CanCreate
         - CannotCreate
-    CustomerList:
-      type: object
-      properties:
-        customers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Customer'
-      required:
-        - customers
-    CustomerStatus:
-      type: string
-      description: |-
-        Status of the customer:
-        - Draft: Customer is in draft state. Not yet submitted for review.
-        - Pending: Customer details are submitted for review. Awaiting approval.
-        - Incomplete: Customer details are incomplete. KYC is not yet completed requres that customer resolve input issues.
-        - InReview: Customer details are under review.
-        - Active: Customer is approved and active.
-        - Inactive: Customer is inactive and cannot be used.
-        - Rejected: Customer is rejected and cannot be used.
-      enum:
-        - Draft
-        - Pending
-        - Incomplete
-        - InReview
-        - Active
-        - Inactive
-        - Rejected
-    CustomerType:
-      type: string
-      description: |-
-        Type of the customer:
-        - Individual: Customer is an individual person.
-        - Business: Customer is a business entity.
-      enum:
-        - Individual
-        - Business
-    Customer:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Customer ID
-          format: uuid
-        name:
-          type: string
-          description: Customer full name
-        email:
-          type: string
-          description: Customer email address
-        status:
-          $ref: '#/components/schemas/CustomerStatus'
-        type:
-          $ref: '#/components/schemas/CustomerType'
-      required:
-        - id
-        - name
-        - email
-        - status
-        - type
-    RegisterCustomer:
-      type: object
-      properties:
-        idempotencyKey:
-          type: string
-          example: 123e4567-e89b-12d3-a456-426614174000
-          description: Unique identifier of the request. Used to prevent duplicate requests.
-        name:
-          type: string
-          description: Customer full name
-        email:
-          type: string
-          description: Customer email address
-        type:
-          $ref: '#/components/schemas/CustomerType'
-        kycTier:
-          type: string
-          description: KYC tier validation to use when registering the customer
-      required:
-        - idempotencyKey
-        - name
-        - email
-        - type
-    CustomerUpdateKycTier:
-      type: object
-      properties:
-        idempotencyKey:
-          type: string
-          example: 123e4567-e89b-12d3-a456-426614174000
-          description: Unique identifier of the request. Used to prevent duplicate requests.
-        kycTier:
-          type: string
-          description: KYC tier to which the customer is upgrading
-      required:
-        - idempotencyKey
-        - kycTier
-    CustomerKycTierResponse:
-      type: object
-      required:
-        - id
-        - name
-        - email
-        - type
-        - kycTier
-        - kycLink
-        - status
-        - tosLink
-        - tosStatus
-      properties:
-        id:
-          type: string
-          description: ID unique for each started KYC process. Registration or KYC tier upgrade.
-          format: uuid
-        customerId:
-          type: string
-          description: |-
-            Customer ID. 
-            If the KYC process is for a new customer, this field is empty until the 
-            customer is registered and first kyc tier is set.
-          format: uuid
-        name:
-          type: string
-          description: Customer full name
-          example: John Doe
-        email:
-          type: string
-          description: Customer email address
-          example: john.doe@example.com
-        type:
-          $ref: '#/components/schemas/CustomerType'
-        kycTier:
-          type: string
-          description: KYC tier to which the customer is upgrading
-          example: Tier 2
-        kycLink:
-          type: string
-          description: URL to the KYC process
-        status:
-          $ref: '#/components/schemas/KycStatus'
-        tosLink:
-          type: string
-          description: URL to the terms of service agreement
-        tosStatus:
-          $ref: '#/components/schemas/TosStatus'
-        rejection:
-          description: KYC rejection details.
-          type: array
-          items:
-            $ref: '#/components/schemas/KycRejectionReason'
-    TosStatus:
-      type: string
-      description: |-
-        Status of the terms of service agreement:
-        - Pending: Terms of service agreement is pending customer acceptance.
-        - Accepted: Terms of service agreement is accepted by the customer.
-      enum:
-        - Pending
-        - Accepted
-    KycRejectionReason:
-      type: object
-      description: Reason for KYC rejection.
-      properties:
-        reason:
-          type: string
-          description: Reason for KYC rejection
-        details:
-          type: string
-          description: Additional details about the rejection reason
-        rejectedAt:
-          type: string
-          description: Date and time when the KYC was rejected
-          format: date-time
-    KycStatus:
-      description: |-
-        Status of the KYC process:
-        - Pending: KYC is pending.
-        - InReview: KYC is under review.
-        - AwaitingCustomer: KYC is awaiting customer input.
-        - Approved: KYC is approved.
-        - Rejected: KYC is rejected.
-      type: string
-      enum:
-        - Pending
-        - InReview
-        - AwaitingCustomer
-        - Approved
-        - Rejected
     ExternalAccountId:
       description: ID of the account in the external system.
       type: string
@@ -4136,14 +3785,13 @@ components:
       type: object
       required:
         - idempotencyKey
-        - customerId
       properties:
         idempotencyKey:
           type: string
           example: 123e4567-e89b-12d3-a456-426614174000
           description: Unique identifier of the request.
         customerId:
-          description: ID of the customer who will be account holder.
+          description: If specified, this is the ID of the customer who owns the record.
           example: 123e4567-e89b-12d3-a456-426614174000
           type: string
         currency:
@@ -4177,14 +3825,13 @@ components:
         - type: object
           required:
             - id
-            - customerId
             - servicedBy
           properties:
             id:
               $ref: '#/components/schemas/ExternalAccountId'
             customerId:
               type: string
-              description: ID of the customer who will be account holder.
+              description: If specified, this is the ID of the customer who owns the record.
               example: 123e4567-e89b-12d3-a456-426614174000
             servicedBy:
               type: string
@@ -4347,7 +3994,6 @@ components:
       type: object
       required:
         - idempotencyKey
-        - customerId
         - source
         - destination
       properties:
@@ -4356,6 +4002,7 @@ components:
           example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
         customerId:
           type: string
+          description: If provided, the standing order will be associated with the customer.
           example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
         source:
           $ref: '#/components/schemas/CryptoPaymentAccountParams'
@@ -4365,7 +4012,6 @@ components:
       type: object
       required:
         - idempotencyKey
-        - customerId
         - source
         - destination
       properties:
@@ -4374,6 +4020,7 @@ components:
           example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
         customerId:
           type: string
+          description: If provided, the standing order will be associated with the customer.
           example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
         source:
           $ref: '#/components/schemas/FiatPaymentAccountParams'
@@ -4393,7 +4040,6 @@ components:
       type: object
       required:
         - idempotencyKey
-        - customerId
         - source
         - destination
       properties:
@@ -4402,6 +4048,7 @@ components:
           example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
         customerId:
           type: string
+          description: If provided, the standing order will be associated with the customer.
           example: 76a33ed9-8aa2-4781-93f8-d2369c0c2b14
         source:
           $ref: '#/components/schemas/CryptoPaymentAccountParams'
