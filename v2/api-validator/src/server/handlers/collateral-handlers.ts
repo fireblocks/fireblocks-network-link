@@ -5,19 +5,21 @@ import {
   CollateralController,
 } from '../controllers/collateral-controller';
 import { CollateralAccount } from '../../client/generated';
+import { ControllersContainer } from '../controllers/controllers-container';
+import { getPaginationResult } from '../controllers/pagination-controller';
+import { AccountIdPathParam, PaginationQuerystring } from './request-types';
 
 const collateralController = new CollateralController();
+const controllers = new ControllersContainer(() => new CollateralController());
 
 type CreateCollateralAccountLinkRequest = {
   Body: CollateralAccount;
   Params: { accountId: string };
 };
 
-export type CollateralCapabilitiesResponse = { capabilities: CollateralAccount[] };
+type CollateralLinkListResponse = { collateralLinks: CollateralAccount[] };
 
-type GetCollateralAccountLinksRequest = {
-  Params: { accountId: string };
-};
+export type CollateralCapabilitiesResponse = { capabilities: CollateralAccount[] };
 
 export async function getCollateralCapabilities(): Promise<CollateralCapabilitiesResponse> {
   return { capabilities: collateralController.getCollateralAccountLinks() };
@@ -49,25 +51,30 @@ export async function createCollateralAccountLink(
   }
 }
 
-// export async function getCollateralAccountLinks(
-//   request: FastifyRequest<GetCollateralAccountLinksRequest>,
-//   reply: FastifyReply
-// ): Promise<void> {
-//   try {
-//     const links = collateralController.getCollateralAccountLinks();
-//     reply.status(200).send({ collateralLinks: links });
-//   } catch (err) {
-//     if (err instanceof CollateralAccountNotExist) {
-//       if (!!reply.status(404)) {
-//         ErrorFactory.notFound(reply)
-//       }
-//       if (!!reply.status(400)) {
-//         return ErrorFactory.badRequest(reply, {
-//           message: err.message,
-//           errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
-//           requestPart: RequestPart.BODY,
-//         });
-//     }
-//     }
-//   }
-// }
+export async function getCollateralAccountLinks(
+  request: FastifyRequest<PaginationQuerystring & AccountIdPathParam>,
+  reply: FastifyReply
+): Promise<CollateralLinkListResponse> {
+  const { limit, startingAfter, endingBefore } = request.query;
+  const { accountId } = request.params;
+
+  const controller = controllers.getController(accountId);
+
+  if (!controller) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  if (limit === undefined || isNaN(limit)) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  return {
+    collateralLinks: getPaginationResult(
+      limit,
+      startingAfter,
+      endingBefore,
+      controller.getCollateralAccountLinks(),
+      'collateralId'
+    ),
+  };
+}

@@ -1,6 +1,6 @@
-import { CollateralAccount } from '../../src/client/generated';
 import Client from '../../src/client';
 import { getCapableAccountId, hasCapability } from '../utils/capable-accounts';
+import { Pageable, paginated } from '../utils/pagination';
 import {
   ApiError,
   BadRequestError,
@@ -9,6 +9,9 @@ import {
   Environment,
   Blockchain,
   CryptocurrencySymbol,
+  CollateralAccount,
+  CollateralAccountLink,
+  GeneralError,
 } from '../../src/client/generated';
 import { randomUUID } from 'crypto';
 
@@ -24,7 +27,7 @@ describe.skipIf(noCollateralapability)('collateral', () => {
   beforeAll(async () => {
     client = new Client();
     accountId = getCapableAccountId('collateral');
-    collateralId = `${accountId}.${randomUUID()}`;
+    collateralId = `${randomUUID()}.${accountId}.${randomUUID()}`;
     collateralSinersList = [randomUUID(), randomUUID(), randomUUID()];
     requestBody = {
       collateralId: collateralId,
@@ -33,10 +36,10 @@ describe.skipIf(noCollateralapability)('collateral', () => {
     };
   });
 
-  describe('get collateral accounts linked', () => {
+  describe('create collateral accounts links', () => {
     let collateralAccount: CollateralAccount;
 
-    const GetCreateCollateralAccountLinksFailureResult = async (
+    const CreateCollateralAccountLinksFailureResult = async (
       requestBody: CollateralAccount
     ): Promise<ApiError> => {
       try {
@@ -76,15 +79,105 @@ describe.skipIf(noCollateralapability)('collateral', () => {
       else if (createCollateralLink.env === Environment.SANDBOX)
         expect(createCollateralLink.eligibleCollateralAssets[0]['testAsset']).toEqual(true);
     });
+    it('request should fail with Not Found', async () => {
+      requestBody.collateralId = '1';
+
+      const error = await CreateCollateralAccountLinksFailureResult(requestBody);
+
+      expect(error.status).toBe(404);
+      expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
+      expect(error.body.requestPart).toBe(undefined);
+    });
 
     it('request should fail schema property', async () => {
-      const error = await GetCreateCollateralAccountLinksFailureResult({
+      const error = await CreateCollateralAccountLinksFailureResult({
         ...collateralAccount,
       });
 
       expect(error.status).toBe(400);
       expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
       expect(error.body.requestPart).toBe(RequestPart.BODY);
+    });
+  });
+
+  describe('get linked collateral accounts', () => {
+    const GetCollateralAccountLinksFailureResult = async (
+      failType: number,
+      limit?,
+      startingAfter?
+    ): Promise<ApiError> => {
+      let accId = accountId;
+      if (failType == 404) {
+        accId = '1';
+      } else {
+        limit = 'aa';
+      }
+      try {
+        await client.collateral.getCollateralAccountLinks({
+          accountId: accId,
+          limit: limit,
+          startingAfter: startingAfter,
+        });
+      } catch (err) {
+        if (err instanceof ApiError) {
+          return err;
+        }
+        throw err;
+      }
+      throw new Error('Expected to throw');
+    };
+
+    it('collateral account should return with a valid schema', async () => {
+      const getCollateralAccountLinks: Pageable<CollateralAccountLink> = async (
+        limit,
+        startingAfter?
+      ) => {
+        const response = await client.collateral.getCollateralAccountLinks({
+          accountId: accountId,
+          limit: limit,
+          startingAfter: startingAfter,
+        });
+        return response.collateralLinks;
+      };
+
+      for await (const collateralAccountLinks of paginated(getCollateralAccountLinks)) {
+        expect(Object.values(CollateralLinkStatus)).toContain(collateralAccountLinks.status);
+        if (
+          collateralAccountLinks.status === CollateralLinkStatus.DISABLED ||
+          collateralAccountLinks.status == CollateralLinkStatus.FAILED
+        ) {
+          expect(typeof collateralAccountLinks.rejectionReason).toBe('string');
+        }
+        expect(Object.values(Environment)).toContain(collateralAccountLinks.env);
+        expect(collateralAccountLinks.collateralId).toBe(collateralId);
+        expect(collateralAccountLinks.collateralSigners).toEqual(collateralSinersList);
+        expect(Object.values(Blockchain)).toContain(
+          collateralAccountLinks.eligibleCollateralAssets[0]['blockchain']
+        );
+        expect(Object.values(CryptocurrencySymbol)).toContain(
+          collateralAccountLinks.eligibleCollateralAssets[0]['cryptocurrencySymbol']
+        );
+        if (collateralAccountLinks.env === Environment.PROD)
+          expect(collateralAccountLinks.eligibleCollateralAssets[0]['testAsset']).toEqual(false);
+        else if (collateralAccountLinks.env === Environment.SANDBOX)
+          expect(collateralAccountLinks.eligibleCollateralAssets[0]['testAsset']).toEqual(true);
+      }
+    });
+
+    it('request should fail with Not Found', async () => {
+      const error = await GetCollateralAccountLinksFailureResult(404);
+
+      expect(error.status).toBe(404);
+      expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
+      expect(error.body.requestPart).toBe(undefined);
+    });
+
+    it('request should fail schema property', async () => {
+      const error = await GetCollateralAccountLinksFailureResult(400);
+
+      expect(error.status).toBe(400);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
+      expect(error.body.requestPart).toBe(RequestPart.QUERYSTRING);
     });
   });
 });

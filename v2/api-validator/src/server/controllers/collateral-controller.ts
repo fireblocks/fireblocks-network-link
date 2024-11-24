@@ -9,6 +9,7 @@ import {
   CryptocurrencySymbol,
   Account,
 } from '../../client/generated';
+import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
 
 export class CollateralAccountNotExist extends XComError {
@@ -53,6 +54,16 @@ export class CollateralController {
       throw new CollateralAccountNotExist();
     }
 
+    const collateralIdsList = collateralAccount.collateralId.split('.');
+    if (collateralIdsList[1] != accountId) {
+      throw new CollateralAccountNotExist();
+    }
+    for (const id of collateralIdsList) {
+      if (!isUUIDv4(id)) {
+        throw new CollateralAccountNotExist();
+      }
+    }
+
     for (const signer of collateralAccount.collateralSigners) {
       if (!isUUIDv4(signer)) {
         throw new CollateralAccountNotExist();
@@ -70,6 +81,15 @@ export class CollateralController {
   }
 
   public getCollateralAccountLinks(): CollateralAccount[] {
+    const accountId = randomUUID();
+    const collateralId = `${randomUUID()}.${accountId}.${randomUUID()}`;
+    const collateralSinersList = [randomUUID(), randomUUID(), randomUUID()];
+    const requestBody = {
+      collateralId: collateralId,
+      collateralSigners: collateralSinersList,
+      env: Environment.PROD,
+    };
+    this.createCollateralAccountLink(accountId, requestBody);
     return this.collateralRepository.list();
   }
 }
