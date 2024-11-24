@@ -19,25 +19,25 @@ describe.skipIf(noCollateralapability)('collateral', () => {
   let accountId: string;
   let collateralId: string;
   let collateralSinersList: string[];
-
-  type CollateralAccountWithStatus = CollateralAccount & { status: CollateralLinkStatus };
+  let requestBody: CollateralAccount;
 
   beforeAll(async () => {
     client = new Client();
     accountId = getCapableAccountId('collateral');
     collateralId = `${accountId}.${randomUUID()}`;
     collateralSinersList = [randomUUID(), randomUUID(), randomUUID()];
+    requestBody = {
+      collateralId: collateralId,
+      collateralSigners: collateralSinersList,
+      env: Environment.PROD,
+    };
   });
 
   describe('get collateral accounts linked', () => {
-    let collateralAccount: CollateralAccountWithStatus;
-
-    const GetCreateCollateralAccountLinksSuccessResult = async (
-      requestBody: CollateralAccountWithStatus
-    ) => client.collateral.createCollateralAccountLink({ accountId, requestBody });
+    let collateralAccount: CollateralAccount;
 
     const GetCreateCollateralAccountLinksFailureResult = async (
-      requestBody: CollateralAccountWithStatus
+      requestBody: CollateralAccount
     ): Promise<ApiError> => {
       try {
         await client.collateral.createCollateralAccountLink({ accountId, requestBody });
@@ -50,48 +50,31 @@ describe.skipIf(noCollateralapability)('collateral', () => {
       throw new Error('Expected to throw');
     };
 
-    it('collateral account should return with status eligble', async () => {
-      const createCollateralLink = await GetCreateCollateralAccountLinksSuccessResult({
-        status: CollateralLinkStatus.ELIGIBLE,
-        collateralId: collateralId,
-        collateralSigners: collateralSinersList,
-        env: Environment.PROD,
+    it('collateral account should return with a valid schema', async () => {
+      const createCollateralLink = await client.collateral.createCollateralAccountLink({
+        accountId,
+        requestBody,
       });
-      expect(createCollateralLink.status).toBe(CollateralLinkStatus.ELIGIBLE);
-      expect(createCollateralLink.env).toBe(Environment.PROD);
+      expect(Object.values(CollateralLinkStatus)).toContain(createCollateralLink.status);
+      if (
+        createCollateralLink.status === CollateralLinkStatus.DISABLED ||
+        createCollateralLink.status == CollateralLinkStatus.FAILED
+      ) {
+        expect(typeof createCollateralLink.rejectionReason).toBe('string');
+      }
+      expect(Object.values(Environment)).toContain(createCollateralLink.env);
       expect(createCollateralLink.collateralId).toBe(collateralId);
       expect(createCollateralLink.collateralSigners).toEqual(collateralSinersList);
-      expect(createCollateralLink.eligibleCollateralAssets[0]['blockchain']).toBe(
-        Blockchain.BITCOIN
+      expect(Object.values(Blockchain)).toContain(
+        createCollateralLink.eligibleCollateralAssets[0]['blockchain']
       );
-      expect(createCollateralLink.eligibleCollateralAssets[0]['cryptocurrencySymbol']).toBe(
-        CryptocurrencySymbol.BTC
+      expect(Object.values(CryptocurrencySymbol)).toContain(
+        createCollateralLink.eligibleCollateralAssets[0]['cryptocurrencySymbol']
       );
-      expect(createCollateralLink.eligibleCollateralAssets[0]['testAsset']).toEqual(false);
-      expect(createCollateralLink.eligibleCollateralAssets.length).toEqual(2);
-    });
-
-    it('collateral account should return with status linked, env sandbox & testAsset true', async () => {
-      const createCollateralLink = await GetCreateCollateralAccountLinksSuccessResult({
-        status: CollateralLinkStatus.LINKED,
-        collateralId: collateralId,
-        collateralSigners: collateralSinersList,
-        env: Environment.SANDBOX,
-      });
-      expect(createCollateralLink.status).toBe(CollateralLinkStatus.LINKED);
-      expect(createCollateralLink.env).toBe(Environment.SANDBOX);
-      expect(createCollateralLink.eligibleCollateralAssets[0]['testAsset']).toEqual(true);
-    });
-
-    it('collateral account should return rejection reason', async () => {
-      const createCollateralLink = await GetCreateCollateralAccountLinksSuccessResult({
-        status: CollateralLinkStatus.FAILED,
-        collateralId: collateralId,
-        collateralSigners: collateralSinersList,
-        env: Environment.SANDBOX,
-      });
-      expect(createCollateralLink.rejectionReason).not.toBe(undefined);
-      expect(typeof createCollateralLink.rejectionReason).toBe('string');
+      if (createCollateralLink.env === Environment.PROD)
+        expect(createCollateralLink.eligibleCollateralAssets[0]['testAsset']).toEqual(false);
+      else if (createCollateralLink.env === Environment.SANDBOX)
+        expect(createCollateralLink.eligibleCollateralAssets[0]['testAsset']).toEqual(true);
     });
 
     it('request should fail schema property', async () => {

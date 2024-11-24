@@ -43,27 +43,6 @@ const config = convict({
     default: 2,
     env: 'PAGINATION_LIMIT',
   },
-  collateral: {
-    subAccount: {
-      accountId: {
-        format: String,
-        default: 'c5bb0880-523c-4c1c-bfe7-bcf2941517a0',
-        env: 'COLLATERAL_SUB_ACCOUNT',
-      },
-    },
-    blockchain: {
-      address: {
-        format: String,
-        default: '0x91b9e7bc95f8ef6f4e08ea10aaaac84b6c54203b',
-        env: 'COLLATERAL_BLOCKCHAIN_ADDRESS',
-      },
-      addressTag: {
-        format: String,
-        default: undefined,
-        env: 'COLLATERAL_BLOCKCHAIN_ADDRESS_TAG',
-      },
-    },
-  },
   withdrawal: {
     peerAccount: {
       accountId: {

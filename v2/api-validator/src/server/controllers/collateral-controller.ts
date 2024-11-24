@@ -7,6 +7,7 @@ import {
   CollateralAsset,
   Blockchain,
   CryptocurrencySymbol,
+  Account,
 } from '../../client/generated';
 import { XComError } from '../../error';
 
@@ -16,10 +17,12 @@ export class CollateralAccountNotExist extends XComError {
   }
 }
 
-type CollateralAccountLinkWithId = CollateralAccountLink & { id: string };
-
+function isUUIDv4(uuid: string): boolean {
+  const uuidv4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidv4Regex.test(uuid);
+}
 export class CollateralController {
-  private readonly collateralRepository = new Repository<CollateralAccountLinkWithId>();
+  private readonly collateralRepository = new Repository<CollateralAccount & Account>();
 
   constructor() {}
 
@@ -43,27 +46,30 @@ export class CollateralController {
   }
 
   public createCollateralAccountLink(
-    status: CollateralLinkStatus,
-    accountId,
+    accountId: string,
     collateralAccount: CollateralAccount
-  ): CollateralAccountLinkWithId {
-    const newCollateralAccountLink: CollateralAccountLinkWithId = {
-      id: accountId,
+  ): CollateralAccount {
+    if (!accountId) {
+      throw new CollateralAccountNotExist();
+    }
+
+    for (const signer of collateralAccount.collateralSigners) {
+      if (!isUUIDv4(signer)) {
+        throw new CollateralAccountNotExist();
+      }
+    }
+
+    const newCollateralAccountLink: CollateralAccountLink = {
       collateralId: collateralAccount.collateralId,
       collateralSigners: collateralAccount.collateralSigners || [],
       eligibleCollateralAssets: this.generateCollateralAssets(2, collateralAccount.env),
-      status: status,
-      env: collateralAccount.env,
+      status: CollateralLinkStatus.ELIGIBLE,
+      env: Environment.PROD,
     };
-    status == CollateralLinkStatus.FAILED
-      ? (newCollateralAccountLink.rejectionReason = 'Rejected: unknown account')
-      : status == CollateralLinkStatus.DISABLED
-      ? (newCollateralAccountLink.rejectionReason = 'Rejected: account is disabled')
-      : this.collateralRepository.create(newCollateralAccountLink);
     return newCollateralAccountLink;
   }
 
-  public getCollateralAccountLinks(): CollateralAccountLink[] {
+  public getCollateralAccountLinks(): CollateralAccount[] {
     return this.collateralRepository.list();
   }
 }
