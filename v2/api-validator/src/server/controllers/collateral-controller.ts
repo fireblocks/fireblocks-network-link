@@ -8,6 +8,8 @@ import {
   Blockchain,
   CryptocurrencySymbol,
   Account,
+  CollateralAssetAddress,
+  PublicBlockchainCapability
 } from '../../client/generated';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
@@ -24,6 +26,7 @@ function isUUIDv4(uuid: string): boolean {
 }
 export class CollateralController {
   private readonly collateralRepository = new Repository<CollateralAccount & Account>();
+  // private readonly collateralAssetRepository = new Repository<CollateralAssetAddress & Account>();
 
   constructor() {}
 
@@ -35,6 +38,28 @@ export class CollateralController {
     }
 
     return assets;
+  }
+
+  public generateCollateralAssetAddress(numAssets: number): CollateralAssetAddress[] {
+    const depositAddress: CollateralAssetAddress[] = [];
+    const asset = this.generateCollateralAssets(2, Environment.PROD);
+    const address: CollateralAssetAddress = {
+      address: {
+        address: randomUUID(),
+        addressTag: randomUUID(),
+        transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+        asset: asset[0]
+      },
+      recoveryAccountId: randomUUID(),
+      asset: asset[0],
+    fireblocksAssetId: 'BTC'
+    }
+
+    for (let i = 0; i < numAssets; i++) {
+      depositAddress.push(address);
+    }
+
+    return depositAddress;
   }
 
   private createCollateralAsset(env: Environment): CollateralAsset {
@@ -91,5 +116,9 @@ export class CollateralController {
     };
     this.createCollateralAccountLink(accountId, requestBody);
     return this.collateralRepository.list();
+  }
+
+  public getCollateralDepositAddresses(): CollateralAssetAddress[] {
+    return this.generateCollateralAssetAddress(2)
   }
 }

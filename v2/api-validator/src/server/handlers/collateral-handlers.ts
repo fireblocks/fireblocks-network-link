@@ -4,7 +4,10 @@ import {
   CollateralAccountNotExist,
   CollateralController,
 } from '../controllers/collateral-controller';
-import { CollateralAccount } from '../../client/generated';
+import {
+  CollateralAccount,
+  CollateralDepositAddresses
+ } from '../../client/generated';
 import { ControllersContainer } from '../controllers/controllers-container';
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { AccountIdPathParam, PaginationQuerystring } from './request-types';
@@ -17,8 +20,14 @@ type CreateCollateralAccountLinkRequest = {
   Params: { accountId: string };
 };
 
-type CollateralLinkListResponse = { collateralLinks: CollateralAccount[] };
+type AccountIdandCollateralIdPAthParam = {
+  Params:{
+    accountId: string,
+    collateralId: string,
+  }
+}
 
+type CollateralLinkListResponse = { collateralLinks: CollateralAccount[] };
 export type CollateralCapabilitiesResponse = { capabilities: CollateralAccount[] };
 
 export async function getCollateralCapabilities(): Promise<CollateralCapabilitiesResponse> {
@@ -75,6 +84,38 @@ export async function getCollateralAccountLinks(
       endingBefore,
       controller.getCollateralAccountLinks(),
       'collateralId'
+    ),
+  };
+}
+
+export async function getCollateralDepositAddresses(
+  request: FastifyRequest<PaginationQuerystring & AccountIdandCollateralIdPAthParam>, 
+  reply: FastifyReply
+): Promise<CollateralDepositAddresses> {
+  const { limit, startingAfter, endingBefore } = request.query;
+  const { accountId, collateralId } = request.params;
+
+  const controller = controllers.getController(accountId);
+
+  if (!controller) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  if (!collateralId) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  if (limit === undefined || isNaN(limit)) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  return {
+    addresses: getPaginationResult(
+      limit,
+      startingAfter,
+      endingBefore,
+      controller.getCollateralDepositAddresses(),
+      'recoveryAccountId'
     ),
   };
 }
