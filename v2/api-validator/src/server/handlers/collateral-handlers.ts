@@ -4,10 +4,7 @@ import {
   CollateralAccountNotExist,
   CollateralController,
 } from '../controllers/collateral-controller';
-import {
-  CollateralAccount,
-  CollateralDepositAddresses
- } from '../../client/generated';
+import { CollateralAccount, CollateralDepositAddresses } from '../../client/generated';
 import { ControllersContainer } from '../controllers/controllers-container';
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { AccountIdPathParam, PaginationQuerystring } from './request-types';
@@ -21,11 +18,11 @@ type CreateCollateralAccountLinkRequest = {
 };
 
 type AccountIdandCollateralIdPAthParam = {
-  Params:{
-    accountId: string,
-    collateralId: string,
-  }
-}
+  Params: {
+    accountId: string;
+    collateralId: string;
+  };
+};
 
 type CollateralLinkListResponse = { collateralLinks: CollateralAccount[] };
 export type CollateralCapabilitiesResponse = { capabilities: CollateralAccount[] };
@@ -89,7 +86,7 @@ export async function getCollateralAccountLinks(
 }
 
 export async function getCollateralDepositAddresses(
-  request: FastifyRequest<PaginationQuerystring & AccountIdandCollateralIdPAthParam>, 
+  request: FastifyRequest<PaginationQuerystring & AccountIdandCollateralIdPAthParam>,
   reply: FastifyReply
 ): Promise<CollateralDepositAddresses> {
   const { limit, startingAfter, endingBefore } = request.query;

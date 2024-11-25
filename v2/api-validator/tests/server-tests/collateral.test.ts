@@ -180,4 +180,5 @@ describe.skipIf(noCollateralapability)('collateral', () => {
       expect(error.body.requestPart).toBe(RequestPart.QUERYSTRING);
     });
   });
+  
 });

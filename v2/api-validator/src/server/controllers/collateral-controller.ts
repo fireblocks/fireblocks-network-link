@@ -9,7 +9,7 @@ import {
   CryptocurrencySymbol,
   Account,
   CollateralAssetAddress,
-  PublicBlockchainCapability
+  PublicBlockchainCapability,
 } from '../../client/generated';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
@@ -48,12 +48,12 @@ export class CollateralController {
         address: randomUUID(),
         addressTag: randomUUID(),
         transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-        asset: asset[0]
+        asset: asset[0],
       },
       recoveryAccountId: randomUUID(),
       asset: asset[0],
-    fireblocksAssetId: 'BTC'
-    }
+      fireblocksAssetId: 'BTC',
+    };
 
     for (let i = 0; i < numAssets; i++) {
       depositAddress.push(address);
@@ -119,6 +119,6 @@ export class CollateralController {
   }
 
   public getCollateralDepositAddresses(): CollateralAssetAddress[] {
-    return this.generateCollateralAssetAddress(2)
+    return this.generateCollateralAssetAddress(2);
   }
 }
