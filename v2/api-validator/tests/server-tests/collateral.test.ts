@@ -12,6 +12,8 @@ import {
   CollateralAccount,
   CollateralAccountLink,
   GeneralError,
+  CollateralAssetAddress,
+  PublicBlockchainCapability
 } from '../../src/client/generated';
 import { randomUUID } from 'crypto';
 
@@ -181,4 +183,93 @@ describe.skipIf(noCollateralapability)('collateral', () => {
     });
   });
   
+  describe('get collateral deposit addresses', () => {
+    const GetCollateralDepositAddressesFailureResult = async (
+      failType: number,
+      limit?,
+      startingAfter?
+    ): Promise<ApiError> => {
+      let accId = accountId;
+      let lim = limit;
+      lim = 10;
+      if (failType == 404) {
+        accId = '1';
+      } else {
+        lim = 'aa';
+      }
+      try {
+        await client.collateral.getCollateralDepositAddresses({
+          accountId: accId,
+          collateralId,
+          limit: lim,
+          startingAfter: startingAfter,
+        });
+      } catch (err) {
+        if (err instanceof ApiError) {
+          return err;
+        }
+        throw err;
+      }
+      throw new Error('Expected to throw');
+    };
+
+    it('collateral deposit address should return with a valid schema', async () => {
+      const getCollateralDepositAddresses: Pageable<CollateralAssetAddress> = async (
+        limit,
+        startingAfter?
+      ) => {
+        limit = 10;
+        const response = await client.collateral.getCollateralDepositAddresses({
+          accountId,
+          collateralId,
+          limit,
+          startingAfter,
+        });
+        return response.addresses;
+      };
+      for await (const collateralAccountAddress of paginated(getCollateralDepositAddresses)) {
+        const addressObj = collateralAccountAddress.address;
+        const assetObj = collateralAccountAddress.asset
+
+        expect(typeof collateralAccountAddress.fireblocksAssetId).toBe('string');
+        expect(typeof collateralAccountAddress.recoveryAccountId).toBe('string');
+        expect(typeof addressObj.transferMethod).toBe('string');
+        expect(Object.values(PublicBlockchainCapability.transferMethod)).toContain(
+          addressObj.transferMethod
+        );
+        if (!!addressObj.addressTag)
+          expect(typeof addressObj.addressTag).toBe('string');
+        expect(Object.values(Blockchain)).toContain(
+          addressObj.asset['blockchain']
+        );
+        expect(Object.values(CryptocurrencySymbol)).toContain(
+          addressObj.asset['cryptocurrencySymbol']
+        );
+        expect(typeof addressObj.asset['testAsset']).toBe('boolean');
+        expect(Object.values(Blockchain)).toContain(
+          assetObj['blockchain']
+        );
+        expect(Object.values(CryptocurrencySymbol)).toContain(
+          assetObj['cryptocurrencySymbol']
+        );
+        expect(typeof assetObj['testAsset']).toBe('boolean');
+      }
+    });
+
+    it('request should fail with Not Found', async () => {
+      const error = await GetCollateralDepositAddressesFailureResult(404);
+
+      expect(error.status).toBe(404);
+      expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
+      expect(error.body.requestPart).toBe(undefined);
+    });
+
+    it('request should fail schema property', async () => {
+      const error = await GetCollateralDepositAddressesFailureResult(400);
+
+      expect(error.status).toBe(400);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
+      expect(error.body.requestPart).toBe(RequestPart.QUERYSTRING);
+    });
+  });
 });
