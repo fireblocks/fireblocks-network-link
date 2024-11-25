@@ -112,6 +112,9 @@ export async function getCollateralDepositAddresses(
       startingAfter,
       endingBefore,
       controller.getCollateralDepositAddresses(),
+      /* Currently creates infinite loop due to the fact that the pagination function require and 
+      id as a unique value to seacrh the next page on and to stop when there is non, need to update the OpenApi, 
+      suspecting thet the same issue can happen for getCollateralAccountLinks  */
       'recoveryAccountId'
     ),
   };
