@@ -51,15 +51,10 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
-        - in: path
-          name: accountId
-          required: true
-          description: Account that is parent for searched external accounts.
-          schema:
-            type: string
         - in: query
           name: customerId
           required: false
@@ -112,12 +107,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
-        - in: path
-          name: accountId
-          required: true
-          description: Account that is parent for given external account.
-          schema:
-            type: string
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         required: true
         content:
@@ -148,7 +138,7 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
-  /accounts/{accountId}/external/{externalAccountId}:
+  /accounts/{accountId}/external/{id}:
     get:
       operationId: getExternalAccountDetails
       summary: Get external account details
@@ -158,18 +148,8 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
-        - in: path
-          name: accountId
-          required: true
-          description: Account that is parent for given external account.
-          schema:
-            type: string
-        - in: path
-          name: externalAccountId
-          required: true
-          description: Identifier of external account.
-          schema:
-            type: string
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
         '200':
           description: External account details.
@@ -201,18 +181,8 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
-        - in: path
-          name: accountId
-          required: true
-          description: Account that is parent for given external account.
-          schema:
-            type: string
-        - in: path
-          name: externalAccountId
-          required: true
-          description: Identifier of external account that should be updated.
-          schema:
-            type: string
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/x-path-params/EntityIdPathParam'
       requestBody:
         required: true
         content:
@@ -250,18 +220,8 @@ paths:
           - $ref: '#/x-header-params/X-FBAPI-NONCE'
           - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
           - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
-          - in: path
-            name: accountId
-            required: true
-            description: Account that is parent for given external account.
-            schema:
-              type: string
-          - in: path
-            name: externalAccountId
-            required: true
-            description: Identifier of external account that should be deleted.
-            schema:
-              type: string
+          - $ref: '#/x-path-params/SubAccountIdPathParam'
+          - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
         '200':
           description: External account deleted.

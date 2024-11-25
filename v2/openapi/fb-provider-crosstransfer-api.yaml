@@ -47,7 +47,7 @@ x-responses:
   ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
 
 paths:
-  /crosstransfers:
+  /accounts/{accountId}/crosstransfers:
     get:
       operationId: listCrossTransfers
       summary: >-
@@ -62,8 +62,14 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
-        - name: orderId
-          in: query
+        - in: path
+          name: accountId
+          required: true
+          description: Sub-account identifier.
+          schema:
+            type: string
+        - in: query
+          name: orderId
           description: Filter by order ID.
           schema:
             type: string
@@ -84,9 +90,47 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
-  /crosstransfers/onramp/standingorders:
+  /accounts/{accountId}/crosstransfers/standingorders:
+    get:
+      operationId: listCrosstransferStandingOrders
+      summary: >-
+        Lists all crosstransfer standing orders.
+      tags: [ crosstransfers ]
+      parameters:
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/x-query-params/ListOrderQueryParam'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - in: path
+          name: accountId
+          required: true
+          description: Sub-account identifier.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of crosstransfer standing orders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCrosstransferStandingOrdersResult'
+                
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/crosstransfers/standingorders/onramp:
     post:
-      operationId: createCrossTransferOnRampRouting
+      operationId: createOnRampStandingOrder
       summary: >-
         Creates deposit-only fiat account as a source, configures trigger and stores 
         payment instruction details about destination crypto account. As a result, the user will be
@@ -98,6 +142,12 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - in: path
+          name: accountId
+          required: true
+          description: Sub-account identifier.
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -120,9 +170,82 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
-  /crosstransfers/offramp/standingorders:
+  /accounts/{accountId}/crosstransfers/standingorders/onramp/{id}:
+    get:
+      operationId: getOnRampStandingOrder
+      summary: >-
+        Deletes the standing order.
+      tags: [ crosstransfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - in: path
+          name: id
+          required: true
+          description: Standing order identifier.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Standing order details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnRampStandingOrder'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    put:
+      operationId: updateOnRampStandingOrder
+      summary: >-
+        Updates the standing order destination.
+      tags: [ crosstransfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - in: path
+          name: id
+          required: true
+          description: Standing order identifier.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOnRampStandingOrderRequest'
+      responses:
+        '200':
+          description: Standing order updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OnRampStandingOrder'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+
+  /accounts/{accountId}/crosstransfers/standingorders/offramp:
     post:
-      operationId: createCrossTransferOffRampRouting
+      operationId: createOffRampStandingOrder
       summary: >-
         Creates deposit-only crypto account as a source, configures trigger and stores 
         payment instruction details about destination fiat account. As a result, the user will be
@@ -133,6 +256,12 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - in: path
+          name: accountId
+          required: true
+          description: Sub-account identifier.
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -155,9 +284,81 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
-  /crosstransfers/bridging/standingorders:
+  /accounts/{accountId}/crosstransfers/standingorders/offramp/{id}:
+    get:
+      operationId: getOffRampStandingOrder
+      summary: >-
+        Deletes the standing order.
+      tags: [ crosstransfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - in: path
+          name: id
+          required: true
+          description: Standing order identifier.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Standing order details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OffRampStandingOrder'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    put:
+      operationId: updateOffRampStandingOrder
+      summary: >-
+        Updates the standing order destination.
+      tags: [ crosstransfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - in: path
+          name: id
+          required: true
+          description: Standing order identifier.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOffRampStandingOrderRequest'
+      responses:
+        '200':
+          description: Standing order updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OffRampStandingOrder'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/crosstransfers/standingorders/bridging:
     post:
-      operationId: createCrossTransferBridgingRouting
+      operationId: createBridgingStandingOrder
       summary: >-
         Creates deposit-only crypto account as a source, configures trigger and stores 
         payment instruction details about destination crypto address. As a result, the user will be
@@ -169,6 +370,12 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - in: path
+          name: accountId
+          required: true
+          description: Sub-account identifier.
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -182,6 +389,78 @@ paths:
             application/json:
               schema:
                 $ref: '#/x-schemas/AccountId'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+
+  /accounts/{accountId}/crosstransfers/standingorders/bridging/{id}:
+    get:
+      operationId: getBridgingStandingOrder
+      summary: >-
+        Deletes the standing order.
+      tags: [ crosstransfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - in: path
+          name: id
+          required: true
+          description: Standing order identifier.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Standing order details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BridgingStandingOrder'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+    put:
+      operationId: updateBridgingStandingOrder
+      summary: >-
+        Updates the standing order destination.
+      tags: [ crosstransfers ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - in: path
+          name: id
+          required: true
+          description: Standing order identifier.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBridgingStandingOrderRequest'
+      responses:
+        '200':
+          description: Standing order updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BridgingStandingOrder'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -322,6 +601,100 @@ components:
         destination:
           $ref: '#/x-schemas/PublicBlockchainAddress'
 
+    ListCrosstransferStandingOrdersResult:
+      type: object
+      properties:
+        standingOrders:
+          type: array
+          items: 
+            $ref: '#/components/schemas/CrosstransferStandingOrder'
+
+    CrosstransferStandingOrder:
+      oneOf:
+      - $ref: '#/components/schemas/OnRampStandingOrder'
+      - $ref: '#/components/schemas/OffRampStandingOrder'
+      - $ref: '#/components/schemas/BridgingStandingOrder'
+      
+    OnRampStandingOrder:
+      type: object
+      required: [ orderType, source, destination ]
+      properties:
+        id:
+          type: string
+          example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
+        orderType:
+          type: string
+          enum: [ OnRamp ]
+        source:
+          allOf:
+            -  $ref: '#/components/schemas/FiatPaymentAccountParams'
+            - type: object
+              required: [ accountId ]
+              properties:
+                accountId:
+                  $ref: '#/x-schemas/AccountId'
+        destination:
+          $ref: '#/x-schemas/PublicBlockchainAddress'
+
+    UpdateOnRampStandingOrderRequest:
+      type: object
+      description: Update standing order destination.
+      required: [ destination ]
+      properties:
+        destination:
+          $ref: '#/x-schemas/PublicBlockchainAddress'
+
+
+    OffRampStandingOrder:
+      type: object
+      required: [ orderType, source, destination ]
+      properties:
+        id:
+          type: string
+          example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
+        orderType:
+          type: string
+          enum: [ OffRamp ]
+        source:
+          allOf:
+            -  $ref: '#/components/schemas/CryptoPaymentAccountParams'
+            - type: object
+              required: [ accountId ]
+              properties:
+                accountId:
+                  $ref: '#/x-schemas/AccountId'
+        destination:
+          $ref: '#/components/schemas/OffRampDestination'
+
+    UpdateOffRampStandingOrderRequest:
+      type: object
+      description: Update standing order destination.
+      required: [ destination ]
+      properties:
+        destination:
+          $ref: '#/components/schemas/OffRampDestination'
+
+    BridgingStandingOrder:
+      type: object
+      required: [ orderType, source, destination ]
+      properties:
+        id:
+          type: string
+          example: '76a33ed9-8aa2-4781-93f8-d2369c0c2b14'
+        orderType:
+          type: string
+          enum: [ Bridging ]
+        source:
+          allOf:
+            -  $ref: '#/components/schemas/CryptoPaymentAccountParams'
+            - type: object
+              required: [ accountId ]
+              properties:
+                accountId:
+                  $ref: '#/x-schemas/AccountId'
+        destination:
+          $ref: '#/x-schemas/PublicBlockchainAddress'
+
     CreateOnRampRoutingRequest:
       type: object
       required: [ idempotencyKey, source, destination ]
@@ -340,6 +713,9 @@ components:
 
     OffRampDestination:
       type: object
+      description:  |- 
+        Destination account for off-ramp standing order.
+        Set either externalAccountId or accountId. The reference is optional.
       properties:
         externalAccountId:
           $ref: '#/x-schemas/AccountId'
@@ -364,3 +740,11 @@ components:
           $ref: '#/components/schemas/CryptoPaymentAccountParams'
         destination:
           $ref: '#/components/schemas/OffRampDestination'
+
+    UpdateBridgingStandingOrderRequest:
+      type: object
+      description: Update standing order destination.
+      required: [ destination ]
+      properties:
+        destination:
+          $ref: '#/x-schemas/PublicBlockchainAddress'
