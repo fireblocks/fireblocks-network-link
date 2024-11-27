@@ -1912,7 +1912,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/crosstransfers/standingorders:
     get:
-      operationId: listCrosstransferStandingOrders
+      operationId: getCrosstransferStandingOrders
       summary: Lists all crosstransfer standing orders.
       tags:
         - crosstransfers
@@ -1937,7 +1937,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ListCrosstransferStandingOrdersResult'
+                type: object
+                properties:
+                  standingOrders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CrosstransferStandingOrder'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -4241,13 +4246,6 @@ components:
           $ref: '#/components/schemas/CryptoPaymentAccountParams'
         destination:
           $ref: '#/components/schemas/PublicBlockchainAddress'
-    ListCrosstransferStandingOrdersResult:
-      type: object
-      properties:
-        standingOrders:
-          type: array
-          items:
-            $ref: '#/components/schemas/CrosstransferStandingOrder'
     CrosstransferStandingOrder:
       oneOf:
         - $ref: '#/components/schemas/OnRampStandingOrder'
