@@ -9,14 +9,12 @@ import { ControllersContainer } from '../../controllers/controllers-container';
 import { getPaginationResult } from '../../controllers/pagination-controller';
 import { AccountIdPathParam, PaginationQuerystring } from '../request-types';
 
-
 const controllers = new ControllersContainer(() => new CollateralController());
-
 
 type CollateralLinkListResponse = { collateralLinks: CollateralAccountLink[] };
 
 export async function createCollateralAccountLink(
-  request: FastifyRequest<{Body: CollateralAccount} & AccountIdPathParam>,
+  request: FastifyRequest<{ Body: CollateralAccount } & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<CollateralAccount> {
   try {

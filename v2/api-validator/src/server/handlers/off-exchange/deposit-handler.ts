@@ -4,11 +4,19 @@ import {
   CollateralAccountNotExist,
   CollateralController,
 } from '../../controllers/off-exchange/collateral-controller';
-import { CollateralDepositAddresses, CollateralAddress } from '../../../client/generated';
+import {
+  CollateralDepositAddresses,
+  CollateralAddress,
+  CollateralDepositAddressesForAsset,
+} from '../../../client/generated';
 import { ControllersContainer } from '../../controllers/controllers-container';
 import { getPaginationResult } from '../../controllers/pagination-controller';
-import { AccountIdPathParam, PaginationQuerystring, CollateralIdPathParam, fireblocksAssetIdPathParam } from '../request-types';
-
+import {
+  AccountIdPathParam,
+  PaginationQuerystring,
+  CollateralIdPathParam,
+  fireblocksAssetIdPathParam,
+} from '../request-types';
 
 const controllers = new ControllersContainer(() => new CollateralController());
 
@@ -36,19 +44,16 @@ export async function getCollateralDepositAddresses(
   const addressList = controller.getCollateralDepositAddresses();
 
   return {
-    addresses: getPaginationResult(
-      limit,
-      startingAfter,
-      endingBefore,
-      addressList,
-      'id'
-    ),
+    addresses: getPaginationResult(limit, startingAfter, endingBefore, addressList, 'id'),
   };
 }
 
-
 export async function createCollateralDepositAddressForAsset(
-  request: FastifyRequest<AccountIdPathParam & CollateralIdPathParam & fireblocksAssetIdPathParam & {Body: CollateralAddress} >,
+  request: FastifyRequest<
+    AccountIdPathParam &
+      CollateralIdPathParam &
+      fireblocksAssetIdPathParam & { Body: CollateralAddress }
+  >,
   reply: FastifyReply
 ): Promise<CollateralDepositAddresses> {
   try {
@@ -81,14 +86,43 @@ export async function createCollateralDepositAddressForAsset(
       address,
       recoveryAccountId,
       accountId,
-      collateralId,
-      fireblocksAssetId
+      collateralId
     );
-    return {addresses: [newCollateralDepositAddress]};
-    } catch (err) {
-      if (err instanceof CollateralAccountNotExist) {
-        return ErrorFactory.notFound(reply);
-      }
-      throw err;
+    return { addresses: [newCollateralDepositAddress] };
+  } catch (err) {
+    if (err instanceof CollateralAccountNotExist) {
+      return ErrorFactory.notFound(reply);
     }
+    throw err;
+  }
+}
+
+export async function getCollateralDepositAddressesForAsset(
+  request: FastifyRequest<
+    PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam & fireblocksAssetIdPathParam
+  >,
+  reply: FastifyReply
+): Promise<CollateralDepositAddressesForAsset> {
+  const { limit, startingAfter, endingBefore } = request.query;
+  const { accountId, collateralId, fireblocksAssetId } = request.params;
+
+  const controller = controllers.getController(accountId);
+
+  if (!controller) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  if (!collateralId) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  if (limit === undefined || isNaN(limit)) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  const addressList = controller.getCollateralDepositAddressesForAsset(fireblocksAssetId);
+
+  return {
+    addresses: getPaginationResult(limit, startingAfter, endingBefore, addressList, 'id'),
+  };
 }

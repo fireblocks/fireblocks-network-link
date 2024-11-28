@@ -247,12 +247,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  addresses:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CollateralAddress'
+                $ref: '#/components/schemas/CollateralDepositAddressesForAsset'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -738,6 +733,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CollateralAssetAddress'
+    CollateralDepositAddressesForAsset:
+      type: object
+      required:
+        - addresses
+      properties:
+        addresses:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollateralAddress'
 
     CollateralDepositTransactionStatus:
       type: string

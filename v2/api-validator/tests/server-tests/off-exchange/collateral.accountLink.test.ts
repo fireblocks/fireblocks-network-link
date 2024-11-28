@@ -21,14 +21,12 @@ describe.skipIf(noCollateralapability)('collateral', () => {
   let client: Client;
   let accountId: string;
   let collateralId: string;
-  let fireblocksAssetId: string;
   let collateralSinersList: string[];
   let requestBody: CollateralAccount;
 
   beforeAll(async () => {
     client = new Client();
     accountId = getCapableAccountId('collateral');
-    fireblocksAssetId = randomUUID();
     collateralId = `${randomUUID()}.${accountId}.${randomUUID()}`;
     collateralSinersList = [randomUUID(), randomUUID(), randomUUID()];
     requestBody = {

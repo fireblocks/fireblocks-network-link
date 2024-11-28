@@ -39,6 +39,7 @@ export type { CollateralAsset } from './models/CollateralAsset';
 export type { CollateralAssetAddress } from './models/CollateralAssetAddress';
 export type { CollateralAssetMapping } from './models/CollateralAssetMapping';
 export type { CollateralDepositAddresses } from './models/CollateralDepositAddresses';
+export type { CollateralDepositAddressesForAsset } from './models/CollateralDepositAddressesForAsset';
 export type { CollateralDepositTransaction } from './models/CollateralDepositTransaction';
 export { CollateralDepositTransactionStatus } from './models/CollateralDepositTransactionStatus';
 export type { CollateralId } from './models/CollateralId';

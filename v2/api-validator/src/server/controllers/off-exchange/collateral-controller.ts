@@ -9,16 +9,18 @@ import {
   CryptocurrencySymbol,
   NativeCryptocurrency,
   CollateralAssetAddress,
-  PublicBlockchainCapability,
+  CollateralAddress,
   PublicBlockchainAddress,
 } from '../../../client/generated';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../../error';
 import { fakeSchemaObject } from '../../../schemas';
 
-
-type CollateralIdentifier = { id: string, collateralAccounts: CollateralAccount[]}
-type CollateralAccountLinkIdentifier = { id: string, collateralAccountLinks: CollateralAccountLink[]}
+type CollateralIdentifier = { id: string; collateralAccounts: CollateralAccount[] };
+type CollateralAccountLinkIdentifier = {
+  id: string;
+  collateralAccountLinks: CollateralAccountLink[];
+};
 
 export class CollateralAccountNotExist extends XComError {
   constructor() {
@@ -33,11 +35,14 @@ function isUUIDv4(uuid: string): boolean {
 
 export class CollateralController {
   private readonly collateralRepository = new Repository<CollateralIdentifier>();
-  private readonly collateralAccountLinksRepository = new Repository<CollateralAccountLinkIdentifier>();
+  private readonly collateralAccountLinksRepository =
+    new Repository<CollateralAccountLinkIdentifier>();
   private readonly collateralDepositAddressesRepository = new Repository<CollateralAssetAddress>();
   constructor() {
     for (let i = 0; i < 20; i++) {
-      const CollateralDepositAddress = fakeSchemaObject('CollateralAssetAddress') as CollateralAssetAddress;
+      const CollateralDepositAddress = fakeSchemaObject(
+        'CollateralAssetAddress'
+      ) as CollateralAssetAddress;
       CollateralDepositAddress.address.asset = CollateralDepositAddress.asset;
       this.collateralDepositAddressesRepository.create(CollateralDepositAddress);
     }
@@ -98,9 +103,8 @@ export class CollateralController {
   }
 
   public getCollateralAccountLinks(accountId: string): CollateralAccountLink[] {
-  
-    const collateralLinks = this.collateralAccountLinksRepository.find(accountId)
-  
+    const collateralLinks = this.collateralAccountLinksRepository.find(accountId);
+
     return collateralLinks?.collateralAccountLinks || [];
   }
 
@@ -123,7 +127,7 @@ export class CollateralController {
       env: Environment.PROD,
     };
 
-    this.collateralRepository.create({id: accountId, collateralAccounts: [newCollateralAccount]});
+    this.collateralRepository.create({ id: accountId, collateralAccounts: [newCollateralAccount] });
     return newCollateralAccount[0];
   }
 
@@ -132,17 +136,16 @@ export class CollateralController {
 
     if (!CollateralDepositAddress) {
       throw new CollateralAccountNotExist();
-    };
+    }
 
-    return  CollateralDepositAddress;
+    return CollateralDepositAddress;
   }
 
   public createCollateralDepositAddressForAsset(
     address: PublicBlockchainAddress,
     recoveryAccountId: string,
     fireblocksAssetId: string,
-    accountId: string,
-    collateralId: string
+    accountId: string
   ): CollateralAssetAddress {
     const asset: NativeCryptocurrency = this.createCollateralAsset(Environment.PROD);
     const newCollateralDepositAddress: CollateralAssetAddress = {
@@ -156,9 +159,21 @@ export class CollateralController {
     return newCollateralDepositAddress;
   }
 
+  public getCollateralDepositAddressesForAsset(fireblocksAssetId: string): CollateralAddress[] {
+    const CollateralDepositAddress = this.collateralDepositAddressesRepository.list();
+
+    const CollateralDepositAddressForAsset = CollateralDepositAddress.filter(
+      (address) => address.fireblocksAssetId === fireblocksAssetId
+    );
+
+    if (!CollateralDepositAddressForAsset) {
+      throw new CollateralAccountNotExist();
+    }
+
+    return CollateralDepositAddressForAsset;
+  }
+
   public getAllCollateralAccounts(): CollateralAccount[] {
     return this.collateralRepository.list().map((account) => account.collateralAccounts[0]);
   }
-  
-
 }
