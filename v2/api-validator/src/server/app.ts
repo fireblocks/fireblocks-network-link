@@ -31,6 +31,7 @@ export class WebApp {
     ajvRegisterJsonSchemaStandardStringFormats(this.ajv);
 
     this.app = Fastify({
+      maxParamLength: 111,
       logger: loggerForFastify,
       ajv: { customOptions: { strictSchema: false } },
     });

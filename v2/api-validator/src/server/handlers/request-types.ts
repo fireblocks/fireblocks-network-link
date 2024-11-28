@@ -10,6 +10,18 @@ export type AccountIdPathParam = {
   };
 };
 
+export type CollateralIdPathParam = {
+  Params: {
+    collateralId: string;
+  };
+};
+
+export type fireblocksAssetIdPathParam = {
+  Params: {
+    fireblocksAssetId: string;
+  };
+};
+
 export type PaginationQuerystring = {
   Querystring: {
     limit: number;

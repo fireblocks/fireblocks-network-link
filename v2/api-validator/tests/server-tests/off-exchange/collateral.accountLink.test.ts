@@ -1,6 +1,6 @@
-import Client from '../../src/client';
-import { getCapableAccountId, hasCapability } from '../utils/capable-accounts';
-import { Pageable, paginated } from '../utils/pagination';
+import Client from '../../../src/client';
+import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
+import { Pageable, paginated } from '../../utils/pagination';
 import {
   ApiError,
   BadRequestError,
@@ -12,9 +12,7 @@ import {
   CollateralAccount,
   CollateralAccountLink,
   GeneralError,
-  CollateralAssetAddress,
-  PublicBlockchainCapability
-} from '../../src/client/generated';
+} from '../../../src/client/generated';
 import { randomUUID } from 'crypto';
 
 const noCollateralapability = !hasCapability('collateral');
@@ -23,15 +21,18 @@ describe.skipIf(noCollateralapability)('collateral', () => {
   let client: Client;
   let accountId: string;
   let collateralId: string;
+  let fireblocksAssetId: string;
   let collateralSinersList: string[];
   let requestBody: CollateralAccount;
 
   beforeAll(async () => {
     client = new Client();
     accountId = getCapableAccountId('collateral');
+    fireblocksAssetId = randomUUID();
     collateralId = `${randomUUID()}.${accountId}.${randomUUID()}`;
     collateralSinersList = [randomUUID(), randomUUID(), randomUUID()];
     requestBody = {
+      id: randomUUID(),
       collateralId: collateralId,
       collateralSigners: collateralSinersList,
       env: Environment.PROD,
@@ -60,6 +61,7 @@ describe.skipIf(noCollateralapability)('collateral', () => {
         accountId,
         requestBody,
       });
+      expect(typeof createCollateralLink.id).toBe('string');
       expect(Object.values(CollateralLinkStatus)).toContain(createCollateralLink.status);
       if (
         createCollateralLink.status === CollateralLinkStatus.DISABLED ||
@@ -143,6 +145,7 @@ describe.skipIf(noCollateralapability)('collateral', () => {
       };
 
       for await (const collateralAccountLinks of paginated(getCollateralAccountLinks)) {
+        expect(typeof collateralAccountLinks.id).toBe('string');
         expect(Object.values(CollateralLinkStatus)).toContain(collateralAccountLinks.status);
         if (
           collateralAccountLinks.status === CollateralLinkStatus.DISABLED ||
@@ -176,96 +179,6 @@ describe.skipIf(noCollateralapability)('collateral', () => {
 
     it('request should fail schema property', async () => {
       const error = await GetCollateralAccountLinksFailureResult(400);
-
-      expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
-      expect(error.body.requestPart).toBe(RequestPart.QUERYSTRING);
-    });
-  });
-  
-  describe('get collateral deposit addresses', () => {
-    const GetCollateralDepositAddressesFailureResult = async (
-      failType: number,
-      limit?,
-      startingAfter?
-    ): Promise<ApiError> => {
-      let accId = accountId;
-      let lim = limit;
-      lim = 10;
-      if (failType == 404) {
-        accId = '1';
-      } else {
-        lim = 'aa';
-      }
-      try {
-        await client.collateral.getCollateralDepositAddresses({
-          accountId: accId,
-          collateralId,
-          limit: lim,
-          startingAfter: startingAfter,
-        });
-      } catch (err) {
-        if (err instanceof ApiError) {
-          return err;
-        }
-        throw err;
-      }
-      throw new Error('Expected to throw');
-    };
-
-    it('collateral deposit address should return with a valid schema', async () => {
-      const getCollateralDepositAddresses: Pageable<CollateralAssetAddress> = async (
-        limit,
-        startingAfter?
-      ) => {
-        limit = 10;
-        const response = await client.collateral.getCollateralDepositAddresses({
-          accountId,
-          collateralId,
-          limit,
-          startingAfter,
-        });
-        return response.addresses;
-      };
-      for await (const collateralAccountAddress of paginated(getCollateralDepositAddresses)) {
-        const addressObj = collateralAccountAddress.address;
-        const assetObj = collateralAccountAddress.asset
-
-        expect(typeof collateralAccountAddress.fireblocksAssetId).toBe('string');
-        expect(typeof collateralAccountAddress.recoveryAccountId).toBe('string');
-        expect(typeof addressObj.transferMethod).toBe('string');
-        expect(Object.values(PublicBlockchainCapability.transferMethod)).toContain(
-          addressObj.transferMethod
-        );
-        if (!!addressObj.addressTag)
-          expect(typeof addressObj.addressTag).toBe('string');
-        expect(Object.values(Blockchain)).toContain(
-          addressObj.asset['blockchain']
-        );
-        expect(Object.values(CryptocurrencySymbol)).toContain(
-          addressObj.asset['cryptocurrencySymbol']
-        );
-        expect(typeof addressObj.asset['testAsset']).toBe('boolean');
-        expect(Object.values(Blockchain)).toContain(
-          assetObj['blockchain']
-        );
-        expect(Object.values(CryptocurrencySymbol)).toContain(
-          assetObj['cryptocurrencySymbol']
-        );
-        expect(typeof assetObj['testAsset']).toBe('boolean');
-      }
-    });
-
-    it('request should fail with Not Found', async () => {
-      const error = await GetCollateralDepositAddressesFailureResult(404);
-
-      expect(error.status).toBe(404);
-      expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
-      expect(error.body.requestPart).toBe(undefined);
-    });
-
-    it('request should fail schema property', async () => {
-      const error = await GetCollateralDepositAddressesFailureResult(400);
 
       expect(error.status).toBe(400);
       expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);

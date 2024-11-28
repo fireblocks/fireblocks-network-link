@@ -6,4 +6,4 @@ export * from './liquidity-handlers';
 export * from './deposit-handlers';
 export * from './withdrawal-handlers';
 export * from './balances-handlers';
-export * from './collateral-handlers';
+export * from './off-exchange';
