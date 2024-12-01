@@ -11,6 +11,8 @@ import {
   CollateralAssetAddress,
   CollateralAddress,
   PublicBlockchainAddress,
+  CollateralDepositTransactionStatus,
+  CollateralDepositTransaction,
 } from '../../../client/generated';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../../error';
@@ -33,11 +35,17 @@ function isUUIDv4(uuid: string): boolean {
   return uuidv4Regex.test(uuid);
 }
 
+function isPositiveAmount(amount: string): boolean {
+  const uuidv4Regex = /^\d+(\.\d+)?/i;
+  return uuidv4Regex.test(amount);
+}
+
 export class CollateralController {
   private readonly collateralRepository = new Repository<CollateralIdentifier>();
   private readonly collateralAccountLinksRepository =
     new Repository<CollateralAccountLinkIdentifier>();
   private readonly collateralDepositAddressesRepository = new Repository<CollateralAssetAddress>();
+  private readonly collateralDepositTransactionRepository = new Repository<{id: string} & CollateralDepositTransaction>();
   constructor() {
     for (let i = 0; i < 20; i++) {
       const CollateralDepositAddress = fakeSchemaObject(
@@ -175,5 +183,44 @@ export class CollateralController {
 
   public getAllCollateralAccounts(): CollateralAccount[] {
     return this.collateralRepository.list().map((account) => account.collateralAccounts[0]);
+  }
+
+  public registerCollateralDepositTransaction(
+    status: CollateralDepositTransactionStatus | undefined,
+    amount: string | undefined,
+    collateralTxId: string,
+    fireblocksAssetId: string,
+    accountId: string,
+    collateralId: string
+  ): CollateralDepositTransaction {
+
+    if (!isUUIDv4(accountId)) {
+      throw new CollateralAccountNotExist();
+    }
+
+    const collateralIdsList = collateralId.split('.');
+    if (collateralIdsList[1] !== accountId) {
+      throw new CollateralAccountNotExist();
+    }
+
+    for (const id of collateralIdsList) {
+      if (!isUUIDv4(id)) {
+        throw new CollateralAccountNotExist();
+      }
+    }
+    if(amount != undefined) {
+      if (!isPositiveAmount(amount)) {
+        throw new CollateralAccountNotExist();
+      }
+    }
+    const newCollateralDepositTransaction: {id: string} & CollateralDepositTransaction = {
+      id: accountId,
+      collateralTxId: collateralTxId,
+      fireblocksAssetId: fireblocksAssetId,
+      amount: amount,
+      status: status
+    };
+    this.collateralDepositTransactionRepository.create(newCollateralDepositTransaction);
+    return newCollateralDepositTransaction;
   }
 }
