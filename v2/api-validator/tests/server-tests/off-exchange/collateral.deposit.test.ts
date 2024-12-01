@@ -193,6 +193,7 @@ describe.skipIf(noCollateralapability)('collateral', () => {
       expect(error.body.requestPart).toBe(RequestPart.BODY);
     });
   });
+
   describe('get collateral deposit transactions', () => {
     const getCollateralDepositTransactionsFailureResult = async (
       failType: number,
@@ -275,6 +276,67 @@ describe.skipIf(noCollateralapability)('collateral', () => {
       expect(error.status).toBe(400);
       expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
       expect(error.body.requestPart).toBe(RequestPart.QUERYSTRING);
+    });
+  });
+
+  describe('get collateral deposit transaction details', () => {
+    const getCollateralDepositTransactionDetailsFailureResult = async (
+      failType: number
+    ): Promise<ApiError> => {
+      let accId = accountId;
+      if (failType == 404) {
+        accId = '1';
+      }
+      try {
+        await client.collateral.getCollateralDepositTransactionDetails({
+          accountId: accId,
+          collateralId,
+          collateralTxId,
+        });
+      } catch (err) {
+        if (err instanceof ApiError) {
+          return err;
+        }
+        throw err;
+      }
+      throw new Error('Expected to throw');
+    };
+
+    it('get collateral deposit transaction details return with a valid schema', async () => {
+      const collateralDepositTransaction =
+        await client.collateral.getCollateralDepositTransactionDetails({
+          accountId,
+          collateralId,
+          collateralTxId,
+        });
+
+      expect(collateralDepositTransaction.collateralTxId).toEqual(collateralTxId);
+
+      const splittedCollateralTxId = collateralDepositTransaction.collateralTxId.split('.');
+
+      expect(typeof collateralDepositTransaction.collateralTxId).toBe('string');
+      expect(splittedCollateralTxId.length).toBe(3);
+      expect(splittedCollateralTxId[0]).toBe('0');
+      expect(splittedCollateralTxId[1]).toBe(accountId);
+      expect(isUUIDv4(splittedCollateralTxId[2])).toBe(true);
+
+      expect(typeof collateralDepositTransaction.fireblocksAssetId).toBe('string');
+      if (collateralDepositTransaction.amount) {
+        expect(typeof collateralDepositTransaction.amount).toBe('string');
+        expect(isPositiveAmount(collateralDepositTransaction.amount)).toBe(true);
+      }
+      if (collateralDepositTransaction.status)
+        expect(Object.values(CollateralDepositTransactionStatus)).toContain(
+          collateralDepositTransaction.status
+        );
+    });
+
+    it('request should fail with Not Found', async () => {
+      const error = await getCollateralDepositTransactionDetailsFailureResult(404);
+
+      expect(error.status).toBe(404);
+      expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
+      expect(error.body.requestPart).toBe(undefined);
     });
   });
 });

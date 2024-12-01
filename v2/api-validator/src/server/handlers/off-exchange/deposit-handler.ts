@@ -15,6 +15,7 @@ import {
   PaginationQuerystring,
   CollateralIdPathParam,
   fireblocksAssetIdPathParam,
+  CollateralTxIdPathParam,
 } from '../request-types';
 
 const controllers = new ControllersContainer(() => new CollateralController());
@@ -94,4 +95,31 @@ export async function getCollateralDepositTransactions(
   return {
     transactions: getPaginationResult(limit, startingAfter, endingBefore, transactionList, 'id'),
   };
+}
+
+export async function getCollateralDepositTransactionDetails(
+  request: FastifyRequest<
+    PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam & CollateralTxIdPathParam
+  >,
+  reply: FastifyReply
+): Promise<CollateralDepositTransaction> {
+  const { accountId, collateralId, collateralTxId } = request.params;
+
+  const controller = controllers.getController(accountId);
+
+  if (!controller) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  if (!collateralId) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  if (collateralTxId === undefined) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  const transaction = controller.getCollateralDepositTransactionDetails(collateralTxId);
+
+  return transaction;
 }

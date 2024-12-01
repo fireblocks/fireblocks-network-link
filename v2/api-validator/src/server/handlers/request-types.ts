@@ -22,6 +22,12 @@ export type fireblocksAssetIdPathParam = {
   };
 };
 
+export type CollateralTxIdPathParam = {
+  Params: {
+    collateralTxId: string;
+  };
+};
+
 export type PaginationQuerystring = {
   Querystring: {
     limit: number;
