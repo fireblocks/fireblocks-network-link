@@ -45,7 +45,9 @@ export class CollateralController {
   private readonly collateralAccountLinksRepository =
     new Repository<CollateralAccountLinkIdentifier>();
   private readonly collateralDepositAddressesRepository = new Repository<CollateralAssetAddress>();
-  private readonly collateralDepositTransactionRepository = new Repository<{id: string} & CollateralDepositTransaction>();
+  private readonly collateralDepositTransactionRepository = new Repository<
+    { id: string } & CollateralDepositTransaction
+  >();
   constructor() {
     for (let i = 0; i < 20; i++) {
       const CollateralDepositAddress = fakeSchemaObject(
@@ -193,7 +195,6 @@ export class CollateralController {
     accountId: string,
     collateralId: string
   ): CollateralDepositTransaction {
-
     if (!isUUIDv4(accountId)) {
       throw new CollateralAccountNotExist();
     }
@@ -208,19 +209,29 @@ export class CollateralController {
         throw new CollateralAccountNotExist();
       }
     }
-    if(amount != undefined) {
+    if (amount != undefined) {
       if (!isPositiveAmount(amount)) {
         throw new CollateralAccountNotExist();
       }
     }
-    const newCollateralDepositTransaction: {id: string} & CollateralDepositTransaction = {
+    const newCollateralDepositTransaction: CollateralDepositTransaction = {
       id: accountId,
       collateralTxId: collateralTxId,
       fireblocksAssetId: fireblocksAssetId,
       amount: amount,
-      status: status
+      status: status,
     };
     this.collateralDepositTransactionRepository.create(newCollateralDepositTransaction);
     return newCollateralDepositTransaction;
+  }
+
+  public getCollateralDepositTransactions(): CollateralDepositTransaction[] {
+    const CollateralDepositAddress = this.collateralDepositTransactionRepository.list();
+
+    if (!CollateralDepositAddress) {
+      throw new CollateralAccountNotExist();
+    }
+
+    return CollateralDepositAddress;
   }
 }

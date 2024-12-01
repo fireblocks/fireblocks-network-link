@@ -8,6 +8,7 @@ import type { CollateralAddress } from '../models/CollateralAddress';
 import type { CollateralDepositAddresses } from '../models/CollateralDepositAddresses';
 import type { CollateralDepositAddressesForAsset } from '../models/CollateralDepositAddressesForAsset';
 import type { CollateralDepositTransaction } from '../models/CollateralDepositTransaction';
+import type { CollateralDepositTransactions } from '../models/CollateralDepositTransactions';
 import type { CollateralWithdrawalTransaction } from '../models/CollateralWithdrawalTransaction';
 import type { CollateralWithdrawalTransactionRequest } from '../models/CollateralWithdrawalTransactionRequest';
 import type { SettlementInstructions } from '../models/SettlementInstructions';
@@ -508,7 +509,7 @@ export class CollateralService {
 
     /**
      * Get list of collateral account deposit transactions sorted by creation time
-     * @returns any List of collateral deposit transactions
+     * @returns CollateralDepositTransactions List of collateral deposit transactions
      * @throws ApiError
      */
     public getCollateralDepositTransactions({
@@ -564,9 +565,7 @@ export class CollateralService {
          * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
-    }): CancelablePromise<{
-        transactions?: Array<CollateralDepositTransaction>;
-    }> {
+    }): CancelablePromise<CollateralDepositTransactions> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/deposits',

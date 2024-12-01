@@ -324,12 +324,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  transactions:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CollateralDepositTransaction'
+                $ref: '#/components/schemas/CollateralDepositTransactions'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -757,7 +752,7 @@ components:
         - **Rejected** - The transaction has been rejected and the account has not been credited
     CollateralDepositTransaction:
       type: object
-      required: [ fireblocksAssetId, collateralTxId ]
+      required: [ id, fireblocksAssetId, collateralTxId ]
       properties:
         collateralTxId:
           type: string
@@ -768,10 +763,22 @@ components:
         fireblocksAssetId:
           type: string
           description: "ID of the Fireblocks asset"
+        id:
+          type: string
         amount:
           $ref: '#/x-schemas/PositiveAmount'
         status:
           $ref: '#/components/schemas/CollateralDepositTransactionStatus'
+
+    CollateralDepositTransactions:
+      type: object
+      required:
+        - transactions
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollateralDepositTransaction'
 
     CollateralWithdrawalTransactionStatus:
       type: string

@@ -1972,12 +1972,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  transactions:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CollateralDepositTransaction'
+                $ref: '#/components/schemas/CollateralDepositTransactions'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -4081,6 +4076,7 @@ components:
     CollateralDepositTransaction:
       type: object
       required:
+        - id
         - fireblocksAssetId
         - collateralTxId
       properties:
@@ -4092,10 +4088,21 @@ components:
         fireblocksAssetId:
           type: string
           description: ID of the Fireblocks asset
+        id:
+          type: string
         amount:
           $ref: '#/components/schemas/PositiveAmount'
         status:
           $ref: '#/components/schemas/CollateralDepositTransactionStatus'
+    CollateralDepositTransactions:
+      type: object
+      required:
+        - transactions
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollateralDepositTransaction'
     CollateralWithdrawalTransactionStatus:
       type: string
       enum:
