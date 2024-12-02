@@ -50,6 +50,7 @@ export type { CollateralSignerId } from './models/CollateralSignerId';
 export type { CollateralTxIdPathParam } from './models/CollateralTxIdPathParam';
 export type { CollateralWithdrawalTransaction } from './models/CollateralWithdrawalTransaction';
 export type { CollateralWithdrawalTransactionRequest } from './models/CollateralWithdrawalTransactionRequest';
+export type { CollateralWithdrawalTransactions } from './models/CollateralWithdrawalTransactions';
 export { CollateralWithdrawalTransactionStatus } from './models/CollateralWithdrawalTransactionStatus';
 export type { CryptocurrencyReference } from './models/CryptocurrencyReference';
 export { CryptocurrencySymbol } from './models/CryptocurrencySymbol';

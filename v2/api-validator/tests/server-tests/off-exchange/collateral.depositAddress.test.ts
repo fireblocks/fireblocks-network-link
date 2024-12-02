@@ -90,17 +90,21 @@ describe.skipIf(noCollateralapability)('collateral', () => {
         );
         expect(typeof addressObj.address).toBe('string');
         expect(typeof addressObj.addressTag).toBe('string');
-        if (assetObj['assetId'] === 'undefined') {
+        if (assetObj['assetId'] === undefined) {
           expect(Object.values(Blockchain)).toContain(assetObj['blockchain']);
           expect(Object.values(CryptocurrencySymbol)).toContain(assetObj['cryptocurrencySymbol']);
           expect(typeof assetObj['testAsset']).toBe('boolean');
+        } else {
+          expect(typeof assetObj['assetId']).toBe('string');
         }
-        if (addressObj.asset['assetId'] === 'undefined') {
+        if (addressObj.asset['assetId'] === undefined) {
           expect(Object.values(Blockchain)).toContain(addressObj.asset['blockchain']);
           expect(Object.values(CryptocurrencySymbol)).toContain(
             addressObj.asset['cryptocurrencySymbol']
           );
           expect(typeof addressObj.asset['testAsset']).toBe('boolean');
+        } else {
+          expect(typeof addressObj.asset['assetId']).toBe('string');
         }
         if (addressObj.asset['assetId'] === assetObj['assetId']) {
           expect(assetObj).toEqual(addressObj.asset);

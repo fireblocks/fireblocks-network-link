@@ -2082,12 +2082,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  transactions:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CollateralWithdrawalTransaction'
+                $ref: '#/components/schemas/CollateralWithdrawalTransactions'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -4116,9 +4111,12 @@ components:
     CollateralWithdrawalTransaction:
       type: object
       required:
+        - id
         - collateralTxId
         - status
       properties:
+        id:
+          type: string
         collateralTxId:
           type: string
           description: |
@@ -4145,6 +4143,15 @@ components:
           $ref: '#/components/schemas/PositiveAmount'
         destinationAddress:
           $ref: '#/components/schemas/PublicBlockchainAddress'
+    CollateralWithdrawalTransactions:
+      type: object
+      required:
+        - transactions
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollateralWithdrawalTransaction'
     SettlementTransactionStatus:
       type: string
       enum:

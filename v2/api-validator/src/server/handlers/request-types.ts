@@ -28,6 +28,12 @@ export type CollateralTxIdPathParam = {
   };
 };
 
+export type SettlementVersionPathParam = {
+  Params: {
+    settlementVersion: string;
+  };
+};
+
 export type PaginationQuerystring = {
   Querystring: {
     limit: number;

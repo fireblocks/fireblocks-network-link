@@ -434,12 +434,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  transactions:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CollateralWithdrawalTransaction'
+                $ref: '#/components/schemas/CollateralWithdrawalTransactions'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -794,8 +789,10 @@ components:
         - **Rejected** - The withdrawal transaction has been rejected
     CollateralWithdrawalTransaction:
       type: object
-      required: [ collateralTxId, status ]
+      required: [ id, collateralTxId, status ]
       properties:
+        id:
+          type: string
         collateralTxId:
           type: string
           description: >
@@ -820,6 +817,15 @@ components:
           $ref: '#/x-schemas/PositiveAmount'
         destinationAddress:
           $ref: '#/x-schemas/PublicBlockchainAddress'
+    CollateralWithdrawalTransactions:
+      type: object
+      required:
+        - transactions
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollateralWithdrawalTransaction'
 
     SettlementTransactionStatus:
       type: string
