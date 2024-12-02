@@ -18,6 +18,7 @@ import {
   SettlementInstructions,
   PublicBlockchainCapability,
   SettlementState,
+  BadRequestError
 } from '../../../client/generated';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../../error';
@@ -54,7 +55,6 @@ function isPositiveAmount(amount: string): boolean {
 }
 
 export class CollateralController {
-  private readonly collateralRepository = new Repository<CollateralIdentifier>();
   private readonly collateralAccountLinksRepository =
     new Repository<CollateralAccountLinkIdentifier>();
   private readonly collateralDepositAddressesRepository = new Repository<CollateralAssetAddress>();
@@ -139,29 +139,6 @@ export class CollateralController {
     return collateralLinks?.collateralAccountLinks || [];
   }
 
-  public registerCollateralAccount(accountId: string, collateralId: string): CollateralAccount {
-    const collateralIdsList = collateralId.split('.');
-    if (collateralIdsList.length !== 3 || collateralIdsList[1] !== accountId) {
-      throw new CollateralAccountNotExist();
-    }
-
-    collateralIdsList.forEach((id) => {
-      if (!isUUIDv4(id)) {
-        throw new CollateralAccountNotExist();
-      }
-    });
-
-    const newCollateralAccount: CollateralAccount = {
-      id: randomUUID(),
-      collateralId: collateralId,
-      collateralSigners: [randomUUID(), randomUUID()],
-      env: Environment.PROD,
-    };
-
-    this.collateralRepository.create({ id: accountId, collateralAccounts: [newCollateralAccount] });
-    return newCollateralAccount[0];
-  }
-
   public getCollateralDepositAddresses(): CollateralAssetAddress[] {
     const CollateralDepositAddress = this.collateralDepositAddressesRepository.list();
 
@@ -202,10 +179,6 @@ export class CollateralController {
     }
 
     return CollateralDepositAddressForAsset;
-  }
-
-  public getAllCollateralAccounts(): CollateralAccount[] {
-    return this.collateralRepository.list().map((account) => account.collateralAccounts[0]);
   }
 
   public registerCollateralDepositTransaction(
