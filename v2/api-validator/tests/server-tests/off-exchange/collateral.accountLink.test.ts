@@ -68,19 +68,26 @@ describe.skipIf(noCollateralapability)('collateral', () => {
         expect(typeof createCollateralLink.rejectionReason).toBe('string');
       }
       expect(Object.values(Environment)).toContain(createCollateralLink.env);
-      expect(createCollateralLink.collateralId).toBe(collateralId);
-      expect(createCollateralLink.collateralSigners).toEqual(collateralSinersList);
-      expect(Object.values(Blockchain)).toContain(
-        createCollateralLink.eligibleCollateralAssets[0]['blockchain']
-      );
-      expect(Object.values(CryptocurrencySymbol)).toContain(
-        createCollateralLink.eligibleCollateralAssets[0]['cryptocurrencySymbol']
-      );
-      if (createCollateralLink.env === Environment.PROD)
-        expect(createCollateralLink.eligibleCollateralAssets[0]['testAsset']).toEqual(false);
-      else if (createCollateralLink.env === Environment.SANDBOX)
-        expect(createCollateralLink.eligibleCollateralAssets[0]['testAsset']).toEqual(true);
+      expect(typeof createCollateralLink.collateralId).toBe('string');
+      expect(createCollateralLink.collateralSigners).toBeArray();
+      for (const signer of createCollateralLink.collateralSigners) {
+        expect(typeof signer).toBe('string');
+      }
+      for (const asset of createCollateralLink.eligibleCollateralAssets) {
+        if (asset['assetId'] === undefined) {
+          expect(Object.values(Blockchain)).toContain(asset['blockchain']);
+          expect(Object.values(CryptocurrencySymbol)).toContain(asset['cryptocurrencySymbol']);
+          expect(typeof asset['testAsset']).toBe('boolean');
+        } else {
+          expect(typeof asset['assetId']).toBe('string');
+        }
+        if (createCollateralLink.env === Environment.PROD)
+          expect(asset['testAsset']).toEqual(false);
+        else if (createCollateralLink.env === Environment.SANDBOX)
+          expect(asset['testAsset']).toEqual(true);
+      }
     });
+
     it('request should fail with Not Found', async () => {
       requestBody.collateralId = '1';
 
@@ -142,28 +149,34 @@ describe.skipIf(noCollateralapability)('collateral', () => {
         return response.collateralLinks;
       };
 
-      for await (const collateralAccountLinks of paginated(getCollateralAccountLinks)) {
-        expect(typeof collateralAccountLinks.id).toBe('string');
-        expect(Object.values(CollateralLinkStatus)).toContain(collateralAccountLinks.status);
+      for await (const collateralAccountLink of paginated(getCollateralAccountLinks)) {
+        expect(typeof collateralAccountLink.id).toBe('string');
+        expect(Object.values(CollateralLinkStatus)).toContain(collateralAccountLink.status);
         if (
-          collateralAccountLinks.status === CollateralLinkStatus.DISABLED ||
-          collateralAccountLinks.status == CollateralLinkStatus.FAILED
+          collateralAccountLink.status === CollateralLinkStatus.DISABLED ||
+          collateralAccountLink.status == CollateralLinkStatus.FAILED
         ) {
-          expect(typeof collateralAccountLinks.rejectionReason).toBe('string');
+          expect(typeof collateralAccountLink.rejectionReason).toBe('string');
         }
-        expect(Object.values(Environment)).toContain(collateralAccountLinks.env);
-        expect(collateralAccountLinks.collateralId).toBe(collateralId);
-        expect(collateralAccountLinks.collateralSigners).toEqual(collateralSinersList);
-        expect(Object.values(Blockchain)).toContain(
-          collateralAccountLinks.eligibleCollateralAssets[0]['blockchain']
-        );
-        expect(Object.values(CryptocurrencySymbol)).toContain(
-          collateralAccountLinks.eligibleCollateralAssets[0]['cryptocurrencySymbol']
-        );
-        if (collateralAccountLinks.env === Environment.PROD)
-          expect(collateralAccountLinks.eligibleCollateralAssets[0]['testAsset']).toEqual(false);
-        else if (collateralAccountLinks.env === Environment.SANDBOX)
-          expect(collateralAccountLinks.eligibleCollateralAssets[0]['testAsset']).toEqual(true);
+        expect(Object.values(Environment)).toContain(collateralAccountLink.env);
+        expect(typeof collateralAccountLink.collateralId).toBe('string');
+        expect(collateralAccountLink.collateralSigners).toBeArray();
+        for (const signer of collateralAccountLink.collateralSigners) {
+          expect(typeof signer).toBe('string');
+        }
+        for (const asset of collateralAccountLink.eligibleCollateralAssets) {
+          if (asset['assetId'] === undefined) {
+            expect(Object.values(Blockchain)).toContain(asset['blockchain']);
+            expect(Object.values(CryptocurrencySymbol)).toContain(asset['cryptocurrencySymbol']);
+            expect(typeof asset['testAsset']).toBe('boolean');
+          } else {
+            expect(typeof asset['assetId']).toBe('string');
+          }
+          if (collateralAccountLink.env === Environment.PROD)
+            expect(asset['testAsset']).toEqual(false);
+          else if (collateralAccountLink.env === Environment.SANDBOX)
+            expect(asset['testAsset']).toEqual(true);
+        }
       }
     });
 

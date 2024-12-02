@@ -1,4 +1,5 @@
 import { Repository } from '../repository';
+import * as ErrorFactory from '../../http-error-factory';
 import {
   CollateralAccountLink,
   CollateralAccount,
@@ -18,17 +19,11 @@ import {
   SettlementInstructions,
   PublicBlockchainCapability,
   SettlementState,
-  BadRequestError
+  BadRequestError,
 } from '../../../client/generated';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../../error';
 import { fakeSchemaObject } from '../../../schemas';
-
-type CollateralIdentifier = { id: string; collateralAccounts: CollateralAccount[] };
-type CollateralAccountLinkIdentifier = {
-  id: string;
-  collateralAccountLinks: CollateralAccountLink[];
-};
 
 type SettlementInstructionsIdentifier = {
   id: string;
@@ -38,9 +33,15 @@ type SettlementStateIdentifier = {
   id: string;
 } & SettlementState;
 
-export class CollateralAccountNotExist extends XComError {
-  constructor() {
-    super('Collateral Account Not Found');
+export class NotFound extends XComError {
+  constructor(id: string) {
+    super(`${id} Not Found`);
+  }
+}
+
+export class NotValid extends XComError {
+  constructor(parameter: string) {
+    super(`${parameter} Is Not Valid`);
   }
 }
 
@@ -55,8 +56,7 @@ function isPositiveAmount(amount: string): boolean {
 }
 
 export class CollateralController {
-  private readonly collateralAccountLinksRepository =
-    new Repository<CollateralAccountLinkIdentifier>();
+  private readonly collateralAccountLinksRepository = new Repository<CollateralAccountLink>();
   private readonly collateralDepositAddressesRepository = new Repository<CollateralAssetAddress>();
   private readonly collateralDepositTransactionRepository =
     new Repository<CollateralDepositTransaction>();
@@ -102,23 +102,19 @@ export class CollateralController {
     accountId: string,
     collateralAccount: CollateralAccount
   ): CollateralAccount {
-    if (!accountId) {
-      throw new CollateralAccountNotExist();
-    }
-
     const collateralIdsList = collateralAccount.collateralId.split('.');
     if (collateralIdsList[1] !== accountId) {
-      throw new CollateralAccountNotExist();
+      throw new NotValid('collateralId');
     }
     for (const id of collateralIdsList) {
       if (!isUUIDv4(id)) {
-        throw new CollateralAccountNotExist();
+        throw new NotValid('collateralId');
       }
     }
 
     for (const signer of collateralAccount.collateralSigners) {
       if (!isUUIDv4(signer)) {
-        throw new CollateralAccountNotExist();
+        throw new NotValid('collateralId');
       }
     }
 
@@ -133,18 +129,14 @@ export class CollateralController {
     return newCollateralAccountLink;
   }
 
-  public getCollateralAccountLinks(accountId: string): CollateralAccountLink[] {
-    const collateralLinks = this.collateralAccountLinksRepository.find(accountId);
+  public getCollateralAccountLinks(): CollateralAccountLink[] {
+    const collateralLinks = this.collateralAccountLinksRepository.list();
 
-    return collateralLinks?.collateralAccountLinks || [];
+    return collateralLinks;
   }
 
   public getCollateralDepositAddresses(): CollateralAssetAddress[] {
     const CollateralDepositAddress = this.collateralDepositAddressesRepository.list();
-
-    if (!CollateralDepositAddress) {
-      throw new CollateralAccountNotExist();
-    }
 
     return CollateralDepositAddress;
   }
@@ -175,7 +167,7 @@ export class CollateralController {
     );
 
     if (!CollateralDepositAddressForAsset) {
-      throw new CollateralAccountNotExist();
+      throw new NotFound('fireblocksAssetId');
     }
 
     return CollateralDepositAddressForAsset;
@@ -190,22 +182,22 @@ export class CollateralController {
     collateralId: string
   ): CollateralDepositTransaction {
     if (!isUUIDv4(accountId)) {
-      throw new CollateralAccountNotExist();
+      throw new NotValid('accountId');
     }
 
     const collateralIdsList = collateralId.split('.');
     if (collateralIdsList[1] !== accountId) {
-      throw new CollateralAccountNotExist();
+      throw new NotValid('collateralId');
     }
 
     for (const id of collateralIdsList) {
       if (!isUUIDv4(id)) {
-        throw new CollateralAccountNotExist();
+        throw new NotValid('collateralId');
       }
     }
     if (amount != undefined) {
       if (!isPositiveAmount(amount)) {
-        throw new CollateralAccountNotExist();
+        throw new NotValid('amount');
       }
     }
     const newCollateralDepositTransaction: CollateralDepositTransaction = {
@@ -222,10 +214,6 @@ export class CollateralController {
   public getCollateralDepositTransactions(): CollateralDepositTransaction[] {
     const collateralDepositTransactions = this.collateralDepositTransactionRepository.list();
 
-    if (!collateralDepositTransactions) {
-      throw new CollateralAccountNotExist();
-    }
-
     return collateralDepositTransactions;
   }
 
@@ -236,7 +224,7 @@ export class CollateralController {
       this.collateralDepositTransactionRepository.find(collateralTxId);
 
     if (!collateralDepositTransaction) {
-      throw new CollateralAccountNotExist();
+      throw new NotFound('collateralTxId');
     }
 
     return collateralDepositTransaction;
@@ -250,23 +238,11 @@ export class CollateralController {
     collateralId: string
   ): CollateralWithdrawalTransaction {
     if (!accountId) {
-      throw new CollateralAccountNotExist();
-    }
-
-    if (!collateralId) {
-      throw new CollateralAccountNotExist();
-    }
-
-    if (!fireblocksAssetId) {
-      throw new CollateralAccountNotExist();
-    }
-
-    if (!destinationAddress) {
-      throw new CollateralAccountNotExist();
+      throw new NotFound('accountId');
     }
 
     if (!amount || !isPositiveAmount(amount)) {
-      throw new CollateralAccountNotExist();
+      throw new NotValid('Amount');
     }
 
     const status = CollateralWithdrawalTransactionStatus.REJECTED;
@@ -287,10 +263,6 @@ export class CollateralController {
   public getCollateralWithdrawalTransactions(): CollateralWithdrawalTransaction[] {
     const collateralWithdrawalTransaction = this.collateralWithdrawalTransactionRepository.list();
 
-    if (!collateralWithdrawalTransaction) {
-      throw new CollateralAccountNotExist();
-    }
-
     return collateralWithdrawalTransaction;
   }
 
@@ -301,7 +273,7 @@ export class CollateralController {
       this.collateralWithdrawalTransactionRepository.find(collateralTxId);
 
     if (!collateralWithdrawalTransaction) {
-      throw new CollateralAccountNotExist();
+      throw new NotFound('collateralTxId');
     }
 
     return collateralWithdrawalTransaction;
@@ -314,15 +286,15 @@ export class CollateralController {
     collateralId: string
   ): SettlementInstructions {
     if (!accountId) {
-      throw new CollateralAccountNotExist();
+      throw new NotFound('accountId');
     }
 
     if (!collateralId) {
-      throw new CollateralAccountNotExist();
+      throw new NotFound('collateralId');
     }
 
     if (!settlementId) {
-      throw new CollateralAccountNotExist();
+      throw new NotFound('settlementId');
     }
 
     const newCollateralSettlement: SettlementInstructionsIdentifier = {
@@ -372,7 +344,7 @@ export class CollateralController {
     const collateralSettlement = this.collateralSettlementRepository.find(settlementVersion);
 
     if (!collateralSettlement) {
-      throw new CollateralAccountNotExist();
+      throw new NotFound('settlementVersion');
     }
 
     return collateralSettlement;
@@ -380,10 +352,6 @@ export class CollateralController {
 
   public getSettlementDetails(): SettlementState {
     const collateralSettlementState = this.collateralSettlementStateRepository.list();
-
-    if (!collateralSettlementState) {
-      throw new CollateralAccountNotExist();
-    }
 
     return collateralSettlementState[0];
   }

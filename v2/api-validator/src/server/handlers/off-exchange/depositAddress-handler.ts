@@ -1,7 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../http-error-factory';
 import {
-  CollateralAccountNotExist,
+  NotFound,
+  NotValid,
   CollateralController,
 } from '../../controllers/off-exchange/collateral-controller';
 import {
@@ -74,14 +75,6 @@ export async function createCollateralDepositAddressForAsset(
       return ErrorFactory.notFound(reply);
     }
 
-    if (!address) {
-      return ErrorFactory.notFound(reply);
-    }
-
-    if (!recoveryAccountId) {
-      return ErrorFactory.notFound(reply);
-    }
-
     const newCollateralDepositAddress = controller.createCollateralDepositAddressForAsset(
       address,
       recoveryAccountId,
@@ -90,7 +83,7 @@ export async function createCollateralDepositAddressForAsset(
     );
     return { addresses: [newCollateralDepositAddress] };
   } catch (err) {
-    if (err instanceof CollateralAccountNotExist) {
+    if (err instanceof NotValid) {
       return ErrorFactory.notFound(reply);
     }
     throw err;

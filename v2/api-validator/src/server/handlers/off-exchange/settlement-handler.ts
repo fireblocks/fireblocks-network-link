@@ -1,7 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../http-error-factory';
 import {
-  CollateralAccountNotExist,
+  NotFound,
+  NotValid,
   CollateralController,
 } from '../../controllers/off-exchange/collateral-controller';
 import {
@@ -50,7 +51,7 @@ export async function initiateSettlement(
       );
       return newSettlement;
     } catch (err) {
-      if (err instanceof CollateralAccountNotExist) {
+      if (err instanceof NotFound) {
         return ErrorFactory.notFound(reply);
       }
       throw err;

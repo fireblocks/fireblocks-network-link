@@ -1,7 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../http-error-factory';
 import {
-  CollateralAccountNotExist,
+  NotFound,
+  NotValid,
   CollateralController,
 } from '../../controllers/off-exchange/collateral-controller';
 import { CollateralAccount, CollateralAccountLink } from '../../../client/generated';
@@ -25,10 +26,6 @@ export async function createCollateralAccountLink(
       return ErrorFactory.notFound(reply);
     }
 
-    if (!collateralAccount.collateralId || collateralAccount.collateralSigners.length <= 0) {
-      return ErrorFactory.notFound(reply);
-    }
-
     const controller = controllers.getController(accountId);
 
     if (!controller) {
@@ -37,10 +34,7 @@ export async function createCollateralAccountLink(
     const newLink = controller.createCollateralAccountLink(accountId, collateralAccount);
     return newLink;
   } catch (err) {
-    if (err instanceof CollateralAccountNotExist) {
-      return ErrorFactory.notFound(reply);
-    }
-    throw err;
+    throw ErrorFactory.notFound(reply);
   }
 }
 
@@ -66,7 +60,7 @@ export async function getCollateralAccountLinks(
       limit,
       startingAfter,
       endingBefore,
-      controller.getCollateralAccountLinks(accountId),
+      controller.getCollateralAccountLinks(),
       'id'
     ),
   };

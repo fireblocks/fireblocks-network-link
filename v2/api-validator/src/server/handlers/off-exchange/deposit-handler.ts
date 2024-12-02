@@ -1,7 +1,8 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../http-error-factory';
 import {
-  CollateralAccountNotExist,
+  NotFound,
+  NotValid,
   CollateralController,
 } from '../../controllers/off-exchange/collateral-controller';
 import {
@@ -43,14 +44,6 @@ export async function registerCollateralDepositTransaction(
         return ErrorFactory.notFound(reply);
       }
 
-      if (!fireblocksAssetId) {
-        return ErrorFactory.notFound(reply);
-      }
-
-      if (!collateralTxId) {
-        return ErrorFactory.notFound(reply);
-      }
-
       const newCollateralDepositTransaction = controller.registerCollateralDepositTransaction(
         status,
         amount,
@@ -61,7 +54,7 @@ export async function registerCollateralDepositTransaction(
       );
       return newCollateralDepositTransaction;
     } catch (err) {
-      if (err instanceof CollateralAccountNotExist) {
+      if (err instanceof NotValid) {
         return ErrorFactory.notFound(reply);
       }
       throw err;
