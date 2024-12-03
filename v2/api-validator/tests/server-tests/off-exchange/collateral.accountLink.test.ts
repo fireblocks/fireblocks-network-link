@@ -1,4 +1,5 @@
 import Client from '../../../src/client';
+import config from '../../../src/config';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { Pageable, paginated } from '../../utils/pagination';
 import {
@@ -28,7 +29,8 @@ describe.skipIf(noCollateralapability)('collateral', () => {
     client = new Client();
     accountId = getCapableAccountId('collateral');
     collateralId = `${randomUUID()}.${accountId}.${randomUUID()}`;
-    collateralSignersList = [randomUUID(), randomUUID(), randomUUID()];
+    collateralSignersList = config.get('collateral.accountLink.signers');
+    console.log(collateralSignersList);
     requestBody = {
       id: randomUUID(),
       collateralId: collateralId,
