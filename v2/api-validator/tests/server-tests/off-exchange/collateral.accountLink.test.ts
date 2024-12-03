@@ -21,18 +21,18 @@ describe.skipIf(noCollateralapability)('collateral', () => {
   let client: Client;
   let accountId: string;
   let collateralId: string;
-  let collateralSinersList: string[];
+  let collateralSignersList: string[];
   let requestBody: CollateralAccount;
 
   beforeAll(async () => {
     client = new Client();
     accountId = getCapableAccountId('collateral');
     collateralId = `${randomUUID()}.${accountId}.${randomUUID()}`;
-    collateralSinersList = [randomUUID(), randomUUID(), randomUUID()];
+    collateralSignersList = [randomUUID(), randomUUID(), randomUUID()];
     requestBody = {
       id: randomUUID(),
       collateralId: collateralId,
-      collateralSigners: collateralSinersList,
+      collateralSigners: collateralSignersList,
       env: Environment.PROD,
     };
   });
@@ -86,16 +86,6 @@ describe.skipIf(noCollateralapability)('collateral', () => {
         else if (createCollateralLink.env === Environment.SANDBOX)
           expect(asset['testAsset']).toEqual(true);
       }
-    });
-
-    it('request should fail with Not Found', async () => {
-      requestBody.collateralId = '1';
-
-      const error = await CreateCollateralAccountLinksFailureResult(requestBody);
-
-      expect(error.status).toBe(404);
-      expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
-      expect(error.body.requestPart).toBe(undefined);
     });
 
     it('request should fail schema property', async () => {

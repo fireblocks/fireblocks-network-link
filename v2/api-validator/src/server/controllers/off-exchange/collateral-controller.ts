@@ -64,6 +64,7 @@ export class CollateralController {
     new Repository<SettlementInstructionsIdentifier>();
   private readonly collateralSettlementStateRepository =
     new Repository<SettlementStateIdentifier>();
+
   constructor() {
     for (let i = 0; i < 20; i++) {
       const CollateralDepositAddress = fakeSchemaObject(
@@ -96,26 +97,7 @@ export class CollateralController {
     };
   }
 
-  public createCollateralAccountLink(
-    accountId: string,
-    collateralAccount: CollateralAccount
-  ): CollateralAccount {
-    const collateralIdsList = collateralAccount.collateralId.split('.');
-    if (collateralIdsList[1] !== accountId) {
-      throw new NotValid('collateralId');
-    }
-    for (const id of collateralIdsList) {
-      if (!isUUIDv4(id)) {
-        throw new NotValid('collateralId');
-      }
-    }
-
-    for (const signer of collateralAccount.collateralSigners) {
-      if (!isUUIDv4(signer)) {
-        throw new NotValid('collateralId');
-      }
-    }
-
+  public createCollateralAccountLink(collateralAccount: CollateralAccount): CollateralAccount {
     const newCollateralAccountLink: CollateralAccountLink = {
       id: randomUUID(),
       collateralId: collateralAccount.collateralId,
@@ -231,29 +213,14 @@ export class CollateralController {
   public initiateCollateralWithdrawalTransaction(
     amount: string,
     fireblocksAssetId: string,
-    destinationAddress: PublicBlockchainAddress,
-    accountId: string,
-    collateralId: string
+    accountId: string
   ): CollateralWithdrawalTransaction {
-
-    if (!accountId) {
-      throw new NotFound('accountId');
-    }
-
-    if (!collateralId) {
-      throw new NotFound('collateralId');
-    }
-
     if (!isPositiveAmount(amount)) {
       throw new NotValid('Amount');
     }
 
-    if (typeof fireblocksAssetId !== 'string' ) {
+    if (typeof fireblocksAssetId !== 'string') {
       throw new NotValid('fireblocksAssetId');
-    }
-
-    if (!destinationAddress) {
-      throw new NotValid('destinationAddress');
     }
 
     const status = CollateralWithdrawalTransactionStatus.REJECTED;
@@ -296,24 +263,12 @@ export class CollateralController {
     accountId: string,
     collateralId: string
   ): SettlementInstructions {
-    if (!accountId) {
-      throw new NotFound('accountId');
-    }
-
-    if (!collateralId) {
-      throw new NotFound('collateralId');
-    }
-
-    if (!settlementId) {
-      throw new NotFound('settlementId');
-    }
-
     const newCollateralSettlement: SettlementInstructionsIdentifier = {
       id: accountId,
       settlementVersion: settlementVersion,
       withdrawInstructions: [
         {
-          fireblocksAssetId: 'str',
+          fireblocksAssetId: settlementId,
           amount: '5',
           fee: '0.005',
           sourceAddress: {
@@ -340,7 +295,7 @@ export class CollateralController {
             },
             transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
             address: 'str',
-            addressTag: 'str',
+            addressTag: collateralId,
           },
         },
       ],

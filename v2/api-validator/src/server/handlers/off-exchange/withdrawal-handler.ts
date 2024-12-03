@@ -1,9 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../http-error-factory';
-import {
-  NotFound,
-  CollateralController,
-} from '../../controllers/off-exchange/collateral-controller';
+import { CollateralController } from '../../controllers/off-exchange/collateral-controller';
 import {
   CollateralWithdrawalTransaction,
   CollateralWithdrawalTransactionRequest,
@@ -30,42 +27,21 @@ export async function initiateCollateralWithdrawalTransaction(
   reply: FastifyReply
 ): Promise<CollateralWithdrawalTransaction> {
   {
-    try {
-      const { fireblocksAssetId, amount, destinationAddress } = request.body;
-      const { accountId, collateralId } = request.params;
+    const { fireblocksAssetId, amount } = request.body;
+    const { accountId } = request.params;
 
-      const controller = controllers.getController(accountId);
+    const controller = controllers.getController(accountId);
 
-      if (!controller) {
-        return ErrorFactory.notFound(reply);
-      }
-
-      if (!collateralId) {
-        return ErrorFactory.notFound(reply);
-      }
-
-      if (!fireblocksAssetId) {
-        return ErrorFactory.notFound(reply);
-      }
-
-      if (!destinationAddress) {
-        return ErrorFactory.notFound(reply);
-      }
-
-      const newCollateralDepositTransaction = controller.initiateCollateralWithdrawalTransaction(
-        amount,
-        fireblocksAssetId,
-        destinationAddress,
-        accountId,
-        collateralId
-      );
-      return newCollateralDepositTransaction;
-    } catch (err) {
-      if (err instanceof NotFound) {
-        return ErrorFactory.notFound(reply);
-      }
-      throw err;
+    if (!controller) {
+      return ErrorFactory.notFound(reply);
     }
+
+    const newCollateralDepositTransaction = controller.initiateCollateralWithdrawalTransaction(
+      amount,
+      fireblocksAssetId,
+      accountId
+    );
+    return newCollateralDepositTransaction;
   }
 }
 
@@ -74,19 +50,11 @@ export async function getCollateralWithdrawalTransactions(
   reply: FastifyReply
 ): Promise<CollateralWithdrawalTransactions> {
   const { limit, startingAfter, endingBefore } = request.query;
-  const { accountId, collateralId } = request.params;
+  const { accountId } = request.params;
 
   const controller = controllers.getController(accountId);
 
   if (!controller) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (!collateralId) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (limit === undefined || isNaN(limit)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -103,19 +71,11 @@ export async function getCollateralWithdrawalTransactionDetails(
   >,
   reply: FastifyReply
 ): Promise<CollateralWithdrawalTransaction> {
-  const { accountId, collateralId, collateralTxId } = request.params;
+  const { accountId, collateralTxId } = request.params;
 
   const controller = controllers.getController(accountId);
 
   if (!controller) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (!collateralId) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (collateralTxId === undefined) {
     return ErrorFactory.notFound(reply);
   }
 

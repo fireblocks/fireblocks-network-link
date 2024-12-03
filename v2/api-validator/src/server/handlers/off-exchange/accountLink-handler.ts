@@ -1,8 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../http-error-factory';
-import {
-  CollateralController,
-} from '../../controllers/off-exchange/collateral-controller';
+import { CollateralController } from '../../controllers/off-exchange/collateral-controller';
 import { CollateralAccount, CollateralAccountLink } from '../../../client/generated';
 import { ControllersContainer } from '../../controllers/controllers-container';
 import { getPaginationResult } from '../../controllers/pagination-controller';
@@ -16,24 +14,16 @@ export async function createCollateralAccountLink(
   request: FastifyRequest<{ Body: CollateralAccount } & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<CollateralAccount> {
-  try {
-    const { accountId } = request.params;
-    const collateralAccount = request.body;
+  const { accountId } = request.params;
+  const collateralAccount = request.body;
 
-    if (!accountId) {
-      return ErrorFactory.notFound(reply);
-    }
+  const controller = controllers.getController(accountId);
 
-    const controller = controllers.getController(accountId);
-
-    if (!controller) {
-      return ErrorFactory.notFound(reply);
-    }
-    const newLink = controller.createCollateralAccountLink(accountId, collateralAccount);
-    return newLink;
-  } catch (err) {
-    throw ErrorFactory.notFound(reply);
+  if (!controller) {
+    return ErrorFactory.notFound(reply);
   }
+  const newLink = controller.createCollateralAccountLink(collateralAccount);
+  return newLink;
 }
 
 export async function getCollateralAccountLinks(
@@ -46,10 +36,6 @@ export async function getCollateralAccountLinks(
   const controller = controllers.getController(accountId);
 
   if (!controller) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (limit === undefined || isNaN(limit)) {
     return ErrorFactory.notFound(reply);
   }
 

@@ -1,9 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../http-error-factory';
-import {
-  NotFound,
-  CollateralController,
-} from '../../controllers/off-exchange/collateral-controller';
+import { CollateralController } from '../../controllers/off-exchange/collateral-controller';
 import {
   SettlementRequest,
   SettlementState,
@@ -24,37 +21,22 @@ export async function initiateSettlement(
   reply: FastifyReply
 ): Promise<SettlementInstructions> {
   {
-    try {
-      const { settlementId, settlementVersion } = request.body;
-      const { accountId, collateralId } = request.params;
+    const { settlementId, settlementVersion } = request.body;
+    const { accountId, collateralId } = request.params;
 
-      const controller = controllers.getController(accountId);
+    const controller = controllers.getController(accountId);
 
-      if (!controller) {
-        return ErrorFactory.notFound(reply);
-      }
-
-      if (!collateralId) {
-        return ErrorFactory.notFound(reply);
-      }
-
-      if (!settlementId) {
-        return ErrorFactory.notFound(reply);
-      }
-
-      const newSettlement = controller.initiateSettlement(
-        settlementVersion,
-        settlementId,
-        accountId,
-        collateralId
-      );
-      return newSettlement;
-    } catch (err) {
-      if (err instanceof NotFound) {
-        return ErrorFactory.notFound(reply);
-      }
-      throw err;
+    if (!controller) {
+      return ErrorFactory.notFound(reply);
     }
+
+    const newSettlement = controller.initiateSettlement(
+      settlementVersion,
+      settlementId,
+      accountId,
+      collateralId
+    );
+    return newSettlement;
   }
 }
 
@@ -62,15 +44,11 @@ export async function getCurrentSettlementInstructions(
   request: FastifyRequest<AccountIdPathParam & CollateralIdPathParam>,
   reply: FastifyReply
 ): Promise<SettlementInstructions> {
-  const { accountId, collateralId } = request.params;
+  const { accountId } = request.params;
 
   const controller = controllers.getController(accountId);
 
   if (!controller) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (!collateralId) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -85,19 +63,11 @@ export async function getSettlementDetails(
   >,
   reply: FastifyReply
 ): Promise<SettlementState> {
-  const { accountId, collateralId, settlementVersion } = request.params;
+  const { accountId } = request.params;
 
   const controller = controllers.getController(accountId);
 
   if (!controller) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (!collateralId) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (!settlementVersion) {
     return ErrorFactory.notFound(reply);
   }
 

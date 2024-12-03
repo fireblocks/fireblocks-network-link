@@ -87,8 +87,7 @@ describe.skipIf(noCollateralapability)('collateral', () => {
       expect(typeof collateralDepositTransaction.fireblocksAssetId).toBe('string');
 
       expect(typeof collateralDepositTransaction.amount).toBe('string');
-      // @ts-ignore
-      expect(isPositiveAmount(collateralDepositTransaction.amount)).toBe(true);
+      expect(collateralDepositTransaction.amount).toBe('0.002');
       expect(Object.values(CollateralDepositTransactionStatus)).toContain(
         collateralDepositTransaction.status
       );
@@ -145,8 +144,7 @@ describe.skipIf(noCollateralapability)('collateral', () => {
       expect(typeof collateralDepositTransaction.fireblocksAssetId).toBe('string');
 
       expect(typeof collateralDepositTransaction.amount).toBe('string');
-      // @ts-ignore
-      expect(isPositiveAmount(collateralDepositTransaction.amount)).toBe(true);
+      expect(collateralDepositTransaction.amount).toBe('0.002');
       expect(collateralDepositTransaction.status).toBe(undefined);
     });
 

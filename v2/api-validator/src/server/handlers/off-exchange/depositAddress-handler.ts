@@ -1,9 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../http-error-factory';
-import {
-  NotValid,
-  CollateralController,
-} from '../../controllers/off-exchange/collateral-controller';
+import { CollateralController } from '../../controllers/off-exchange/collateral-controller';
 import {
   CollateralDepositAddresses,
   CollateralAddress,
@@ -25,19 +22,11 @@ export async function getCollateralDepositAddresses(
   reply: FastifyReply
 ): Promise<CollateralDepositAddresses> {
   const { limit, startingAfter, endingBefore } = request.query;
-  const { accountId, collateralId } = request.params;
+  const { accountId } = request.params;
 
   const controller = controllers.getController(accountId);
 
   if (!controller) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (!collateralId) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (limit === undefined || isNaN(limit)) {
     return ErrorFactory.notFound(reply);
   }
 
@@ -56,37 +45,22 @@ export async function createCollateralDepositAddressForAsset(
   >,
   reply: FastifyReply
 ): Promise<CollateralDepositAddresses> {
-  try {
-    const { address, recoveryAccountId } = request.body;
-    const { accountId, collateralId, fireblocksAssetId } = request.params;
+  const { address, recoveryAccountId } = request.body;
+  const { accountId, collateralId } = request.params;
 
-    const controller = controllers.getController(accountId);
+  const controller = controllers.getController(accountId);
 
-    if (!controller) {
-      return ErrorFactory.notFound(reply);
-    }
-
-    if (!collateralId) {
-      return ErrorFactory.notFound(reply);
-    }
-
-    if (!fireblocksAssetId) {
-      return ErrorFactory.notFound(reply);
-    }
-
-    const newCollateralDepositAddress = controller.createCollateralDepositAddressForAsset(
-      address,
-      recoveryAccountId,
-      accountId,
-      collateralId
-    );
-    return { addresses: [newCollateralDepositAddress] };
-  } catch (err) {
-    if (err instanceof NotValid) {
-      return ErrorFactory.notFound(reply);
-    }
-    throw err;
+  if (!controller) {
+    return ErrorFactory.notFound(reply);
   }
+
+  const newCollateralDepositAddress = controller.createCollateralDepositAddressForAsset(
+    address,
+    recoveryAccountId,
+    accountId,
+    collateralId
+  );
+  return { addresses: [newCollateralDepositAddress] };
 }
 
 export async function getCollateralDepositAddressesForAsset(
@@ -96,19 +70,11 @@ export async function getCollateralDepositAddressesForAsset(
   reply: FastifyReply
 ): Promise<CollateralDepositAddressesForAsset> {
   const { limit, startingAfter, endingBefore } = request.query;
-  const { accountId, collateralId, fireblocksAssetId } = request.params;
+  const { accountId, fireblocksAssetId } = request.params;
 
   const controller = controllers.getController(accountId);
 
   if (!controller) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (!collateralId) {
-    return ErrorFactory.notFound(reply);
-  }
-
-  if (limit === undefined || isNaN(limit)) {
     return ErrorFactory.notFound(reply);
   }
 
