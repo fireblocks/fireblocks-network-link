@@ -2,8 +2,6 @@ import Client from '../../../src/client';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import {
   ApiError,
-  BadRequestError,
-  RequestPart,
   GeneralError,
   PublicBlockchainCapability,
   Blockchain,

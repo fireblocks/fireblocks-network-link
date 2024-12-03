@@ -1,5 +1,4 @@
 import { Repository } from '../repository';
-import * as ErrorFactory from '../../http-error-factory';
 import {
   CollateralAccountLink,
   CollateralAccount,
@@ -19,7 +18,6 @@ import {
   SettlementInstructions,
   PublicBlockchainCapability,
   SettlementState,
-  BadRequestError,
 } from '../../../client/generated';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../../error';
@@ -237,12 +235,25 @@ export class CollateralController {
     accountId: string,
     collateralId: string
   ): CollateralWithdrawalTransaction {
+
     if (!accountId) {
       throw new NotFound('accountId');
     }
 
-    if (!amount || !isPositiveAmount(amount)) {
+    if (!collateralId) {
+      throw new NotFound('collateralId');
+    }
+
+    if (!isPositiveAmount(amount)) {
       throw new NotValid('Amount');
+    }
+
+    if (typeof fireblocksAssetId !== 'string' ) {
+      throw new NotValid('fireblocksAssetId');
+    }
+
+    if (!destinationAddress) {
+      throw new NotValid('destinationAddress');
     }
 
     const status = CollateralWithdrawalTransactionStatus.REJECTED;

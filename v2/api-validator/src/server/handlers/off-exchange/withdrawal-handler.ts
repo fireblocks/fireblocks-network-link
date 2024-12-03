@@ -2,7 +2,6 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../http-error-factory';
 import {
   NotFound,
-  NotValid,
   CollateralController,
 } from '../../controllers/off-exchange/collateral-controller';
 import {
