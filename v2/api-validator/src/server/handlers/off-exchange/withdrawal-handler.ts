@@ -12,7 +12,7 @@ import {
   AccountIdPathParam,
   PaginationQuerystring,
   CollateralIdPathParam,
-  fireblocksAssetIdPathParam,
+  FireblocksAssetIdPathParam,
   CollateralTxIdPathParam,
 } from '../request-types';
 
@@ -22,7 +22,7 @@ export async function initiateCollateralWithdrawalTransaction(
   request: FastifyRequest<
     AccountIdPathParam &
       CollateralIdPathParam &
-      fireblocksAssetIdPathParam & { Body: CollateralWithdrawalTransactionRequest }
+      FireblocksAssetIdPathParam & { Body: CollateralWithdrawalTransactionRequest }
   >,
   reply: FastifyReply
 ): Promise<CollateralWithdrawalTransaction> {

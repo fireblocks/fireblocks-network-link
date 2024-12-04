@@ -16,7 +16,7 @@ export type CollateralIdPathParam = {
   };
 };
 
-export type fireblocksAssetIdPathParam = {
+export type FireblocksAssetIdPathParam = {
   Params: {
     fireblocksAssetId: string;
   };

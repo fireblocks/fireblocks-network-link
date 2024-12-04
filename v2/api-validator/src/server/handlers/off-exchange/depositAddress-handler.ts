@@ -12,7 +12,7 @@ import {
   AccountIdPathParam,
   PaginationQuerystring,
   CollateralIdPathParam,
-  fireblocksAssetIdPathParam,
+  FireblocksAssetIdPathParam,
 } from '../request-types';
 
 const controllers = new ControllersContainer(() => new CollateralController());
@@ -41,7 +41,7 @@ export async function createCollateralDepositAddressForAsset(
   request: FastifyRequest<
     AccountIdPathParam &
       CollateralIdPathParam &
-      fireblocksAssetIdPathParam & { Body: CollateralAddress }
+      FireblocksAssetIdPathParam & { Body: CollateralAddress }
   >,
   reply: FastifyReply
 ): Promise<CollateralDepositAddresses> {
@@ -65,7 +65,7 @@ export async function createCollateralDepositAddressForAsset(
 
 export async function getCollateralDepositAddressesForAsset(
   request: FastifyRequest<
-    PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam & fireblocksAssetIdPathParam
+    PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam & FireblocksAssetIdPathParam
   >,
   reply: FastifyReply
 ): Promise<CollateralDepositAddressesForAsset> {

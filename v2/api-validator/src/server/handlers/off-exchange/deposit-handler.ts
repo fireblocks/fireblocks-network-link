@@ -11,7 +11,7 @@ import {
   AccountIdPathParam,
   PaginationQuerystring,
   CollateralIdPathParam,
-  fireblocksAssetIdPathParam,
+  FireblocksAssetIdPathParam,
   CollateralTxIdPathParam,
 } from '../request-types';
 
@@ -21,7 +21,7 @@ export async function registerCollateralDepositTransaction(
   request: FastifyRequest<
     AccountIdPathParam &
       CollateralIdPathParam &
-      fireblocksAssetIdPathParam & { Body: CollateralDepositTransaction }
+      FireblocksAssetIdPathParam & { Body: CollateralDepositTransaction }
   >,
   reply: FastifyReply
 ): Promise<CollateralDepositTransaction> {
