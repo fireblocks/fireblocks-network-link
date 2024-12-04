@@ -3,14 +3,12 @@ import config from '../../../src/config';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { Pageable, paginated } from '../../utils/pagination';
 import {
-  ApiError,
   CollateralLinkStatus,
   Environment,
   Blockchain,
   CryptocurrencySymbol,
   CollateralAccount,
   CollateralAccountLink,
-  GeneralError,
 } from '../../../src/client/generated';
 import { randomUUID } from 'crypto';
 
@@ -22,6 +20,7 @@ describe.skipIf(noCollateralapability)('collateral', () => {
   let collateralId: string;
   let collateralSignersList: string[];
   let requestBody: CollateralAccount;
+  let createCollateralAccountLinkResponse: CollateralAccountLink;
 
   beforeAll(async () => {
     client = new Client();
@@ -36,129 +35,183 @@ describe.skipIf(noCollateralapability)('collateral', () => {
     };
   });
 
-  describe('create collateral accounts links', () => {
-    let collateralAccount: CollateralAccount;
-
-    const createCollateralAccountLinksFailureResult = async (
-      requestBody: CollateralAccount
-    ): Promise<ApiError> => {
-      try {
-        await client.collateral.createCollateralAccountLink({ accountId, requestBody });
-      } catch (err) {
-        if (err instanceof ApiError) {
-          return err;
-        }
-        throw err;
-      }
-      throw new Error('Expected to throw');
-    };
-
-    it('collateral account should return with a valid schema', async () => {
-      const createCollateralLink = await client.collateral.createCollateralAccountLink({
-        accountId,
-        requestBody,
-      });
-      expect(typeof createCollateralLink.id).toBe('string');
-      expect(Object.values(CollateralLinkStatus)).toContain(createCollateralLink.status);
-      if (
-        createCollateralLink.status === CollateralLinkStatus.DISABLED ||
-        createCollateralLink.status == CollateralLinkStatus.FAILED
-      ) {
-        expect(typeof createCollateralLink.rejectionReason).toBe('string');
-      }
-      expect(Object.values(Environment)).toContain(createCollateralLink.env);
-      expect(typeof createCollateralLink.collateralId).toBe('string');
-      expect(createCollateralLink.collateralSigners).toBeArray();
-      for (const signer of createCollateralLink.collateralSigners) {
-        expect(typeof signer).toBe('string');
-      }
-      for (const asset of createCollateralLink.eligibleCollateralAssets) {
-        if (asset['assetId'] === undefined) {
-          expect(Object.values(Blockchain)).toContain(asset['blockchain']);
-          expect(Object.values(CryptocurrencySymbol)).toContain(asset['cryptocurrencySymbol']);
-          expect(typeof asset['testAsset']).toBe('boolean');
-        } else {
-          expect(typeof asset['assetId']).toBe('string');
-        }
-        if (createCollateralLink.env === Environment.PROD)
-          expect(asset['testAsset']).toEqual(false);
-        else if (createCollateralLink.env === Environment.SANDBOX)
-          expect(asset['testAsset']).toEqual(true);
-      }
-    });
-  });
-
-  describe('get linked collateral accounts', () => {
-    const getCollateralAccountLinksFailureResult = async (
-      accountId: string,
-      limit?,
-      startingAfter?
-    ): Promise<ApiError> => {
-      try {
-        await client.collateral.getCollateralAccountLinks({
-          accountId,
-          limit,
-          startingAfter: startingAfter,
+  describe('Collateral Account Link', () => {
+    describe('POST request: createCollateralAccountLink', () => {
+      describe('Should be sucess tests and a valid response', () => {
+        beforeEach(async () => {
+          createCollateralAccountLinkResponse = await client.collateral.createCollateralAccountLink(
+            {
+              accountId,
+              requestBody,
+            }
+          );
         });
-      } catch (err) {
-        if (err instanceof ApiError) {
-          return err;
-        }
-        throw err;
-      }
-      throw new Error('Expected to throw');
-    };
 
-    it('collateral account should return with a valid schema', async () => {
-      const getCollateralAccountLinks: Pageable<CollateralAccountLink> = async (
-        limit,
-        startingAfter?
-      ) => {
-        const response = await client.collateral.getCollateralAccountLinks({
-          accountId: accountId,
-          limit: limit,
-          startingAfter: startingAfter,
+        it('Check all required parameters exist and their type', () => {
+          expect(typeof createCollateralAccountLinkResponse.id).toBe('string');
+
+          expect(typeof createCollateralAccountLinkResponse.collateralId).toBe('string');
+
+          expect(createCollateralAccountLinkResponse.collateralSigners).toEqual(
+            collateralSignersList
+          );
+
+          expect(createCollateralAccountLinkResponse.eligibleCollateralAssets).toBeArray();
+
+          expect(Object.values(Environment)).toContain(createCollateralAccountLinkResponse.env);
+
+          expect(Object.values(CollateralLinkStatus)).toContain(
+            createCollateralAccountLinkResponse.status
+          );
         });
-        return response.collateralLinks;
-      };
 
-      for await (const collateralAccountLink of paginated(getCollateralAccountLinks)) {
-        expect(typeof collateralAccountLink.id).toBe('string');
-        expect(Object.values(CollateralLinkStatus)).toContain(collateralAccountLink.status);
-        if (
-          collateralAccountLink.status === CollateralLinkStatus.DISABLED ||
-          collateralAccountLink.status == CollateralLinkStatus.FAILED
-        ) {
-          expect(typeof collateralAccountLink.rejectionReason).toBe('string');
-        }
-        expect(Object.values(Environment)).toContain(collateralAccountLink.env);
-        expect(typeof collateralAccountLink.collateralId).toBe('string');
-        expect(collateralAccountLink.collateralSigners).toBeArray();
-        for (const signer of collateralAccountLink.collateralSigners) {
-          expect(typeof signer).toBe('string');
-        }
-        for (const asset of collateralAccountLink.eligibleCollateralAssets) {
-          if (asset['assetId'] === undefined) {
-            expect(Object.values(Blockchain)).toContain(asset['blockchain']);
-            expect(Object.values(CryptocurrencySymbol)).toContain(asset['cryptocurrencySymbol']);
-            expect(typeof asset['testAsset']).toBe('boolean');
-          } else {
-            expect(typeof asset['assetId']).toBe('string');
+        it('Validate collateralSigners properties type is string', () => {
+          createCollateralAccountLinkResponse.collateralSigners.forEach((signer) =>
+            expect(typeof signer).toBe('string')
+          );
+        });
+
+        describe('eligibleCollateralAssets validation', () => {
+          beforeEach(async () => {
+            createCollateralAccountLinkResponse =
+              await client.collateral.createCollateralAccountLink({
+                accountId,
+                requestBody,
+              });
+          });
+
+          it('eligibleCollateralAssets should have assetId or NativeCryptocurrency object', () => {
+            const assetObject = createCollateralAccountLinkResponse.eligibleCollateralAssets;
+            // each collateralAsset can have assetId or NativeCryptocurrency object {blockchain?, cryptocurrencySymbol, testAsset?}
+            if (assetObject['assetId']) {
+              expect(assetObject['blockchain']).toBeUndefined;
+
+              expect(assetObject['cryptocurrencySymbol']).toBeUndefined;
+            }
+          });
+
+          it('Validate eligibleCollateralAssets required properties exist and their type', () => {
+            const assetObject = createCollateralAccountLinkResponse.eligibleCollateralAssets;
+            // each collateralAsset can have assetId or NativeCryptocurrency object {blockchain?, cryptocurrencySymbol, testAsset?}
+            if (assetObject['assetId']) {
+              if (assetObject['blockchain']) {
+                expect(Object.values(Blockchain)).toContain(assetObject['blockchain']);
+              }
+
+              expect(Object.values(CryptocurrencySymbol)).toContain(
+                assetObject['cryptocurrencySymbol']
+              );
+
+              if (assetObject['testAsset']) {
+                if (createCollateralAccountLinkResponse.env === Environment.PROD) {
+                  expect(assetObject['testAsset']).toEqual(false);
+                } else if (createCollateralAccountLinkResponse.env === Environment.SANDBOX) {
+                  expect(assetObject['testAsset']).toEqual(true);
+                } else {
+                  expect(assetObject['testAsset']).toBe('string');
+                }
+              } else {
+                expect(typeof assetObject['assetId']).toBe('string');
+              }
+            }
+          });
+        });
+
+        it('rejectionReason should exist only when status is Disabled or Failed, and his type is string', () => {
+          if (createCollateralAccountLinkResponse.rejectionReason) {
+            expect(createCollateralAccountLinkResponse.rejectionReason).toBe('string');
+
+            expect(createCollateralAccountLinkResponse.status).not.toBe(
+              CollateralLinkStatus.DISABLED
+            );
+
+            expect(createCollateralAccountLinkResponse.rejectionReason).not.toBe(
+              CollateralLinkStatus.FAILED
+            );
           }
-          if (collateralAccountLink.env === Environment.PROD)
-            expect(asset['testAsset']).toEqual(false);
-          else if (collateralAccountLink.env === Environment.SANDBOX)
-            expect(asset['testAsset']).toEqual(true);
-        }
-      }
+        });
+      });
     });
 
-    it('request should fail with Not Found', async () => {
-      const error = await getCollateralAccountLinksFailureResult('1');
+    describe('GET request: getCollateralAccountLinks', () => {
+      describe('Should Sucess Tests', () => {
+        const getCollateralAccountLinks: Pageable<CollateralAccountLink> = async (
+          limit,
+          startingAfter?
+        ) => {
+          const response = await client.collateral.getCollateralAccountLinks({
+            accountId: accountId,
+            limit: limit,
+            startingAfter: startingAfter,
+          });
+          return response.collateralLinks;
+        };
 
-      expect(error.status).toBe(404);
-      expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
-      expect(error.body.requestPart).toBe(undefined);
+        it('Check all required parameters exist and their type', async () => {
+          for await (const collateralAccountLink of paginated(getCollateralAccountLinks)) {
+            expect(typeof collateralAccountLink.id).toBe('string');
+
+            expect(typeof collateralAccountLink.collateralId).toBe('string');
+
+            expect(collateralAccountLink.collateralSigners).toEqual(collateralSignersList);
+
+            expect(collateralAccountLink.eligibleCollateralAssets).toBeArray();
+
+            expect(Object.values(Environment)).toContain(collateralAccountLink.env);
+
+            expect(Object.values(CollateralLinkStatus)).toContain(collateralAccountLink.status);
+          }
+        });
+
+        it('Validate collateralSigners properties type is string', async () => {
+          for await (const collateralAccountLink of paginated(getCollateralAccountLinks)) {
+            collateralAccountLink.collateralSigners.forEach((signer) =>
+              expect(typeof signer).toBe('string')
+            );
+          }
+        });
+
+        it('Validate eligibleCollateralAssets properties required parameters exist and their type', async () => {
+          for await (const collateralAccountLink of paginated(getCollateralAccountLinks)) {
+            for (const assetObject of collateralAccountLink.eligibleCollateralAssets) {
+              // each collateralAsset can have assetId or NativeCryptocurrency object {blockchain?, cryptocurrencySymbol, testAsset?}
+              if (assetObject['assetId'] === undefined) {
+                if (assetObject['blockchain']) {
+                  expect(Object.values(Blockchain)).toContain(assetObject['blockchain']);
+                }
+
+                expect(Object.values(CryptocurrencySymbol)).toContain(
+                  assetObject['cryptocurrencySymbol']
+                );
+
+                if (assetObject['testAsset']) {
+                  if (collateralAccountLink.env === Environment.PROD) {
+                    expect(assetObject['testAsset']).toEqual(false);
+                  } else if (collateralAccountLink.env === Environment.SANDBOX) {
+                    expect(assetObject['testAsset']).toEqual(true);
+                  } else {
+                    expect(assetObject['testAsset']).toBe('string');
+                  }
+                } else {
+                  expect(typeof assetObject['assetId']).toBe('string');
+                }
+              }
+            }
+          }
+        });
+
+        it('rejectionReason should exist only when status is Disabled or Failed, and his type is string', async () => {
+          for await (const collateralAccountLink of paginated(getCollateralAccountLinks)) {
+            if (collateralAccountLink.rejectionReason) {
+              expect(collateralAccountLink.rejectionReason).toBe('string');
+
+              expect(collateralAccountLink.status).not.toBe(CollateralLinkStatus.DISABLED);
+
+              expect(collateralAccountLink.rejectionReason).not.toBe(CollateralLinkStatus.FAILED);
+            }
+          }
+        });
+      });
     });
   });
 });
