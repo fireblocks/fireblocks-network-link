@@ -38,12 +38,12 @@ describe.skipIf(noCollateralapability)('collateral', () => {
 
   describe('initiate settlement', () => {
     const initiateSettlementFailureResult = async (
-      acc: string,
+      accountId: string,
       requestBody: SettlementRequest
     ): Promise<ApiError> => {
       try {
         await client.collateral.initiateSettlement({
-          accountId: acc,
+          accountId,
           collateralId,
           requestBody,
         });
@@ -131,11 +131,11 @@ describe.skipIf(noCollateralapability)('collateral', () => {
 
   describe('get current settlement instructions', () => {
     const getCurrentSettlementInstructionsFailureResult = async (
-      accId: string
+      accountId: string
     ): Promise<ApiError> => {
       try {
         await client.collateral.getCurrentSettlementInstructions({
-          accountId: accId,
+          accountId,
           collateralId,
         });
       } catch (err) {

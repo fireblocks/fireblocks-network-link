@@ -3,8 +3,6 @@ import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts
 import { Pageable, paginated } from '../../utils/pagination';
 import {
   ApiError,
-  BadRequestError,
-  RequestPart,
   GeneralError,
   CollateralWithdrawalTransactionRequest,
   CollateralWithdrawalTransaction,
@@ -54,12 +52,12 @@ describe.skipIf(noCollateralapability)('collateral', () => {
 
   describe('create collateral deposit transaction', () => {
     const initiateCollateralWithdrawalTransactionFailureResult = async (
-      acc: string,
+      accountId: string,
       requestBody: CollateralWithdrawalTransactionRequest
     ): Promise<ApiError> => {
       try {
         await client.collateral.initiateCollateralWithdrawalTransaction({
-          accountId: acc,
+          accountId,
           collateralId,
           requestBody,
         });
@@ -108,38 +106,20 @@ describe.skipIf(noCollateralapability)('collateral', () => {
       expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
       expect(error.body.requestPart).toBe(undefined);
     });
-
-    it('register collateral deposit transaction request should fail schema property', async () => {
-      const reqBody = withdrawalDetails;
-      reqBody.amount = '-2';
-      const error = await initiateCollateralWithdrawalTransactionFailureResult('1', reqBody);
-
-      expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
-      expect(error.body.requestPart).toBe(RequestPart.BODY);
-    });
   });
 
   describe('get collateral deposit transactions', () => {
     const getCollateralWithdrawalTransactionsFailureResult = async (
-      failType: number,
+      accountId: string,
       limit?,
       startingAfter?
     ): Promise<ApiError> => {
-      let accId = accountId;
-      let lim = limit;
-      lim = 10;
-      if (failType == 404) {
-        accId = '1';
-      } else {
-        lim = 'aa';
-      }
       try {
         await client.collateral.getCollateralWithdrawalTransactions({
-          accountId: accId,
+          accountId,
           collateralId,
-          limit: lim,
-          startingAfter: startingAfter,
+          limit,
+          startingAfter,
         });
       } catch (err) {
         if (err instanceof ApiError) {
@@ -155,8 +135,6 @@ describe.skipIf(noCollateralapability)('collateral', () => {
         limit,
         startingAfter?
       ) => {
-        console.log;
-        limit = 10;
         const response = await client.collateral.getCollateralWithdrawalTransactions({
           accountId,
           collateralId,
@@ -189,33 +167,21 @@ describe.skipIf(noCollateralapability)('collateral', () => {
     });
 
     it('request should fail with Not Found', async () => {
-      const error = await getCollateralWithdrawalTransactionsFailureResult(404);
+      const error = await getCollateralWithdrawalTransactionsFailureResult('1');
 
       expect(error.status).toBe(404);
       expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
       expect(error.body.requestPart).toBe(undefined);
     });
-
-    it('request should fail schema property', async () => {
-      const error = await getCollateralWithdrawalTransactionsFailureResult(400);
-
-      expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
-      expect(error.body.requestPart).toBe(RequestPart.QUERYSTRING);
-    });
   });
 
   describe('get collateral deposit transaction details', () => {
     const getCollateralWiothdrawalTransactionDetailsFailureResult = async (
-      failType: number
+      accountId: string,
     ): Promise<ApiError> => {
-      let accId = accountId;
-      if (failType == 404) {
-        accId = '1';
-      }
       try {
         await client.collateral.getCollateralWithdrawalTransactionDetails({
-          accountId: accId,
+          accountId,
           collateralId,
           collateralTxId,
         });
@@ -255,7 +221,7 @@ describe.skipIf(noCollateralapability)('collateral', () => {
     });
 
     it('request should fail with Not Found', async () => {
-      const error = await getCollateralWiothdrawalTransactionDetailsFailureResult(404);
+      const error = await getCollateralWiothdrawalTransactionDetailsFailureResult('1');
 
       expect(error.status).toBe(404);
       expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);

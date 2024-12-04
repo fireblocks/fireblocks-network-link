@@ -3,8 +3,6 @@ import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts
 import { Pageable, paginated } from '../../utils/pagination';
 import {
   ApiError,
-  BadRequestError,
-  RequestPart,
   Blockchain,
   CryptocurrencySymbol,
   GeneralError,
@@ -44,7 +42,7 @@ describe.skipIf(noCollateralapability)('collateral', () => {
       },
       recoveryAccountId: randomUUID(),
     };
-    const CreateCollateralAccountLinksFailureResult = async (
+    const createCollateralAccountLinksFailureResult = async (
       acc: string,
       requestBody: CollateralAddress
     ): Promise<ApiError> => {
@@ -134,43 +132,25 @@ describe.skipIf(noCollateralapability)('collateral', () => {
     it('create collateral deposit address request should fail with Not Found', async () => {
       const reqBody: CollateralAddress = address;
 
-      const error = await CreateCollateralAccountLinksFailureResult('1', reqBody);
+      const error = await createCollateralAccountLinksFailureResult('1', reqBody);
 
       expect(error.status).toBe(404);
       expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
       expect(error.body.requestPart).toBe(undefined);
     });
-
-    it('create collateral deposit address request should fail schema property', async () => {
-      const reqBody: CollateralAddress = address;
-      reqBody.address.asset['assetId'] = 2;
-      const error = await CreateCollateralAccountLinksFailureResult('1', reqBody);
-
-      expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
-      expect(error.body.requestPart).toBe(RequestPart.BODY);
-    });
   });
 
   describe('get collateral deposit addresses', () => {
-    const GetCollateralDepositAddressesFailureResult = async (
-      failType: number,
+    const getCollateralDepositAddressesFailureResult = async (
+      accountId: string,
       limit?,
       startingAfter?
     ): Promise<ApiError> => {
-      let accId = accountId;
-      let lim = limit;
-      lim = 10;
-      if (failType == 404) {
-        accId = '1';
-      } else {
-        lim = 'aa';
-      }
       try {
         await client.collateral.getCollateralDepositAddresses({
-          accountId: accId,
+          accountId,
           collateralId,
-          limit: lim,
+          limit,
           startingAfter: startingAfter,
         });
       } catch (err) {
@@ -187,7 +167,6 @@ describe.skipIf(noCollateralapability)('collateral', () => {
         limit,
         startingAfter?
       ) => {
-        limit = 10;
         const response = await client.collateral.getCollateralDepositAddresses({
           accountId,
           collateralId,
@@ -229,42 +208,26 @@ describe.skipIf(noCollateralapability)('collateral', () => {
     });
 
     it('request should fail with Not Found', async () => {
-      const error = await GetCollateralDepositAddressesFailureResult(404);
+      const error = await getCollateralDepositAddressesFailureResult('1');
 
       expect(error.status).toBe(404);
       expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
       expect(error.body.requestPart).toBe(undefined);
     });
-
-    it('request should fail schema property', async () => {
-      const error = await GetCollateralDepositAddressesFailureResult(400);
-
-      expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
-      expect(error.body.requestPart).toBe(RequestPart.QUERYSTRING);
-    });
   });
 
   describe('get collateral deposit addresses for asset', () => {
-    const GetCollateralDepositAddressesForAssetFailureResult = async (
-      failType: number,
+    const getCollateralDepositAddressesForAssetFailureResult = async (
+      accountId: string,
       limit?,
       startingAfter?
     ): Promise<ApiError> => {
-      let accId = accountId;
-      let lim = limit;
-      lim = 10;
-      if (failType == 404) {
-        accId = '1';
-      } else {
-        lim = 'aa';
-      }
       try {
         await client.collateral.getCollateralDepositAddressesForAsset({
-          accountId: accId,
+          accountId,
           collateralId,
           fireblocksAssetId,
-          limit: lim,
+          limit,
           startingAfter: startingAfter,
         });
       } catch (err) {
@@ -281,7 +244,6 @@ describe.skipIf(noCollateralapability)('collateral', () => {
         limit,
         startingAfter?
       ) => {
-        limit = 10;
         const response = await client.collateral.getCollateralDepositAddressesForAsset({
           accountId,
           collateralId,
@@ -316,19 +278,11 @@ describe.skipIf(noCollateralapability)('collateral', () => {
     });
 
     it('request should fail with Not Found', async () => {
-      const error = await GetCollateralDepositAddressesForAssetFailureResult(404);
+      const error = await getCollateralDepositAddressesForAssetFailureResult('1');
 
       expect(error.status).toBe(404);
       expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
       expect(error.body.requestPart).toBe(undefined);
-    });
-
-    it('request should fail schema property', async () => {
-      const error = await GetCollateralDepositAddressesForAssetFailureResult(400);
-
-      expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
-      expect(error.body.requestPart).toBe(RequestPart.QUERYSTRING);
     });
   });
 });

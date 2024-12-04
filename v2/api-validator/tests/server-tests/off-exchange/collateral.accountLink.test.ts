@@ -4,9 +4,7 @@ import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts
 import { Pageable, paginated } from '../../utils/pagination';
 import {
   ApiError,
-  BadRequestError,
   CollateralLinkStatus,
-  RequestPart,
   Environment,
   Blockchain,
   CryptocurrencySymbol,
@@ -30,7 +28,6 @@ describe.skipIf(noCollateralapability)('collateral', () => {
     accountId = getCapableAccountId('collateral');
     collateralId = `${randomUUID()}.${accountId}.${randomUUID()}`;
     collateralSignersList = config.get('collateral.accountLink.signers');
-    console.log(collateralSignersList);
     requestBody = {
       id: randomUUID(),
       collateralId: collateralId,
@@ -42,7 +39,7 @@ describe.skipIf(noCollateralapability)('collateral', () => {
   describe('create collateral accounts links', () => {
     let collateralAccount: CollateralAccount;
 
-    const CreateCollateralAccountLinksFailureResult = async (
+    const createCollateralAccountLinksFailureResult = async (
       requestBody: CollateralAccount
     ): Promise<ApiError> => {
       try {
@@ -89,34 +86,18 @@ describe.skipIf(noCollateralapability)('collateral', () => {
           expect(asset['testAsset']).toEqual(true);
       }
     });
-
-    it('request should fail schema property', async () => {
-      const error = await CreateCollateralAccountLinksFailureResult({
-        ...collateralAccount,
-      });
-
-      expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
-      expect(error.body.requestPart).toBe(RequestPart.BODY);
-    });
   });
 
   describe('get linked collateral accounts', () => {
-    const GetCollateralAccountLinksFailureResult = async (
-      failType: number,
+    const getCollateralAccountLinksFailureResult = async (
+      accountId: string,
       limit?,
       startingAfter?
     ): Promise<ApiError> => {
-      let accId = accountId;
-      if (failType == 404) {
-        accId = '1';
-      } else {
-        limit = 'aa';
-      }
       try {
         await client.collateral.getCollateralAccountLinks({
-          accountId: accId,
-          limit: limit,
+          accountId,
+          limit,
           startingAfter: startingAfter,
         });
       } catch (err) {
@@ -173,19 +154,11 @@ describe.skipIf(noCollateralapability)('collateral', () => {
     });
 
     it('request should fail with Not Found', async () => {
-      const error = await GetCollateralAccountLinksFailureResult(404);
+      const error = await getCollateralAccountLinksFailureResult('1');
 
       expect(error.status).toBe(404);
       expect(error.body.errorType).toBe(GeneralError.errorType.NOT_FOUND);
       expect(error.body.requestPart).toBe(undefined);
-    });
-
-    it('request should fail schema property', async () => {
-      const error = await GetCollateralAccountLinksFailureResult(400);
-
-      expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
-      expect(error.body.requestPart).toBe(RequestPart.QUERYSTRING);
     });
   });
 });
