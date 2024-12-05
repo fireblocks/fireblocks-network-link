@@ -40,9 +40,7 @@ paths:
         
         The capabilities are specified as a map. The map keys are the capability
         names and the values are lists of account IDs. If all the accounts support
-        a capability, an asterisk could be used, instead of listing all the accounts. 
-        Exception is `crosstransfers` where it can accept only `*` or an empty list, 
-        it is not allowed to specify individual accounts.
+        a capability, an asterisk could be used, instead of listing all the accounts.
       tags: [ capabilities ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
@@ -70,7 +68,6 @@ paths:
                       transfersFiat: "*"
                       transfersPeerAccounts: "*"
                       transfersInternal: "*"
-                      crosstransfers: "*"
                       crosstransfersOnRamp: "*"
                       crosstransfersOffRamp: "*"
                       crosstransfersBridging: "*"

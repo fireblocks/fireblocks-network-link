@@ -80,7 +80,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ListCrossTransfersResult'
-                
+
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -121,9 +121,9 @@ paths:
                 properties:
                   standingOrders:
                     type: array
-                    items: 
+                    items:
                       $ref: '#/components/schemas/CrosstransferStandingOrder'
-                
+
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -482,7 +482,7 @@ components:
       properties:
         crossTransfers:
           type: array
-          items: 
+          items:
             $ref: '#/components/schemas/CrsossTransfer'
 
     CrsossTransfer:
@@ -571,7 +571,7 @@ components:
               properties:
                 status:
                   $ref: '#/x-schemas/WithdrawalStatus'
-        
+
     CryptoPaymentAccountParams:
       allOf:
         - $ref: '#/x-schemas/NativeCryptocurrency'
@@ -611,10 +611,10 @@ components:
       - $ref: '#/components/schemas/OnRampStandingOrder'
       - $ref: '#/components/schemas/OffRampStandingOrder'
       - $ref: '#/components/schemas/BridgingStandingOrder'
-      
+
     OnRampStandingOrder:
       type: object
-      required: [ orderType, source, destination ]
+      required: [ id, orderType, source, destination ]
       properties:
         id:
           type: string
@@ -644,7 +644,7 @@ components:
 
     OffRampStandingOrder:
       type: object
-      required: [ orderType, source, destination ]
+      required: [ id, orderType, source, destination ]
       properties:
         id:
           type: string
@@ -673,7 +673,7 @@ components:
 
     BridgingStandingOrder:
       type: object
-      required: [ orderType, source, destination ]
+      required: [ id, orderType, source, destination ]
       properties:
         id:
           type: string
