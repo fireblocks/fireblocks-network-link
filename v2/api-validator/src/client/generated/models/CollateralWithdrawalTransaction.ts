@@ -6,6 +6,7 @@
 import type { CollateralWithdrawalTransactionStatus } from './CollateralWithdrawalTransactionStatus';
 
 export type CollateralWithdrawalTransaction = {
+    id: string;
     /**
      * A unique identifier of the transaction to track. This field will contain information to help Fireblocks poll the status of the transaction from the provider.
      *
