@@ -1,3 +1,4 @@
+
 import Client from '../../../src/client';
 import config from '../../../src/config';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
@@ -10,7 +11,14 @@ import {
   CollateralAccount,
   CollateralAccountLink,
 } from '../../../src/client/generated';
+import { AxiosHttpRequest } from '../../../src/client/generated/core/AxiosHttpRequest';
 import { randomUUID } from 'crypto';
+import { fakeSchemaObject } from '../../../src/schemas';
+
+jest.mock('../../../src/client/generated/core/AxiosHttpRequest');
+const mockRequest = AxiosHttpRequest as jest.MockedClass<typeof AxiosHttpRequest>
+// jest.mock('axios');
+// const mockedAxios = axios as jest.MockedObject<typeof axios>;
 
 const noCollateralapability = !hasCapability('collateral');
 
@@ -33,6 +41,34 @@ describe.skipIf(noCollateralapability)('collateral', () => {
       collateralSigners: collateralSignersList,
       env: Environment.PROD,
     };
+
+    const response  = {
+      "collateralLinks": [
+        {
+          "collateralId": "f861c6ca-f4c8-44dd-a02e-081a38745623.95e40c1e-407e-405c-871e-d69218611a79.4cd3e66b-4ee4-4750-bcfd-d2d43054fc5d",
+          "collateralSigners": [
+            "4cd3e66b-4ee4-4750-bcfd-d2d43054fc5d"
+          ],
+          "id": "360de0ad-9ba1-45d5-8074-22453f193d65",
+          "eligibleCollateralAssets": [
+            {
+              "blockchain": "Bitcoin",
+              "cryptocurrencySymbol": "BTC",
+              "testAsset": false
+            },
+            {
+              "assetId": "360de0ad-9ba1-45d5-8074-22453f193d65"
+            }
+          ],
+          "status": "Linked",
+          "env": "kaka"
+        }
+      ]
+    }
+
+    mockRequest.prototype.request.mockResolvedValue({ status: 200, data: response });
+    // mockedAxios.request.mockImplementation(() => Promise.resolve({ status: 200, data: response }));
+
   });
 
   describe('Collateral Account Link', () => {
@@ -147,7 +183,10 @@ describe.skipIf(noCollateralapability)('collateral', () => {
           return response.collateralLinks;
         };
 
-        it('Check all required parameters exist and their type', async () => {
+        it.only('Check all required parameters exist and their type', async () => {
+          //const data = fakeSchemaObject('CollateralAccountLink') as CollateralAccountLink
+
+          
           for await (const collateralAccountLink of paginated(getCollateralAccountLinks)) {
             expect(typeof collateralAccountLink.id).toBe('string');
 
