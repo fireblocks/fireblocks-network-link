@@ -43,16 +43,6 @@ export class NotValid extends XComError {
   }
 }
 
-function isUUIDv4(uuid: string): boolean {
-  const uuidv4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidv4Regex.test(uuid);
-}
-
-function isPositiveAmount(amount: string): boolean {
-  const uuidv4Regex = /^\d+(\.\d+)?/i;
-  return uuidv4Regex.test(amount);
-}
-
 export class CollateralController {
   private readonly accountLinksRepository = new Repository<CollateralAccountLink>();
   private readonly depositAddressesRepository = new Repository<CollateralAssetAddress>();
@@ -173,25 +163,7 @@ export class CollateralController {
     accountId: string,
     collateralId: string
   ): CollateralDepositTransaction {
-    if (!isUUIDv4(accountId)) {
-      throw new NotValid('accountId');
-    }
-
-    const collateralIdsList = collateralId.split('.');
-    if (collateralIdsList[1] !== accountId) {
-      throw new NotValid('collateralId');
-    }
-
-    for (const id of collateralIdsList) {
-      if (!isUUIDv4(id)) {
-        throw new NotValid('collateralId');
-      }
-    }
-    if (amount != undefined) {
-      if (!isPositiveAmount(amount)) {
-        throw new NotValid('amount');
-      }
-    }
+  
     const newCollateralDepositTransaction: CollateralDepositTransaction = {
       id: collateralTxId,
       collateralTxId: collateralTxId,
@@ -226,13 +198,6 @@ export class CollateralController {
     fireblocksAssetId: string,
     accountId: string
   ): CollateralWithdrawalTransaction {
-    if (!isPositiveAmount(amount)) {
-      throw new NotValid('Amount');
-    }
-
-    if (typeof fireblocksAssetId !== 'string') {
-      throw new NotValid('fireblocksAssetId');
-    }
 
     const status = CollateralWithdrawalTransactionStatus.REJECTED;
     const collateralTxId = `1.${accountId}.${accountId}`;
