@@ -163,7 +163,6 @@ export class CollateralController {
     accountId: string,
     collateralId: string
   ): CollateralDepositTransaction {
-  
     const newCollateralDepositTransaction: CollateralDepositTransaction = {
       id: collateralTxId,
       collateralTxId: collateralTxId,
@@ -198,7 +197,6 @@ export class CollateralController {
     fireblocksAssetId: string,
     accountId: string
   ): CollateralWithdrawalTransaction {
-
     const status = CollateralWithdrawalTransactionStatus.REJECTED;
     const collateralTxId = `1.${accountId}.${accountId}`;
 
