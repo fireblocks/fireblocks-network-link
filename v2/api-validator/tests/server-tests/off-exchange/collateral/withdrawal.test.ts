@@ -1,6 +1,6 @@
-import Client from '../../../src/client';
-import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
-import { Pageable, paginated } from '../../utils/pagination';
+import Client from '../../../../src/client';
+import { getCapableAccountId, hasCapability } from '../../../utils/capable-accounts';
+import { Pageable, paginated } from '../../../utils/pagination';
 import {
   ApiError,
   GeneralError,
@@ -10,7 +10,7 @@ import {
   Blockchain,
   CollateralWithdrawalTransactionStatus,
   CryptocurrencySymbol,
-} from '../../../src/client/generated';
+} from '../../../../src/client/generated';
 import { randomUUID } from 'crypto';
 
 const noCollateralapability = !hasCapability('collateral');
@@ -177,7 +177,7 @@ describe.skipIf(noCollateralapability)('collateral', () => {
 
   describe('get collateral deposit transaction details', () => {
     const getCollateralWiothdrawalTransactionDetailsFailureResult = async (
-      accountId: string,
+      accountId: string
     ): Promise<ApiError> => {
       try {
         await client.collateral.getCollateralWithdrawalTransactionDetails({

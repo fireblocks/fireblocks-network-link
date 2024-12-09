@@ -1,34 +1,33 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import * as ErrorFactory from '../../http-error-factory';
-import { CollateralController } from '../../controllers/off-exchange/collateral-controller';
+import * as ErrorFactory from '../../../http-error-factory';
+import { CollateralController } from '../../../controllers/off-exchange/collateral/collateral-controller';
 import {
-  CollateralWithdrawalTransaction,
-  CollateralWithdrawalTransactionRequest,
-  CollateralWithdrawalTransactions,
-} from '../../../client/generated';
-import { ControllersContainer } from '../../controllers/controllers-container';
-import { getPaginationResult } from '../../controllers/pagination-controller';
+  CollateralDepositTransaction,
+  CollateralDepositTransactions,
+} from '../../../../client/generated';
+import { ControllersContainer } from '../../../controllers/controllers-container';
+import { getPaginationResult } from '../../../controllers/pagination-controller';
 import {
   AccountIdPathParam,
   PaginationQuerystring,
   CollateralIdPathParam,
   FireblocksAssetIdPathParam,
   CollateralTxIdPathParam,
-} from '../request-types';
+} from '../../request-types';
 
 const controllers = new ControllersContainer(() => new CollateralController());
 
-export async function initiateCollateralWithdrawalTransaction(
+export async function registerCollateralDepositTransaction(
   request: FastifyRequest<
     AccountIdPathParam &
       CollateralIdPathParam &
-      FireblocksAssetIdPathParam & { Body: CollateralWithdrawalTransactionRequest }
+      FireblocksAssetIdPathParam & { Body: CollateralDepositTransaction }
   >,
   reply: FastifyReply
-): Promise<CollateralWithdrawalTransaction> {
+): Promise<CollateralDepositTransaction> {
   {
-    const { fireblocksAssetId, amount } = request.body;
-    const { accountId } = request.params;
+    const { collateralTxId, fireblocksAssetId, amount, status } = request.body;
+    const { accountId, collateralId } = request.params;
 
     const controller = controllers.getController(accountId);
 
@@ -36,19 +35,22 @@ export async function initiateCollateralWithdrawalTransaction(
       return ErrorFactory.notFound(reply);
     }
 
-    const newCollateralDepositTransaction = controller.initiateCollateralWithdrawalTransaction(
+    const newCollateralDepositTransaction = controller.registerCollateralDepositTransaction(
+      status,
       amount,
+      collateralTxId,
       fireblocksAssetId,
-      accountId
+      accountId,
+      collateralId
     );
     return newCollateralDepositTransaction;
   }
 }
 
-export async function getCollateralWithdrawalTransactions(
+export async function getCollateralDepositTransactions(
   request: FastifyRequest<PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam>,
   reply: FastifyReply
-): Promise<CollateralWithdrawalTransactions> {
+): Promise<CollateralDepositTransactions> {
   const { limit, startingAfter, endingBefore } = request.query;
   const { accountId } = request.params;
 
@@ -58,19 +60,19 @@ export async function getCollateralWithdrawalTransactions(
     return ErrorFactory.notFound(reply);
   }
 
-  const transactionList = controller.getCollateralWithdrawalTransactions();
+  const transactionList = controller.getCollateralDepositTransactions();
 
   return {
     transactions: getPaginationResult(limit, startingAfter, endingBefore, transactionList, 'id'),
   };
 }
 
-export async function getCollateralWithdrawalTransactionDetails(
+export async function getCollateralDepositTransactionDetails(
   request: FastifyRequest<
     PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam & CollateralTxIdPathParam
   >,
   reply: FastifyReply
-): Promise<CollateralWithdrawalTransaction> {
+): Promise<CollateralDepositTransaction> {
   const { accountId, collateralTxId } = request.params;
 
   const controller = controllers.getController(accountId);
@@ -79,7 +81,7 @@ export async function getCollateralWithdrawalTransactionDetails(
     return ErrorFactory.notFound(reply);
   }
 
-  const transaction = controller.getCollateralwithdrawalTransactionDetails(collateralTxId);
+  const transaction = controller.getCollateralDepositTransactionDetails(collateralTxId);
 
   return transaction;
 }

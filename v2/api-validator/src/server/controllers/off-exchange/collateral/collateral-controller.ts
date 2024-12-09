@@ -1,4 +1,4 @@
-import { Repository } from '../repository';
+import { Repository } from '../../repository';
 import {
   CollateralAccountLink,
   CollateralAccount,
@@ -18,10 +18,10 @@ import {
   SettlementInstructions,
   PublicBlockchainCapability,
   SettlementState,
-} from '../../../client/generated';
-import { randomUUID } from 'crypto';
-import { XComError } from '../../../error';
-import { fakeSchemaObject } from '../../../schemas';
+} from '../../../../client/generated';
+import { v4 as uuid } from 'uuid';
+import { XComError } from '../../../../error';
+import { fakeSchemaObject } from '../../../../schemas';
 
 type SettlementInstructionsIdentifier = {
   id: string;
@@ -54,27 +54,25 @@ function isPositiveAmount(amount: string): boolean {
 }
 
 export class CollateralController {
-  private readonly collateralAccountLinksRepository = new Repository<CollateralAccountLink>();
-  private readonly collateralDepositAddressesRepository = new Repository<CollateralAssetAddress>();
-  private readonly collateralDepositTransactionRepository =
-    new Repository<CollateralDepositTransaction>();
-  private readonly collateralWithdrawalTransactionRepository =
+  private readonly accountLinksRepository = new Repository<CollateralAccountLink>();
+  private readonly depositAddressesRepository = new Repository<CollateralAssetAddress>();
+  private readonly depositTransactionRepository = new Repository<CollateralDepositTransaction>();
+  private readonly withdrawalTransactionRepository =
     new Repository<CollateralWithdrawalTransaction>();
-  private readonly collateralSettlementRepository =
-    new Repository<SettlementInstructionsIdentifier>();
-  private readonly collateralSettlementStateRepository =
-    new Repository<SettlementStateIdentifier>();
+  private readonly settlementRepository = new Repository<SettlementInstructionsIdentifier>();
+  private readonly settlementStateRepository = new Repository<SettlementStateIdentifier>();
 
   constructor() {
     for (let i = 0; i < 20; i++) {
-      const CollateralDepositAddress = fakeSchemaObject(
-        'CollateralAssetAddress'
-      ) as CollateralAssetAddress;
-      CollateralDepositAddress.address.asset = CollateralDepositAddress.asset;
-      this.collateralDepositAddressesRepository.create(CollateralDepositAddress);
+      const accountLink = fakeSchemaObject('CollateralAccountLink') as CollateralAccountLink;
+      this.accountLinksRepository.create(accountLink);
+
+      const depositAddress = fakeSchemaObject('CollateralAssetAddress') as CollateralAssetAddress;
+      depositAddress.address.asset = depositAddress.asset;
+      this.depositAddressesRepository.create(depositAddress);
 
       const setllementState = fakeSchemaObject('SettlementState') as SettlementStateIdentifier;
-      this.collateralSettlementStateRepository.create(setllementState);
+      this.settlementStateRepository.create(setllementState);
     }
   }
 
@@ -99,24 +97,25 @@ export class CollateralController {
 
   public createCollateralAccountLink(collateralAccount: CollateralAccount): CollateralAccount {
     const newCollateralAccountLink: CollateralAccountLink = {
-      id: randomUUID(),
+      id: uuid(),
       collateralId: collateralAccount.collateralId,
       collateralSigners: collateralAccount.collateralSigners || [],
       eligibleCollateralAssets: this.generateCollateralAssets(2, collateralAccount.env),
       status: CollateralLinkStatus.ELIGIBLE,
-      env: Environment.PROD,
+      env: collateralAccount.env,
     };
+
     return newCollateralAccountLink;
   }
 
   public getCollateralAccountLinks(): CollateralAccountLink[] {
-    const collateralLinks = this.collateralAccountLinksRepository.list();
+    const collateralLinks = this.accountLinksRepository.list();
 
     return collateralLinks;
   }
 
   public getCollateralDepositAddresses(): CollateralAssetAddress[] {
-    const CollateralDepositAddress = this.collateralDepositAddressesRepository.list();
+    const CollateralDepositAddress = this.depositAddressesRepository.list();
 
     return CollateralDepositAddress;
   }
@@ -135,12 +134,12 @@ export class CollateralController {
       asset: asset,
       fireblocksAssetId: fireblocksAssetId,
     };
-    this.collateralDepositAddressesRepository.create(newCollateralDepositAddress);
+    this.depositAddressesRepository.create(newCollateralDepositAddress);
     return newCollateralDepositAddress;
   }
 
   public getCollateralDepositAddressesForAsset(fireblocksAssetId: string): CollateralAddress[] {
-    const CollateralDepositAddress = this.collateralDepositAddressesRepository.list();
+    const CollateralDepositAddress = this.depositAddressesRepository.list();
 
     const CollateralDepositAddressForAsset = CollateralDepositAddress.filter(
       (address) => address.fireblocksAssetId === fireblocksAssetId
@@ -187,12 +186,12 @@ export class CollateralController {
       amount: amount,
       status: status,
     };
-    this.collateralDepositTransactionRepository.create(newCollateralDepositTransaction);
+    this.depositTransactionRepository.create(newCollateralDepositTransaction);
     return newCollateralDepositTransaction;
   }
 
   public getCollateralDepositTransactions(): CollateralDepositTransaction[] {
-    const collateralDepositTransactions = this.collateralDepositTransactionRepository.list();
+    const collateralDepositTransactions = this.depositTransactionRepository.list();
 
     return collateralDepositTransactions;
   }
@@ -200,8 +199,7 @@ export class CollateralController {
   public getCollateralDepositTransactionDetails(
     collateralTxId: string
   ): CollateralDepositTransaction {
-    const collateralDepositTransaction =
-      this.collateralDepositTransactionRepository.find(collateralTxId);
+    const collateralDepositTransaction = this.depositTransactionRepository.find(collateralTxId);
 
     if (!collateralDepositTransaction) {
       throw new NotFound('collateralTxId');
@@ -226,7 +224,7 @@ export class CollateralController {
     const status = CollateralWithdrawalTransactionStatus.REJECTED;
     const collateralTxId = `1.${accountId}.${accountId}`;
 
-    const newcollateralWithdrawalTransaction: CollateralWithdrawalTransaction = {
+    const newWithdrawalTransaction: CollateralWithdrawalTransaction = {
       id: collateralTxId,
       collateralTxId: collateralTxId,
       withdrawalTxBlockchainId:
@@ -234,27 +232,27 @@ export class CollateralController {
       status: status,
       rejectionReason: 'Rejected due to ongoing settlement',
     };
-    this.collateralWithdrawalTransactionRepository.create(newcollateralWithdrawalTransaction);
-    return newcollateralWithdrawalTransaction;
+
+    this.withdrawalTransactionRepository.create(newWithdrawalTransaction);
+    return newWithdrawalTransaction;
   }
 
   public getCollateralWithdrawalTransactions(): CollateralWithdrawalTransaction[] {
-    const collateralWithdrawalTransaction = this.collateralWithdrawalTransactionRepository.list();
+    const withdrawalTransaction = this.withdrawalTransactionRepository.list();
 
-    return collateralWithdrawalTransaction;
+    return withdrawalTransaction;
   }
 
   public getCollateralwithdrawalTransactionDetails(
     collateralTxId: string
   ): CollateralWithdrawalTransaction {
-    const collateralWithdrawalTransaction =
-      this.collateralWithdrawalTransactionRepository.find(collateralTxId);
+    const withdrawalTransaction = this.withdrawalTransactionRepository.find(collateralTxId);
 
-    if (!collateralWithdrawalTransaction) {
+    if (!withdrawalTransaction) {
       throw new NotFound('collateralTxId');
     }
 
-    return collateralWithdrawalTransaction;
+    return withdrawalTransaction;
   }
 
   public initiateSettlement(
@@ -263,7 +261,7 @@ export class CollateralController {
     accountId: string,
     collateralId: string
   ): SettlementInstructions {
-    const newCollateralSettlement: SettlementInstructionsIdentifier = {
+    const newSettlement: SettlementInstructionsIdentifier = {
       id: accountId,
       settlementVersion: settlementVersion,
       withdrawInstructions: [
@@ -301,24 +299,24 @@ export class CollateralController {
       ],
     };
 
-    this.collateralSettlementRepository.create(newCollateralSettlement);
+    this.settlementRepository.create(newSettlement);
 
-    return newCollateralSettlement;
+    return newSettlement;
   }
 
   public getCurrentSettlementInstructions(settlementVersion: string): SettlementInstructions {
-    const collateralSettlement = this.collateralSettlementRepository.find(settlementVersion);
+    const settlement = this.settlementRepository.find(settlementVersion);
 
-    if (!collateralSettlement) {
+    if (!settlement) {
       throw new NotFound('settlementVersion');
     }
 
-    return collateralSettlement;
+    return settlement;
   }
 
   public getSettlementDetails(): SettlementState {
-    const collateralSettlementState = this.collateralSettlementStateRepository.list();
+    const settlementState = this.settlementStateRepository.list();
 
-    return collateralSettlementState[0];
+    return settlementState[0];
   }
 }

@@ -1,6 +1,6 @@
-import Client from '../../../src/client';
-import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
-import { Pageable, paginated } from '../../utils/pagination';
+import Client from '../../../../src/client';
+import { getCapableAccountId, hasCapability } from '../../../utils/capable-accounts';
+import { Pageable, paginated } from '../../../utils/pagination';
 import {
   ApiError,
   Blockchain,
@@ -9,7 +9,7 @@ import {
   CollateralAssetAddress,
   PublicBlockchainCapability,
   CollateralAddress,
-} from '../../../src/client/generated';
+} from '../../../../src/client/generated';
 import { randomUUID } from 'crypto';
 
 const noCollateralapability = !hasCapability('collateral');

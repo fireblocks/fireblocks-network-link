@@ -1,5 +1,5 @@
-import Client from '../../../src/client';
-import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
+import Client from '../../../../src/client';
+import { getCapableAccountId, hasCapability } from '../../../utils/capable-accounts';
 import {
   ApiError,
   GeneralError,
@@ -8,7 +8,7 @@ import {
   CryptocurrencySymbol,
   SettlementRequest,
   SettlementTransactionStatus,
-} from '../../../src/client/generated';
+} from '../../../../src/client/generated';
 import { randomUUID } from 'crypto';
 
 const noCollateralapability = !hasCapability('collateral');

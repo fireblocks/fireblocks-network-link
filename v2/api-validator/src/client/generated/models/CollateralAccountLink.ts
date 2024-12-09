@@ -8,6 +8,7 @@ import type { CollateralAsset } from './CollateralAsset';
 import type { CollateralLinkStatus } from './CollateralLinkStatus';
 
 export type CollateralAccountLink = (CollateralAccount & {
+    id: string;
     status: CollateralLinkStatus;
     eligibleCollateralAssets: Array<CollateralAsset>;
     rejectionReason?: string;

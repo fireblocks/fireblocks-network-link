@@ -667,13 +667,10 @@ components:
     CollateralAccount:
       type: object
       required:
-        - id
         - collateralId
         - collateralSigners
         - env
       properties:
-        id:
-          type: string
         collateralId:
           $ref: '#/components/schemas/CollateralId'
         collateralSigners:
@@ -687,9 +684,12 @@ components:
         - $ref: '#/components/schemas/CollateralAccount'
         - type: object
           required:
+            - id
             - status
             - eligibleCollateralAssets
           properties:
+            id:
+              type: string
             status:
               $ref: '#/components/schemas/CollateralLinkStatus'
             eligibleCollateralAssets:
