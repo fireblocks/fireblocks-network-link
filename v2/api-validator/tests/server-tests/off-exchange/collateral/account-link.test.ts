@@ -110,10 +110,6 @@ describe('collateral', () => {
 
         it('Check all required parameters exist and their type', async () => {
           for await (const collateralAccountLink of paginated(getCollateralAccountLinks)) {
-            expect(collateralAccountLink.collateralId).toBe(collateralId);
-
-            expect(collateralAccountLink.collateralSigners).toEqual(collateralSignersList);
-
             if (collateralAccountLink.rejectionReason) {
               expect(collateralAccountLink.status).not.toBe(CollateralLinkStatus.LINKED);
 

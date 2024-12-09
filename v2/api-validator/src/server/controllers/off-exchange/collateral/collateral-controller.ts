@@ -65,6 +65,11 @@ export class CollateralController {
   constructor() {
     for (let i = 0; i < 20; i++) {
       const accountLink = fakeSchemaObject('CollateralAccountLink') as CollateralAccountLink;
+      if (
+        ![CollateralLinkStatus.FAILED, CollateralLinkStatus.DISABLED].includes(accountLink.status)
+      ) {
+        delete accountLink.rejectionReason;
+      }
       this.accountLinksRepository.create(accountLink);
 
       const depositAddress = fakeSchemaObject('CollateralAssetAddress') as CollateralAssetAddress;
