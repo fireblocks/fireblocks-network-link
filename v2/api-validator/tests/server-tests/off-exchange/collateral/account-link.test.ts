@@ -27,7 +27,7 @@ describe('collateral', () => {
 
   describe('Collateral Account Link', () => {
     describe('POST request: createCollateralAccountLink', () => {
-      describe('Should be sucess tests and a valid response', () => {
+      describe('Should sucess link tests and a valid response', () => {
         it('with PROD env param, should return env: Prod and testAsset: false', async () => {
           requestBody = {
             collateralId: collateralId,
@@ -90,6 +90,48 @@ describe('collateral', () => {
 
           if (assetObject['testAsset'] !== undefined)
             expect(assetObject['testAsset']).toEqual(true);
+        });
+      });
+      describe('Should fail link tests and a valid response', () => {
+        it('with collateralId is missing in db, should return faild status and rejectionReason', async () => {
+          requestBody = {
+            collateralId: collateralId,
+            collateralSigners: collateralSignersList,
+            env: Environment.PROD,
+          };
+
+          requestBody.collateralId = '10';
+
+          createCollateralAccountLinkResponse = await client.collateral.createCollateralAccountLink(
+            {
+              accountId,
+              requestBody,
+            }
+          );
+
+          expect(createCollateralAccountLinkResponse.status).toBe(CollateralLinkStatus.FAILED);
+
+          expect(createCollateralAccountLinkResponse).toHaveProperty('rejectionReason');
+        });
+        it('with collateralId is missing in db, should return faild status and rejectionReason', async () => {
+          requestBody = {
+            collateralId: collateralId,
+            collateralSigners: collateralSignersList,
+            env: Environment.PROD,
+          };
+
+          requestBody.collateralSigners = ['10'];
+
+          createCollateralAccountLinkResponse = await client.collateral.createCollateralAccountLink(
+            {
+              accountId,
+              requestBody,
+            }
+          );
+
+          expect(createCollateralAccountLinkResponse.status).toBe(CollateralLinkStatus.FAILED);
+
+          expect(createCollateralAccountLinkResponse).toHaveProperty('rejectionReason');
         });
       });
     });

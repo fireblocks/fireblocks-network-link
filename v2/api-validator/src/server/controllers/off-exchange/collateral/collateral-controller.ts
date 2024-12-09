@@ -110,6 +110,14 @@ export class CollateralController {
       env: collateralAccount.env,
     };
 
+    if (
+      collateralAccount.collateralId === '10' ||
+      collateralAccount.collateralSigners[0] === '10'
+    ) {
+      newCollateralAccountLink.status = CollateralLinkStatus.FAILED;
+      newCollateralAccountLink.rejectionReason = 'unknown collateralId/collateralSigner';
+    }
+
     return newCollateralAccountLink;
   }
 
