@@ -5,7 +5,6 @@ import { Pageable, paginated } from '../../../utils/pagination';
 import {
   CollateralLinkStatus,
   Environment,
-  CollateralAccount,
   CollateralAccountLink,
 } from '../../../../src/client/generated';
 import { v4 as uuid } from 'uuid';
@@ -24,14 +23,14 @@ describe('Collateral Account Link', () => {
     collateralSignersList = config.get('collateral.accountLink.signers');
   });
 
-  describe('POST request: createCollateralAccountLink', () => {
-    describe('Should be a sucess link tests and a valid response', () => {
+  describe('createCollateralAccountLink', () => {
+    describe('Linking success CollateralLinkStatus', () => {
       const testParams = [
         { env: Environment.SANDBOX, expectedEnv: Environment.SANDBOX, expectedTestAsset: true },
         { env: Environment.PROD, expectedEnv: Environment.PROD, expectedTestAsset: false },
       ];
 
-      it('Should retunrn same collateralId, collateralSigners, status: eligble and rejectionReason: undefined', async () => {
+      it('Response should return same collateralId, collateralSigners, status: eligble and rejectionReason: undefined', async () => {
         createCollateralAccountLinkResponse = await client.collateral.createCollateralAccountLink({
           accountId,
           requestBody: {
@@ -53,7 +52,7 @@ describe('Collateral Account Link', () => {
       });
 
       it.each(testParams)(
-        'Happy flow with $env env param, should return env: $expectedEnv and testAsset: $expectedTestAsset',
+        'Response should return env: $expectedEnv and testAsset: $expectedTestAsset',
         async ({ env, expectedEnv, expectedTestAsset }) => {
           createCollateralAccountLinkResponse = await client.collateral.createCollateralAccountLink(
             {
@@ -76,7 +75,7 @@ describe('Collateral Account Link', () => {
       );
     });
 
-    describe('Should fail link tests and a valid response', () => {
+    describe('Linking failure CollateralLinkStatus', () => {
       const testParams = [
         {
           collateralId: '10',
@@ -93,7 +92,7 @@ describe('Collateral Account Link', () => {
       ];
 
       it.each(testParams)(
-        'with %p, should return failed status and rejectionReason',
+        'CollateralId/collateralSigners unknown for the provider, response should return with failed status and rejectionReason',
         async ({ collateralId, collateralSigners, expectedStatus, expectedRejectionReason }) => {
           createCollateralAccountLinkResponse = await client.collateral.createCollateralAccountLink(
             {
@@ -116,8 +115,8 @@ describe('Collateral Account Link', () => {
     });
   });
 
-  describe('GET request: getCollateralAccountLinks', () => {
-    describe('Should Sucess Tests', () => {
+  describe('getCollateralAccountLinks', () => {
+    describe('Successful request', () => {
       const getCollateralAccountLinks: Pageable<CollateralAccountLink> = async (
         limit,
         startingAfter?
@@ -130,7 +129,7 @@ describe('Collateral Account Link', () => {
         return response.collateralLinks;
       };
 
-      it('Check all required parameters exist and their type', async () => {
+      it('Happy flow, response returned with valid values', async () => {
         for await (const collateralAccountLink of paginated(getCollateralAccountLinks)) {
           if (collateralAccountLink.rejectionReason) {
             expect(collateralAccountLink.status).not.toBe(CollateralLinkStatus.LINKED);

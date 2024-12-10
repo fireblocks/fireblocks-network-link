@@ -6,5 +6,7 @@
 import type { CollateralAddress } from './CollateralAddress';
 import type { CollateralAssetMapping } from './CollateralAssetMapping';
 
-export type CollateralAssetAddress = (CollateralAddress & CollateralAssetMapping);
+export type CollateralAssetAddress = (CollateralAddress & CollateralAssetMapping & {
+    id: string;
+});
 

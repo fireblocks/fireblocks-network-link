@@ -6,7 +6,6 @@
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
 export type CollateralAddress = {
-    id: string;
     address: PublicBlockchainAddress;
     /**
      * An account ID used when recovering the assets of an off-exchange client

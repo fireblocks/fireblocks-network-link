@@ -1895,7 +1895,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CollateralDepositAddressesForAsset'
+                $ref: '#/components/schemas/CollateralDepositAddresses'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -4024,12 +4024,9 @@ components:
     CollateralAddress:
       type: object
       required:
-        - id
         - address
         - recoveryAccountId
       properties:
-        id:
-          type: string
         address:
           $ref: '#/components/schemas/PublicBlockchainAddress'
         recoveryAccountId:
@@ -4040,6 +4037,12 @@ components:
       allOf:
         - $ref: '#/components/schemas/CollateralAddress'
         - $ref: '#/components/schemas/CollateralAssetMapping'
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
     CollateralDepositAddresses:
       type: object
       required:
@@ -4049,15 +4052,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CollateralAssetAddress'
-    CollateralDepositAddressesForAsset:
-      type: object
-      required:
-        - addresses
-      properties:
-        addresses:
-          type: array
-          items:
-            $ref: '#/components/schemas/CollateralAddress'
     CollateralDepositTransactionStatus:
       type: string
       enum:
