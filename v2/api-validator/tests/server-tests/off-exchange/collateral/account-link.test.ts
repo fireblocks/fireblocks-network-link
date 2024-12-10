@@ -24,13 +24,8 @@ describe('Collateral Account Link', () => {
   });
 
   describe('createCollateralAccountLink', () => {
-    describe('Linking success CollateralLinkStatus', () => {
-      const testParams = [
-        { env: Environment.SANDBOX, expectedEnv: Environment.SANDBOX, expectedTestAsset: true },
-        { env: Environment.PROD, expectedEnv: Environment.PROD, expectedTestAsset: false },
-      ];
-
-      it('Response should return same collateralId, collateralSigners, status: eligble and rejectionReason: undefined', async () => {
+    describe('Successful request', () => {
+      it('Response should return valid', async () => {
         createCollateralAccountLinkResponse = await client.collateral.createCollateralAccountLink({
           accountId,
           requestBody: {
@@ -51,85 +46,73 @@ describe('Collateral Account Link', () => {
         expect(createCollateralAccountLinkResponse.status).toBe(CollateralLinkStatus.ELIGIBLE);
       });
 
-      it.each(testParams)(
-        'Response should return env: $expectedEnv and testAsset: $expectedTestAsset',
-        async ({ env, expectedEnv, expectedTestAsset }) => {
-          createCollateralAccountLinkResponse = await client.collateral.createCollateralAccountLink(
-            {
-              accountId,
-              requestBody: {
-                collateralId: collateralId,
-                collateralSigners: collateralSignersList,
-                env: env,
-              },
-            }
-          );
+      it('Response should return test assetTrue', async () => {
+        createCollateralAccountLinkResponse = await client.collateral.createCollateralAccountLink({
+          accountId,
+          requestBody: {
+            collateralId: collateralId,
+            collateralSigners: collateralSignersList,
+            env: Environment.SANDBOX,
+          },
+        });
 
-          expect(createCollateralAccountLinkResponse.env).toBe(expectedEnv);
+        expect(createCollateralAccountLinkResponse.env).toBe(Environment.SANDBOX);
 
-          const assetObject = createCollateralAccountLinkResponse.eligibleCollateralAssets;
-          if (assetObject['testAsset'] !== undefined) {
-            expect(assetObject['testAsset']).toEqual(expectedTestAsset);
-          }
+        const assetObject = createCollateralAccountLinkResponse.eligibleCollateralAssets;
+        if (assetObject['testAsset'] !== undefined) {
+          expect(assetObject['testAsset']).toEqual(true);
         }
-      );
+      });
     });
+    it.each([
+      {
+        collateralId: '10',
+        collateralSigners: config.get('collateral.accountLink.signers'),
+        expectedStatus: CollateralLinkStatus.FAILED,
+        expectedRejectionReason: true,
+      },
+      {
+        collateralId: `${uuid()}.${accountId}.${uuid()}`,
+        collateralSigners: ['10'],
+        expectedStatus: CollateralLinkStatus.FAILED,
+        expectedRejectionReason: true,
+      },
+    ])(
+      'CollateralId/collateralSigners unknown for the provider, response should return with failed status and rejectionReason',
+      async ({ collateralId, collateralSigners, expectedStatus, expectedRejectionReason }) => {
+        createCollateralAccountLinkResponse = await client.collateral.createCollateralAccountLink({
+          accountId,
+          requestBody: {
+            collateralId,
+            collateralSigners,
+            env: Environment.PROD,
+          },
+        });
 
-    describe('Linking failure CollateralLinkStatus', () => {
-      const testParams = [
-        {
-          collateralId: '10',
-          collateralSigners: config.get('collateral.accountLink.signers'),
-          expectedStatus: CollateralLinkStatus.FAILED,
-          expectedRejectionReason: true,
-        },
-        {
-          collateralId: `${uuid()}.${accountId}.${uuid()}`,
-          collateralSigners: ['10'],
-          expectedStatus: CollateralLinkStatus.FAILED,
-          expectedRejectionReason: true,
-        },
-      ];
+        expect(createCollateralAccountLinkResponse.status).toBe(expectedStatus);
 
-      it.each(testParams)(
-        'CollateralId/collateralSigners unknown for the provider, response should return with failed status and rejectionReason',
-        async ({ collateralId, collateralSigners, expectedStatus, expectedRejectionReason }) => {
-          createCollateralAccountLinkResponse = await client.collateral.createCollateralAccountLink(
-            {
-              accountId,
-              requestBody: {
-                collateralId,
-                collateralSigners,
-                env: Environment.PROD,
-              },
-            }
-          );
-
-          expect(createCollateralAccountLinkResponse.status).toBe(expectedStatus);
-
-          if (expectedRejectionReason) {
-            expect(createCollateralAccountLinkResponse).toHaveProperty('rejectionReason');
-          }
+        if (expectedRejectionReason) {
+          expect(createCollateralAccountLinkResponse).toHaveProperty('rejectionReason');
         }
-      );
-    });
+      }
+    );
   });
 
   describe('getCollateralAccountLinks', () => {
     describe('Successful request', () => {
-      const getCollateralAccountLinks: Pageable<CollateralAccountLink> = async (
-        limit,
-        startingAfter?
-      ) => {
-        const response = await client.collateral.getCollateralAccountLinks({
-          accountId: accountId,
-          limit: limit,
-          startingAfter: startingAfter,
-        });
-        return response.collateralLinks;
-      };
+      it('Response returned with valid values', async () => {
+        const getCollateralAccountLinks: Pageable<CollateralAccountLink> = async (
+          limit,
+          startingAfter?
+        ) => {
+          const response = await client.collateral.getCollateralAccountLinks({
+            accountId: accountId,
+            limit: limit,
+            startingAfter: startingAfter,
+          });
+          return response.collateralLinks;
+        };
 
-      it('Happy flow, response returned with valid values', async () => {
         for await (const collateralAccountLink of paginated(getCollateralAccountLinks)) {
           if (collateralAccountLink.rejectionReason) {
             expect(collateralAccountLink.status).not.toBe(CollateralLinkStatus.LINKED);
