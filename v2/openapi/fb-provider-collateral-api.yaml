@@ -126,6 +126,7 @@ paths:
                     collateralLinks:
                       - collateralId: "f861c6ca-f4c8-44dd-a02e-081a38745623.95e40c1e-407e-405c-871e-d69218611a79.4cd3e66b-4ee4-4750-bcfd-d2d43054fc5d"
                         collateralSigners: [ "4cd3e66b-4ee4-4750-bcfd-d2d43054fc5d" ]
+                        id: "360de0ad-9ba1-45d5-8074-22453f193d65"
                         eligibleCollateralAssets:
                           - blockchain: "Bitcoin"
                             cryptocurrencySymbol: "BTC"
@@ -246,12 +247,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  addresses:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CollateralAddress'
+                $ref: '#/components/schemas/CollateralDepositAddresses'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -328,12 +324,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  transactions:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CollateralDepositTransaction'
+                $ref: '#/components/schemas/CollateralDepositTransactions'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -443,12 +434,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  transactions:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/CollateralWithdrawalTransaction'
+                $ref: '#/components/schemas/CollateralWithdrawalTransactions'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -698,9 +684,12 @@ components:
         - $ref: '#/components/schemas/CollateralAccount'
         - type: object
           required:
+            - id
             - status
             - eligibleCollateralAssets
           properties:
+            id:
+              type: string
             status:
               $ref: '#/components/schemas/CollateralLinkStatus'
             eligibleCollateralAssets:
@@ -711,7 +700,7 @@ components:
               type: string
     CollateralAddress:
       type: object
-      required: [ address, recoveryAccountId ]
+      required: [address, recoveryAccountId ]
       properties:
         address:
           $ref: '#/x-schemas/PublicBlockchainAddress'
@@ -723,6 +712,12 @@ components:
       allOf:
         - $ref: '#/components/schemas/CollateralAddress'
         - $ref: '#/components/schemas/CollateralAssetMapping'
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
     CollateralDepositAddresses:
       type: object
       required:
@@ -732,7 +727,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CollateralAssetAddress'
-
     CollateralDepositTransactionStatus:
       type: string
       enum:
@@ -747,7 +741,7 @@ components:
         - **Rejected** - The transaction has been rejected and the account has not been credited
     CollateralDepositTransaction:
       type: object
-      required: [ fireblocksAssetId, collateralTxId ]
+      required: [ id, fireblocksAssetId, collateralTxId ]
       properties:
         collateralTxId:
           type: string
@@ -758,10 +752,22 @@ components:
         fireblocksAssetId:
           type: string
           description: "ID of the Fireblocks asset"
+        id:
+          type: string
         amount:
           $ref: '#/x-schemas/PositiveAmount'
         status:
           $ref: '#/components/schemas/CollateralDepositTransactionStatus'
+
+    CollateralDepositTransactions:
+      type: object
+      required:
+        - transactions
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollateralDepositTransaction'
 
     CollateralWithdrawalTransactionStatus:
       type: string
@@ -777,8 +783,10 @@ components:
         - **Rejected** - The withdrawal transaction has been rejected
     CollateralWithdrawalTransaction:
       type: object
-      required: [ collateralTxId, status ]
+      required: [ id, collateralTxId, status ]
       properties:
+        id:
+          type: string
         collateralTxId:
           type: string
           description: >
@@ -803,6 +811,15 @@ components:
           $ref: '#/x-schemas/PositiveAmount'
         destinationAddress:
           $ref: '#/x-schemas/PublicBlockchainAddress'
+    CollateralWithdrawalTransactions:
+      type: object
+      required:
+        - transactions
+      properties:
+        transactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CollateralWithdrawalTransaction'
 
     SettlementTransactionStatus:
       type: string
