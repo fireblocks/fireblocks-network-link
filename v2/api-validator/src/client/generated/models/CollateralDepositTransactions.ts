@@ -5,7 +5,7 @@
 
 import type { CollateralDepositTransaction } from './CollateralDepositTransaction';
 
-export type CollateralDepositTransactions = {
-    transactions: Array<CollateralDepositTransaction>;
-};
+export type CollateralDepositTransactions = (CollateralDepositTransaction & {
+    id: string;
+});
 

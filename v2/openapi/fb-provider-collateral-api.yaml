@@ -324,7 +324,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CollateralDepositTransactions'
+                $ref: '#/components/schemas/CollateralDepositTransactionsResponse'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -656,14 +656,14 @@ components:
       oneOf:
         - $ref: '#/x-schemas/NativeCryptocurrency'
         - $ref: '#/x-schemas/OtherAssetReference'
-    CollateralAssetMapping:
-      type: object
-      required: [ asset, fireblocksAssetId ]
-      properties:
-        asset:
-          $ref: '#/components/schemas/CollateralAsset'
-        fireblocksAssetId:
-          type: string
+#    CollateralAssetMapping:
+#      type: object
+#      required: [ asset, fireblocksAssetId ]
+#      properties:
+#        asset:
+#          $ref: '#/components/schemas/CollateralAsset'
+#        fireblocksAssetId:
+#          type: string
     CollateralAccount:
       type: object
       required:
@@ -700,7 +700,7 @@ components:
               type: string
     CollateralAddress:
       type: object
-      required: [address, recoveryAccountId ]
+      required: [ address, recoveryAccountId, fireblocksAssetId ]
       properties:
         address:
           $ref: '#/x-schemas/PublicBlockchainAddress'
@@ -708,10 +708,12 @@ components:
           type: string
           description: "An account ID used when recovering the assets of an off-exchange client"
           example: "12"
+        fireblocksAssetId:
+          type: string
     CollateralAssetAddress:
       allOf:
         - $ref: '#/components/schemas/CollateralAddress'
-        - $ref: '#/components/schemas/CollateralAssetMapping'
+#        - $ref: '#/components/schemas/CollateralAssetMapping'
         - type: object
           required:
             - id
@@ -741,7 +743,7 @@ components:
         - **Rejected** - The transaction has been rejected and the account has not been credited
     CollateralDepositTransaction:
       type: object
-      required: [ id, fireblocksAssetId, collateralTxId ]
+      required: [ fireblocksAssetId, collateralTxId ]
       properties:
         collateralTxId:
           type: string
@@ -752,14 +754,21 @@ components:
         fireblocksAssetId:
           type: string
           description: "ID of the Fireblocks asset"
-        id:
-          type: string
         amount:
           $ref: '#/x-schemas/PositiveAmount'
         status:
           $ref: '#/components/schemas/CollateralDepositTransactionStatus'
 
     CollateralDepositTransactions:
+      allOf:
+        - $ref: '#/components/schemas/CollateralDepositTransaction'
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+    CollateralDepositTransactionsResponse:
       type: object
       required:
         - transactions
@@ -767,8 +776,7 @@ components:
         transactions:
           type: array
           items:
-            $ref: '#/components/schemas/CollateralDepositTransaction'
-
+            $ref: '#/components/schemas/CollateralDepositTransactions'
     CollateralWithdrawalTransactionStatus:
       type: string
       enum:

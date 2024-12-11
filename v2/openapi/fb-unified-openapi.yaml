@@ -1972,7 +1972,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CollateralDepositTransactions'
+                $ref: '#/components/schemas/CollateralDepositTransactionsResponse'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -3977,16 +3977,6 @@ components:
       oneOf:
         - $ref: '#/components/schemas/NativeCryptocurrency'
         - $ref: '#/components/schemas/OtherAssetReference'
-    CollateralAssetMapping:
-      type: object
-      required:
-        - asset
-        - fireblocksAssetId
-      properties:
-        asset:
-          $ref: '#/components/schemas/CollateralAsset'
-        fireblocksAssetId:
-          type: string
     CollateralAccount:
       type: object
       required:
@@ -4026,6 +4016,7 @@ components:
       required:
         - address
         - recoveryAccountId
+        - fireblocksAssetId
       properties:
         address:
           $ref: '#/components/schemas/PublicBlockchainAddress'
@@ -4033,10 +4024,11 @@ components:
           type: string
           description: An account ID used when recovering the assets of an off-exchange client
           example: '12'
+        fireblocksAssetId:
+          type: string
     CollateralAssetAddress:
       allOf:
         - $ref: '#/components/schemas/CollateralAddress'
-        - $ref: '#/components/schemas/CollateralAssetMapping'
         - type: object
           required:
             - id
@@ -4065,7 +4057,6 @@ components:
     CollateralDepositTransaction:
       type: object
       required:
-        - id
         - fireblocksAssetId
         - collateralTxId
       properties:
@@ -4077,13 +4068,20 @@ components:
         fireblocksAssetId:
           type: string
           description: ID of the Fireblocks asset
-        id:
-          type: string
         amount:
           $ref: '#/components/schemas/PositiveAmount'
         status:
           $ref: '#/components/schemas/CollateralDepositTransactionStatus'
     CollateralDepositTransactions:
+      allOf:
+        - $ref: '#/components/schemas/CollateralDepositTransaction'
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+    CollateralDepositTransactionsResponse:
       type: object
       required:
         - transactions
@@ -4091,7 +4089,7 @@ components:
         transactions:
           type: array
           items:
-            $ref: '#/components/schemas/CollateralDepositTransaction'
+            $ref: '#/components/schemas/CollateralDepositTransactions'
     CollateralWithdrawalTransactionStatus:
       type: string
       enum:

@@ -1,11 +1,7 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../../http-error-factory';
 import { CollateralController } from '../../../controllers/off-exchange/collateral/collateral-controller';
-import {
-  CollateralDepositAddresses,
-  CollateralAddress,
-  CollateralDepositAddressesForAsset,
-} from '../../../../client/generated';
+import { CollateralDepositAddresses, CollateralAddress } from '../../../../client/generated';
 import { ControllersContainer } from '../../../controllers/controllers-container';
 import { getPaginationResult } from '../../../controllers/pagination-controller';
 import {
@@ -46,7 +42,7 @@ export async function createCollateralDepositAddressForAsset(
   reply: FastifyReply
 ): Promise<CollateralDepositAddresses> {
   const { address, recoveryAccountId } = request.body;
-  const { accountId, collateralId } = request.params;
+  const { accountId, collateralId, fireblocksAssetId } = request.params;
 
   const controller = controllers.getController(accountId);
 
@@ -57,7 +53,7 @@ export async function createCollateralDepositAddressForAsset(
   const newCollateralDepositAddress = controller.createCollateralDepositAddressForAsset(
     address,
     recoveryAccountId,
-    accountId,
+    fireblocksAssetId,
     collateralId
   );
   return { addresses: [newCollateralDepositAddress] };
@@ -68,7 +64,7 @@ export async function getCollateralDepositAddressesForAsset(
     PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam & FireblocksAssetIdPathParam
   >,
   reply: FastifyReply
-): Promise<CollateralDepositAddressesForAsset> {
+): Promise<CollateralDepositAddresses> {
   const { limit, startingAfter, endingBefore } = request.query;
   const { accountId, fireblocksAssetId } = request.params;
 

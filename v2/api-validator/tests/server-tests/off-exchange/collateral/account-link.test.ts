@@ -16,7 +16,7 @@ describe('Collateral Account Link', () => {
   let collateralSignersList: string[];
   let createCollateralAccountLinkResponse: CollateralAccountLink;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     client = new Client();
     accountId = getCapableAccountId('collateral');
     collateralId = `${uuid()}.${accountId}.${uuid()}`;

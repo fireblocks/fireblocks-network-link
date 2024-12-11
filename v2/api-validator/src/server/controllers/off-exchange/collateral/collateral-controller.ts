@@ -9,10 +9,10 @@ import {
   CryptocurrencySymbol,
   NativeCryptocurrency,
   CollateralAssetAddress,
-  CollateralAddress,
   PublicBlockchainAddress,
   CollateralDepositTransactionStatus,
   CollateralDepositTransaction,
+  CollateralDepositTransactions,
   CollateralWithdrawalTransaction,
   CollateralWithdrawalTransactionStatus,
   SettlementInstructions,
@@ -46,7 +46,7 @@ export class NotValid extends XComError {
 export class CollateralController {
   private readonly accountLinksRepository = new Repository<CollateralAccountLink>();
   private readonly depositAddressesRepository = new Repository<CollateralAssetAddress>();
-  private readonly depositTransactionRepository = new Repository<CollateralDepositTransaction>();
+  private readonly depositTransactionRepository = new Repository<CollateralDepositTransactions>();
   private readonly withdrawalTransactionRepository =
     new Repository<CollateralWithdrawalTransaction>();
   private readonly settlementRepository = new Repository<SettlementInstructionsIdentifier>();
@@ -63,7 +63,6 @@ export class CollateralController {
       this.accountLinksRepository.create(accountLink);
 
       const depositAddress = fakeSchemaObject('CollateralAssetAddress') as CollateralAssetAddress;
-      depositAddress.address.asset = depositAddress.asset;
       this.depositAddressesRepository.create(depositAddress);
 
       const setllementState = fakeSchemaObject('SettlementState') as SettlementStateIdentifier;
@@ -129,19 +128,19 @@ export class CollateralController {
     fireblocksAssetId: string,
     accountId: string
   ): CollateralAssetAddress {
-    const asset: NativeCryptocurrency = this.createCollateralAsset(Environment.PROD);
     const newCollateralDepositAddress: CollateralAssetAddress = {
       id: accountId,
       address: address,
       recoveryAccountId: recoveryAccountId,
-      asset: asset,
       fireblocksAssetId: fireblocksAssetId,
     };
     this.depositAddressesRepository.create(newCollateralDepositAddress);
     return newCollateralDepositAddress;
   }
 
-  public getCollateralDepositAddressesForAsset(fireblocksAssetId: string): CollateralAddress[] {
+  public getCollateralDepositAddressesForAsset(
+    fireblocksAssetId: string
+  ): CollateralAssetAddress[] {
     const CollateralDepositAddress = this.depositAddressesRepository.list();
 
     const CollateralDepositAddressForAsset = CollateralDepositAddress.filter(
@@ -159,11 +158,9 @@ export class CollateralController {
     status: CollateralDepositTransactionStatus | undefined,
     amount: string | undefined,
     collateralTxId: string,
-    fireblocksAssetId: string,
-    accountId: string,
-    collateralId: string
-  ): CollateralDepositTransaction {
-    const newCollateralDepositTransaction: CollateralDepositTransaction = {
+    fireblocksAssetId: string
+  ): CollateralDepositTransactions {
+    const newCollateralDepositTransaction: CollateralDepositTransactions = {
       id: collateralTxId,
       collateralTxId: collateralTxId,
       fireblocksAssetId: fireblocksAssetId,
@@ -174,7 +171,7 @@ export class CollateralController {
     return newCollateralDepositTransaction;
   }
 
-  public getCollateralDepositTransactions(): CollateralDepositTransaction[] {
+  public getCollateralDepositTransactions(): CollateralDepositTransactions[] {
     const collateralDepositTransactions = this.depositTransactionRepository.list();
 
     return collateralDepositTransactions;
@@ -193,12 +190,10 @@ export class CollateralController {
   }
 
   public initiateCollateralWithdrawalTransaction(
-    amount: string,
-    fireblocksAssetId: string,
     accountId: string
   ): CollateralWithdrawalTransaction {
     const status = CollateralWithdrawalTransactionStatus.REJECTED;
-    const collateralTxId = `1.${accountId}.${accountId}`;
+    const collateralTxId = `0.${accountId}.${accountId}`;
 
     const newWithdrawalTransaction: CollateralWithdrawalTransaction = {
       id: collateralTxId,

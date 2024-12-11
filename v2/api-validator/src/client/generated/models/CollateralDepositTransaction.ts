@@ -16,7 +16,6 @@ export type CollateralDepositTransaction = {
      * ID of the Fireblocks asset
      */
     fireblocksAssetId: string;
-    id: string;
     amount?: PositiveAmount;
     status?: CollateralDepositTransactionStatus;
 };

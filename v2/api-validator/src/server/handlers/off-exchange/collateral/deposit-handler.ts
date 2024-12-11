@@ -3,7 +3,7 @@ import * as ErrorFactory from '../../../http-error-factory';
 import { CollateralController } from '../../../controllers/off-exchange/collateral/collateral-controller';
 import {
   CollateralDepositTransaction,
-  CollateralDepositTransactions,
+  CollateralDepositTransactionsResponse,
 } from '../../../../client/generated';
 import { ControllersContainer } from '../../../controllers/controllers-container';
 import { getPaginationResult } from '../../../controllers/pagination-controller';
@@ -27,7 +27,7 @@ export async function registerCollateralDepositTransaction(
 ): Promise<CollateralDepositTransaction> {
   {
     const { collateralTxId, fireblocksAssetId, amount, status } = request.body;
-    const { accountId, collateralId } = request.params;
+    const { accountId } = request.params;
 
     const controller = controllers.getController(accountId);
 
@@ -39,9 +39,7 @@ export async function registerCollateralDepositTransaction(
       status,
       amount,
       collateralTxId,
-      fireblocksAssetId,
-      accountId,
-      collateralId
+      fireblocksAssetId
     );
     return newCollateralDepositTransaction;
   }
@@ -50,7 +48,7 @@ export async function registerCollateralDepositTransaction(
 export async function getCollateralDepositTransactions(
   request: FastifyRequest<PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam>,
   reply: FastifyReply
-): Promise<CollateralDepositTransactions> {
+): Promise<CollateralDepositTransactionsResponse> {
   const { limit, startingAfter, endingBefore } = request.query;
   const { accountId } = request.params;
 

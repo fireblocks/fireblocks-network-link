@@ -27,7 +27,6 @@ export async function initiateCollateralWithdrawalTransaction(
   reply: FastifyReply
 ): Promise<CollateralWithdrawalTransaction> {
   {
-    const { fireblocksAssetId, amount } = request.body;
     const { accountId } = request.params;
 
     const controller = controllers.getController(accountId);
@@ -36,11 +35,8 @@ export async function initiateCollateralWithdrawalTransaction(
       return ErrorFactory.notFound(reply);
     }
 
-    const newCollateralDepositTransaction = controller.initiateCollateralWithdrawalTransaction(
-      amount,
-      fireblocksAssetId,
-      accountId
-    );
+    const newCollateralDepositTransaction =
+      controller.initiateCollateralWithdrawalTransaction(accountId);
     return newCollateralDepositTransaction;
   }
 }

@@ -15,16 +15,14 @@ describe('Collateral Deposit Address', () => {
   let accountId: string;
   let collateralId: string;
   let fireblocksAssetId: string;
+  let address: CollateralAddress;
 
   beforeAll(async () => {
     client = new Client();
     accountId = getCapableAccountId('collateral');
     fireblocksAssetId = uuid();
     collateralId = `${uuid()}.${accountId}.${uuid()}`;
-  });
-
-  describe('create collateral deposit address for asset', () => {
-    const address = {
+    address = {
       address: {
         asset: {
           blockchain: Blockchain.BITCOIN,
@@ -36,8 +34,11 @@ describe('Collateral Deposit Address', () => {
         addressTag: '555',
       },
       recoveryAccountId: 'id',
+      fireblocksAssetId: fireblocksAssetId,
     };
+  });
 
+  describe('create collateral deposit address for asset', () => {
     it('Should returned valid response', async () => {
       const collateralAddresses = await client.collateral.createCollateralDepositAddressForAsset({
         accountId,
@@ -50,6 +51,7 @@ describe('Collateral Deposit Address', () => {
 
       collateralAddresses.addresses.forEach((address) => {
         expect(address['recoveryAccountId']).toBe('id');
+        expect(address['fireblocksAssetId']).toBe(fireblocksAssetId);
         expect(address.address['transferMethod']).toBe(
           PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
         );
@@ -67,7 +69,7 @@ describe('Collateral Deposit Address', () => {
       const collateralAddresses = await client.collateral.createCollateralDepositAddressForAsset({
         accountId,
         collateralId,
-        fireblocksAssetId,
+        fireblocksAssetId: '111',
         requestBody: {
           ...newAddress,
         },
@@ -80,7 +82,7 @@ describe('Collateral Deposit Address', () => {
   });
 
   describe('get collateral deposit addresses', () => {
-    it('collateral deposit address should return valid schema', async () => {
+    it('Should return valid schema', async () => {
       const getCollateralDepositAddresses: Pageable<CollateralAssetAddress> = async (
         limit,
         startingAfter?
@@ -98,14 +100,12 @@ describe('Collateral Deposit Address', () => {
         expect(collateralAccountAddress.address.transferMethod).toBe(
           PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
         );
-
-        expect(collateralAccountAddress.asset).toEqual(collateralAccountAddress.address.asset);
       }
     });
   });
 
   describe('get collateral deposit addresses for asset', () => {
-    it('collateral deposit address for asset should return with a valid schema', async () => {
+    it('Should return with a valid schema', async () => {
       const getCollateralDepositAddressesForAsset: Pageable<CollateralAddress> = async (
         limit,
         startingAfter?
@@ -125,6 +125,7 @@ describe('Collateral Deposit Address', () => {
       )) {
         const addressObj = collateralAccountAddress.address;
         expect(collateralAccountAddress['recoveryAccountId']).toBe('id');
+        expect(collateralAccountAddress['fireblocksAssetId']).toBe(fireblocksAssetId);
         expect(addressObj['transferMethod']).toBe(
           PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
         );
@@ -133,6 +134,27 @@ describe('Collateral Deposit Address', () => {
         expect(addressObj.asset['blockchain']).toBe(Blockchain.BITCOIN);
         expect(addressObj.asset['cryptocurrencySymbol']).toBe(CryptocurrencySymbol.BTC);
         expect(addressObj.asset['testAsset']).toBe(false);
+      }
+    });
+    it('Should return with no tag', async () => {
+      const getCollateralDepositAddressesForAsset: Pageable<CollateralAddress> = async (
+        limit,
+        startingAfter?
+      ) => {
+        const response = await client.collateral.getCollateralDepositAddressesForAsset({
+          accountId,
+          collateralId,
+          fireblocksAssetId: '111',
+          limit,
+          startingAfter,
+        });
+        return response.addresses;
+      };
+
+      for await (const collateralAccountAddress of paginated(
+        getCollateralDepositAddressesForAsset
+      )) {
+        expect(collateralAccountAddress.address['addressTag']).toBe(undefined);
       }
     });
   });
