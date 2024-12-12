@@ -9,29 +9,20 @@ import { Pageable, paginated } from '../../../utils/pagination';
 import Client from '../../../../src/client';
 
 describe('Collateral Deposit', () => {
-  let client: Client;
-  let accountId: string;
-  let collateralId: string;
-  let fireblocksAssetId: string;
-  let collateralTxId: string;
-  let depositDetails: CollateralDepositTransaction;
+  const client: Client = new Client();
+  const accountId = getCapableAccountId('collateral');
+  const fireblocksAssetId = uuid();
+  const collateralId = `${uuid()}.${accountId}.${uuid()}`;
+  const collateralTxId = `2.${accountId}.${uuid()}`;
 
-  beforeAll(async () => {
-    client = new Client();
-    accountId = getCapableAccountId('collateral');
-    fireblocksAssetId = uuid();
-    collateralId = `${uuid()}.${accountId}.${uuid()}`;
-    collateralTxId = `2.${accountId}.${uuid()}`;
-    depositDetails = {
+  describe('registerCollateralDepositTransaction', () => {
+    const depositDetails: CollateralDepositTransaction = {
       collateralTxId: collateralTxId,
       fireblocksAssetId: fireblocksAssetId,
       amount: '0.002',
       status: CollateralDepositTransactionStatus.PENDING,
     };
-  });
-
-  describe('create collateral deposit transaction', () => {
-    it('Request should return with a valid schema', async () => {
+    it('Request should return valid response', async () => {
       const collateralDepositTransaction =
         await client.collateral.registerCollateralDepositTransaction({
           accountId,
@@ -47,10 +38,10 @@ describe('Collateral Deposit', () => {
       expect(collateralDepositTransaction.status).toBe(CollateralDepositTransactionStatus.PENDING);
     });
 
-    it('Reques without amount should return with a valid schema', async () => {
+    it('should return without amount', async () => {
       const newDetails = { ...depositDetails };
       delete newDetails.amount;
-      newDetails.collateralTxId = `0.${accountId}.${uuid()}`;
+      newDetails.collateralTxId = `2.${accountId}.${uuid()}`;
       const collateralDepositTransaction =
         await client.collateral.registerCollateralDepositTransaction({
           accountId,
@@ -63,10 +54,10 @@ describe('Collateral Deposit', () => {
       expect(collateralDepositTransaction.amount).toBe(undefined);
     });
 
-    it('Request without status should return with a valid schema', async () => {
+    it('should return without status', async () => {
       const newDetails = { ...depositDetails };
       delete newDetails.status;
-      newDetails.collateralTxId = `0.${accountId}.${uuid()}`;
+      newDetails.collateralTxId = `2.${accountId}.${uuid()}`;
       const collateralDepositTransaction =
         await client.collateral.registerCollateralDepositTransaction({
           accountId,
@@ -79,11 +70,11 @@ describe('Collateral Deposit', () => {
       expect(collateralDepositTransaction.status).toBe(undefined);
     });
 
-    it('Request without amount and status should return with a valid schema', async () => {
+    it('should return without amount and status', async () => {
       const newDetails = { ...depositDetails };
       delete newDetails.amount;
       delete newDetails.status;
-      newDetails.collateralTxId = `0.${accountId}.${uuid()}`;
+      newDetails.collateralTxId = `2.${accountId}.${uuid()}`;
       const collateralDepositTransaction =
         await client.collateral.registerCollateralDepositTransaction({
           accountId,
@@ -98,8 +89,8 @@ describe('Collateral Deposit', () => {
     });
   });
 
-  describe('get collateral deposit transactions', () => {
-    it('should return with a valid schema', async () => {
+  describe('getCollateralDepositTransactions', () => {
+    it('should return valid response', async () => {
       const getCollateralDepositTransactions: Pageable<CollateralDepositTransactions> = async (
         limit,
         startingAfter?
@@ -116,13 +107,13 @@ describe('Collateral Deposit', () => {
       for await (const collateralDepositTransaction of paginated(
         getCollateralDepositTransactions
       )) {
-        expect(!!collateralDepositTransaction).toBe(true);
+        expect(collateralDepositTransaction).toHaveProperty('fireblocksAssetId');
       }
     });
   });
 
-  describe('get collateral deposit transaction details', () => {
-    it('should return with a valid schema', async () => {
+  describe('getCollateralDepositTransactionDetails', () => {
+    it('should return valid response', async () => {
       const collateralDepositTransaction =
         await client.collateral.getCollateralDepositTransactionDetails({
           accountId,

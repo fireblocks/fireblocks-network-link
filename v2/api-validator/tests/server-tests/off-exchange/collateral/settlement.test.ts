@@ -4,37 +4,26 @@ import { v4 as uuid } from 'uuid';
 import Client from '../../../../src/client';
 
 describe('Collateral Settlements', () => {
-  let client: Client;
-  let accountId: string;
-  let collateralId: string;
-  let settlementVersion: string;
-  let settlementlDetails: SettlementRequest;
+  const client: Client = new Client();
+  const accountId = getCapableAccountId('collateral');
+  const collateralId = `${uuid()}.${accountId}.${uuid()}`;
+  const settlementVersion = accountId;
 
-  beforeAll(async () => {
-    client = new Client();
-    accountId = getCapableAccountId('collateral');
-    collateralId = `${uuid()}.${accountId}.${uuid()}`;
-    settlementVersion = accountId;
-    settlementlDetails = {
-      settlementId: uuid(),
-      settlementVersion: settlementVersion,
-    };
-  });
-
-  describe('Initiate settlement', () => {
+  describe('initiateSettlement', () => {
     it('Should return valid scheme with settlementVersion', async () => {
       const collateralSettlement = await client.collateral.initiateSettlement({
         accountId,
         collateralId,
         requestBody: {
-          ...settlementlDetails,
+          settlementId: uuid(),
+          settlementVersion: settlementVersion,
         },
       });
       expect(collateralSettlement.settlementVersion).toBe(settlementVersion);
     });
   });
 
-  describe('Get current settlement instructions', () => {
+  describe('getCurrentSettlementInstructions', () => {
     it('Should return with a valid schema', async () => {
       const collateralSettlement = await client.collateral.getCurrentSettlementInstructions({
         accountId,
@@ -44,7 +33,7 @@ describe('Collateral Settlements', () => {
     });
   });
 
-  describe('get settlement details', () => {
+  describe('getSettlementDetails', () => {
     it('Should return with a valid schema', async () => {
       const collateralSettlementDetails = await client.collateral.getSettlementDetails({
         accountId,

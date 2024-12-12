@@ -12,43 +12,31 @@ import { Pageable, paginated } from '../../../utils/pagination';
 import Client from '../../../../src/client';
 
 describe('Collateral Withdrawal', () => {
-  let client: Client;
-  let accountId: string;
-  let collateralId: string;
-  let fireblocksAssetId: string;
-  let collateralTxId: string;
-  let withdrawalDetails: CollateralWithdrawalTransactionRequest;
+  const client: Client = new Client();
+  const accountId = getCapableAccountId('collateral');
+  const fireblocksAssetId = uuid();
+  const collateralId = `${uuid()}.${accountId}.${uuid()}`;
+  const collateralTxId = `0.${accountId}.${accountId}`;
 
-  beforeAll(async () => {
-    client = new Client();
-    accountId = getCapableAccountId('collateral');
-    fireblocksAssetId = uuid();
-    collateralId = `${uuid()}.${accountId}.${uuid()}`;
-    collateralTxId = `0.${accountId}.${accountId}`;
-    withdrawalDetails = {
-      fireblocksAssetId: fireblocksAssetId,
-      amount: '0.002',
-      destinationAddress: {
-        address: '0x',
-        addressTag: 'abc',
-        asset: {
-          blockchain: Blockchain.ETHEREUM,
-          cryptocurrencySymbol: CryptocurrencySymbol.ETH,
-          testAsset: true,
-        },
-        transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-      },
-    };
-  });
-
-  describe('Initiate withdrawal', () => {
+  describe('initiateCollateralWithdrawalTransaction', () => {
     it('Should return with a valid schema', async () => {
       const collateralWithdrawalTransaction =
         await client.collateral.initiateCollateralWithdrawalTransaction({
           accountId,
           collateralId,
           requestBody: {
-            ...withdrawalDetails,
+            fireblocksAssetId: fireblocksAssetId,
+            amount: '0.002',
+            destinationAddress: {
+              address: '0x',
+              addressTag: 'abc',
+              asset: {
+                blockchain: Blockchain.ETHEREUM,
+                cryptocurrencySymbol: CryptocurrencySymbol.ETH,
+                testAsset: true,
+              },
+              transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+            },
           },
         });
 
@@ -60,7 +48,7 @@ describe('Collateral Withdrawal', () => {
     });
   });
 
-  describe('get collateral withdrawal transactions', () => {
+  describe('getCollateralWithdrawalTransactions', () => {
     it('Should return with a valid schema', async () => {
       const getCollateralWithdrawalTransactions: Pageable<CollateralWithdrawalTransaction> = async (
         limit,
@@ -87,7 +75,7 @@ describe('Collateral Withdrawal', () => {
     });
   });
 
-  describe('get collateral withdrawal transaction details', () => {
+  describe('getCollateralWithdrawalTransactionDetails', () => {
     it('Should return with a valid schema', async () => {
       const collateralWithdrawalTransaction =
         await client.collateral.getCollateralWithdrawalTransactionDetails({

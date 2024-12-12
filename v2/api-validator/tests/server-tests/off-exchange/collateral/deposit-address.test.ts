@@ -32,7 +32,7 @@ describe('Collateral Deposit Address', () => {
       fireblocksAssetId: fireblocksAssetId,
     };
 
-    it('Should returned valid response', async () => {
+    it('should returned valid response', async () => {
       const collateralAddresses = await client.collateral.createCollateralDepositAddressForAsset({
         accountId,
         collateralId,
@@ -54,7 +54,7 @@ describe('Collateral Deposit Address', () => {
       });
     });
 
-    it('Should return without tag', async () => {
+    it('should return without tag', async () => {
       delete requestBody.address.addressTag;
       const collateralAddresses = await client.collateral.createCollateralDepositAddressForAsset({
         accountId,
@@ -70,7 +70,7 @@ describe('Collateral Deposit Address', () => {
   });
 
   describe('getCollateralDepositAddressesForAsset', () => {
-    it('Should return with a valid schema', async () => {
+    it('should return with a valid schema', async () => {
       const getCollateralDepositAddressesForAsset: Pageable<CollateralAddress> = async (
         limit,
         startingAfter?
@@ -102,7 +102,7 @@ describe('Collateral Deposit Address', () => {
       }
     });
 
-    it('Should return without tag', async () => {
+    it('should return without tag', async () => {
       const getCollateralDepositAddressesForAsset: Pageable<CollateralAddress> = async (
         limit,
         startingAfter?
