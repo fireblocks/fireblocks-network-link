@@ -1,5 +1,4 @@
 import {
-  AccountId,
   CollateralAccount,
   CollateralAccountLink,
   CollateralAsset,
@@ -25,7 +24,9 @@ describe('Account Link', () => {
       it('should return valid response', async () => {
         const accountId = getCapableAccountId('collateral');
         const collateralId = `${uuid()}.${accountId}.${uuid()}`;
-        const collateralSigners: CollateralSignerId[] = config.get('collateral.accountLink.signers');
+        const collateralSigners: CollateralSignerId[] = config.get(
+          'collateral.accountLink.signers'
+        );
         const response = await client.collateral.createCollateralAccountLink({
           accountId,
           requestBody: {

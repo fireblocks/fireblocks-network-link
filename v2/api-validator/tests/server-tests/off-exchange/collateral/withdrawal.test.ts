@@ -1,5 +1,4 @@
 import {
-  CollateralWithdrawalTransactionRequest,
   CollateralWithdrawalTransaction,
   PublicBlockchainCapability,
   Blockchain,
