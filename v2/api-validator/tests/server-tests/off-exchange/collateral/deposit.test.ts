@@ -1,12 +1,12 @@
-import Client from '../../../../src/client';
-import { getCapableAccountId } from '../../../utils/capable-accounts';
-import { Pageable, paginated } from '../../../utils/pagination';
 import {
   CollateralDepositTransaction,
   CollateralDepositTransactions,
   CollateralDepositTransactionStatus,
 } from '../../../../src/client/generated';
+import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
+import { Pageable, paginated } from '../../../utils/pagination';
+import Client from '../../../../src/client';
 
 describe('Collateral Deposit', () => {
   let client: Client;

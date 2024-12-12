@@ -12,7 +12,7 @@ import { Pageable, paginated } from '../../../utils/pagination';
 import config from '../../../../src/config';
 import Client from '../../../../src/client';
 
-describe('Account Link Handler', () => {
+describe('Account Link', () => {
   const client = new Client();
 
   describe('createCollateralAccountLink', () => {
@@ -70,11 +70,11 @@ describe('Account Link Handler', () => {
   describe('getCollateralAccountLinks', () => {
     it('simple valid response - one page', async () => {
       const accountId = getCapableAccountId('collateral');
-      const singlePage = await client.collateral.getCollateralAccountLinks({
+      const singlePageResponse = await client.collateral.getCollateralAccountLinks({
         accountId,
       });
 
-      for await (const collateralAccountLink of singlePage.collateralLinks) {
+      for await (const collateralAccountLink of singlePageResponse.collateralLinks) {
         if (
           collateralAccountLink.status === CollateralLinkStatus.FAILED ||
           collateralAccountLink.status === CollateralLinkStatus.DISABLED

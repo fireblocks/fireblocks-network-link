@@ -1,7 +1,7 @@
-import Client from '../../../../src/client';
-import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { SettlementRequest } from '../../../../src/client/generated';
+import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
+import Client from '../../../../src/client';
 
 describe('Collateral Settlements', () => {
   let client: Client;

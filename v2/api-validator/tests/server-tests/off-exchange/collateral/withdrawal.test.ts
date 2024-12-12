@@ -1,6 +1,3 @@
-import Client from '../../../../src/client';
-import { getCapableAccountId } from '../../../utils/capable-accounts';
-import { Pageable, paginated } from '../../../utils/pagination';
 import {
   CollateralWithdrawalTransactionRequest,
   CollateralWithdrawalTransaction,
@@ -9,7 +6,10 @@ import {
   CollateralWithdrawalTransactionStatus,
   CryptocurrencySymbol,
 } from '../../../../src/client/generated';
+import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
+import { Pageable, paginated } from '../../../utils/pagination';
+import Client from '../../../../src/client';
 
 describe('Collateral Withdrawal', () => {
   let client: Client;
