@@ -60,6 +60,13 @@ export class CollateralController {
       ) {
         delete accountLink.rejectionReason;
       }
+
+      for (const asset of accountLink.eligibleCollateralAssets) {
+        accountLink.env === Environment.SANDBOX
+          ? (asset['testAsset'] = true)
+          : (asset['testAsset'] = false);
+      }
+
       this.accountLinksRepository.create(accountLink);
 
       const depositAddress = fakeSchemaObject('CollateralAssetAddress') as CollateralAssetAddress;
