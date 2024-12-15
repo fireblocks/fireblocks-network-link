@@ -9,7 +9,7 @@ describe('Collateral Settlements', () => {
   const settlementVersion = accountId;
 
   describe('initiateSettlement', () => {
-    it('Should return valid scheme with settlementVersion', async () => {
+    it('should return valid response with settlementVersion', async () => {
       const collateralSettlement = await client.collateral.initiateSettlement({
         accountId,
         collateralId,
@@ -23,7 +23,7 @@ describe('Collateral Settlements', () => {
   });
 
   describe('getCurrentSettlementInstructions', () => {
-    it('Should return with a valid schema', async () => {
+    it('should return with a valid response', async () => {
       const collateralSettlement = await client.collateral.getCurrentSettlementInstructions({
         accountId,
         collateralId,
@@ -33,7 +33,7 @@ describe('Collateral Settlements', () => {
   });
 
   describe('getSettlementDetails', () => {
-    it('Should return with a valid schema', async () => {
+    it('should return with a valid response', async () => {
       const collateralSettlementDetails = await client.collateral.getSettlementDetails({
         accountId,
         collateralId,

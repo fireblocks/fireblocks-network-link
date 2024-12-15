@@ -18,7 +18,7 @@ describe('Collateral Withdrawal', () => {
   const collateralTxId = `0.${accountId}.${accountId}`;
 
   describe('initiateCollateralWithdrawalTransaction', () => {
-    it('Should return with a valid schema', async () => {
+    it('should return with a valid response', async () => {
       const collateralWithdrawalTransaction =
         await client.collateral.initiateCollateralWithdrawalTransaction({
           accountId,
@@ -48,7 +48,7 @@ describe('Collateral Withdrawal', () => {
   });
 
   describe('getCollateralWithdrawalTransactions', () => {
-    it('Should return with a valid schema', async () => {
+    it('should return with a valid response', async () => {
       const getCollateralWithdrawalTransactions: Pageable<CollateralWithdrawalTransaction> = async (
         limit,
         startingAfter?
@@ -75,7 +75,7 @@ describe('Collateral Withdrawal', () => {
   });
 
   describe('getCollateralWithdrawalTransactionDetails', () => {
-    it('Should return with a valid schema', async () => {
+    it('should return with a valid response', async () => {
       const collateralWithdrawalTransaction =
         await client.collateral.getCollateralWithdrawalTransactionDetails({
           accountId,
