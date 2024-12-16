@@ -222,8 +222,8 @@ paths:
           $ref: '#/x-responses/ErrorResponse'
   /accounts/{accountId}/collateral/{collateralId}/addresses/{id}:
     get:
-      operationId: getCollateralDepositAddressesForAsset
-      summary: Get list of collateral account deposit addresses for a specific asset
+      operationId: getCollateralDepositAddressesForPage
+      summary: Get list of collateral account deposit addresses for a specific page
       tags: [ collateral ]
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
