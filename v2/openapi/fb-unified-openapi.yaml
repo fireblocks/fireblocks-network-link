@@ -1849,6 +1849,8 @@ paths:
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: '#/components/parameters/DepositAddressesSymbolQueryParam'
+        - $ref: '#/components/parameters/DepositAddressesBlockchainQueryParam'
       responses:
         '200':
           description: List of collateral deposit addresses
@@ -1869,8 +1871,8 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/collateral/{collateralId}/addresses/{id}:
     get:
-      operationId: getCollateralDepositAddressesForAsset
-      summary: Get list of collateral account deposit addresses for a specific asset
+      operationId: getCollateralDepositAddressesDetails
+      summary: Get a specific collateral account deposit addresses details
       tags:
         - collateral
       parameters:
@@ -1887,7 +1889,7 @@ paths:
         - $ref: '#/components/parameters/PaginationEndingBefore'
       responses:
         '200':
-          description: List of collateral deposit addresses
+          description: Specific collateral deposit addresses
           headers:
             X-PROVIDER-SIGNATURE:
               $ref: '#/components/headers/X-PROVIDER-SIGNATURE'
@@ -2361,6 +2363,18 @@ components:
       required: true
       schema:
         type: string
+    DepositAddressesSymbolQueryParam:
+      name: cryptocurrencySymbol
+      in: query
+      description: Specify a specific symbol to return.
+      schema:
+        $ref: '#/components/schemas/CryptocurrencySymbol'
+    DepositAddressesBlockchainQueryParam:
+      name: blockchain
+      in: query
+      description: Specify a specific blockchain to return.
+      schema:
+        $ref: '#/components/schemas/Blockchain'
   headers:
     X-PROVIDER-SIGNATURE:
       required: true

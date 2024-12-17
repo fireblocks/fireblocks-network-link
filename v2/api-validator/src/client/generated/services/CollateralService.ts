@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Blockchain } from '../models/Blockchain';
 import type { CollateralAccount } from '../models/CollateralAccount';
 import type { CollateralAccountLink } from '../models/CollateralAccountLink';
 import type { CollateralAddress } from '../models/CollateralAddress';
@@ -11,6 +12,7 @@ import type { CollateralDepositTransactionsResponse } from '../models/Collateral
 import type { CollateralWithdrawalTransaction } from '../models/CollateralWithdrawalTransaction';
 import type { CollateralWithdrawalTransactionRequest } from '../models/CollateralWithdrawalTransactionRequest';
 import type { CollateralWithdrawalTransactions } from '../models/CollateralWithdrawalTransactions';
+import type { CryptocurrencySymbol } from '../models/CryptocurrencySymbol';
 import type { SettlementInstructions } from '../models/SettlementInstructions';
 import type { SettlementRequest } from '../models/SettlementRequest';
 import type { SettlementState } from '../models/SettlementState';
@@ -264,6 +266,8 @@ export class CollateralService {
         limit = 10,
         startingAfter,
         endingBefore,
+        cryptocurrencySymbol,
+        blockchain,
     }: {
         /**
          * Authentication signature of Fireblocks as the originator of the request
@@ -306,6 +310,14 @@ export class CollateralService {
          * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
+        /**
+         * Specify a specific symbol to return.
+         */
+        cryptocurrencySymbol?: CryptocurrencySymbol,
+        /**
+         * Specify a specific blockchain to return.
+         */
+        blockchain?: Blockchain,
     }): CancelablePromise<CollateralDepositAddresses> {
         return this.httpRequest.request({
             method: 'GET',
@@ -325,6 +337,8 @@ export class CollateralService {
                 'limit': limit,
                 'startingAfter': startingAfter,
                 'endingBefore': endingBefore,
+                'cryptocurrencySymbol': cryptocurrencySymbol,
+                'blockchain': blockchain,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
@@ -334,11 +348,11 @@ export class CollateralService {
     }
 
     /**
-     * Get list of collateral account deposit addresses for a specific asset
-     * @returns CollateralDepositAddresses List of collateral deposit addresses
+     * Get a specific collateral account deposit addresses details
+     * @returns CollateralDepositAddresses Specific collateral deposit addresses
      * @throws ApiError
      */
-    public getCollateralDepositAddressesForAsset({
+    public getCollateralDepositAddressesDetails({
         xFbPlatformSignature,
         xFbapiKey,
         xFbapiNonce,

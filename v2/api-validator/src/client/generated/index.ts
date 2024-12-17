@@ -57,6 +57,8 @@ export type { Deposit } from './models/Deposit';
 export type { DepositAddress } from './models/DepositAddress';
 export { DepositAddressCreationPolicy } from './models/DepositAddressCreationPolicy';
 export type { DepositAddressCreationRequest } from './models/DepositAddressCreationRequest';
+export type { DepositAddressesBlockchainQueryParam } from './models/DepositAddressesBlockchainQueryParam';
+export type { DepositAddressesSymbolQueryParam } from './models/DepositAddressesSymbolQueryParam';
 export { DepositAddressStatus } from './models/DepositAddressStatus';
 export type { DepositCapability } from './models/DepositCapability';
 export type { DepositDestination } from './models/DepositDestination';

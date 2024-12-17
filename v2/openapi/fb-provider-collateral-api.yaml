@@ -41,6 +41,7 @@ x-schemas:
   PublicBlockchainAddress: { $ref: './fb-provider-api.yaml#/components/schemas/PublicBlockchainAddress' }
   Blockchain: { $ref: './fb-provider-api.yaml#/components/schemas/Blockchain' }
   NationalCurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrency' }
+  CryptocurrencySymbol: {$ref: './fb-provider-api.yaml#/components/schemas/CryptocurrencySymbol'}
 
 x-responses:
   BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
@@ -202,6 +203,8 @@ paths:
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: '#/components/parameters/DepositAddressesSymbolQueryParam'
+        - $ref: '#/components/parameters/DepositAddressesBlockchainQueryParam'
       responses:
         '200':
           description: List of collateral deposit addresses
@@ -222,8 +225,8 @@ paths:
           $ref: '#/x-responses/ErrorResponse'
   /accounts/{accountId}/collateral/{collateralId}/addresses/{id}:
     get:
-      operationId: getCollateralDepositAddressesForPage
-      summary: Get list of collateral account deposit addresses for a specific page
+      operationId: getCollateralDepositAddressesDetails
+      summary: Get a specific collateral account deposit addresses details
       tags: [ collateral ]
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -239,7 +242,7 @@ paths:
         - $ref: '#/x-query-params/PaginationEndingBefore'
       responses:
         '200':
-          description: List of collateral deposit addresses
+          description: Specific collateral deposit addresses
           headers:
             X-PROVIDER-SIGNATURE:
               $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
@@ -607,6 +610,18 @@ components:
       required: true
       schema:
         type: string
+    DepositAddressesSymbolQueryParam:
+      name: cryptocurrencySymbol
+      in: query
+      description: Specify a specific symbol to return.
+      schema:
+        $ref: '#/x-schemas/CryptocurrencySymbol'
+    DepositAddressesBlockchainQueryParam:
+      name: blockchain
+      in: query
+      description: Specify a specific blockchain to return.
+      schema:
+        $ref: '#/x-schemas/Blockchain'
 
   schemas:
     CollateralId:
