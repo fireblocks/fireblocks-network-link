@@ -6,19 +6,21 @@ import {
 import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
 import { Pageable, paginated } from '../../../utils/pagination';
+import config from '../../../../src/config';
 import Client from '../../../../src/client';
+
 
 describe('Collateral Deposit', () => {
   const client: Client = new Client();
   const accountId = getCapableAccountId('collateral');
-  const fireblocksAssetId = uuid();
-  const collateralId = `${uuid()}.${accountId}.${uuid()}`;
+  const collateralId = config.get(
+    'collateral.signers.userId'
+  );
   const collateralTxId = `2.${accountId}.${uuid()}`;
 
   describe('registerCollateralDepositTransaction', () => {
     const depositDetails: CollateralDepositTransaction = {
       collateralTxId: collateralTxId,
-      fireblocksAssetId: fireblocksAssetId,
       amount: '0.002',
       status: CollateralDepositTransactionStatus.PENDING,
     };
@@ -33,7 +35,6 @@ describe('Collateral Deposit', () => {
         });
 
       expect(collateralDepositTransaction.collateralTxId).toBe(collateralTxId);
-      expect(collateralDepositTransaction.fireblocksAssetId).toBe(fireblocksAssetId);
       expect(collateralDepositTransaction.amount).toBe('0.002');
       expect(collateralDepositTransaction.status).toBe(CollateralDepositTransactionStatus.PENDING);
     });
@@ -107,7 +108,7 @@ describe('Collateral Deposit', () => {
       for await (const collateralDepositTransaction of paginated(
         getCollateralDepositTransactions
       )) {
-        expect(collateralDepositTransaction).toHaveProperty('fireblocksAssetId');
+        expect(collateralDepositTransaction).toHaveProperty('id');
       }
     });
   });
@@ -122,7 +123,6 @@ describe('Collateral Deposit', () => {
         });
 
       expect(collateralDepositTransaction.collateralTxId).toEqual(collateralTxId);
-      expect(collateralDepositTransaction.fireblocksAssetId).toBe(fireblocksAssetId);
       expect(collateralDepositTransaction.amount).toBe('0.002');
       expect(collateralDepositTransaction.status).toBe(CollateralDepositTransactionStatus.PENDING);
     });

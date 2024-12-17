@@ -44,11 +44,18 @@ const config = convict({
     env: 'PAGINATION_LIMIT',
   },
   collateral: {
-    accountLink: {
-      signers: {
+    signers: {
+      userId: {
         format: Array<string>,
         default: ['be5ff76b-6cc8-4a39-af40-fc71aea1865c', 'c5bb0880-523c-4c1c-bfe7-bcf2941517a0'],
         env: 'COLLATERAL_SIGNERS',
+      }
+    },
+    collateralAccount: {
+      accountId: {
+        format: String,
+        default: 'c8dd0660-555c-4c1c-bfe7-bcf2941517a0.be5ff76b-6cc8-4a39-af40-fc71aea1865c.c5bb0880-523c-4c1c-bfe7-bcf2941517a0',
+        env: 'COLLATERAL_ACCOUNT',
       },
     },
   },

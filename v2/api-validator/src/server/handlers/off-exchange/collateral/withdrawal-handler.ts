@@ -12,7 +12,6 @@ import {
   AccountIdPathParam,
   PaginationQuerystring,
   CollateralIdPathParam,
-  FireblocksAssetIdPathParam,
   CollateralTxIdPathParam,
 } from '../../request-types';
 
@@ -21,8 +20,7 @@ const controllers = new ControllersContainer(() => new CollateralController());
 export async function initiateCollateralWithdrawalTransaction(
   request: FastifyRequest<
     AccountIdPathParam &
-      CollateralIdPathParam &
-      FireblocksAssetIdPathParam & { Body: CollateralWithdrawalTransactionRequest }
+      CollateralIdPathParam & { Body: CollateralWithdrawalTransactionRequest }
   >,
   reply: FastifyReply
 ): Promise<CollateralWithdrawalTransaction> {

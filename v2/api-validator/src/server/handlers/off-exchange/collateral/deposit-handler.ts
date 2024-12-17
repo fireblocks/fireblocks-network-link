@@ -11,7 +11,6 @@ import {
   AccountIdPathParam,
   PaginationQuerystring,
   CollateralIdPathParam,
-  FireblocksAssetIdPathParam,
   CollateralTxIdPathParam,
 } from '../../request-types';
 
@@ -21,12 +20,12 @@ export async function registerCollateralDepositTransaction(
   request: FastifyRequest<
     AccountIdPathParam &
       CollateralIdPathParam &
-      FireblocksAssetIdPathParam & { Body: CollateralDepositTransaction }
+ { Body: CollateralDepositTransaction }
   >,
   reply: FastifyReply
 ): Promise<CollateralDepositTransaction> {
   {
-    const { collateralTxId, fireblocksAssetId, amount, status } = request.body;
+    const { collateralTxId, amount, status } = request.body;
     const { accountId } = request.params;
 
     const controller = controllers.getController(accountId);
@@ -39,7 +38,6 @@ export async function registerCollateralDepositTransaction(
       status,
       amount,
       collateralTxId,
-      fireblocksAssetId
     );
     return newCollateralDepositTransaction;
   }

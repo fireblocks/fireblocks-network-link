@@ -8,16 +8,17 @@ import {
   AccountIdPathParam,
   PaginationQuerystring,
   CollateralIdPathParam,
-  FireblocksAssetIdPathParam,
+  EntityIdPathParam,
+  DepositAddressesQuerystring
 } from '../../request-types';
 
 const controllers = new ControllersContainer(() => new CollateralController());
 
 export async function getCollateralDepositAddresses(
-  request: FastifyRequest<PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam>,
+  request: FastifyRequest<PaginationQuerystring & DepositAddressesQuerystring & AccountIdPathParam & CollateralIdPathParam>,
   reply: FastifyReply
 ): Promise<CollateralDepositAddresses> {
-  const { limit, startingAfter, endingBefore } = request.query;
+  const { limit, startingAfter, endingBefore, cryptocurrencySymbol, blockchain } = request.query;
   const { accountId } = request.params;
 
   const controller = controllers.getController(accountId);
@@ -26,7 +27,7 @@ export async function getCollateralDepositAddresses(
     return ErrorFactory.notFound(reply);
   }
 
-  const addressList = controller.getCollateralDepositAddresses();
+  const addressList = controller.getCollateralDepositAddresses(cryptocurrencySymbol, blockchain);
 
   return {
     addresses: getPaginationResult(limit, startingAfter, endingBefore, addressList, 'id'),
@@ -36,13 +37,12 @@ export async function getCollateralDepositAddresses(
 export async function createCollateralDepositAddressForAsset(
   request: FastifyRequest<
     AccountIdPathParam &
-      CollateralIdPathParam &
-      FireblocksAssetIdPathParam & { Body: CollateralAddress }
+      CollateralIdPathParam & { Body: CollateralAddress }
   >,
   reply: FastifyReply
 ): Promise<CollateralDepositAddresses> {
   const { address, recoveryAccountId } = request.body;
-  const { accountId, collateralId, fireblocksAssetId } = request.params;
+  const { accountId, collateralId } = request.params;
 
   const controller = controllers.getController(accountId);
 
@@ -53,20 +53,19 @@ export async function createCollateralDepositAddressForAsset(
   const newCollateralDepositAddress = controller.createCollateralDepositAddressForAsset(
     address,
     recoveryAccountId,
-    fireblocksAssetId,
     collateralId
   );
   return { addresses: [newCollateralDepositAddress] };
 }
 
-export async function getCollateralDepositAddressesForAsset(
+export async function getCollateralDepositAddressesDetails(
   request: FastifyRequest<
-    PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam & FireblocksAssetIdPathParam
+    PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam & EntityIdPathParam
   >,
   reply: FastifyReply
 ): Promise<CollateralDepositAddresses> {
   const { limit, startingAfter, endingBefore } = request.query;
-  const { accountId, fireblocksAssetId } = request.params;
+  const { accountId, id } = request.params;
 
   const controller = controllers.getController(accountId);
 
@@ -74,7 +73,7 @@ export async function getCollateralDepositAddressesForAsset(
     return ErrorFactory.notFound(reply);
   }
 
-  const addressList = controller.getCollateralDepositAddressesForAsset(fireblocksAssetId);
+  const addressList = controller.getCollateralDepositAddressesDetails(id);
 
   return {
     addresses: getPaginationResult(limit, startingAfter, endingBefore, addressList, 'id'),

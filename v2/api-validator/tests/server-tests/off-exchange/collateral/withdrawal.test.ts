@@ -6,15 +6,16 @@ import {
   CryptocurrencySymbol,
 } from '../../../../src/client/generated';
 import { getCapableAccountId } from '../../../utils/capable-accounts';
-import { v4 as uuid } from 'uuid';
 import { Pageable, paginated } from '../../../utils/pagination';
+import config from '../../../../src/config';
 import Client from '../../../../src/client';
 
 describe('Collateral Withdrawal', () => {
   const client: Client = new Client();
   const accountId = getCapableAccountId('collateral');
-  const fireblocksAssetId = uuid();
-  const collateralId = `${uuid()}.${accountId}.${uuid()}`;
+  const collateralId = config.get(
+    'collateral.signers.userId'
+  );
   const collateralTxId = `0.${accountId}.${accountId}`;
 
   describe('initiateCollateralWithdrawalTransaction', () => {
@@ -24,7 +25,6 @@ describe('Collateral Withdrawal', () => {
           accountId,
           collateralId,
           requestBody: {
-            fireblocksAssetId: fireblocksAssetId,
             amount: '0.002',
             destinationAddress: {
               address: '0x',

@@ -4,7 +4,6 @@ import {
   CollateralAccount,
   CollateralLinkStatus,
   Environment,
-  CollateralAsset,
   Blockchain,
   CryptocurrencySymbol,
   NativeCryptocurrency,
@@ -18,6 +17,7 @@ import {
   SettlementInstructions,
   PublicBlockchainCapability,
   SettlementState,
+  CryptocurrencyReference,
 } from '../../../../client/generated';
 import { v4 as uuid } from 'uuid';
 import { XComError } from '../../../../error';
@@ -77,8 +77,8 @@ export class CollateralController {
     }
   }
 
-  public generateCollateralAssets(numAssets: number, env: Environment): CollateralAsset[] {
-    const assets: CollateralAsset[] = [];
+  public generateCollateralAssets(numAssets: number, env: Environment): CryptocurrencyReference[] {
+    const assets: CryptocurrencyReference[] = [];
 
     for (let i = 0; i < numAssets; i++) {
       assets.push(this.createCollateralAsset(env));
@@ -123,40 +123,44 @@ export class CollateralController {
     return collateralLinks;
   }
 
-  public getCollateralDepositAddresses(): CollateralAssetAddress[] {
-    const CollateralDepositAddress = this.depositAddressesRepository.list();
+  public getCollateralDepositAddresses(cryptocurrencySymbol?: string, blockchain?: string): CollateralAssetAddress[] {
+    let depositAddresses = this.depositAddressesRepository.list();
+    if (cryptocurrencySymbol) {
+      depositAddresses = depositAddresses.filter((collateraladdress) => collateraladdress.address.asset['cryptocurrencySymbol'] === cryptocurrencySymbol)
+    }
+    if (blockchain) {
+      depositAddresses = depositAddresses.filter((collateraladdress) => collateraladdress.address.asset['blockchain'] === blockchain)
+    }
 
-    return CollateralDepositAddress;
+    if (depositAddresses.length === 0) {
+      throw new NotFound(`depositAddresses for cryptocurrencySymbol: ${cryptocurrencySymbol} & blockchain: ${blockchain}`);
+    }
+
+    return depositAddresses;
   }
 
   public createCollateralDepositAddressForAsset(
     address: PublicBlockchainAddress,
     recoveryAccountId: string,
-    fireblocksAssetId: string,
     accountId: string
   ): CollateralAssetAddress {
     const newCollateralDepositAddress: CollateralAssetAddress = {
       id: accountId,
       address: address,
       recoveryAccountId: recoveryAccountId,
-      fireblocksAssetId: fireblocksAssetId,
     };
     this.depositAddressesRepository.create(newCollateralDepositAddress);
     return newCollateralDepositAddress;
   }
 
-  public getCollateralDepositAddressesForAsset(
-    fireblocksAssetId: string
+  public getCollateralDepositAddressesDetails(
+    id: string
   ): CollateralAssetAddress[] {
     const CollateralDepositAddress = this.depositAddressesRepository.list();
 
     const CollateralDepositAddressForAsset = CollateralDepositAddress.filter(
-      (address) => address.fireblocksAssetId === fireblocksAssetId
+      (address) => address.id === id
     );
-
-    if (!CollateralDepositAddressForAsset) {
-      throw new NotFound('fireblocksAssetId');
-    }
 
     return CollateralDepositAddressForAsset;
   }
@@ -165,12 +169,10 @@ export class CollateralController {
     status: CollateralDepositTransactionStatus | undefined,
     amount: string | undefined,
     collateralTxId: string,
-    fireblocksAssetId: string
   ): CollateralDepositTransactions {
     const newCollateralDepositTransaction: CollateralDepositTransactions = {
       id: collateralTxId,
       collateralTxId: collateralTxId,
-      fireblocksAssetId: fireblocksAssetId,
       amount: amount,
       status: status,
     };
@@ -244,7 +246,6 @@ export class CollateralController {
       settlementVersion: settlementVersion,
       withdrawInstructions: [
         {
-          fireblocksAssetId: settlementId,
           amount: '5',
           fee: '0.005',
           sourceAddress: {
@@ -261,7 +262,6 @@ export class CollateralController {
       ],
       depositInstructions: [
         {
-          fireblocksAssetId: 'str',
           amount: '5',
           destinationAddress: {
             asset: {

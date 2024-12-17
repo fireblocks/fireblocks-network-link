@@ -1,11 +1,14 @@
 import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
+import config from '../../../../src/config';
 import Client from '../../../../src/client';
 
 describe('Collateral Settlements', () => {
   const client: Client = new Client();
   const accountId = getCapableAccountId('collateral');
-  const collateralId = `${uuid()}.${accountId}.${uuid()}`;
+  const collateralId = config.get(
+    'collateral.signers.userId'
+  );
   const settlementVersion = accountId;
 
   describe('initiateSettlement', () => {

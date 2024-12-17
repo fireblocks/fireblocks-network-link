@@ -1,13 +1,12 @@
 import {
   CollateralAccount,
   CollateralAccountLink,
-  CollateralAsset,
   CollateralLinkStatus,
   CollateralSignerId,
+  CryptocurrencyReference,
   Environment,
 } from '../../../../src/client/generated';
 import { getCapableAccountId } from '../../../utils/capable-accounts';
-import { v4 as uuid } from 'uuid';
 import { Pageable, paginated } from '../../../utils/pagination';
 import config from '../../../../src/config';
 import Client from '../../../../src/client';
@@ -23,9 +22,11 @@ describe('Account Link', () => {
       const { env, expectedTestAsset } = testParams;
       it('should return valid response', async () => {
         const accountId = getCapableAccountId('collateral');
-        const collateralId = `${uuid()}.${accountId}.${uuid()}`;
+        const collateralId = config.get(
+          'collateral.collateralAccount.accountId'
+        );
         const collateralSigners: CollateralSignerId[] = config.get(
-          'collateral.accountLink.signers'
+          'collateral.signers.userId'
         );
         const response = await client.collateral.createCollateralAccountLink({
           accountId,
@@ -41,7 +42,7 @@ describe('Account Link', () => {
         expect(response.rejectionReason).toBeUndefined();
         expect(response.status).toBe(CollateralLinkStatus.ELIGIBLE);
 
-        const assetsList: CollateralAsset[] = response.eligibleCollateralAssets;
+        const assetsList: CryptocurrencyReference[] = response.eligibleCollateralAssets;
         for (const asset of assetsList) {
           if (typeof asset['testAsset'] === 'boolean') {
             expect(asset['testAsset']).toBe(expectedTestAsset);
@@ -84,7 +85,7 @@ describe('Account Link', () => {
           expect(collateralAccountLink).toHaveProperty('rejectionReason');
         }
 
-        const assetsList: CollateralAsset[] = collateralAccountLink.eligibleCollateralAssets;
+        const assetsList: CryptocurrencyReference[] = collateralAccountLink.eligibleCollateralAssets;
         const expectedTestAsset: boolean =
           collateralAccountLink.env === Environment.SANDBOX ? true : false;
         for (const asset of assetsList) {
@@ -118,7 +119,7 @@ describe('Account Link', () => {
           expect(collateralAccountLink).toHaveProperty('rejectionReason');
         }
 
-        const assetsList: CollateralAsset[] = collateralAccountLink.eligibleCollateralAssets;
+        const assetsList: CryptocurrencyReference[] = collateralAccountLink.eligibleCollateralAssets;
         const expectedTestAsset: boolean =
           collateralAccountLink.env === Environment.SANDBOX ? true : false;
         for (const asset of assetsList) {

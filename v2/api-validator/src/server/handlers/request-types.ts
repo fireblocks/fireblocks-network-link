@@ -1,3 +1,5 @@
+import { DepositAddressesSymbolQueryParam, DepositAddressesBlockchainQueryParam } from "../../client/generated";
+
 export type EntityIdPathParam = {
   Params: {
     id: string;
@@ -13,12 +15,6 @@ export type AccountIdPathParam = {
 export type CollateralIdPathParam = {
   Params: {
     collateralId: string;
-  };
-};
-
-export type FireblocksAssetIdPathParam = {
-  Params: {
-    fireblocksAssetId: string;
   };
 };
 
@@ -45,5 +41,12 @@ export type PaginationQuerystring = {
 export type ListOrderQuerystring = {
   Querystring: {
     order: 'asc' | 'desc';
+  };
+};
+
+export type DepositAddressesQuerystring = {
+  Querystring: {
+    cryptocurrencySymbol?: DepositAddressesSymbolQueryParam;
+    blockchain?: DepositAddressesBlockchainQueryParam;
   };
 };
