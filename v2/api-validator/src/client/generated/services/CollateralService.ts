@@ -311,7 +311,7 @@ export class CollateralService {
          */
         endingBefore?: string,
         /**
-         * Specify a specific symbol to return.
+         * Limits the response to one asset with the provided CryptocurrencySymbol Cannot be used in conjunction with nationalCurrencyCode or assetId
          */
         cryptocurrencySymbol?: CryptocurrencySymbol,
         /**

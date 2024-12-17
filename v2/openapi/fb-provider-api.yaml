@@ -545,6 +545,13 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/CryptocurrencySymbol'
+      
+    BlockchainQueryParam:
+      name: blockchain
+      in: query
+      description: Specify a specific blockchain to return.
+      schema:
+        $ref: '#/components/schemas/Blockchain'
 
     AccountBalancesQueryParam:
       name: balances

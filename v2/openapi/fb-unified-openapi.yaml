@@ -1849,8 +1849,8 @@ paths:
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/DepositAddressesSymbolQueryParam'
-        - $ref: '#/components/parameters/DepositAddressesBlockchainQueryParam'
+        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
+        - $ref: '#/components/parameters/BlockchainQueryParam'
       responses:
         '200':
           description: List of collateral deposit addresses
@@ -2336,6 +2336,12 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/CryptocurrencySymbol'
+    BlockchainQueryParam:
+      name: blockchain
+      in: query
+      description: Specify a specific blockchain to return.
+      schema:
+        $ref: '#/components/schemas/Blockchain'
     AccountBalancesQueryParam:
       name: balances
       in: query
@@ -2363,18 +2369,6 @@ components:
       required: true
       schema:
         type: string
-    DepositAddressesSymbolQueryParam:
-      name: cryptocurrencySymbol
-      in: query
-      description: Specify a specific symbol to return.
-      schema:
-        $ref: '#/components/schemas/CryptocurrencySymbol'
-    DepositAddressesBlockchainQueryParam:
-      name: blockchain
-      in: query
-      description: Specify a specific blockchain to return.
-      schema:
-        $ref: '#/components/schemas/Blockchain'
   headers:
     X-PROVIDER-SIGNATURE:
       required: true

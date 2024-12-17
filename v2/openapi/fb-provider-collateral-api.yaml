@@ -22,6 +22,8 @@ x-query-params:
   PaginationStartingAfter: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationStartingAfter' }
   PaginationEndingBefore: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationEndingBefore' }
   ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
+  CryptocurrencySymbolQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/CryptocurrencySymbolQueryParam' }
+  BlockchainQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/BlockchainQueryParam' }
 
 x-header-params:
   X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
@@ -203,8 +205,8 @@ paths:
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
-        - $ref: '#/components/parameters/DepositAddressesSymbolQueryParam'
-        - $ref: '#/components/parameters/DepositAddressesBlockchainQueryParam'
+        - $ref: '#/x-query-params/CryptocurrencySymbolQueryParam'
+        - $ref: '#/x-query-params/BlockchainQueryParam'
       responses:
         '200':
           description: List of collateral deposit addresses
@@ -610,18 +612,6 @@ components:
       required: true
       schema:
         type: string
-    DepositAddressesSymbolQueryParam:
-      name: cryptocurrencySymbol
-      in: query
-      description: Specify a specific symbol to return.
-      schema:
-        $ref: '#/x-schemas/CryptocurrencySymbol'
-    DepositAddressesBlockchainQueryParam:
-      name: blockchain
-      in: query
-      description: Specify a specific blockchain to return.
-      schema:
-        $ref: '#/x-schemas/Blockchain'
 
   schemas:
     CollateralId:

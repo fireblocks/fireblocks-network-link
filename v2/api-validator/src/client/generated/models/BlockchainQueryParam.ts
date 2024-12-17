@@ -8,4 +8,4 @@ import type { Blockchain } from './Blockchain';
 /**
  * Specify a specific blockchain to return.
  */
-export type DepositAddressesBlockchainQueryParam = Blockchain;
+export type BlockchainQueryParam = Blockchain;
