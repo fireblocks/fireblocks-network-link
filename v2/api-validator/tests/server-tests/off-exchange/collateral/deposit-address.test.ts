@@ -14,9 +14,7 @@ import config from '../../../../src/config';
 describe('Collateral Deposit Address', () => {
   const client = new Client();
   const accountId = getCapableAccountId('collateral');
-  const collateralId = config.get(
-    'collateral.signers.userId'
-  );
+  const collateralId = config.get('collateral.signers.userId');
 
   describe('createCollateralDepositAddressForAsset', () => {
     const requestBody: CollateralAddress = {
@@ -137,10 +135,10 @@ describe('Collateral Deposit Address', () => {
     });
 
     it.each([
-      {cryptocurrencySymbol: CryptocurrencySymbol.BTC, blockchain: Blockchain.BITCOIN},
-      {cryptocurrencySymbol: CryptocurrencySymbol.BTC},
-      {blockchain: Blockchain.BITCOIN},
-      {}
+      { cryptocurrencySymbol: CryptocurrencySymbol.BTC, blockchain: Blockchain.BITCOIN },
+      { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
+      { blockchain: Blockchain.BITCOIN },
+      {},
     ])('multi page valid response with queryParams: %o', async (queryParams) => {
       const getCollateralDepositAddresses: Pageable<CollateralAssetAddress> = async (
         limit,
@@ -151,10 +149,10 @@ describe('Collateral Deposit Address', () => {
           collateralId,
           limit,
           startingAfter,
-          ...queryParams
-        }
+          ...queryParams,
+        };
         const response = await client.collateral.getCollateralDepositAddresses({
-          ...requestParams
+          ...requestParams,
         });
         return response.addresses;
       };
@@ -170,18 +168,15 @@ describe('Collateral Deposit Address', () => {
       }
     });
     it('should return error depositAddress for requested params not found', async () => {
-      (async (
-        limit,
-        startingAfter?
-      ) : Promise<ApiError> => {
+      (async (limit, startingAfter?): Promise<ApiError> => {
         try {
-            await client.collateral.getCollateralDepositAddresses({
+          await client.collateral.getCollateralDepositAddresses({
             accountId,
             collateralId,
             limit,
             startingAfter,
             cryptocurrencySymbol: CryptocurrencySymbol.ALGO,
-            blockchain: Blockchain.BITCOIN_CASH_ABC
+            blockchain: Blockchain.BITCOIN_CASH_ABC,
           });
         } catch (err) {
           if (err instanceof ApiError) {

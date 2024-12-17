@@ -19,8 +19,7 @@ const controllers = new ControllersContainer(() => new CollateralController());
 
 export async function initiateCollateralWithdrawalTransaction(
   request: FastifyRequest<
-    AccountIdPathParam &
-      CollateralIdPathParam & { Body: CollateralWithdrawalTransactionRequest }
+    AccountIdPathParam & CollateralIdPathParam & { Body: CollateralWithdrawalTransactionRequest }
   >,
   reply: FastifyReply
 ): Promise<CollateralWithdrawalTransaction> {

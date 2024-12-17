@@ -1,4 +1,4 @@
-import { BlockchainQueryParam, CryptocurrencySymbolQueryParam } from "../../client/generated";
+import { BlockchainQueryParam, CryptocurrencySymbolQueryParam } from '../../client/generated';
 
 export type EntityIdPathParam = {
   Params: {

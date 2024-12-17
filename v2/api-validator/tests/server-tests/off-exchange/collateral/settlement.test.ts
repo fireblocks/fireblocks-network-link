@@ -6,9 +6,7 @@ import Client from '../../../../src/client';
 describe('Collateral Settlements', () => {
   const client: Client = new Client();
   const accountId = getCapableAccountId('collateral');
-  const collateralId = config.get(
-    'collateral.signers.userId'
-  );
+  const collateralId = config.get('collateral.signers.userId');
   const settlementVersion = accountId;
 
   describe('initiateSettlement', () => {

@@ -13,9 +13,7 @@ import Client from '../../../../src/client';
 describe('Collateral Withdrawal', () => {
   const client: Client = new Client();
   const accountId = getCapableAccountId('collateral');
-  const collateralId = config.get(
-    'collateral.signers.userId'
-  );
+  const collateralId = config.get('collateral.signers.userId');
   const collateralTxId = `0.${accountId}.${accountId}`;
 
   describe('initiateCollateralWithdrawalTransaction', () => {

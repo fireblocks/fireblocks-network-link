@@ -123,17 +123,27 @@ export class CollateralController {
     return collateralLinks;
   }
 
-  public getCollateralDepositAddresses(cryptocurrencySymbol?: string, blockchain?: string): CollateralAssetAddress[] {
+  public getCollateralDepositAddresses(
+    cryptocurrencySymbol?: string,
+    blockchain?: string
+  ): CollateralAssetAddress[] {
     let depositAddresses = this.depositAddressesRepository.list();
     if (cryptocurrencySymbol) {
-      depositAddresses = depositAddresses.filter((collateraladdress) => collateraladdress.address.asset['cryptocurrencySymbol'] === cryptocurrencySymbol)
+      depositAddresses = depositAddresses.filter(
+        (collateraladdress) =>
+          collateraladdress.address.asset['cryptocurrencySymbol'] === cryptocurrencySymbol
+      );
     }
     if (blockchain) {
-      depositAddresses = depositAddresses.filter((collateraladdress) => collateraladdress.address.asset['blockchain'] === blockchain)
+      depositAddresses = depositAddresses.filter(
+        (collateraladdress) => collateraladdress.address.asset['blockchain'] === blockchain
+      );
     }
 
     if (depositAddresses.length === 0) {
-      throw new NotFound(`depositAddresses for cryptocurrencySymbol: ${cryptocurrencySymbol} & blockchain: ${blockchain}`);
+      throw new NotFound(
+        `depositAddresses for cryptocurrencySymbol: ${cryptocurrencySymbol} & blockchain: ${blockchain}`
+      );
     }
 
     return depositAddresses;
@@ -153,9 +163,7 @@ export class CollateralController {
     return newCollateralDepositAddress;
   }
 
-  public getCollateralDepositAddressesDetails(
-    id: string
-  ): CollateralAssetAddress[] {
+  public getCollateralDepositAddressesDetails(id: string): CollateralAssetAddress[] {
     const CollateralDepositAddress = this.depositAddressesRepository.list();
 
     const CollateralDepositAddressForAsset = CollateralDepositAddress.filter(
@@ -168,7 +176,7 @@ export class CollateralController {
   public registerCollateralDepositTransaction(
     status: CollateralDepositTransactionStatus | undefined,
     amount: string | undefined,
-    collateralTxId: string,
+    collateralTxId: string
   ): CollateralDepositTransactions {
     const newCollateralDepositTransaction: CollateralDepositTransactions = {
       id: collateralTxId,

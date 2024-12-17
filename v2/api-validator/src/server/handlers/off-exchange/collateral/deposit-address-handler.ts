@@ -9,13 +9,15 @@ import {
   PaginationQuerystring,
   CollateralIdPathParam,
   EntityIdPathParam,
-  DepositAddressesQuerystring
+  DepositAddressesQuerystring,
 } from '../../request-types';
 
 const controllers = new ControllersContainer(() => new CollateralController());
 
 export async function getCollateralDepositAddresses(
-  request: FastifyRequest<PaginationQuerystring & DepositAddressesQuerystring & AccountIdPathParam & CollateralIdPathParam>,
+  request: FastifyRequest<
+    PaginationQuerystring & DepositAddressesQuerystring & AccountIdPathParam & CollateralIdPathParam
+  >,
   reply: FastifyReply
 ): Promise<CollateralDepositAddresses> {
   const { limit, startingAfter, endingBefore, cryptocurrencySymbol, blockchain } = request.query;
@@ -35,10 +37,7 @@ export async function getCollateralDepositAddresses(
 }
 
 export async function createCollateralDepositAddressForAsset(
-  request: FastifyRequest<
-    AccountIdPathParam &
-      CollateralIdPathParam & { Body: CollateralAddress }
-  >,
+  request: FastifyRequest<AccountIdPathParam & CollateralIdPathParam & { Body: CollateralAddress }>,
   reply: FastifyReply
 ): Promise<CollateralDepositAddresses> {
   const { address, recoveryAccountId } = request.body;

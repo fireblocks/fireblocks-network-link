@@ -22,12 +22,8 @@ describe('Account Link', () => {
       const { env, expectedTestAsset } = testParams;
       it('should return valid response', async () => {
         const accountId = getCapableAccountId('collateral');
-        const collateralId = config.get(
-          'collateral.collateralAccount.accountId'
-        );
-        const collateralSigners: CollateralSignerId[] = config.get(
-          'collateral.signers.userId'
-        );
+        const collateralId = config.get('collateral.collateralAccount.accountId');
+        const collateralSigners: CollateralSignerId[] = config.get('collateral.signers.userId');
         const response = await client.collateral.createCollateralAccountLink({
           accountId,
           requestBody: {
@@ -85,7 +81,8 @@ describe('Account Link', () => {
           expect(collateralAccountLink).toHaveProperty('rejectionReason');
         }
 
-        const assetsList: CryptocurrencyReference[] = collateralAccountLink.eligibleCollateralAssets;
+        const assetsList: CryptocurrencyReference[] =
+          collateralAccountLink.eligibleCollateralAssets;
         const expectedTestAsset: boolean =
           collateralAccountLink.env === Environment.SANDBOX ? true : false;
         for (const asset of assetsList) {
@@ -119,7 +116,8 @@ describe('Account Link', () => {
           expect(collateralAccountLink).toHaveProperty('rejectionReason');
         }
 
-        const assetsList: CryptocurrencyReference[] = collateralAccountLink.eligibleCollateralAssets;
+        const assetsList: CryptocurrencyReference[] =
+          collateralAccountLink.eligibleCollateralAssets;
         const expectedTestAsset: boolean =
           collateralAccountLink.env === Environment.SANDBOX ? true : false;
         for (const asset of assetsList) {

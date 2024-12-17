@@ -9,13 +9,10 @@ import { Pageable, paginated } from '../../../utils/pagination';
 import config from '../../../../src/config';
 import Client from '../../../../src/client';
 
-
 describe('Collateral Deposit', () => {
   const client: Client = new Client();
   const accountId = getCapableAccountId('collateral');
-  const collateralId = config.get(
-    'collateral.signers.userId'
-  );
+  const collateralId = config.get('collateral.signers.userId');
   const collateralTxId = `2.${accountId}.${uuid()}`;
 
   describe('registerCollateralDepositTransaction', () => {

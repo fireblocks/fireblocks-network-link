@@ -18,9 +18,7 @@ const controllers = new ControllersContainer(() => new CollateralController());
 
 export async function registerCollateralDepositTransaction(
   request: FastifyRequest<
-    AccountIdPathParam &
-      CollateralIdPathParam &
- { Body: CollateralDepositTransaction }
+    AccountIdPathParam & CollateralIdPathParam & { Body: CollateralDepositTransaction }
   >,
   reply: FastifyReply
 ): Promise<CollateralDepositTransaction> {
@@ -37,7 +35,7 @@ export async function registerCollateralDepositTransaction(
     const newCollateralDepositTransaction = controller.registerCollateralDepositTransaction(
       status,
       amount,
-      collateralTxId,
+      collateralTxId
     );
     return newCollateralDepositTransaction;
   }
