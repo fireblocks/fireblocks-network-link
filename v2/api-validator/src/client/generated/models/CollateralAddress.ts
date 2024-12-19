@@ -11,6 +11,5 @@ export type CollateralAddress = {
      * An account ID used when recovering the assets of an off-exchange client
      */
     recoveryAccountId: string;
-    fireblocksAssetId: string;
 };
 

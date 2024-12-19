@@ -7,10 +7,6 @@ import type { PositiveAmount } from './PositiveAmount';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
 export type SettlementDepositInstruction = {
-    /**
-     * ID of the Fireblocks asset
-     */
-    fireblocksAssetId: string;
     amount: PositiveAmount;
     destinationAddress: PublicBlockchainAddress;
 };

@@ -1791,6 +1791,48 @@ paths:
         5XX:
           $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/collateral/{collateralId}/addresses:
+    post:
+      tags:
+        - collateral
+      summary: Create/register a collateral deposit address for a specific asset
+      description: |
+        Notifies the provider to have a new collateral deposit address for a specific asset. The provider is expected to listen to this address and credit the account accordingly,  or sending the funds to this address if a withdrawal is requested.
+      operationId: createCollateralDepositAddressForAsset
+      parameters:
+        - $ref: '#/components/parameters/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+      requestBody:
+        description: Collateral deposit address details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollateralAddress'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/components/headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollateralAssetAddress'
+        '400':
+          description: Return Bad Request.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
     get:
       operationId: getCollateralDepositAddresses
       summary: Get list of collateral account deposit addresses
@@ -1807,6 +1849,8 @@ paths:
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: '#/components/parameters/AssetIdQueryParam'
+        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
       responses:
         '200':
           description: List of collateral deposit addresses
@@ -1825,53 +1869,10 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /accounts/{accountId}/collateral/{collateralId}/addresses/{fireblocksAssetId}:
-    post:
-      tags:
-        - collateral
-      summary: Create/register a collateral deposit address for a specific asset
-      description: |
-        Notifies the provider to have a new collateral deposit address for a specific asset. The provider is expected to listen to this address and credit the account accordingly,  or sending the funds to this address if a withdrawal is requested.
-      operationId: createCollateralDepositAddressForAsset
-      parameters:
-        - $ref: '#/components/parameters/X-FB-PLATFORM-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/SubAccountIdPathParam'
-        - $ref: '#/components/parameters/CollateralIdPathParam'
-        - $ref: '#/components/parameters/FireblocksAssetIdPathParam'
-      requestBody:
-        description: Collateral deposit address details
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CollateralAddress'
-      responses:
-        '200':
-          description: Successful Operation
-          headers:
-            X-PROVIDER-SIGNATURE:
-              $ref: '#/components/headers/X-PROVIDER-SIGNATURE'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CollateralDepositAddresses'
-        '400':
-          description: Return Bad Request.
-        '401':
-          description: Unauthorized. Either API details are missing or invalid
-        '403':
-          description: Forbidden- You do not have access to the requested resource.
-        '415':
-          description: Unsupported media type. You need to use application/json.
-        '500':
-          description: Exchange internal error.
+  /accounts/{accountId}/collateral/{collateralId}/addresses/{id}:
     get:
-      operationId: getCollateralDepositAddressesForAsset
-      summary: Get list of collateral account deposit addresses for a specific asset
+      operationId: getCollateralDepositAddressesDetails
+      summary: Get details of a specific deposit address in a collateral account.
       tags:
         - collateral
       parameters:
@@ -1882,20 +1883,17 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/CollateralIdPathParam'
-        - $ref: '#/components/parameters/FireblocksAssetIdPathParam'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
         '200':
-          description: List of collateral deposit addresses
+          description: Specific collateral deposit address
           headers:
             X-PROVIDER-SIGNATURE:
               $ref: '#/components/headers/X-PROVIDER-SIGNATURE'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CollateralDepositAddresses'
+                $ref: '#/components/schemas/CollateralAssetAddress'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -1926,7 +1924,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CollateralDepositTransaction'
+              $ref: '#/components/schemas/CollateralDepositTransactionRequest'
       responses:
         '200':
           description: Successful Operation
@@ -2341,13 +2339,6 @@ components:
       description: Flag to include the account balances in the response. Balances are not returned by default for account endpoints.
       schema:
         type: boolean
-    FireblocksAssetIdPathParam:
-      name: fireblocksAssetId
-      description: ID of a Fireblocks asset.
-      in: path
-      required: true
-      schema:
-        type: string
     CollateralIdPathParam:
       name: collateralId
       description: ID of a collateral account
@@ -3973,10 +3964,6 @@ components:
         - **Linked** - The provider account is linked to a collateral account
         - **Disabled** - The link is disabled at the moment, but can be re-enabled
         - **Failed** - The link creation failed
-    CollateralAsset:
-      oneOf:
-        - $ref: '#/components/schemas/NativeCryptocurrency'
-        - $ref: '#/components/schemas/OtherAssetReference'
     CollateralAccount:
       type: object
       required:
@@ -3994,7 +3981,6 @@ components:
           $ref: '#/components/schemas/Environment'
     CollateralAccountLink:
       allOf:
-        - $ref: '#/components/schemas/CollateralAccount'
         - type: object
           required:
             - id
@@ -4008,15 +3994,15 @@ components:
             eligibleCollateralAssets:
               type: array
               items:
-                $ref: '#/components/schemas/CollateralAsset'
+                $ref: '#/components/schemas/CryptocurrencyReference'
             rejectionReason:
               type: string
+        - $ref: '#/components/schemas/CollateralAccount'
     CollateralAddress:
       type: object
       required:
         - address
         - recoveryAccountId
-        - fireblocksAssetId
       properties:
         address:
           $ref: '#/components/schemas/PublicBlockchainAddress'
@@ -4024,17 +4010,15 @@ components:
           type: string
           description: An account ID used when recovering the assets of an off-exchange client
           example: '12'
-        fireblocksAssetId:
-          type: string
     CollateralAssetAddress:
       allOf:
-        - $ref: '#/components/schemas/CollateralAddress'
         - type: object
           required:
             - id
           properties:
             id:
               type: string
+        - $ref: '#/components/schemas/CollateralAddress'
     CollateralDepositAddresses:
       type: object
       required:
@@ -4054,10 +4038,9 @@ components:
         - **Pending** - The transaction is pending and has not been credited to the provider's account yet
         - **Credited** - The transaction has been completed successfully and the account has been credited
         - **Rejected** - The transaction has been rejected and the account has not been credited
-    CollateralDepositTransaction:
+    CollateralDepositTransactionRequest:
       type: object
       required:
-        - fireblocksAssetId
         - collateralTxId
       properties:
         collateralTxId:
@@ -4065,22 +4048,19 @@ components:
           description: |
             A unique identifier of the transaction to track. This field will contain information to help the provider poll the status of the transaction from Fireblocks.
           example: 0.8e4cfce8-0182-4c6d-b9dd-a291c105e1d2.0.5a814998-ec0f-4f1c-92bf-fb5f7dc09ea2
-        fireblocksAssetId:
-          type: string
-          description: ID of the Fireblocks asset
         amount:
           $ref: '#/components/schemas/PositiveAmount'
         status:
           $ref: '#/components/schemas/CollateralDepositTransactionStatus'
-    CollateralDepositTransactions:
+    CollateralDepositTransaction:
       allOf:
-        - $ref: '#/components/schemas/CollateralDepositTransaction'
-      type: object
-      required:
-        - id
-      properties:
-        id:
-          type: string
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+        - $ref: '#/components/schemas/CollateralDepositTransactionRequest'
     CollateralDepositTransactionsResponse:
       type: object
       required:
@@ -4089,7 +4069,7 @@ components:
         transactions:
           type: array
           items:
-            $ref: '#/components/schemas/CollateralDepositTransactions'
+            $ref: '#/components/schemas/CollateralDepositTransaction'
     CollateralWithdrawalTransactionStatus:
       type: string
       enum:
@@ -4124,13 +4104,9 @@ components:
     CollateralWithdrawalTransactionRequest:
       type: object
       required:
-        - fireblocksAssetId
         - amount
         - destinationAddress
       properties:
-        fireblocksAssetId:
-          type: string
-          description: ID of the Fireblocks asset
         amount:
           $ref: '#/components/schemas/PositiveAmount'
         destinationAddress:
@@ -4167,13 +4143,9 @@ components:
     SettlementWithdrawInstruction:
       type: object
       required:
-        - fireblocksAssetId
         - amount
         - sourceAddress
       properties:
-        fireblocksAssetId:
-          type: string
-          description: ID of the Fireblocks asset
         amount:
           $ref: '#/components/schemas/PositiveAmount'
         fee:
@@ -4183,13 +4155,9 @@ components:
     SettlementDepositInstruction:
       type: object
       required:
-        - fireblocksAssetId
         - amount
         - destinationAddress
       properties:
-        fireblocksAssetId:
-          type: string
-          description: ID of the Fireblocks asset
         amount:
           $ref: '#/components/schemas/PositiveAmount'
         destinationAddress:

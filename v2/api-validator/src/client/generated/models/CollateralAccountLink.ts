@@ -4,13 +4,13 @@
 /* eslint-disable */
 
 import type { CollateralAccount } from './CollateralAccount';
-import type { CollateralAsset } from './CollateralAsset';
 import type { CollateralLinkStatus } from './CollateralLinkStatus';
+import type { CryptocurrencyReference } from './CryptocurrencyReference';
 
-export type CollateralAccountLink = (CollateralAccount & {
+export type CollateralAccountLink = ({
     id: string;
     status: CollateralLinkStatus;
-    eligibleCollateralAssets: Array<CollateralAsset>;
+    eligibleCollateralAssets: Array<CryptocurrencyReference>;
     rejectionReason?: string;
-});
+} & CollateralAccount);
 
