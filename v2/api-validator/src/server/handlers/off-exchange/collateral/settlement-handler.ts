@@ -21,7 +21,7 @@ export async function initiateSettlement(
   reply: FastifyReply
 ): Promise<SettlementInstructions> {
   {
-    const { settlementId, settlementVersion } = request.body;
+    const { settlementVersion } = request.body;
     const { accountId, collateralId } = request.params;
 
     const controller = controllers.getController(accountId);
@@ -32,7 +32,6 @@ export async function initiateSettlement(
 
     const newSettlement = controller.initiateSettlement(
       settlementVersion,
-      settlementId,
       accountId,
       collateralId
     );

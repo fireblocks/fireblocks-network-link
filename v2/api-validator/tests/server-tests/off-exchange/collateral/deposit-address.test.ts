@@ -14,78 +14,95 @@ import config from '../../../../src/config';
 describe('Collateral Deposit Address', () => {
   const client = new Client();
   const accountId = getCapableAccountId('collateral');
-  const collateralId = config.get('collateral.signers.userId');
+  const collateralId = config.get('collateral.collateralAccount.accountId');
 
   describe('createCollateralDepositAddressForAsset', () => {
-    const requestBody: CollateralAddress = {
-      address: {
-        asset: {
-          blockchain: Blockchain.BITCOIN,
-          cryptocurrencySymbol: CryptocurrencySymbol.BTC,
-          testAsset: false,
-        },
-        transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-        address: '0x0',
-        addressTag: '555',
-      },
-      recoveryAccountId: 'id',
-    };
-
     it('should returned valid response', async () => {
-      const collateralAddresses = await client.collateral.createCollateralDepositAddressForAsset({
+      const requestBody: CollateralAddress = {
+        address: {
+          asset: {
+            blockchain: Blockchain.BITCOIN,
+            cryptocurrencySymbol: CryptocurrencySymbol.BTC,
+            testAsset: false,
+          },
+          transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          address: '0x0',
+          addressTag: '555',
+        },
+        recoveryAccountId: 'id',
+      };
+      const collateralAddress = await client.collateral.createCollateralDepositAddressForAsset({
         accountId,
         collateralId,
         requestBody,
       });
 
-      collateralAddresses.addresses.forEach((address) => {
-        expect(address['recoveryAccountId']).toBe('id');
-        expect(address.address['transferMethod']).toBe(
+        expect(collateralAddress['recoveryAccountId']).toBe('id');
+        expect(collateralAddress.address['transferMethod']).toBe(
           PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
         );
-        expect(address.address['address']).toBe('0x0');
-        expect(address.address['addressTag']).toBe('555');
-        expect(address.address.asset['blockchain']).toBe(Blockchain.BITCOIN);
-        expect(address.address.asset['cryptocurrencySymbol']).toBe(CryptocurrencySymbol.BTC);
-        expect(address.address.asset['testAsset']).toBe(false);
-      });
+        expect(collateralAddress.address['address']).toBe('0x0');
+        expect(collateralAddress.address['addressTag']).toBe('555');
+        expect(collateralAddress.address.asset['blockchain']).toBe(Blockchain.BITCOIN);
+        expect(collateralAddress.address.asset['cryptocurrencySymbol']).toBe(CryptocurrencySymbol.BTC);
+        expect(collateralAddress.address.asset['testAsset']).toBe(false);
     });
 
     it('should return without tag', async () => {
-      delete requestBody.address.addressTag;
-      const collateralAddresses = await client.collateral.createCollateralDepositAddressForAsset({
+      const requestBody: CollateralAddress = {
+        address: {
+          asset: {
+            blockchain: Blockchain.BITCOIN,
+            cryptocurrencySymbol: CryptocurrencySymbol.BTC,
+            testAsset: false,
+          },
+          transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          address: '0x0',
+        },
+        recoveryAccountId: 'id1',
+      };
+      const collateralAddress = await client.collateral.createCollateralDepositAddressForAsset({
         accountId,
         collateralId,
         requestBody,
       });
 
-      collateralAddresses.addresses.forEach((address) => {
-        expect(address.address['addressTag']).toBe(undefined);
+        expect(collateralAddress.address['addressTag']).toBe(undefined);
+    });
+
+    it('should return with assetId', async () => {
+      const requestBody: CollateralAddress = {
+        address: {
+          asset: {
+            assetId: 'ac123'
+          },
+          transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          address: '0x0',
+          addressTag: '555',
+        },
+        recoveryAccountId: 'id2',
+      };
+      const collateralAddress = await client.collateral.createCollateralDepositAddressForAsset({
+        accountId,
+        collateralId,
+        requestBody,
       });
+
+        expect(collateralAddress.address.asset['assetId']).toBe('ac123');
     });
   });
 
   describe('getCollateralDepositAddressesDetails', () => {
     it('should return with a valid schema', async () => {
-      const getCollateralDepositAddressesForAsset: Pageable<CollateralAddress> = async (
-        limit,
-        startingAfter?
-      ) => {
-        const response = await client.collateral.getCollateralDepositAddressesDetails({
+      const collateralAddress = await client.collateral.getCollateralDepositAddressesDetails({
           accountId,
           collateralId,
-          id: accountId,
-          limit,
-          startingAfter,
+          id: 'id',
         });
-        return response.addresses;
-      };
 
-      for await (const collateralAccountAddress of paginated(
-        getCollateralDepositAddressesForAsset
-      )) {
-        const addressObj = collateralAccountAddress.address;
-        expect(collateralAccountAddress['recoveryAccountId']).toBe('id');
+  
+        const addressObj = collateralAddress.address;
+        expect(collateralAddress['recoveryAccountId']).toBe('id');
         expect(addressObj['transferMethod']).toBe(
           PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
         );
@@ -94,30 +111,27 @@ describe('Collateral Deposit Address', () => {
         expect(addressObj.asset['blockchain']).toBe(Blockchain.BITCOIN);
         expect(addressObj.asset['cryptocurrencySymbol']).toBe(CryptocurrencySymbol.BTC);
         expect(addressObj.asset['testAsset']).toBe(false);
-      }
     });
 
     it('should return without tag', async () => {
-      const getCollateralDepositAddressesForAsset: Pageable<CollateralAddress> = async (
-        limit,
-        startingAfter?
-      ) => {
-        const response = await client.collateral.getCollateralDepositAddressesDetails({
+        const collateralAddress = await client.collateral.getCollateralDepositAddressesDetails({
           accountId,
           collateralId,
-          id: '111',
-          limit,
-          startingAfter,
+          id: 'id1',
         });
-        return response.addresses;
-      };
 
-      for await (const collateralAccountAddress of paginated(
-        getCollateralDepositAddressesForAsset
-      )) {
-        expect(collateralAccountAddress.address['addressTag']).toBe(undefined);
-      }
+        expect(collateralAddress.address['addressTag']).toBe(undefined);
     });
+
+    it('should return with assetId', async () => {
+      const collateralAddress = await client.collateral.getCollateralDepositAddressesDetails({
+        accountId,
+        collateralId,
+        id: 'id2',
+      });
+
+      expect(collateralAddress.address.asset['assetId']).toBe('ac123');
+  });
   });
 
   describe('getCollateralDepositAddresses', () => {
@@ -135,9 +149,8 @@ describe('Collateral Deposit Address', () => {
     });
 
     it.each([
-      { cryptocurrencySymbol: CryptocurrencySymbol.BTC, blockchain: Blockchain.BITCOIN },
       { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
-      { blockchain: Blockchain.BITCOIN },
+      { assetId: 'ac123' },
       {},
     ])('multi page valid response with queryParams: %o', async (queryParams) => {
       const getCollateralDepositAddresses: Pageable<CollateralAssetAddress> = async (
@@ -175,8 +188,7 @@ describe('Collateral Deposit Address', () => {
             collateralId,
             limit,
             startingAfter,
-            cryptocurrencySymbol: CryptocurrencySymbol.ALGO,
-            blockchain: Blockchain.BITCOIN_CASH_ABC,
+            assetId: 'assetId',
           });
         } catch (err) {
           if (err instanceof ApiError) {

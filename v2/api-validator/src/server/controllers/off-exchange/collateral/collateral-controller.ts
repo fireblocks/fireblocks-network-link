@@ -11,7 +11,6 @@ import {
   PublicBlockchainAddress,
   CollateralDepositTransactionStatus,
   CollateralDepositTransaction,
-  CollateralDepositTransactions,
   CollateralWithdrawalTransaction,
   CollateralWithdrawalTransactionStatus,
   SettlementInstructions,
@@ -46,7 +45,7 @@ export class NotValid extends XComError {
 export class CollateralController {
   private readonly accountLinksRepository = new Repository<CollateralAccountLink>();
   private readonly depositAddressesRepository = new Repository<CollateralAssetAddress>();
-  private readonly depositTransactionRepository = new Repository<CollateralDepositTransactions>();
+  private readonly depositTransactionRepository = new Repository<CollateralDepositTransaction>();
   private readonly withdrawalTransactionRepository =
     new Repository<CollateralWithdrawalTransaction>();
   private readonly settlementRepository = new Repository<SettlementInstructionsIdentifier>();
@@ -125,7 +124,7 @@ export class CollateralController {
 
   public getCollateralDepositAddresses(
     cryptocurrencySymbol?: string,
-    blockchain?: string
+    assetId?: string
   ): CollateralAssetAddress[] {
     let depositAddresses = this.depositAddressesRepository.list();
     if (cryptocurrencySymbol) {
@@ -134,15 +133,15 @@ export class CollateralController {
           collateraladdress.address.asset['cryptocurrencySymbol'] === cryptocurrencySymbol
       );
     }
-    if (blockchain) {
+    if (assetId) {
       depositAddresses = depositAddresses.filter(
-        (collateraladdress) => collateraladdress.address.asset['blockchain'] === blockchain
+        (collateraladdress) => collateraladdress.address.asset['assetId'] === assetId
       );
     }
 
     if (depositAddresses.length === 0) {
       throw new NotFound(
-        `depositAddresses for cryptocurrencySymbol: ${cryptocurrencySymbol} & blockchain: ${blockchain}`
+        `depositAddresses for cryptocurrencySymbol: ${cryptocurrencySymbol} & assetId: ${assetId}`
       );
     }
 
@@ -152,33 +151,35 @@ export class CollateralController {
   public createCollateralDepositAddressForAsset(
     address: PublicBlockchainAddress,
     recoveryAccountId: string,
-    accountId: string
   ): CollateralAssetAddress {
     const newCollateralDepositAddress: CollateralAssetAddress = {
-      id: accountId,
+      id: recoveryAccountId,
       address: address,
       recoveryAccountId: recoveryAccountId,
     };
+
     this.depositAddressesRepository.create(newCollateralDepositAddress);
     return newCollateralDepositAddress;
   }
 
-  public getCollateralDepositAddressesDetails(id: string): CollateralAssetAddress[] {
-    const CollateralDepositAddress = this.depositAddressesRepository.list();
+  public getCollateralDepositAddressesDetails(id: string): CollateralAssetAddress {
+    const CollateralAssetAddress = this.depositAddressesRepository.find(id);
 
-    const CollateralDepositAddressForAsset = CollateralDepositAddress.filter(
-      (address) => address.id === id
-    );
+    if (!CollateralAssetAddress) {
+      throw new NotFound(
+        `depositAddressesDetails of id: ${id} not found`
+      );
+    }
 
-    return CollateralDepositAddressForAsset;
+    return CollateralAssetAddress;
   }
 
   public registerCollateralDepositTransaction(
     status: CollateralDepositTransactionStatus | undefined,
     amount: string | undefined,
     collateralTxId: string
-  ): CollateralDepositTransactions {
-    const newCollateralDepositTransaction: CollateralDepositTransactions = {
+  ): CollateralDepositTransaction {
+    const newCollateralDepositTransaction: CollateralDepositTransaction = {
       id: collateralTxId,
       collateralTxId: collateralTxId,
       amount: amount,
@@ -188,7 +189,7 @@ export class CollateralController {
     return newCollateralDepositTransaction;
   }
 
-  public getCollateralDepositTransactions(): CollateralDepositTransactions[] {
+  public getCollateralDepositTransactions(): CollateralDepositTransaction[] {
     const collateralDepositTransactions = this.depositTransactionRepository.list();
 
     return collateralDepositTransactions;
@@ -245,7 +246,6 @@ export class CollateralController {
 
   public initiateSettlement(
     settlementVersion: string | undefined,
-    settlementId: string,
     accountId: string,
     collateralId: string
   ): SettlementInstructions {

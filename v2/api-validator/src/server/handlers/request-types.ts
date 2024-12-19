@@ -1,4 +1,4 @@
-import { BlockchainQueryParam, CryptocurrencySymbolQueryParam } from '../../client/generated';
+import { CryptocurrencySymbolQueryParam } from '../../client/generated';
 
 export type EntityIdPathParam = {
   Params: {
@@ -41,12 +41,5 @@ export type PaginationQuerystring = {
 export type ListOrderQuerystring = {
   Querystring: {
     order: 'asc' | 'desc';
-  };
-};
-
-export type DepositAddressesQuerystring = {
-  Querystring: {
-    cryptocurrencySymbol?: CryptocurrencySymbolQueryParam;
-    blockchain?: BlockchainQueryParam;
   };
 };

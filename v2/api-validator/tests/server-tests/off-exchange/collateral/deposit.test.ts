@@ -1,6 +1,6 @@
 import {
   CollateralDepositTransaction,
-  CollateralDepositTransactions,
+  CollateralDepositTransactionRequest,
   CollateralDepositTransactionStatus,
 } from '../../../../src/client/generated';
 import { getCapableAccountId } from '../../../utils/capable-accounts';
@@ -16,7 +16,7 @@ describe('Collateral Deposit', () => {
   const collateralTxId = `2.${accountId}.${uuid()}`;
 
   describe('registerCollateralDepositTransaction', () => {
-    const depositDetails: CollateralDepositTransaction = {
+    const depositDetails: CollateralDepositTransactionRequest = {
       collateralTxId: collateralTxId,
       amount: '0.002',
       status: CollateralDepositTransactionStatus.PENDING,
@@ -89,7 +89,7 @@ describe('Collateral Deposit', () => {
 
   describe('getCollateralDepositTransactions', () => {
     it('should return valid response', async () => {
-      const getCollateralDepositTransactions: Pageable<CollateralDepositTransactions> = async (
+      const getCollateralDepositTransactions: Pageable<CollateralDepositTransaction> = async (
         limit,
         startingAfter?
       ) => {
