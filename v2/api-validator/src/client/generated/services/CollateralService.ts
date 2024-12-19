@@ -5,10 +5,15 @@
 import type { CollateralAccount } from '../models/CollateralAccount';
 import type { CollateralAccountLink } from '../models/CollateralAccountLink';
 import type { CollateralAddress } from '../models/CollateralAddress';
+import type { CollateralAssetAddress } from '../models/CollateralAssetAddress';
 import type { CollateralDepositAddresses } from '../models/CollateralDepositAddresses';
 import type { CollateralDepositTransaction } from '../models/CollateralDepositTransaction';
+import type { CollateralDepositTransactionRequest } from '../models/CollateralDepositTransactionRequest';
+import type { CollateralDepositTransactionsResponse } from '../models/CollateralDepositTransactionsResponse';
 import type { CollateralWithdrawalTransaction } from '../models/CollateralWithdrawalTransaction';
 import type { CollateralWithdrawalTransactionRequest } from '../models/CollateralWithdrawalTransactionRequest';
+import type { CollateralWithdrawalTransactions } from '../models/CollateralWithdrawalTransactions';
+import type { CryptocurrencySymbol } from '../models/CryptocurrencySymbol';
 import type { SettlementInstructions } from '../models/SettlementInstructions';
 import type { SettlementRequest } from '../models/SettlementRequest';
 import type { SettlementState } from '../models/SettlementState';
@@ -170,95 +175,10 @@ export class CollateralService {
     }
 
     /**
-     * Get list of collateral account deposit addresses
-     * @returns CollateralDepositAddresses List of collateral deposit addresses
-     * @throws ApiError
-     */
-    public getCollateralDepositAddresses({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<CollateralDepositAddresses> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/accounts/{accountId}/collateral/{collateralId}/addresses',
-            path: {
-                'accountId': accountId,
-                'collateralId': collateralId,
-            },
-            headers: {
-                'X-FB-PLATFORM-SIGNATURE': xFbPlatformSignature,
-                'X-FBAPI-KEY': xFbapiKey,
-                'X-FBAPI-NONCE': xFbapiNonce,
-                'X-FBAPI-SIGNATURE': xFbapiSignature,
-                'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
-            },
-            query: {
-                'limit': limit,
-                'startingAfter': startingAfter,
-                'endingBefore': endingBefore,
-            },
-            errors: {
-                400: `Request could not be processed due to a client error.`,
-                401: `Request is unauthorized`,
-            },
-        });
-    }
-
-    /**
      * Create/register a collateral deposit address for a specific asset
      * Notifies the provider to have a new collateral deposit address for a specific asset. The provider is expected to listen to this address and credit the account accordingly,  or sending the funds to this address if a withdrawal is requested.
      *
-     * @returns CollateralDepositAddresses Successful Operation
+     * @returns CollateralAssetAddress Successful Operation
      * @throws ApiError
      */
     public createCollateralDepositAddressForAsset({
@@ -269,7 +189,6 @@ export class CollateralService {
         xFbapiTimestamp,
         accountId,
         collateralId,
-        fireblocksAssetId,
         requestBody,
     }: {
         /**
@@ -302,21 +221,16 @@ export class CollateralService {
          */
         collateralId: string,
         /**
-         * ID of a Fireblocks asset.
-         */
-        fireblocksAssetId: string,
-        /**
          * Collateral deposit address details
          */
         requestBody: CollateralAddress,
-    }): CancelablePromise<CollateralDepositAddresses> {
+    }): CancelablePromise<CollateralAssetAddress> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/accounts/{accountId}/collateral/{collateralId}/addresses/{fireblocksAssetId}',
+            url: '/accounts/{accountId}/collateral/{collateralId}/addresses',
             path: {
                 'accountId': accountId,
                 'collateralId': collateralId,
-                'fireblocksAssetId': fireblocksAssetId,
             },
             headers: {
                 'X-FB-PLATFORM-SIGNATURE': xFbPlatformSignature,
@@ -338,11 +252,11 @@ export class CollateralService {
     }
 
     /**
-     * Get list of collateral account deposit addresses for a specific asset
-     * @returns any List of collateral deposit addresses
+     * Get list of collateral account deposit addresses
+     * @returns CollateralDepositAddresses List of collateral deposit addresses
      * @throws ApiError
      */
-    public getCollateralDepositAddressesForAsset({
+    public getCollateralDepositAddresses({
         xFbPlatformSignature,
         xFbapiKey,
         xFbapiNonce,
@@ -350,10 +264,11 @@ export class CollateralService {
         xFbapiTimestamp,
         accountId,
         collateralId,
-        fireblocksAssetId,
         limit = 10,
         startingAfter,
         endingBefore,
+        assetId,
+        cryptocurrencySymbol,
     }: {
         /**
          * Authentication signature of Fireblocks as the originator of the request
@@ -385,10 +300,6 @@ export class CollateralService {
          */
         collateralId: string,
         /**
-         * ID of a Fireblocks asset.
-         */
-        fireblocksAssetId: string,
-        /**
          * Maximum number of returned items.
          */
         limit?: number,
@@ -400,16 +311,21 @@ export class CollateralService {
          * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
-    }): CancelablePromise<{
-        addresses?: Array<CollateralAddress>;
-    }> {
+        /**
+         * ID of one of the assets returned in get-additional-assets. Limits the response to one. Cannot be used in conjunction with cryptocurrencySymbol or nationalCurrencyCode
+         */
+        assetId?: string,
+        /**
+         * Limits the response to one asset with the provided CryptocurrencySymbol Cannot be used in conjunction with nationalCurrencyCode or assetId
+         */
+        cryptocurrencySymbol?: CryptocurrencySymbol,
+    }): CancelablePromise<CollateralDepositAddresses> {
         return this.httpRequest.request({
             method: 'GET',
-            url: '/accounts/{accountId}/collateral/{collateralId}/addresses/{fireblocksAssetId}',
+            url: '/accounts/{accountId}/collateral/{collateralId}/addresses',
             path: {
                 'accountId': accountId,
                 'collateralId': collateralId,
-                'fireblocksAssetId': fireblocksAssetId,
             },
             headers: {
                 'X-FB-PLATFORM-SIGNATURE': xFbPlatformSignature,
@@ -422,6 +338,79 @@ export class CollateralService {
                 'limit': limit,
                 'startingAfter': startingAfter,
                 'endingBefore': endingBefore,
+                'assetId': assetId,
+                'cryptocurrencySymbol': cryptocurrencySymbol,
+            },
+            errors: {
+                400: `Request could not be processed due to a client error.`,
+                401: `Request is unauthorized`,
+            },
+        });
+    }
+
+    /**
+     * Get details of a specific deposit address in a collateral account.
+     * @returns CollateralAssetAddress Specific collateral deposit address
+     * @throws ApiError
+     */
+    public getCollateralDepositAddressesDetails({
+        xFbPlatformSignature,
+        xFbapiKey,
+        xFbapiNonce,
+        xFbapiSignature,
+        xFbapiTimestamp,
+        accountId,
+        collateralId,
+        id,
+    }: {
+        /**
+         * Authentication signature of Fireblocks as the originator of the request
+         */
+        xFbPlatformSignature: string,
+        /**
+         * API authentication key.
+         */
+        xFbapiKey: string,
+        /**
+         * Unique identifier of the request.
+         */
+        xFbapiNonce: string,
+        /**
+         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+         */
+        xFbapiSignature: string,
+        /**
+         * Request timestamp in milliseconds since Unix epoch.
+         */
+        xFbapiTimestamp: number,
+        /**
+         * Sub-account identifier.
+         */
+        accountId: string,
+        /**
+         * ID of a collateral account
+         */
+        collateralId: string,
+        /**
+         * Entity unique identifier.
+         */
+        id: string,
+    }): CancelablePromise<CollateralAssetAddress> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/accounts/{accountId}/collateral/{collateralId}/addresses/{id}',
+            path: {
+                'accountId': accountId,
+                'collateralId': collateralId,
+                'id': id,
+            },
+            headers: {
+                'X-FB-PLATFORM-SIGNATURE': xFbPlatformSignature,
+                'X-FBAPI-KEY': xFbapiKey,
+                'X-FBAPI-NONCE': xFbapiNonce,
+                'X-FBAPI-SIGNATURE': xFbapiSignature,
+                'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
@@ -479,7 +468,7 @@ export class CollateralService {
         /**
          * Collateral deposit transaction details
          */
-        requestBody: CollateralDepositTransaction,
+        requestBody: CollateralDepositTransactionRequest,
     }): CancelablePromise<CollateralDepositTransaction> {
         return this.httpRequest.request({
             method: 'POST',
@@ -509,7 +498,7 @@ export class CollateralService {
 
     /**
      * Get list of collateral account deposit transactions sorted by creation time
-     * @returns any List of collateral deposit transactions
+     * @returns CollateralDepositTransactionsResponse List of collateral deposit transactions
      * @throws ApiError
      */
     public getCollateralDepositTransactions({
@@ -565,9 +554,7 @@ export class CollateralService {
          * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
-    }): CancelablePromise<{
-        transactions?: Array<CollateralDepositTransaction>;
-    }> {
+    }): CancelablePromise<CollateralDepositTransactionsResponse> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/deposits',
@@ -744,7 +731,7 @@ export class CollateralService {
 
     /**
      * Get list of collateral withdrawal transactions sorted by creation time
-     * @returns any List of collateral withdrawal transactions
+     * @returns CollateralWithdrawalTransactions List of collateral withdrawal transactions
      * @throws ApiError
      */
     public getCollateralWithdrawalTransactions({
@@ -800,9 +787,7 @@ export class CollateralService {
          * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
-    }): CancelablePromise<{
-        transactions?: Array<CollateralWithdrawalTransaction>;
-    }> {
+    }): CancelablePromise<CollateralWithdrawalTransactions> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/withdrawals',
