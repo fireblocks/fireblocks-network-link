@@ -142,6 +142,15 @@ const ambiguousProperties = {
       '/transferMethod/asset/assetId',
     ],
   ],
+  '/accounts/:accountId/collateral/:collateralId/addresses': [
+    ['/address/asset/assetId', '/address/asset/cryptocurrencySymbol'],
+  ],
+  '/accounts/:accountId/collateral/:collateralId/withdrawals': [
+    ['/destinationAddress/asset/assetId', '/destinationAddress/asset/cryptocurrencySymbol'],
+  ],
+  '/accounts/:accountId/collateral/:collateralId/addresses/:id': [
+    ['/address/asset/assetId', '/address/asset/cryptocurrencySymbol'],
+  ],
 };
 
 /**

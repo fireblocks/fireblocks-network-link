@@ -1,3 +1,5 @@
+import { CryptocurrencySymbolQueryParam } from '../../client/generated';
+
 export type EntityIdPathParam = {
   Params: {
     id: string;
@@ -7,6 +9,24 @@ export type EntityIdPathParam = {
 export type AccountIdPathParam = {
   Params: {
     accountId: string;
+  };
+};
+
+export type CollateralIdPathParam = {
+  Params: {
+    collateralId: string;
+  };
+};
+
+export type CollateralTxIdPathParam = {
+  Params: {
+    collateralTxId: string;
+  };
+};
+
+export type SettlementVersionPathParam = {
+  Params: {
+    settlementVersion: string;
   };
 };
 

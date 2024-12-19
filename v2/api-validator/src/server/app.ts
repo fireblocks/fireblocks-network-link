@@ -31,6 +31,9 @@ export class WebApp {
     ajvRegisterJsonSchemaStandardStringFormats(this.ajv);
 
     this.app = Fastify({
+      // Currently maxParamLength expanded to 111 chars, due to the fact that collateralId (uuid.uuid.uuid) length is 111.
+      // Example: 1281e787-bca0-4335-b69b-a873012397e6.06b64f88-24fe-4621-9ded-b40a7618b594.1f0793c4-41eb-45d8-a6c6-9a7898a49a0e
+      maxParamLength: 111,
       logger: loggerForFastify,
       ajv: { customOptions: { strictSchema: false } },
     });
