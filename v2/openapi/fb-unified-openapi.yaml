@@ -1850,6 +1850,7 @@ paths:
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
         - $ref: '#/components/parameters/AssetIdQueryParam'
+        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
       responses:
         '200':
           description: List of collateral deposit addresses
@@ -1923,7 +1924,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CollateralDepositTransaction'
+              $ref: '#/components/schemas/CollateralDepositTransactionRequest'
       responses:
         '200':
           description: Successful Operation
@@ -4037,7 +4038,7 @@ components:
         - **Pending** - The transaction is pending and has not been credited to the provider's account yet
         - **Credited** - The transaction has been completed successfully and the account has been credited
         - **Rejected** - The transaction has been rejected and the account has not been credited
-    CollateralDepositTransaction:
+    CollateralDepositTransactionRequest:
       type: object
       required:
         - collateralTxId
@@ -4051,7 +4052,7 @@ components:
           $ref: '#/components/schemas/PositiveAmount'
         status:
           $ref: '#/components/schemas/CollateralDepositTransactionStatus'
-    CollateralDepositTransactions:
+    CollateralDepositTransaction:
       allOf:
         - type: object
           required:
@@ -4059,7 +4060,7 @@ components:
           properties:
             id:
               type: string
-        - $ref: '#/components/schemas/CollateralDepositTransaction'
+        - $ref: '#/components/schemas/CollateralDepositTransactionRequest'
     CollateralDepositTransactionsResponse:
       type: object
       required:
@@ -4068,7 +4069,7 @@ components:
         transactions:
           type: array
           items:
-            $ref: '#/components/schemas/CollateralDepositTransactions'
+            $ref: '#/components/schemas/CollateralDepositTransaction'
     CollateralWithdrawalTransactionStatus:
       type: string
       enum:

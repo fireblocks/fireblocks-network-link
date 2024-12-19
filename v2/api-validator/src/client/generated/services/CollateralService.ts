@@ -8,10 +8,12 @@ import type { CollateralAddress } from '../models/CollateralAddress';
 import type { CollateralAssetAddress } from '../models/CollateralAssetAddress';
 import type { CollateralDepositAddresses } from '../models/CollateralDepositAddresses';
 import type { CollateralDepositTransaction } from '../models/CollateralDepositTransaction';
+import type { CollateralDepositTransactionRequest } from '../models/CollateralDepositTransactionRequest';
 import type { CollateralDepositTransactionsResponse } from '../models/CollateralDepositTransactionsResponse';
 import type { CollateralWithdrawalTransaction } from '../models/CollateralWithdrawalTransaction';
 import type { CollateralWithdrawalTransactionRequest } from '../models/CollateralWithdrawalTransactionRequest';
 import type { CollateralWithdrawalTransactions } from '../models/CollateralWithdrawalTransactions';
+import type { CryptocurrencySymbol } from '../models/CryptocurrencySymbol';
 import type { SettlementInstructions } from '../models/SettlementInstructions';
 import type { SettlementRequest } from '../models/SettlementRequest';
 import type { SettlementState } from '../models/SettlementState';
@@ -266,6 +268,7 @@ export class CollateralService {
         startingAfter,
         endingBefore,
         assetId,
+        cryptocurrencySymbol,
     }: {
         /**
          * Authentication signature of Fireblocks as the originator of the request
@@ -312,6 +315,10 @@ export class CollateralService {
          * ID of one of the assets returned in get-additional-assets. Limits the response to one. Cannot be used in conjunction with cryptocurrencySymbol or nationalCurrencyCode
          */
         assetId?: string,
+        /**
+         * Limits the response to one asset with the provided CryptocurrencySymbol Cannot be used in conjunction with nationalCurrencyCode or assetId
+         */
+        cryptocurrencySymbol?: CryptocurrencySymbol,
     }): CancelablePromise<CollateralDepositAddresses> {
         return this.httpRequest.request({
             method: 'GET',
@@ -332,6 +339,7 @@ export class CollateralService {
                 'startingAfter': startingAfter,
                 'endingBefore': endingBefore,
                 'assetId': assetId,
+                'cryptocurrencySymbol': cryptocurrencySymbol,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
@@ -460,7 +468,7 @@ export class CollateralService {
         /**
          * Collateral deposit transaction details
          */
-        requestBody: CollateralDepositTransaction,
+        requestBody: CollateralDepositTransactionRequest,
     }): CancelablePromise<CollateralDepositTransaction> {
         return this.httpRequest.request({
             method: 'POST',

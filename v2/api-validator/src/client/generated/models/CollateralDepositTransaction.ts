@@ -3,16 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CollateralDepositTransactionStatus } from './CollateralDepositTransactionStatus';
-import type { PositiveAmount } from './PositiveAmount';
+import type { CollateralDepositTransactionRequest } from './CollateralDepositTransactionRequest';
 
-export type CollateralDepositTransaction = {
-    /**
-     * A unique identifier of the transaction to track. This field will contain information to help the provider poll the status of the transaction from Fireblocks.
-     *
-     */
-    collateralTxId: string;
-    amount?: PositiveAmount;
-    status?: CollateralDepositTransactionStatus;
-};
+export type CollateralDepositTransaction = ({
+    id: string;
+} & CollateralDepositTransactionRequest);
 
