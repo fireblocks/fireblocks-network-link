@@ -23,7 +23,7 @@ x-query-params:
   PaginationEndingBefore: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationEndingBefore' }
   ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
   CryptocurrencySymbolQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/CryptocurrencySymbolQueryParam' }
-  BlockchainQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/BlockchainQueryParam' }
+  AssetIdQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/AssetIdQueryParam' }
 
 x-header-params:
   X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
@@ -206,6 +206,7 @@ paths:
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
         - $ref: '#/x-query-params/AssetIdQueryParam'
+        - $ref: '#/x-query-params/CryptocurrencySymbolQueryParam'
       responses:
         '200':
           description: List of collateral deposit addresses
@@ -279,7 +280,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CollateralDepositTransaction'
+              $ref: '#/components/schemas/CollateralDepositTransactionRequest'
       responses:
         '200':
           description: Successful Operation
@@ -719,7 +720,7 @@ components:
         - **Credited** - The transaction has been completed successfully and the account has been credited
         
         - **Rejected** - The transaction has been rejected and the account has not been credited
-    CollateralDepositTransaction:
+    CollateralDepositTransactionRequest:
       type: object
       required: [ collateralTxId ]
       properties:
@@ -734,7 +735,7 @@ components:
         status:
           $ref: '#/components/schemas/CollateralDepositTransactionStatus'
 
-    CollateralDepositTransactions:
+    CollateralDepositTransaction:
       allOf:
         - type: object
           required:
@@ -742,7 +743,7 @@ components:
           properties:
             id:
               type: string
-        - $ref: '#/components/schemas/CollateralDepositTransaction'
+        - $ref: '#/components/schemas/CollateralDepositTransactionRequest'
     CollateralDepositTransactionsResponse:
       type: object
       required:
@@ -751,7 +752,7 @@ components:
         transactions:
           type: array
           items:
-            $ref: '#/components/schemas/CollateralDepositTransactions'
+            $ref: '#/components/schemas/CollateralDepositTransaction'
     CollateralWithdrawalTransactionStatus:
       type: string
       enum:
