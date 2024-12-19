@@ -1822,7 +1822,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CollateralDepositAddresses'
+                $ref: '#/components/schemas/CollateralAssetAddress'
         '400':
           description: Return Bad Request.
         '401':
@@ -1849,8 +1849,7 @@ paths:
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
-        - $ref: '#/components/parameters/BlockchainQueryParam'
+        - $ref: '#/components/parameters/AssetIdQueryParam'
       responses:
         '200':
           description: List of collateral deposit addresses
@@ -1872,7 +1871,7 @@ paths:
   /accounts/{accountId}/collateral/{collateralId}/addresses/{id}:
     get:
       operationId: getCollateralDepositAddressesDetails
-      summary: Get a specific collateral account deposit addresses details
+      summary: Get details of a specific deposit address in a collateral account.
       tags:
         - collateral
       parameters:
@@ -1884,19 +1883,16 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/CollateralIdPathParam'
         - $ref: '#/components/parameters/EntityIdPathParam'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
       responses:
         '200':
-          description: Specific collateral deposit addresses
+          description: Specific collateral deposit address
           headers:
             X-PROVIDER-SIGNATURE:
               $ref: '#/components/headers/X-PROVIDER-SIGNATURE'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CollateralDepositAddresses'
+                $ref: '#/components/schemas/CollateralAssetAddress'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -2336,12 +2332,6 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/CryptocurrencySymbol'
-    BlockchainQueryParam:
-      name: blockchain
-      in: query
-      description: Specify a specific blockchain to return.
-      schema:
-        $ref: '#/components/schemas/Blockchain'
     AccountBalancesQueryParam:
       name: balances
       in: query

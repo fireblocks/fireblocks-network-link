@@ -179,7 +179,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CollateralDepositAddresses'
+                $ref: '#/components/schemas/CollateralAssetAddress'
         '400':
           description: Return Bad Request.
         '401':
@@ -205,8 +205,7 @@ paths:
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
-        - $ref: '#/x-query-params/CryptocurrencySymbolQueryParam'
-        - $ref: '#/x-query-params/BlockchainQueryParam'
+        - $ref: '#/x-query-params/AssetIdQueryParam'
       responses:
         '200':
           description: List of collateral deposit addresses
@@ -228,7 +227,7 @@ paths:
   /accounts/{accountId}/collateral/{collateralId}/addresses/{id}:
     get:
       operationId: getCollateralDepositAddressesDetails
-      summary: Get a specific collateral account deposit addresses details
+      summary: Get details of a specific deposit address in a collateral account.
       tags: [ collateral ]
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -239,19 +238,16 @@ paths:
         - $ref: '#/x-path-params/SubAccountIdPathParam'
         - $ref: '#/components/parameters/CollateralIdPathParam'
         - $ref: '#/x-path-params/EntityIdPathParam'
-        - $ref: '#/x-query-params/PaginationLimit'
-        - $ref: '#/x-query-params/PaginationStartingAfter'
-        - $ref: '#/x-query-params/PaginationEndingBefore'
       responses:
         '200':
-          description: Specific collateral deposit addresses
+          description: Specific collateral deposit address
           headers:
             X-PROVIDER-SIGNATURE:
               $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CollateralDepositAddresses'
+                $ref: '#/components/schemas/CollateralAssetAddress'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':

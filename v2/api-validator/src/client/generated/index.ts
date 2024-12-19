@@ -28,7 +28,6 @@ export { BadRequestError } from './models/BadRequestError';
 export type { Balances } from './models/Balances';
 export { Bep20Token } from './models/Bep20Token';
 export { Blockchain } from './models/Blockchain';
-export type { BlockchainQueryParam } from './models/BlockchainQueryParam';
 export type { BlockchainWithdrawal } from './models/BlockchainWithdrawal';
 export type { BlockchainWithdrawalRequest } from './models/BlockchainWithdrawalRequest';
 export { BucketAsset } from './models/BucketAsset';

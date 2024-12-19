@@ -2,17 +2,16 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Blockchain } from '../models/Blockchain';
 import type { CollateralAccount } from '../models/CollateralAccount';
 import type { CollateralAccountLink } from '../models/CollateralAccountLink';
 import type { CollateralAddress } from '../models/CollateralAddress';
+import type { CollateralAssetAddress } from '../models/CollateralAssetAddress';
 import type { CollateralDepositAddresses } from '../models/CollateralDepositAddresses';
 import type { CollateralDepositTransaction } from '../models/CollateralDepositTransaction';
 import type { CollateralDepositTransactionsResponse } from '../models/CollateralDepositTransactionsResponse';
 import type { CollateralWithdrawalTransaction } from '../models/CollateralWithdrawalTransaction';
 import type { CollateralWithdrawalTransactionRequest } from '../models/CollateralWithdrawalTransactionRequest';
 import type { CollateralWithdrawalTransactions } from '../models/CollateralWithdrawalTransactions';
-import type { CryptocurrencySymbol } from '../models/CryptocurrencySymbol';
 import type { SettlementInstructions } from '../models/SettlementInstructions';
 import type { SettlementRequest } from '../models/SettlementRequest';
 import type { SettlementState } from '../models/SettlementState';
@@ -177,7 +176,7 @@ export class CollateralService {
      * Create/register a collateral deposit address for a specific asset
      * Notifies the provider to have a new collateral deposit address for a specific asset. The provider is expected to listen to this address and credit the account accordingly,  or sending the funds to this address if a withdrawal is requested.
      *
-     * @returns CollateralDepositAddresses Successful Operation
+     * @returns CollateralAssetAddress Successful Operation
      * @throws ApiError
      */
     public createCollateralDepositAddressForAsset({
@@ -223,7 +222,7 @@ export class CollateralService {
          * Collateral deposit address details
          */
         requestBody: CollateralAddress,
-    }): CancelablePromise<CollateralDepositAddresses> {
+    }): CancelablePromise<CollateralAssetAddress> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/collateral/{collateralId}/addresses',
@@ -266,8 +265,7 @@ export class CollateralService {
         limit = 10,
         startingAfter,
         endingBefore,
-        cryptocurrencySymbol,
-        blockchain,
+        assetId,
     }: {
         /**
          * Authentication signature of Fireblocks as the originator of the request
@@ -311,13 +309,9 @@ export class CollateralService {
          */
         endingBefore?: string,
         /**
-         * Limits the response to one asset with the provided CryptocurrencySymbol Cannot be used in conjunction with nationalCurrencyCode or assetId
+         * ID of one of the assets returned in get-additional-assets. Limits the response to one. Cannot be used in conjunction with cryptocurrencySymbol or nationalCurrencyCode
          */
-        cryptocurrencySymbol?: CryptocurrencySymbol,
-        /**
-         * Specify a specific blockchain to return.
-         */
-        blockchain?: Blockchain,
+        assetId?: string,
     }): CancelablePromise<CollateralDepositAddresses> {
         return this.httpRequest.request({
             method: 'GET',
@@ -337,8 +331,7 @@ export class CollateralService {
                 'limit': limit,
                 'startingAfter': startingAfter,
                 'endingBefore': endingBefore,
-                'cryptocurrencySymbol': cryptocurrencySymbol,
-                'blockchain': blockchain,
+                'assetId': assetId,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
@@ -348,8 +341,8 @@ export class CollateralService {
     }
 
     /**
-     * Get a specific collateral account deposit addresses details
-     * @returns CollateralDepositAddresses Specific collateral deposit addresses
+     * Get details of a specific deposit address in a collateral account.
+     * @returns CollateralAssetAddress Specific collateral deposit address
      * @throws ApiError
      */
     public getCollateralDepositAddressesDetails({
@@ -361,9 +354,6 @@ export class CollateralService {
         accountId,
         collateralId,
         id,
-        limit = 10,
-        startingAfter,
-        endingBefore,
     }: {
         /**
          * Authentication signature of Fireblocks as the originator of the request
@@ -398,19 +388,7 @@ export class CollateralService {
          * Entity unique identifier.
          */
         id: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<CollateralDepositAddresses> {
+    }): CancelablePromise<CollateralAssetAddress> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/addresses/{id}',
@@ -425,11 +403,6 @@ export class CollateralService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
-            },
-            query: {
-                'limit': limit,
-                'startingAfter': startingAfter,
-                'endingBefore': endingBefore,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
