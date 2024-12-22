@@ -106,8 +106,8 @@ export class CollateralController {
     };
 
     if (
-      collateralAccount.collateralId === '10' ||
-      collateralAccount.collateralSigners[0] === '10'
+      collateralAccount.collateralId === 'unknownId' ||
+      collateralAccount.collateralSigners[0] === 'unknownId'
     ) {
       newCollateralAccountLink.status = CollateralLinkStatus.FAILED;
       newCollateralAccountLink.rejectionReason = 'unknown collateralId/collateralSigner';
@@ -153,7 +153,7 @@ export class CollateralController {
     recoveryAccountId: string,
   ): CollateralAssetAddress {
     const newCollateralDepositAddress: CollateralAssetAddress = {
-      id: recoveryAccountId,
+      id: uuid(),
       address: address,
       recoveryAccountId: recoveryAccountId,
     };
