@@ -483,9 +483,9 @@ components:
         crossTransfers:
           type: array
           items:
-            $ref: '#/components/schemas/CrsossTransfer'
+            $ref: '#/components/schemas/CrossTransfer'
 
-    CrsossTransfer:
+    CrossTransfer:
       oneOf:
       - $ref: '#/components/schemas/OnRampCrossTransfer'
       - $ref: '#/components/schemas/OffRampCrossTransfer'
