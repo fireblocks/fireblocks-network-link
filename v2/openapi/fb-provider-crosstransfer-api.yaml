@@ -161,11 +161,11 @@ paths:
               $ref: '#/components/schemas/CreateOnRampRoutingRequest'
       responses:
         '200':
-          description: Sub-account created.
+          description: On ramp standing order with fiat source sub-account created.
           content:
             application/json:
               schema:
-                $ref: '#/x-schemas/AccountId'
+                $ref: '#/components/schemas/OnRampStandingOrder'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -275,11 +275,11 @@ paths:
               $ref: '#/components/schemas/CreateOffRampRoutingRequest'
       responses:
         '200':
-          description: Sub-account created.
+          description: Off ramp standing order with crypto source sub-account created.
           content:
             application/json:
               schema:
-                $ref: '#/x-schemas/AccountId'
+                $ref: '#/components/schemas/OffRampStandingOrder'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -389,11 +389,11 @@ paths:
               $ref: '#/components/schemas/CreateBridgingRequest'
       responses:
         '200':
-          description: Sub-account created.
+          description: Bridging standing order with crypto source sub-account created.
           content:
             application/json:
               schema:
-                $ref: '#/x-schemas/AccountId'
+                $ref: '#/components/schemas/BridgingStandingOrder'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
