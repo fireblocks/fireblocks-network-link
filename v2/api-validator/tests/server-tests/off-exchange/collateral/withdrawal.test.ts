@@ -16,7 +16,7 @@ describe('Collateral Withdrawal', () => {
   const accountId = getCapableAccountId('collateral');
   const collateralId = config.get('collateral.signers.userId');
 
-  describe('create collateral withdrawal & fetch by collateralTxId ', () => {
+  describe('Create collateral withdrawal & fetch by collateralTxId ', () => {
     const validAddress = config.get('collateral.withdrawal.validAddress');
     const validTag = config.get('collateral.withdrawal.validTag');
     const inValidAddress = config.get('collateral.withdrawal.inValidAddress');
@@ -33,7 +33,7 @@ describe('Collateral Withdrawal', () => {
         expectedStatus: CollateralWithdrawalTransactionStatus.REJECTED,
         expectedRejectionReason: true,
       },
-    ])('status validation', (testParams) => {
+    ])('Status validation', (testParams) => {
       let collateralTxId: string;
       const { address, addressTag, expectedStatus, expectedRejectionReason } = testParams;
       const requestBody: CollateralWithdrawalTransactionRequest = {
@@ -49,7 +49,7 @@ describe('Collateral Withdrawal', () => {
           transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
         },
       };
-      it('create request should return with a valid response', async () => {
+      it('Create request should return with a valid response', async () => {
         const collateralWithdrawalTransaction =
           await client.collateral.initiateCollateralWithdrawalTransaction({
             accountId,
@@ -65,7 +65,7 @@ describe('Collateral Withdrawal', () => {
         }
       });
 
-      it('get request should return with a valid response', async () => {
+      it('Get request should return with a valid response', async () => {
         const collateralWithdrawalTransaction =
           await client.collateral.getCollateralWithdrawalTransactionDetails({
             accountId,
@@ -82,8 +82,8 @@ describe('Collateral Withdrawal', () => {
     });
   });
 
-  describe('getCollateralWithdrawalTransactions', () => {
-    it('should return with a valid response', async () => {
+  describe('Get List of collateral withdrawal transactions', () => {
+    it('Should return with a valid response', async () => {
       const getCollateralWithdrawalTransactions: Pageable<CollateralWithdrawalTransaction> = async (
         limit,
         startingAfter?

@@ -26,8 +26,8 @@ describe('Collateral Deposit Address', () => {
     assetId = id;
   });
 
-  describe('create collateral deposit address & fetch by entityId', () => {
-    describe('full response check', () => {
+  describe('Create collateral deposit address & fetch by entityId', () => {
+    describe('Full response check', () => {
       let resEntityId: string;
 
       const responseValidation = (collateralAddress) => {
@@ -43,7 +43,7 @@ describe('Collateral Deposit Address', () => {
         expect(collateralAddress.address.asset['testAsset']).toBe(false);
       };
 
-      it('create request should returned valid response', async () => {
+      it('Create request should returned valid response', async () => {
         const requestBody: CollateralAddress = {
           address: {
             asset: {
@@ -67,7 +67,7 @@ describe('Collateral Deposit Address', () => {
         responseValidation(collateralAddress);
       });
 
-      it('get request should return with a valid schema', async () => {
+      it('Get request should return with a valid schema', async () => {
         const collateralAddress = await client.collateral.getCollateralDepositAddressesDetails({
           accountId,
           collateralId,
@@ -78,10 +78,10 @@ describe('Collateral Deposit Address', () => {
       });
     });
 
-    describe('without tag response check', () => {
+    describe('Without tag response check', () => {
       let resEntityId: string;
 
-      it('create request should return without tag', async () => {
+      it('Create request should return without tag', async () => {
         const requestBody: CollateralAddress = {
           address: {
             asset: {
@@ -103,7 +103,7 @@ describe('Collateral Deposit Address', () => {
         expect(collateralAddress.address['addressTag']).toBe(undefined);
       });
 
-      it('get request should return without tag', async () => {
+      it('Get request should return without tag', async () => {
         const collateralAddress = await client.collateral.getCollateralDepositAddressesDetails({
           accountId,
           collateralId,
@@ -114,10 +114,10 @@ describe('Collateral Deposit Address', () => {
       });
     });
 
-    describe('with assetId response check', () => {
+    describe('With assetId response check', () => {
       let resEntityId: string;
 
-      it('create request should return with assetId', async () => {
+      it('Create request should return with assetId', async () => {
         const requestBody: CollateralAddress = {
           address: {
             asset: {
@@ -137,7 +137,7 @@ describe('Collateral Deposit Address', () => {
         expect(collateralAddress.address.asset['assetId']).toBe(assetId);
       });
 
-      it('should return with assetId', async () => {
+      it('Get should return with assetId', async () => {
         const collateralAddress = await client.collateral.getCollateralDepositAddressesDetails({
           accountId,
           collateralId,
@@ -149,8 +149,8 @@ describe('Collateral Deposit Address', () => {
     });
   });
 
-  describe('getCollateralDepositAddresses', () => {
-    it('simple valid response - one page', async () => {
+  describe('Get list of collateral account deposit addresses', () => {
+    it('Simple valid response - one page', async () => {
       const singlePageResponse = await client.collateral.getCollateralDepositAddresses({
         accountId,
         collateralId,
@@ -167,7 +167,7 @@ describe('Collateral Deposit Address', () => {
       { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
       async () => ({ assetId: await assetId }),
       {},
-    ])('multi page valid response with queryParams: %o', async (queryParams) => {
+    ])('Multi page valid response with queryParams: %o', async (queryParams) => {
       const getCollateralDepositAddresses: Pageable<CollateralAssetAddress> = async (
         limit,
         startingAfter?
@@ -191,7 +191,8 @@ describe('Collateral Deposit Address', () => {
         });
       }
     });
-    it('should return error depositAddress for requested params not found', async () => {
+
+    it('Should return not found error depositAddress for requested params', async () => {
       (async (limit, startingAfter?): Promise<ApiError> => {
         try {
           await client.collateral.getCollateralDepositAddresses({

@@ -14,13 +14,13 @@ import Client from '../../../../src/client';
 describe('Account Link', () => {
   const client = new Client();
 
-  describe('createCollateralAccountLink', () => {
+  describe('Creates a new link between a collateral account and a provider account', () => {
     describe.each([
       { env: Environment.PROD, expectedTestAsset: false },
       { env: Environment.SANDBOX, expectedTestAsset: true },
     ])('Successful request', (testParams) => {
       const { env, expectedTestAsset } = testParams;
-      it('should return valid response', async () => {
+      it('Should return valid response', async () => {
         const accountId = getCapableAccountId('collateral');
         const collateralId = config.get('collateral.collateralAccount.accountId');
         const collateralSigners: CollateralSignerId[] = config.get('collateral.signers.userId');
@@ -48,7 +48,7 @@ describe('Account Link', () => {
       });
     });
 
-    it('for unknown collateral signers or collateralId for the provider, should return with failed status and rejectionReason', async () => {
+    it('For unknown collateral signers or collateralId for the provider, should return with failed status and rejectionReason', async () => {
       const accountId = getCapableAccountId('collateral');
       const collateralId = 'unknownId';
       const collateralSigners: CollateralSignerId[] = ['unknownId'];
@@ -67,7 +67,7 @@ describe('Account Link', () => {
     });
   });
 
-  describe('getCollateralAccountLinks', () => {
+  describe('Get list of collateral account links', () => {
     async function checkCollateralAccountLink(collateralAccountLink: CollateralAccountLink) {
       if (
         collateralAccountLink.status === CollateralLinkStatus.FAILED ||
@@ -86,7 +86,7 @@ describe('Account Link', () => {
         }
       }
     }
-    it('simple valid response - one page', async () => {
+    it('Simple valid response - one page', async () => {
       const accountId = getCapableAccountId('collateral');
       const singlePageResponse = await client.collateral.getCollateralAccountLinks({
         accountId,
@@ -97,7 +97,7 @@ describe('Account Link', () => {
       }
     });
 
-    it('multi page valid response', async () => {
+    it('Multi page valid response', async () => {
       const accountId = getCapableAccountId('collateral');
       const getCollateralAccountLinks: Pageable<CollateralAccountLink> = async (
         limit,

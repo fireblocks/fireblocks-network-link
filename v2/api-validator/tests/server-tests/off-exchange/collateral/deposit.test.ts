@@ -14,12 +14,12 @@ describe('Collateral Deposit', () => {
   const collateralId = config.get('collateral.signers.userId');
   const collateralTxId = `2.${accountId}.${uuid()}`;
 
-  describe('registerCollateralDepositTransaction', () => {
+  describe('Register collateral deposit transaction', () => {
     const depositDetails: CollateralDepositTransactionRequest = {
       collateralTxId: collateralTxId,
       amount: '0.002',
     };
-    it('Request should return valid response', async () => {
+    it('Should return valid response', async () => {
       const collateralDepositTransaction =
         await client.collateral.registerCollateralDepositTransaction({
           accountId,
@@ -36,8 +36,8 @@ describe('Collateral Deposit', () => {
     });
   });
 
-  describe('getCollateralDepositTransactions', () => {
-    it('should return valid response', async () => {
+  describe('Get List of collateral deposit transactions', () => {
+    it('Should return valid response', async () => {
       const getCollateralDepositTransactions: Pageable<CollateralDepositTransaction> = async (
         limit,
         startingAfter?
@@ -59,8 +59,8 @@ describe('Collateral Deposit', () => {
     });
   });
 
-  describe('getCollateralDepositTransactionDetails', () => {
-    it('should return valid response', async () => {
+  describe('Get a collateral deposit transaction details by collateraltxId', () => {
+    it('Should return valid response', async () => {
       const collateralDepositTransaction =
         await client.collateral.getCollateralDepositTransactionDetails({
           accountId,
