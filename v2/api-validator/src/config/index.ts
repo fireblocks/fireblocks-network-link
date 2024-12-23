@@ -59,6 +59,23 @@ const config = convict({
         env: 'COLLATERAL_ACCOUNT',
       },
     },
+    withdrawal: {
+      validAddress: {
+        format: String,
+        default: 'J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ',
+        env: 'COLLATERAL_WIHTDRAWAL_VALID_ADDRESS',
+      },
+      inValidAddress: {
+        format: String,
+        default: 'tb1qdsffc8en440dwjfdl9hp8zz2d7e7lae64mr3g7',
+        env: 'COLLATERAL_WIHTDRAWAL_INVALID_ADDRESS',
+      },
+      validTag: {
+        format: String,
+        default: '5494396EB65E6615D307',
+        env: 'COLLATERAL_WIHTDRAWAL_TAG',
+      },
+    },
   },
   withdrawal: {
     peerAccount: {

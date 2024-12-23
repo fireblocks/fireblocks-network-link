@@ -68,7 +68,6 @@ describe('Account Link', () => {
   });
 
   describe('getCollateralAccountLinks', () => {
-
     async function checkCollateralAccountLink(collateralAccountLink: CollateralAccountLink) {
       if (
         collateralAccountLink.status === CollateralLinkStatus.FAILED ||
@@ -78,7 +77,8 @@ describe('Account Link', () => {
       }
 
       const assetsList: CryptocurrencyReference[] = collateralAccountLink.eligibleCollateralAssets;
-      const expectedTestAsset: boolean = collateralAccountLink.env === Environment.SANDBOX ? true : false;
+      const expectedTestAsset: boolean =
+        collateralAccountLink.env === Environment.SANDBOX ? true : false;
 
       for (const asset of assetsList) {
         if (typeof asset['testAsset'] === 'boolean') {

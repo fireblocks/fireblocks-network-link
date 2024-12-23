@@ -30,11 +30,7 @@ export async function initiateSettlement(
       return ErrorFactory.notFound(reply);
     }
 
-    const newSettlement = controller.initiateSettlement(
-      settlementVersion,
-      accountId,
-      collateralId
-    );
+    const newSettlement = controller.initiateSettlement(settlementVersion, accountId, collateralId);
     return newSettlement;
   }
 }

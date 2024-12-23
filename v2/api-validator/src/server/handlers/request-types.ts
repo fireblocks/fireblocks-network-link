@@ -1,5 +1,3 @@
-import { CryptocurrencySymbolQueryParam } from '../../client/generated';
-
 export type EntityIdPathParam = {
   Params: {
     id: string;

@@ -150,7 +150,7 @@ export class CollateralController {
 
   public createCollateralDepositAddressForAsset(
     address: PublicBlockchainAddress,
-    recoveryAccountId: string,
+    recoveryAccountId: string
   ): CollateralAssetAddress {
     const newCollateralDepositAddress: CollateralAssetAddress = {
       id: uuid(),
@@ -166,9 +166,7 @@ export class CollateralController {
     const CollateralAssetAddress = this.depositAddressesRepository.find(id);
 
     if (!CollateralAssetAddress) {
-      throw new NotFound(
-        `depositAddressesDetails of id: ${id} not found`
-      );
+      throw new NotFound(`depositAddressesDetails of id: ${id} not found`);
     }
 
     return CollateralAssetAddress;
@@ -207,11 +205,20 @@ export class CollateralController {
     return collateralDepositTransaction;
   }
 
+  private getWithdrawalStatus(tag): CollateralWithdrawalTransactionStatus {
+    if (tag) {
+      return CollateralWithdrawalTransactionStatus.APPROVED;
+    } else {
+      return CollateralWithdrawalTransactionStatus.REJECTED;
+    }
+  }
+
   public initiateCollateralWithdrawalTransaction(
-    accountId: string
+    accountId: string,
+    tag: string
   ): CollateralWithdrawalTransaction {
-    const status = CollateralWithdrawalTransactionStatus.REJECTED;
-    const collateralTxId = `0.${accountId}.${accountId}`;
+    const status: CollateralWithdrawalTransactionStatus = this.getWithdrawalStatus(tag);
+    const collateralTxId = `0.${accountId}.${uuid()}`;
 
     const newWithdrawalTransaction: CollateralWithdrawalTransaction = {
       id: collateralTxId,
@@ -219,8 +226,11 @@ export class CollateralController {
       withdrawalTxBlockchainId:
         '0xb00b8884d17a737be3088ab222a600ef1a2ad3612a0f74406dfbb7039fdb051e',
       status: status,
-      rejectionReason: 'Rejected due to ongoing settlement',
     };
+
+    if (status === CollateralWithdrawalTransactionStatus.REJECTED) {
+      newWithdrawalTransaction.rejectionReason = 'Rejected due to ongoing settlement';
+    }
 
     this.withdrawalTransactionRepository.create(newWithdrawalTransaction);
     return newWithdrawalTransaction;

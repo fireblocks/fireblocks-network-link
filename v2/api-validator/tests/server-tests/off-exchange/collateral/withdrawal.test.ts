@@ -4,6 +4,7 @@ import {
   Blockchain,
   CollateralWithdrawalTransactionStatus,
   CryptocurrencySymbol,
+  CollateralWithdrawalTransactionRequest,
 } from '../../../../src/client/generated';
 import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { Pageable, paginated } from '../../../utils/pagination';
@@ -14,34 +15,70 @@ describe('Collateral Withdrawal', () => {
   const client: Client = new Client();
   const accountId = getCapableAccountId('collateral');
   const collateralId = config.get('collateral.signers.userId');
-  const collateralTxId = `0.${accountId}.${accountId}`;
 
-  describe('initiateCollateralWithdrawalTransaction', () => {
-    it('should return with a valid response', async () => {
-      const collateralWithdrawalTransaction =
-        await client.collateral.initiateCollateralWithdrawalTransaction({
-          accountId,
-          collateralId,
-          requestBody: {
-            amount: '0.002',
-            destinationAddress: {
-              address: '0x',
-              addressTag: 'abc',
-              asset: {
-                blockchain: Blockchain.ETHEREUM,
-                cryptocurrencySymbol: CryptocurrencySymbol.ETH,
-                testAsset: true,
-              },
-              transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-            },
+  describe('create collateral withdrawal & fetch by collateralTxId ', () => {
+    const validAddress = config.get('collateral.withdrawal.validAddress');
+    const validTag = config.get('collateral.withdrawal.validTag');
+    const inValidAddress = config.get('collateral.withdrawal.inValidAddress');
+    describe.each([
+      {
+        address: validAddress,
+        addressTag: validTag,
+        expectedStatus: CollateralWithdrawalTransactionStatus.APPROVED,
+        expectedRejectionReason: false,
+      },
+      {
+        address: inValidAddress,
+        addressTag: '',
+        expectedStatus: CollateralWithdrawalTransactionStatus.REJECTED,
+        expectedRejectionReason: true,
+      },
+    ])('status validation', (testParams) => {
+      let collateralTxId: string;
+      const { address, addressTag, expectedStatus, expectedRejectionReason } = testParams;
+      const requestBody: CollateralWithdrawalTransactionRequest = {
+        amount: '0.002',
+        destinationAddress: {
+          address: address,
+          addressTag: addressTag,
+          asset: {
+            blockchain: Blockchain.ALGORAND,
+            cryptocurrencySymbol: CryptocurrencySymbol.ALGO,
+            testAsset: false,
           },
-        });
+          transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+        },
+      };
+      it('create request should return with a valid response', async () => {
+        const collateralWithdrawalTransaction =
+          await client.collateral.initiateCollateralWithdrawalTransaction({
+            accountId,
+            collateralId,
+            requestBody,
+          });
 
-      if (
-        collateralWithdrawalTransaction.status === CollateralWithdrawalTransactionStatus.REJECTED
-      ) {
-        expect(collateralWithdrawalTransaction).toHaveProperty('rejectionReason');
-      }
+        collateralTxId = collateralWithdrawalTransaction.collateralTxId;
+
+        expect(collateralWithdrawalTransaction.status).toBe(expectedStatus);
+        if (expectedRejectionReason) {
+          expect(collateralWithdrawalTransaction).toHaveProperty('rejectionReason');
+        }
+      });
+
+      it('get request should return with a valid response', async () => {
+        const collateralWithdrawalTransaction =
+          await client.collateral.getCollateralWithdrawalTransactionDetails({
+            accountId,
+            collateralId,
+            collateralTxId,
+          });
+
+        expect(collateralWithdrawalTransaction.collateralTxId).toBe(collateralTxId);
+        expect(collateralWithdrawalTransaction.status).toBe(expectedStatus);
+        if (expectedRejectionReason) {
+          expect(collateralWithdrawalTransaction).toHaveProperty('rejectionReason');
+        }
+      });
     });
   });
 
@@ -68,25 +105,6 @@ describe('Collateral Withdrawal', () => {
         ) {
           expect(collateralWithdrawalTransaction).toHaveProperty('rejectionReason');
         }
-      }
-    });
-  });
-
-  describe('getCollateralWithdrawalTransactionDetails', () => {
-    it('should return with a valid response', async () => {
-      const collateralWithdrawalTransaction =
-        await client.collateral.getCollateralWithdrawalTransactionDetails({
-          accountId,
-          collateralId,
-          collateralTxId,
-        });
-
-      expect(collateralWithdrawalTransaction.collateralTxId).toBe(collateralTxId);
-
-      if (
-        collateralWithdrawalTransaction.status === CollateralWithdrawalTransactionStatus.REJECTED
-      ) {
-        expect(collateralWithdrawalTransaction).toHaveProperty('rejectionReason');
       }
     });
   });

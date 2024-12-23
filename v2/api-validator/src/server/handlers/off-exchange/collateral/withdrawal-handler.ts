@@ -25,15 +25,17 @@ export async function initiateCollateralWithdrawalTransaction(
 ): Promise<CollateralWithdrawalTransaction> {
   {
     const { accountId } = request.params;
-
+    const { destinationAddress } = request.body;
     const controller = controllers.getController(accountId);
-
+    const tag = destinationAddress.addressTag != undefined ? destinationAddress.addressTag : '';
     if (!controller) {
       return ErrorFactory.notFound(reply);
     }
 
-    const newCollateralDepositTransaction =
-      controller.initiateCollateralWithdrawalTransaction(accountId);
+    const newCollateralDepositTransaction = controller.initiateCollateralWithdrawalTransaction(
+      accountId,
+      tag
+    );
     return newCollateralDepositTransaction;
   }
 }

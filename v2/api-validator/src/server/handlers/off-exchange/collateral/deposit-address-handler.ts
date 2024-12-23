@@ -1,7 +1,13 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../../http-error-factory';
 import { CollateralController } from '../../../controllers/off-exchange/collateral/collateral-controller';
-import { CollateralDepositAddresses, CollateralAddress, AssetIdQueryParam, CryptocurrencySymbolQueryParam, CollateralAssetAddress } from '../../../../client/generated';
+import {
+  CollateralDepositAddresses,
+  CollateralAddress,
+  AssetIdQueryParam,
+  CryptocurrencySymbolQueryParam,
+  CollateralAssetAddress,
+} from '../../../../client/generated';
 import { ControllersContainer } from '../../../controllers/controllers-container';
 import { getPaginationResult } from '../../../controllers/pagination-controller';
 import {
@@ -47,7 +53,7 @@ export async function createCollateralDepositAddressForAsset(
   reply: FastifyReply
 ): Promise<CollateralAssetAddress> {
   const { address, recoveryAccountId } = request.body;
-  const { accountId, collateralId } = request.params;
+  const { accountId } = request.params;
 
   const controller = controllers.getController(accountId);
 
@@ -57,15 +63,13 @@ export async function createCollateralDepositAddressForAsset(
 
   const newCollateralDepositAddress = controller.createCollateralDepositAddressForAsset(
     address,
-    recoveryAccountId,
+    recoveryAccountId
   );
   return newCollateralDepositAddress;
 }
 
 export async function getCollateralDepositAddressesDetails(
-  request: FastifyRequest<
-    AccountIdPathParam & CollateralIdPathParam & EntityIdPathParam
-  >,
+  request: FastifyRequest<AccountIdPathParam & CollateralIdPathParam & EntityIdPathParam>,
   reply: FastifyReply
 ): Promise<CollateralAssetAddress> {
   const { accountId, id } = request.params;
@@ -78,5 +82,5 @@ export async function getCollateralDepositAddressesDetails(
 
   const address = controller.getCollateralDepositAddressesDetails(id);
 
-  return address
+  return address;
 }
