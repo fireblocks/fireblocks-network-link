@@ -4,6 +4,7 @@ import {
   CollateralAssetAddress,
   PublicBlockchainCapability,
   CollateralAddress,
+  CollateralDepositAddresses,
   ApiError,
 } from '../../../../src/client/generated';
 import { getCapableAccountId } from '../../../utils/capable-accounts';
@@ -13,8 +14,8 @@ import config from '../../../../src/config';
 
 describe('Collateral Deposit Address', () => {
   const client = new Client();
-  const accountId = getCapableAccountId('collateral');
-  const collateralId = config.get('collateral.collateralAccount.accountId');
+  const accountId: string = getCapableAccountId('collateral');
+  const collateralId: string = config.get('collateral.collateralAccount.accountId');
   let assetId: string;
 
   function fetchAssetId() {
@@ -57,7 +58,7 @@ describe('Collateral Deposit Address', () => {
           },
           recoveryAccountId: '1',
         };
-        const collateralAddress = await client.collateral.createCollateralDepositAddressForAsset({
+        const collateralAddress: CollateralAssetAddress = await client.collateral.createCollateralDepositAddressForAsset({
           accountId,
           collateralId,
           requestBody,
@@ -68,7 +69,7 @@ describe('Collateral Deposit Address', () => {
       });
 
       it('Get request should return with a valid schema', async () => {
-        const collateralAddress = await client.collateral.getCollateralDepositAddressesDetails({
+        const collateralAddress: CollateralAssetAddress = await client.collateral.getCollateralDepositAddressesDetails({
           accountId,
           collateralId,
           id: resEntityId,
@@ -94,7 +95,7 @@ describe('Collateral Deposit Address', () => {
           },
           recoveryAccountId: '1',
         };
-        const collateralAddress = await client.collateral.createCollateralDepositAddressForAsset({
+        const collateralAddress: CollateralAssetAddress = await client.collateral.createCollateralDepositAddressForAsset({
           accountId,
           collateralId,
           requestBody,
@@ -104,7 +105,7 @@ describe('Collateral Deposit Address', () => {
       });
 
       it('Get request should return without tag', async () => {
-        const collateralAddress = await client.collateral.getCollateralDepositAddressesDetails({
+        const collateralAddress: CollateralAssetAddress = await client.collateral.getCollateralDepositAddressesDetails({
           accountId,
           collateralId,
           id: resEntityId,
@@ -128,7 +129,7 @@ describe('Collateral Deposit Address', () => {
           },
           recoveryAccountId: '1',
         };
-        const collateralAddress = await client.collateral.createCollateralDepositAddressForAsset({
+        const collateralAddress: CollateralAssetAddress = await client.collateral.createCollateralDepositAddressForAsset({
           accountId,
           collateralId,
           requestBody,
@@ -138,7 +139,7 @@ describe('Collateral Deposit Address', () => {
       });
 
       it('Get should return with assetId', async () => {
-        const collateralAddress = await client.collateral.getCollateralDepositAddressesDetails({
+        const collateralAddress: CollateralAssetAddress = await client.collateral.getCollateralDepositAddressesDetails({
           accountId,
           collateralId,
           id: resEntityId,
@@ -151,7 +152,7 @@ describe('Collateral Deposit Address', () => {
 
   describe('Get list of collateral account deposit addresses', () => {
     it('Simple valid response - one page', async () => {
-      const singlePageResponse = await client.collateral.getCollateralDepositAddresses({
+      const singlePageResponse: CollateralDepositAddresses = await client.collateral.getCollateralDepositAddresses({
         accountId,
         collateralId,
       });
@@ -179,7 +180,7 @@ describe('Collateral Deposit Address', () => {
           startingAfter,
           ...queryParams,
         };
-        const response = await client.collateral.getCollateralDepositAddresses({
+        const response: CollateralDepositAddresses = await client.collateral.getCollateralDepositAddresses({
           ...requestParams,
         });
         return response.addresses;

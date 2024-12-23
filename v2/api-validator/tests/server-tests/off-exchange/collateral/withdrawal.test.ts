@@ -5,6 +5,7 @@ import {
   CollateralWithdrawalTransactionStatus,
   CryptocurrencySymbol,
   CollateralWithdrawalTransactionRequest,
+  CollateralWithdrawalTransactions,
 } from '../../../../src/client/generated';
 import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { Pageable, paginated } from '../../../utils/pagination';
@@ -17,13 +18,13 @@ describe('Collateral Withdrawal', () => {
   const collateralId = config.get('collateral.signers.userId');
 
   describe('Create collateral withdrawal & fetch by collateralTxId ', () => {
-    const validAddress = config.get('collateral.withdrawal.validAddress');
-    const validTag = config.get('collateral.withdrawal.validTag');
-    const inValidAddress = config.get('collateral.withdrawal.inValidAddress');
+    const address: string = config.get('collateral.withdrawal.validAddress');
+    const tag: string = config.get('collateral.withdrawal.validTag');
+    const inValidAddress: string = config.get('collateral.withdrawal.inValidAddress');
     describe.each([
       {
-        address: validAddress,
-        addressTag: validTag,
+        address: address,
+        addressTag: tag,
         expectedStatus: CollateralWithdrawalTransactionStatus.APPROVED,
         expectedRejectionReason: false,
       },
@@ -50,7 +51,7 @@ describe('Collateral Withdrawal', () => {
         },
       };
       it('Create request should return with a valid response', async () => {
-        const collateralWithdrawalTransaction =
+        const collateralWithdrawalTransaction: CollateralWithdrawalTransaction =
           await client.collateral.initiateCollateralWithdrawalTransaction({
             accountId,
             collateralId,
@@ -66,7 +67,7 @@ describe('Collateral Withdrawal', () => {
       });
 
       it('Get request should return with a valid response', async () => {
-        const collateralWithdrawalTransaction =
+        const collateralWithdrawalTransaction: CollateralWithdrawalTransaction =
           await client.collateral.getCollateralWithdrawalTransactionDetails({
             accountId,
             collateralId,
@@ -88,7 +89,7 @@ describe('Collateral Withdrawal', () => {
         limit,
         startingAfter?
       ) => {
-        const response = await client.collateral.getCollateralWithdrawalTransactions({
+        const response: CollateralWithdrawalTransactions = await client.collateral.getCollateralWithdrawalTransactions({
           accountId,
           collateralId,
           limit,

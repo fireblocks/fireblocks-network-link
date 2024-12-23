@@ -1,6 +1,7 @@
 import {
   CollateralDepositTransaction,
   CollateralDepositTransactionRequest,
+  CollateralDepositTransactionsResponse,
 } from '../../../../src/client/generated';
 import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
@@ -10,9 +11,9 @@ import Client from '../../../../src/client';
 
 describe('Collateral Deposit', () => {
   const client: Client = new Client();
-  const accountId = getCapableAccountId('collateral');
-  const collateralId = config.get('collateral.signers.userId');
-  const collateralTxId = `2.${accountId}.${uuid()}`;
+  const accountId: string = getCapableAccountId('collateral');
+  const collateralId: string = config.get('collateral.signers.userId');
+  const collateralTxId: string = `2.${accountId}.${uuid()}`;
 
   describe('Register collateral deposit transaction', () => {
     const depositDetails: CollateralDepositTransactionRequest = {
@@ -20,7 +21,7 @@ describe('Collateral Deposit', () => {
       amount: '0.002',
     };
     it('Should return valid response', async () => {
-      const collateralDepositTransaction =
+      const collateralDepositTransaction: CollateralDepositTransaction =
         await client.collateral.registerCollateralDepositTransaction({
           accountId,
           collateralId,
@@ -42,7 +43,7 @@ describe('Collateral Deposit', () => {
         limit,
         startingAfter?
       ) => {
-        const response = await client.collateral.getCollateralDepositTransactions({
+        const response: CollateralDepositTransactionsResponse = await client.collateral.getCollateralDepositTransactions({
           accountId,
           collateralId,
           limit,
@@ -61,7 +62,7 @@ describe('Collateral Deposit', () => {
 
   describe('Get a collateral deposit transaction details by collateraltxId', () => {
     it('Should return valid response', async () => {
-      const collateralDepositTransaction =
+      const collateralDepositTransaction: CollateralDepositTransaction =
         await client.collateral.getCollateralDepositTransactionDetails({
           accountId,
           collateralId,
