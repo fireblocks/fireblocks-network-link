@@ -63,7 +63,7 @@ const config = convict({
       validAddress: {
         format: String,
         default: 'J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ',
-        env: 'COLLATERAL_WIHTDRAWAL_VALID_ADDRESS',
+        env: 'COLLATERAL_WIHTDRAWAL_ADDRESS',
       },
       inValidAddress: {
         format: String,
