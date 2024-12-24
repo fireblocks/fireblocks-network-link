@@ -89,12 +89,13 @@ describe('Collateral Withdrawal', () => {
         limit,
         startingAfter?
       ) => {
-        const response: CollateralWithdrawalTransactions = await client.collateral.getCollateralWithdrawalTransactions({
-          accountId,
-          collateralId,
-          limit,
-          startingAfter,
-        });
+        const response: CollateralWithdrawalTransactions =
+          await client.collateral.getCollateralWithdrawalTransactions({
+            accountId,
+            collateralId,
+            limit,
+            startingAfter,
+          });
         return response.transactions;
       };
 

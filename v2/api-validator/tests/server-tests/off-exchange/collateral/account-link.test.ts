@@ -24,14 +24,16 @@ describe('Account Link', () => {
         const accountId: string = getCapableAccountId('collateral');
         const collateralId: string = config.get('collateral.collateralAccount.accountId');
         const collateralSigners: CollateralSignerId[] = config.get('collateral.signers.userId');
-        const response: CollateralAccountLink = await client.collateral.createCollateralAccountLink({
-          accountId,
-          requestBody: {
-            collateralId,
-            collateralSigners,
-            env: env,
-          },
-        });
+        const response: CollateralAccountLink = await client.collateral.createCollateralAccountLink(
+          {
+            accountId,
+            requestBody: {
+              collateralId,
+              collateralSigners,
+              env: env,
+            },
+          }
+        );
 
         expect(response.collateralId).toBe(collateralId);
         expect(response.collateralSigners).toEqual(collateralSigners);
@@ -50,7 +52,7 @@ describe('Account Link', () => {
 
     it('For unknown collateral signers or collateralId for the provider, should return with failed status and rejectionReason', async () => {
       const accountId: string = getCapableAccountId('collateral');
-      const collateralId: string = 'unknownId';
+      const collateralId = 'unknownId';
       const collateralSigners: CollateralSignerId[] = ['unknownId'];
       const requestBody: CollateralAccount = {
         collateralId,
@@ -85,7 +87,7 @@ describe('Account Link', () => {
           expect(asset['testAsset']).toBe(expectedTestAsset);
         }
       }
-    }
+    };
     it('Simple valid response - one page', async () => {
       const accountId: string = getCapableAccountId('collateral');
       const singlePageResponse = await client.collateral.getCollateralAccountLinks({

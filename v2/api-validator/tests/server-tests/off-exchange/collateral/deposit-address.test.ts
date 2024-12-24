@@ -58,22 +58,24 @@ describe('Collateral Deposit Address', () => {
           },
           recoveryAccountId: '1',
         };
-        const collateralAddress: CollateralAssetAddress = await client.collateral.createCollateralDepositAddressForAsset({
-          accountId,
-          collateralId,
-          requestBody,
-        });
+        const collateralAddress: CollateralAssetAddress =
+          await client.collateral.createCollateralDepositAddressForAsset({
+            accountId,
+            collateralId,
+            requestBody,
+          });
 
         resEntityId = collateralAddress.id;
         responseValidation(collateralAddress);
       });
 
       it('Get request should return with a valid schema', async () => {
-        const collateralAddress: CollateralAssetAddress = await client.collateral.getCollateralDepositAddressesDetails({
-          accountId,
-          collateralId,
-          id: resEntityId,
-        });
+        const collateralAddress: CollateralAssetAddress =
+          await client.collateral.getCollateralDepositAddressesDetails({
+            accountId,
+            collateralId,
+            id: resEntityId,
+          });
 
         responseValidation(collateralAddress);
       });
@@ -95,21 +97,23 @@ describe('Collateral Deposit Address', () => {
           },
           recoveryAccountId: '1',
         };
-        const collateralAddress: CollateralAssetAddress = await client.collateral.createCollateralDepositAddressForAsset({
-          accountId,
-          collateralId,
-          requestBody,
-        });
+        const collateralAddress: CollateralAssetAddress =
+          await client.collateral.createCollateralDepositAddressForAsset({
+            accountId,
+            collateralId,
+            requestBody,
+          });
         resEntityId = collateralAddress.id;
         expect(collateralAddress.address['addressTag']).toBe(undefined);
       });
 
       it('Get request should return without tag', async () => {
-        const collateralAddress: CollateralAssetAddress = await client.collateral.getCollateralDepositAddressesDetails({
-          accountId,
-          collateralId,
-          id: resEntityId,
-        });
+        const collateralAddress: CollateralAssetAddress =
+          await client.collateral.getCollateralDepositAddressesDetails({
+            accountId,
+            collateralId,
+            id: resEntityId,
+          });
 
         expect(collateralAddress.address['addressTag']).toBe(undefined);
       });
@@ -129,21 +133,23 @@ describe('Collateral Deposit Address', () => {
           },
           recoveryAccountId: '1',
         };
-        const collateralAddress: CollateralAssetAddress = await client.collateral.createCollateralDepositAddressForAsset({
-          accountId,
-          collateralId,
-          requestBody,
-        });
+        const collateralAddress: CollateralAssetAddress =
+          await client.collateral.createCollateralDepositAddressForAsset({
+            accountId,
+            collateralId,
+            requestBody,
+          });
         resEntityId = collateralAddress.id;
         expect(collateralAddress.address.asset['assetId']).toBe(assetId);
       });
 
       it('Get should return with assetId', async () => {
-        const collateralAddress: CollateralAssetAddress = await client.collateral.getCollateralDepositAddressesDetails({
-          accountId,
-          collateralId,
-          id: resEntityId,
-        });
+        const collateralAddress: CollateralAssetAddress =
+          await client.collateral.getCollateralDepositAddressesDetails({
+            accountId,
+            collateralId,
+            id: resEntityId,
+          });
 
         expect(collateralAddress.address.asset['assetId']).toBe(assetId);
       });
@@ -152,10 +158,11 @@ describe('Collateral Deposit Address', () => {
 
   describe('Get list of collateral account deposit addresses', () => {
     it('Simple valid response - one page', async () => {
-      const singlePageResponse: CollateralDepositAddresses = await client.collateral.getCollateralDepositAddresses({
-        accountId,
-        collateralId,
-      });
+      const singlePageResponse: CollateralDepositAddresses =
+        await client.collateral.getCollateralDepositAddresses({
+          accountId,
+          collateralId,
+        });
 
       for await (const collateralAccountAddress of singlePageResponse.addresses) {
         expect(collateralAccountAddress.address.transferMethod).toBe(
@@ -180,9 +187,10 @@ describe('Collateral Deposit Address', () => {
           startingAfter,
           ...queryParams,
         };
-        const response: CollateralDepositAddresses = await client.collateral.getCollateralDepositAddresses({
-          ...requestParams,
-        });
+        const response: CollateralDepositAddresses =
+          await client.collateral.getCollateralDepositAddresses({
+            ...requestParams,
+          });
         return response.addresses;
       };
 

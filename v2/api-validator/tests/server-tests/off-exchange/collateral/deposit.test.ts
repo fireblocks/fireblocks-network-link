@@ -13,7 +13,7 @@ describe('Collateral Deposit', () => {
   const client: Client = new Client();
   const accountId: string = getCapableAccountId('collateral');
   const collateralId: string = config.get('collateral.signers.userId');
-  const collateralTxId: string = `2.${accountId}.${uuid()}`;
+  const collateralTxId = `2.${accountId}.${uuid()}`;
 
   describe('Register collateral deposit transaction', () => {
     const depositDetails: CollateralDepositTransactionRequest = {
@@ -43,12 +43,13 @@ describe('Collateral Deposit', () => {
         limit,
         startingAfter?
       ) => {
-        const response: CollateralDepositTransactionsResponse = await client.collateral.getCollateralDepositTransactions({
-          accountId,
-          collateralId,
-          limit,
-          startingAfter,
-        });
+        const response: CollateralDepositTransactionsResponse =
+          await client.collateral.getCollateralDepositTransactions({
+            accountId,
+            collateralId,
+            limit,
+            startingAfter,
+          });
         return response.transactions;
       };
 

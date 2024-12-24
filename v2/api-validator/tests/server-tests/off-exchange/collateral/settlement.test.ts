@@ -12,26 +12,27 @@ describe('Collateral Settlements', () => {
   describe('Initiate a settlement request & fetch by settlementVersion', () => {
     let settlementVersion; // should be type string will be added/modified after schema change
     it('Initiate request should return valid response', async () => {
-      const collateralSettlement: SettlementInstructions = await client.collateral.initiateSettlement({
-        accountId,
-        collateralId,
-        requestBody: {
-          settlementId: uuid(),
-          settlementVersion: uuid(),
-        },
-      });
-      
+      const collateralSettlement: SettlementInstructions =
+        await client.collateral.initiateSettlement({
+          accountId,
+          collateralId,
+          requestBody: {
+            settlementId: uuid(),
+            settlementVersion: uuid(),
+          },
+        });
+
       expect(collateralSettlement).toHaveProperty('settlementVersion');
       settlementVersion = collateralSettlement.settlementVersion;
-
     });
 
     it('Get request should return with a valid response', async () => {
-      const collateralSettlementDetails: SettlementState = await client.collateral.getSettlementDetails({
-        accountId,
-        collateralId,
-        settlementVersion,
-      });
+      const collateralSettlementDetails: SettlementState =
+        await client.collateral.getSettlementDetails({
+          accountId,
+          collateralId,
+          settlementVersion,
+        });
 
       if (!collateralSettlementDetails['depositTransactions']) {
         expect(collateralSettlementDetails).toHaveProperty('withdrawTransactions');
@@ -43,10 +44,11 @@ describe('Collateral Settlements', () => {
 
   describe('Get current Instructions for settlement', () => {
     it('Should return with a valid response', async () => {
-      const collateralSettlement: SettlementInstructions = await client.collateral.getCurrentSettlementInstructions({
-        accountId,
-        collateralId,
-      });
+      const collateralSettlement: SettlementInstructions =
+        await client.collateral.getCurrentSettlementInstructions({
+          accountId,
+          collateralId,
+        });
       expect(!!collateralSettlement).toBe(true);
     });
   });
