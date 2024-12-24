@@ -1,7 +1,8 @@
 import {
-  CollateralDepositTransaction,
+  CollateralDepositTransactionResponse,
   CollateralDepositTransactionRequest,
   CollateralDepositTransactionsResponse,
+  CollateralDepositTransactionStatus,
 } from '../../../../src/client/generated';
 import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
@@ -13,15 +14,18 @@ describe('Collateral Deposit', () => {
   const client: Client = new Client();
   const accountId: string = getCapableAccountId('collateral');
   const collateralId: string = config.get('collateral.signers.userId');
-  const collateralTxId = `2.${accountId}.${uuid()}`;
 
-  describe('Register collateral deposit transaction', () => {
+  describe.each([
+    { status: CollateralDepositTransactionStatus.REJECTED },
+    { amount: '0.002', status: CollateralDepositTransactionStatus.PENDING },
+  ])('Register collateral deposit transaction & fetch by collateralTxId', (testParams) => {
+    const collateralTxId = `2.${accountId}.${uuid()}`;
     const depositDetails: CollateralDepositTransactionRequest = {
       collateralTxId: collateralTxId,
-      amount: '0.002',
+      amount: testParams.amount,
     };
-    it('Should return valid response', async () => {
-      const collateralDepositTransaction: CollateralDepositTransaction =
+    it('Register should return valid response', async () => {
+      const collateralDepositTransaction: CollateralDepositTransactionResponse =
         await client.collateral.registerCollateralDepositTransaction({
           accountId,
           collateralId,
@@ -31,18 +35,31 @@ describe('Collateral Deposit', () => {
         });
 
       expect(collateralDepositTransaction.collateralTxId).toBe(collateralTxId);
-      if (collateralDepositTransaction.amount) {
-        expect(collateralDepositTransaction.amount).toBe('0.002');
-      }
+      Object.keys(testParams).forEach((key) => {
+        expect(collateralDepositTransaction[key]).toBe(testParams[key]);
+      });
+    });
+
+    it('Get by collateralTxId return valid response', async () => {
+      const collateralDepositTransaction: CollateralDepositTransactionResponse =
+        await client.collateral.getCollateralDepositTransactionDetails({
+          accountId,
+          collateralId,
+          collateralTxId,
+        });
+
+      expect(collateralDepositTransaction.collateralTxId).toEqual(collateralTxId);
+      Object.keys(testParams).forEach((key) => {
+        expect(collateralDepositTransaction[key]).toBe(testParams[key]);
+      });
     });
   });
 
   describe('Get List of collateral deposit transactions', () => {
     it('Should return valid response', async () => {
-      const getCollateralDepositTransactions: Pageable<CollateralDepositTransaction> = async (
-        limit,
-        startingAfter?
-      ) => {
+      const getCollateralDepositTransactions: Pageable<
+        CollateralDepositTransactionResponse
+      > = async (limit, startingAfter?) => {
         const response: CollateralDepositTransactionsResponse =
           await client.collateral.getCollateralDepositTransactions({
             accountId,
@@ -58,19 +75,6 @@ describe('Collateral Deposit', () => {
       )) {
         expect(!!collateralDepositTransaction).toBe(true);
       }
-    });
-  });
-
-  describe('Get a collateral deposit transaction details by collateraltxId', () => {
-    it('Should return valid response', async () => {
-      const collateralDepositTransaction: CollateralDepositTransaction =
-        await client.collateral.getCollateralDepositTransactionDetails({
-          accountId,
-          collateralId,
-          collateralTxId,
-        });
-
-      expect(collateralDepositTransaction.collateralTxId).toEqual(collateralTxId);
     });
   });
 });

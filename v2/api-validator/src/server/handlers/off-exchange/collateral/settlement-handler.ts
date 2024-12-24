@@ -22,7 +22,7 @@ export async function initiateSettlement(
 ): Promise<SettlementInstructions> {
   {
     const { settlementVersion } = request.body;
-    const { accountId, collateralId } = request.params;
+    const { accountId } = request.params;
 
     const controller = controllers.getController(accountId);
 
@@ -30,7 +30,7 @@ export async function initiateSettlement(
       return ErrorFactory.notFound(reply);
     }
 
-    const newSettlement = controller.initiateSettlement(settlementVersion, accountId, collateralId);
+    const newSettlement = controller.initiateSettlement(settlementVersion);
     return newSettlement;
   }
 }
@@ -47,7 +47,7 @@ export async function getCurrentSettlementInstructions(
     return ErrorFactory.notFound(reply);
   }
 
-  const settlement = controller.getCurrentSettlementInstructions(accountId);
+  const settlement = controller.getCurrentSettlementInstructions();
 
   return settlement;
 }
@@ -58,7 +58,7 @@ export async function getSettlementDetails(
   >,
   reply: FastifyReply
 ): Promise<SettlementState> {
-  const { accountId } = request.params;
+  const { accountId, settlementVersion } = request.params;
 
   const controller = controllers.getController(accountId);
 
@@ -66,7 +66,7 @@ export async function getSettlementDetails(
     return ErrorFactory.notFound(reply);
   }
 
-  const transaction = controller.getSettlementDetails();
+  const transaction = controller.getSettlementDetails(settlementVersion);
 
   return transaction;
 }

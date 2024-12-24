@@ -2,7 +2,8 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 import * as ErrorFactory from '../../../http-error-factory';
 import { CollateralController } from '../../../controllers/off-exchange/collateral/collateral-controller';
 import {
-  CollateralDepositTransaction,
+  CollateralDepositTransactionRequest,
+  CollateralDepositTransactionResponse,
   CollateralDepositTransactionsResponse,
 } from '../../../../client/generated';
 import { ControllersContainer } from '../../../controllers/controllers-container';
@@ -18,12 +19,12 @@ const controllers = new ControllersContainer(() => new CollateralController());
 
 export async function registerCollateralDepositTransaction(
   request: FastifyRequest<
-    AccountIdPathParam & CollateralIdPathParam & { Body: CollateralDepositTransaction }
+    AccountIdPathParam & CollateralIdPathParam & { Body: CollateralDepositTransactionRequest }
   >,
   reply: FastifyReply
-): Promise<CollateralDepositTransaction> {
+): Promise<CollateralDepositTransactionResponse> {
   {
-    const { collateralTxId, amount, status } = request.body;
+    const { collateralTxId, amount } = request.body;
     const { accountId } = request.params;
 
     const controller = controllers.getController(accountId);
@@ -33,7 +34,6 @@ export async function registerCollateralDepositTransaction(
     }
 
     const newCollateralDepositTransaction = controller.registerCollateralDepositTransaction(
-      status,
       amount,
       collateralTxId
     );
@@ -66,7 +66,7 @@ export async function getCollateralDepositTransactionDetails(
     PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam & CollateralTxIdPathParam
   >,
   reply: FastifyReply
-): Promise<CollateralDepositTransaction> {
+): Promise<CollateralDepositTransactionResponse> {
   const { accountId, collateralTxId } = request.params;
 
   const controller = controllers.getController(accountId);
