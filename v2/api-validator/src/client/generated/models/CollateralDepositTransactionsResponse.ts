@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CollateralDepositTransaction } from './CollateralDepositTransaction';
+import type { CollateralDepositTransactionResponse } from './CollateralDepositTransactionResponse';
 
 export type CollateralDepositTransactionsResponse = {
-    transactions: Array<CollateralDepositTransaction>;
+    transactions: Array<CollateralDepositTransactionResponse>;
 };
 

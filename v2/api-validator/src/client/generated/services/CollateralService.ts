@@ -7,8 +7,8 @@ import type { CollateralAccountLink } from '../models/CollateralAccountLink';
 import type { CollateralAddress } from '../models/CollateralAddress';
 import type { CollateralAssetAddress } from '../models/CollateralAssetAddress';
 import type { CollateralDepositAddresses } from '../models/CollateralDepositAddresses';
-import type { CollateralDepositTransaction } from '../models/CollateralDepositTransaction';
 import type { CollateralDepositTransactionRequest } from '../models/CollateralDepositTransactionRequest';
+import type { CollateralDepositTransactionResponse } from '../models/CollateralDepositTransactionResponse';
 import type { CollateralDepositTransactionsResponse } from '../models/CollateralDepositTransactionsResponse';
 import type { CollateralWithdrawalTransaction } from '../models/CollateralWithdrawalTransaction';
 import type { CollateralWithdrawalTransactionRequest } from '../models/CollateralWithdrawalTransactionRequest';
@@ -423,7 +423,7 @@ export class CollateralService {
      * Register a collateral deposit transaction
      * Notifies the provider to have start listening to a new collateral deposit transaction. The provider is expected to listen to this address and credit the account accordingly
      *
-     * @returns CollateralDepositTransaction Successful Operation
+     * @returns CollateralDepositTransactionResponse Successful Operation
      * @throws ApiError
      */
     public registerCollateralDepositTransaction({
@@ -469,7 +469,7 @@ export class CollateralService {
          * Collateral deposit transaction details
          */
         requestBody: CollateralDepositTransactionRequest,
-    }): CancelablePromise<CollateralDepositTransaction> {
+    }): CancelablePromise<CollateralDepositTransactionResponse> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/collateral/{collateralId}/deposits',
@@ -583,7 +583,7 @@ export class CollateralService {
 
     /**
      * Get a collateral account deposit transaction details
-     * @returns CollateralDepositTransaction A collateral deposit transaction details
+     * @returns CollateralDepositTransactionResponse A collateral deposit transaction details
      * @throws ApiError
      */
     public getCollateralDepositTransactionDetails({
@@ -629,7 +629,7 @@ export class CollateralService {
          * A Fireblocks' ID of a collateral transaction
          */
         collateralTxId: string,
-    }): CancelablePromise<CollateralDepositTransaction> {
+    }): CancelablePromise<CollateralDepositTransactionResponse> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/deposits/{collateralTxId}',

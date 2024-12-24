@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CollateralDepositTransactionStatus } from './CollateralDepositTransactionStatus';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type CollateralDepositTransactionRequest = {
@@ -13,6 +12,5 @@ export type CollateralDepositTransactionRequest = {
      */
     collateralTxId: string;
     amount?: PositiveAmount;
-    status?: CollateralDepositTransactionStatus;
 };
 

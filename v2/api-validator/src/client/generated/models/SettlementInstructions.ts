@@ -7,7 +7,7 @@ import type { SettlementDepositInstruction } from './SettlementDepositInstructio
 import type { SettlementWithdrawInstruction } from './SettlementWithdrawInstruction';
 
 export type SettlementInstructions = {
-    settlementVersion?: string;
+    settlementVersion: string;
     withdrawInstructions: Array<SettlementWithdrawInstruction>;
     depositInstructions: Array<SettlementDepositInstruction>;
 };
