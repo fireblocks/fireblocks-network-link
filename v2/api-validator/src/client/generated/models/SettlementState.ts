@@ -7,7 +7,7 @@ import type { SettlementDepositTransaction } from './SettlementDepositTransactio
 import type { SettlementWithdrawTransaction } from './SettlementWithdrawTransaction';
 
 export type SettlementState = {
-    settlementVersion?: string;
+    settlementVersion: string;
     withdrawTransactions?: Array<SettlementWithdrawTransaction>;
     depositTransactions?: Array<SettlementDepositTransaction>;
     /**
@@ -18,7 +18,7 @@ export type SettlementState = {
      * - **Failed** - The settlement has failed
      *
      */
-    status?: SettlementState.status;
+    status: SettlementState.status;
 };
 
 export namespace SettlementState {

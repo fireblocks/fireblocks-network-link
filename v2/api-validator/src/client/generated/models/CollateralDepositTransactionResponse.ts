@@ -4,8 +4,10 @@
 /* eslint-disable */
 
 import type { CollateralDepositTransactionRequest } from './CollateralDepositTransactionRequest';
+import type { CollateralDepositTransactionStatus } from './CollateralDepositTransactionStatus';
 
-export type CollateralDepositTransaction = ({
+export type CollateralDepositTransactionResponse = ({
     id: string;
+    status: CollateralDepositTransactionStatus;
 } & CollateralDepositTransactionRequest);
 
