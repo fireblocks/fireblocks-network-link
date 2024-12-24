@@ -2,7 +2,7 @@ import convict from 'convict';
 import path from 'path';
 import fs from 'fs';
 import { config as dotenvConfig } from 'dotenv';
-import { InternalTransferDestinationPolicy } from '../client/generated';
+import { InternalTransferDestinationPolicy, PublicBlockchainAddress } from '../client/generated';
 
 dotenvConfig();
 
@@ -60,20 +60,16 @@ const config = convict({
       },
     },
     withdrawal: {
-      validAddress: {
-        format: String,
-        default: 'J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ',
-        env: 'COLLATERAL_WIHTDRAWAL_ADDRESS',
-      },
-      inValidAddress: {
-        format: String,
-        default: 'tb1qdsffc8en440dwjfdl9hp8zz2d7e7lae64mr3g7',
-        env: 'COLLATERAL_WIHTDRAWAL_INVALID_ADDRESS',
-      },
-      validTag: {
-        format: String,
-        default: '5494396EB65E6615D307',
-        env: 'COLLATERAL_WIHTDRAWAL_TAG',
+      addresses: {
+        format: Array<PublicBlockchainAddress>,
+        default: [
+          {
+            address: 'J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ',
+            addressTag: '5494396EB65E6615D307',
+          },
+          { address: 'J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ', addressTag: '' },
+        ],
+        env: 'COLLATERAL_WIHTDRAWAL_ADDRESSES',
       },
     },
   },

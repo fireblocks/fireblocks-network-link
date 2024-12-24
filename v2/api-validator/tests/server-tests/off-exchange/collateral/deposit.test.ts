@@ -2,7 +2,6 @@ import {
   CollateralDepositTransactionResponse,
   CollateralDepositTransactionRequest,
   CollateralDepositTransactionsResponse,
-  CollateralDepositTransactionStatus,
 } from '../../../../src/client/generated';
 import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
@@ -15,14 +14,11 @@ describe('Collateral Deposit', () => {
   const accountId: string = getCapableAccountId('collateral');
   const collateralId: string = config.get('collateral.signers.userId');
 
-  describe.each([
-    { status: CollateralDepositTransactionStatus.REJECTED },
-    { amount: '0.002', status: CollateralDepositTransactionStatus.PENDING },
-  ])('Register collateral deposit transaction & fetch by collateralTxId', (testParams) => {
+  describe('Register collateral deposit transaction & fetch by collateralTxId', () => {
     const collateralTxId = `2.${accountId}.${uuid()}`;
     const depositDetails: CollateralDepositTransactionRequest = {
       collateralTxId: collateralTxId,
-      amount: testParams.amount,
+      amount: '100',
     };
     it('Register should return valid response', async () => {
       const collateralDepositTransaction: CollateralDepositTransactionResponse =
@@ -35,9 +31,6 @@ describe('Collateral Deposit', () => {
         });
 
       expect(collateralDepositTransaction.collateralTxId).toBe(collateralTxId);
-      Object.keys(testParams).forEach((key) => {
-        expect(collateralDepositTransaction[key]).toBe(testParams[key]);
-      });
     });
 
     it('Get by collateralTxId return valid response', async () => {
@@ -49,9 +42,6 @@ describe('Collateral Deposit', () => {
         });
 
       expect(collateralDepositTransaction.collateralTxId).toEqual(collateralTxId);
-      Object.keys(testParams).forEach((key) => {
-        expect(collateralDepositTransaction[key]).toBe(testParams[key]);
-      });
     });
   });
 

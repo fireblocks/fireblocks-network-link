@@ -290,7 +290,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CollateralDepositTransaction'
+                $ref: '#/components/schemas/CollateralDepositTransactionResponse'
         '400':
           description: Return Bad Request.
         '401':
@@ -357,7 +357,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CollateralDepositTransaction'
+                $ref: '#/components/schemas/CollateralDepositTransactionResponse'
         '400':
           $ref: '#/x-responses/BadRequestResponse'
         '401':
@@ -732,17 +732,15 @@ components:
           example: "0.8e4cfce8-0182-4c6d-b9dd-a291c105e1d2.0.5a814998-ec0f-4f1c-92bf-fb5f7dc09ea2"
         amount:
           $ref: '#/x-schemas/PositiveAmount'
-        status:
-          $ref: '#/components/schemas/CollateralDepositTransactionStatus'
-
-    CollateralDepositTransaction:
+    CollateralDepositTransactionResponse:
       allOf:
         - type: object
-          required:
-            - id
+          required: [id, status]
           properties:
             id:
               type: string
+            status:
+              $ref: '#/components/schemas/CollateralDepositTransactionStatus'
         - $ref: '#/components/schemas/CollateralDepositTransactionRequest'
     CollateralDepositTransactionsResponse:
       type: object
@@ -752,7 +750,7 @@ components:
         transactions:
           type: array
           items:
-            $ref: '#/components/schemas/CollateralDepositTransaction'
+            $ref: '#/components/schemas/CollateralDepositTransactionResponse'
     CollateralWithdrawalTransactionStatus:
       type: string
       enum:
@@ -872,7 +870,7 @@ components:
               nullable: true
     SettlementInstructions:
       type: object
-      required: [ withdrawInstructions, depositInstructions ]
+      required: [ settlementVersion, withdrawInstructions, depositInstructions ]
       properties:
         settlementVersion:
           type: string
@@ -886,6 +884,7 @@ components:
             $ref: '#/components/schemas/SettlementDepositInstruction'
     SettlementState:
       type: object
+      required: [ settlementVersion, status ]
       properties:
         settlementVersion:
           type: string
@@ -919,8 +918,7 @@ components:
     SettlementRequest:
       type: object
       description: Settlement to be created
-      required:
-        - settlementId
+      required: [ settlementId, settlementVersion ]
       properties:
         settlementId:
           type: string

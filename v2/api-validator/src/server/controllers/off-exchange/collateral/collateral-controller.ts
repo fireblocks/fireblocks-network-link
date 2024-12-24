@@ -196,25 +196,15 @@ export class CollateralController {
     return CollateralAssetAddress;
   }
 
-  private getDepositStatus(amount): CollateralDepositTransactionStatus {
-    if (amount) {
-      return CollateralDepositTransactionStatus.PENDING;
-    } else {
-      return CollateralDepositTransactionStatus.REJECTED;
-    }
-  }
-
   public registerCollateralDepositTransaction(
     amount: string | undefined,
     collateralTxId: string
   ): CollateralDepositTransactionResponse {
-    const status: CollateralDepositTransactionStatus = this.getDepositStatus(amount);
-
     const newCollateralDepositTransaction: CollateralDepositTransactionResponse = {
       id: collateralTxId,
       collateralTxId: collateralTxId,
       amount: amount,
-      status: status,
+      status: CollateralDepositTransactionStatus.PENDING,
     };
     this.depositTransactionRepository.create(newCollateralDepositTransaction);
     return newCollateralDepositTransaction;

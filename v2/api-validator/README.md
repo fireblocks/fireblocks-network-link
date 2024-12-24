@@ -43,6 +43,7 @@ method the server uses. All these parameters could be configured using environme
 variables. Make a copy of `env.example`, rename it to `.env` and edit the values.
 `src/config/index.ts` contains all the environment variable definitions and the possible
 values.
+For off-exchange .env COLLATERAL_WIHTDRAWAL_ADDRESSES structure should be as follow: [{address: '', addressTag: ''}]
 
 ## Design
 
