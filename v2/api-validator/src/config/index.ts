@@ -2,11 +2,16 @@ import convict from 'convict';
 import path from 'path';
 import fs from 'fs';
 import { config as dotenvConfig } from 'dotenv';
-import { InternalTransferDestinationPolicy, PublicBlockchainAddress } from '../client/generated';
+import { InternalTransferDestinationPolicy } from '../client/generated';
 
 dotenvConfig();
 
 export const encodingTypes = ['url-encoded', 'base64', 'hexstr', 'base58', 'base32'];
+
+type Address = {
+  address: string;
+  addressTag?: string;
+};
 
 const config = convict({
   env: {
@@ -61,7 +66,7 @@ const config = convict({
     },
     withdrawal: {
       addresses: {
-        format: Array<PublicBlockchainAddress>,
+        format: Array<Address>,
         default: [
           {
             address: 'J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ',

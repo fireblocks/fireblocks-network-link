@@ -6,12 +6,16 @@ import {
   CryptocurrencySymbol,
   CollateralWithdrawalTransactionRequest,
   CollateralWithdrawalTransactions,
-  PublicBlockchainAddress,
 } from '../../../../src/client/generated';
 import { getCapableAccountId } from '../../../utils/capable-accounts';
 import { Pageable, paginated } from '../../../utils/pagination';
 import config from '../../../../src/config';
 import Client from '../../../../src/client';
+
+type Address = {
+  address: string;
+  addressTag?: string;
+};
 
 describe('Collateral Withdrawal', () => {
   const client: Client = new Client();
@@ -19,7 +23,7 @@ describe('Collateral Withdrawal', () => {
   const collateralId = config.get('collateral.signers.userId');
 
   describe('Create collateral withdrawal & fetch by collateralTxId ', () => {
-    const address: PublicBlockchainAddress[] = config.get('collateral.withdrawal.addresses');
+    const address: Address[] = config.get('collateral.withdrawal.addresses');
     describe.each(address)('Status validation', (testParams) => {
       let collateralTxId: string;
       const { address, addressTag } = testParams;
