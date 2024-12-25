@@ -2,16 +2,11 @@ import convict from 'convict';
 import path from 'path';
 import fs from 'fs';
 import { config as dotenvConfig } from 'dotenv';
-import { InternalTransferDestinationPolicy } from '../client/generated';
+import { InternalTransferDestinationPolicy, PublicBlockchainAddress } from '../client/generated';
 
 dotenvConfig();
 
 export const encodingTypes = ['url-encoded', 'base64', 'hexstr', 'base58', 'base32'];
-
-type Address = {
-  address: string;
-  addressTag?: string;
-};
 
 const config = convict({
   env: {
@@ -66,13 +61,34 @@ const config = convict({
     },
     withdrawal: {
       addresses: {
-        format: Array<Address>,
+        format: Array<PublicBlockchainAddress>,
         default: [
           {
             address: 'J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ',
             addressTag: '5494396EB65E6615D307',
+            asset: {
+              blockchain: 'Algorand',
+              cryptocurrencySymbol: 'ALGO',
+              testAsset: false,
+            },
+            transferMethod: 'PublicBlockchain',
           },
-          { address: 'J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ', addressTag: '' },
+          {
+            address: '18csoDRstrn2YqpxQMgnTh1BqgA1m9T9xQ',
+            asset: {
+              blockchain: 'Bitcoin',
+              cryptocurrencySymbol: 'BTC',
+              testAsset: false,
+            },
+            transferMethod: 'PublicBlockchain',
+          },
+          {
+            address: '0x1Dd0386E43C0F66981e46C6e6A57E9d8919b6125',
+            asset: {
+              assetId: 'ac7d9d17-1f88-41f7-9cda-c074f800ba05',
+            },
+            transferMethod: 'PublicBlockchain',
+          },
         ],
         env: 'COLLATERAL_WIHTDRAWAL_ADDRESSES',
       },
