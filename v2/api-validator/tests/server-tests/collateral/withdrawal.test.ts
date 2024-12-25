@@ -4,11 +4,11 @@ import {
   CollateralWithdrawalTransactionRequest,
   CollateralWithdrawalTransactions,
   PublicBlockchainAddress,
-} from '../../../../src/client/generated';
-import { getCapableAccountId } from '../../../utils/capable-accounts';
-import { Pageable, paginated } from '../../../utils/pagination';
-import config from '../../../../src/config';
-import Client from '../../../../src/client';
+} from '../../../src/client/generated';
+import { getCapableAccountId } from '../../utils/capable-accounts';
+import { Pageable, paginated } from '../../utils/pagination';
+import config from '../../../src/config';
+import Client from '../../../src/client';
 
 describe('Collateral Withdrawal', () => {
   const client: Client = new Client();

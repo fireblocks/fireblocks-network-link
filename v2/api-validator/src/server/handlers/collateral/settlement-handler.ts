@@ -1,18 +1,18 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import * as ErrorFactory from '../../../http-error-factory';
-import { CollateralController } from '../../../controllers/off-exchange/collateral/collateral-controller';
+import * as ErrorFactory from '../../http-error-factory';
+import { CollateralController } from '../../controllers/collateral/collateral-controller';
 import {
   SettlementRequest,
   SettlementState,
   SettlementInstructions,
-} from '../../../../client/generated';
-import { ControllersContainer } from '../../../controllers/controllers-container';
+} from '../../../client/generated';
+import { ControllersContainer } from '../../controllers/controllers-container';
 import {
   AccountIdPathParam,
   PaginationQuerystring,
   CollateralIdPathParam,
   SettlementVersionPathParam,
-} from '../../request-types';
+} from '../request-types';
 
 const controllers = new ControllersContainer(() => new CollateralController());
 

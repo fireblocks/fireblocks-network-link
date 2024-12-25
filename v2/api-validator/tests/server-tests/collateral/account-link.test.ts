@@ -5,11 +5,11 @@ import {
   CollateralSignerId,
   CryptocurrencyReference,
   Environment,
-} from '../../../../src/client/generated';
-import { getCapableAccountId } from '../../../utils/capable-accounts';
-import { Pageable, paginated } from '../../../utils/pagination';
-import config from '../../../../src/config';
-import Client from '../../../../src/client';
+} from '../../../src/client/generated';
+import { getCapableAccountId } from '../../utils/capable-accounts';
+import { Pageable, paginated } from '../../utils/pagination';
+import config from '../../../src/config';
+import Client from '../../../src/client';
 
 describe('Account Link', () => {
   const client = new Client();

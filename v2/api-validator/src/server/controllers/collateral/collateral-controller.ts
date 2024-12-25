@@ -1,4 +1,4 @@
-import { Repository } from '../../repository';
+import { Repository } from '../repository';
 import {
   CollateralAccountLink,
   CollateralAccount,
@@ -16,10 +16,10 @@ import {
   SettlementInstructions,
   SettlementState,
   CryptocurrencyReference,
-} from '../../../../client/generated';
+} from '../../../client/generated';
 import { v4 as uuid } from 'uuid';
-import { XComError } from '../../../../error';
-import { fakeSchemaObject } from '../../../../schemas';
+import { XComError } from '../../../error';
+import { fakeSchemaObject } from '../../../schemas';
 
 type SettlementInstructionsIdentifier = {
   id: string;

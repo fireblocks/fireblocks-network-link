@@ -6,11 +6,11 @@ import {
   CollateralAddress,
   CollateralDepositAddresses,
   ApiError,
-} from '../../../../src/client/generated';
-import { getCapableAccountId } from '../../../utils/capable-accounts';
-import { Pageable, paginated } from '../../../utils/pagination';
-import Client from '../../../../src/client';
-import config from '../../../../src/config';
+} from '../../../src/client/generated';
+import { getCapableAccountId } from '../../utils/capable-accounts';
+import { Pageable, paginated } from '../../utils/pagination';
+import Client from '../../../src/client';
+import config from '../../../src/config';
 
 describe('Collateral Deposit Address', () => {
   const client = new Client();

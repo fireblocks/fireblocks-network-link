@@ -2,12 +2,12 @@ import {
   CollateralDepositTransactionResponse,
   CollateralDepositTransactionRequest,
   CollateralDepositTransactionsResponse,
-} from '../../../../src/client/generated';
-import { getCapableAccountId } from '../../../utils/capable-accounts';
+} from '../../../src/client/generated';
+import { getCapableAccountId } from '../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
-import { Pageable, paginated } from '../../../utils/pagination';
-import config from '../../../../src/config';
-import Client from '../../../../src/client';
+import { Pageable, paginated } from '../../utils/pagination';
+import config from '../../../src/config';
+import Client from '../../../src/client';
 
 describe('Collateral Deposit', () => {
   const client: Client = new Client();

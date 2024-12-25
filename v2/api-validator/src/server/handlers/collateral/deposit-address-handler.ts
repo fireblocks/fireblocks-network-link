@@ -1,21 +1,21 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import * as ErrorFactory from '../../../http-error-factory';
-import { CollateralController } from '../../../controllers/off-exchange/collateral/collateral-controller';
+import * as ErrorFactory from '../../http-error-factory';
+import { CollateralController } from '../../controllers/collateral/collateral-controller';
 import {
   CollateralDepositAddresses,
   CollateralAddress,
   AssetIdQueryParam,
   CryptocurrencySymbolQueryParam,
   CollateralAssetAddress,
-} from '../../../../client/generated';
-import { ControllersContainer } from '../../../controllers/controllers-container';
-import { getPaginationResult } from '../../../controllers/pagination-controller';
+} from '../../../client/generated';
+import { ControllersContainer } from '../../controllers/controllers-container';
+import { getPaginationResult } from '../../controllers/pagination-controller';
 import {
   AccountIdPathParam,
   PaginationQuerystring,
   CollateralIdPathParam,
   EntityIdPathParam,
-} from '../../request-types';
+} from '../request-types';
 
 type AssetQuery = {
   assetId?: AssetIdQueryParam;

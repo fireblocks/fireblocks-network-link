@@ -1,13 +1,13 @@
-import { getCapableAccountId } from '../../../utils/capable-accounts';
+import { getCapableAccountId } from '../../utils/capable-accounts';
 import {
   SettlementInstructions,
   SettlementState,
   SettlementDepositInstruction,
   SettlementWithdrawInstruction,
-} from '../../../../src/client/generated';
+} from '../../../src/client/generated';
 import { v4 as uuid } from 'uuid';
-import config from '../../../../src/config';
-import Client from '../../../../src/client';
+import config from '../../../src/config';
+import Client from '../../../src/client';
 
 describe('Collateral Settlements', () => {
   const client: Client = new Client();

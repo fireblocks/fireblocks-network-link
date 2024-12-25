@@ -1,10 +1,10 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import * as ErrorFactory from '../../../http-error-factory';
-import { CollateralController } from '../../../controllers/off-exchange/collateral/collateral-controller';
-import { CollateralAccount, CollateralAccountLink } from '../../../../client/generated';
-import { ControllersContainer } from '../../../controllers/controllers-container';
-import { getPaginationResult } from '../../../controllers/pagination-controller';
-import { AccountIdPathParam, PaginationQuerystring } from '../../request-types';
+import * as ErrorFactory from '../../http-error-factory';
+import { CollateralController } from '../../controllers/collateral/collateral-controller';
+import { CollateralAccount, CollateralAccountLink } from '../../../client/generated';
+import { ControllersContainer } from '../../controllers/controllers-container';
+import { getPaginationResult } from '../../controllers/pagination-controller';
+import { AccountIdPathParam, PaginationQuerystring } from '../request-types';
 
 const controllers = new ControllersContainer(() => new CollateralController());
 
