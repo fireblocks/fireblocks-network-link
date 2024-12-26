@@ -46,9 +46,21 @@ values.
 
 For off-exchange `.env` **COLLATERAL_WIHTDRAWAL_ADDRESSES** structure should be of type PublicBlockchainAddress[].
 
+
 example:
 ```json
-COLLATERAL_WIHTDRAWAL_ADDRESSES='[{"address":"some-address","addressTag":"some-address-tag","asset":{"blockchain":"Algorand","cryptocurrencySymbol":"ALGO","testAsset":false},"transferMethod":"PublicBlockchain"}]'
+[
+  {
+    "address": "some-address",
+    "addressTag": "some-address-tag",
+    "asset": {
+      "blockchain": "Algorand",
+      "cryptocurrencySymbol": "ALGO",
+      "testAsset": false
+    },
+    "transferMethod": "PublicBlockchain"
+  }
+]
 ```
 
 ## Design
