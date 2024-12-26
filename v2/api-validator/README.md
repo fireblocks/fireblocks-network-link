@@ -46,10 +46,6 @@ values.
 
 For off-exchange `.env` **COLLATERAL_WIHTDRAWAL_ADDRESSES** structure should be of type PublicBlockchainAddress[].
 
-example:
-```env
-COLLATERAL_WIHTDRAWAL_ADDRESSES='[{"address":"J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ","addressTag":"5494396EB65E6615D307","asset":{"blockchain":"Algorand","cryptocurrencySymbol":"ALGO","testAsset":false},"transferMethod":"PublicBlockchain"}]'
-```
 
 ## Design
 
