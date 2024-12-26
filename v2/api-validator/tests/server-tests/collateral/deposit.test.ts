@@ -3,13 +3,15 @@ import {
   CollateralDepositTransactionRequest,
   CollateralDepositTransactionsResponse,
 } from '../../../src/client/generated';
-import { getCapableAccountId } from '../../utils/capable-accounts';
+import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
 import { Pageable, paginated } from '../../utils/pagination';
 import config from '../../../src/config';
 import Client from '../../../src/client';
 
-describe('Collateral Deposit', () => {
+const noCollateralCapability = !hasCapability('transfers');
+
+describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
   const client: Client = new Client();
   const accountId: string = getCapableAccountId('collateral');
   const collateralId: string = config.get('collateral.signers.userId');

@@ -7,12 +7,14 @@ import {
   CollateralDepositAddresses,
   ApiError,
 } from '../../../src/client/generated';
-import { getCapableAccountId } from '../../utils/capable-accounts';
+import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { Pageable, paginated } from '../../utils/pagination';
 import Client from '../../../src/client';
 import config from '../../../src/config';
 
-describe('Collateral Deposit Address', () => {
+const noCollateralCapability = !hasCapability('transfers');
+
+describe.skipIf(noCollateralCapability)('Collateral Deposit Address', () => {
   const client = new Client();
   const accountId: string = getCapableAccountId('collateral');
   const collateralId: string = config.get('collateral.collateralAccount.accountId');

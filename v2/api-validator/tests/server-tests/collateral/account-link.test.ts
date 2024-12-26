@@ -3,23 +3,20 @@ import {
   CollateralAccountLink,
   CollateralLinkStatus,
   CollateralSignerId,
-  CryptocurrencyReference,
-  Environment,
+  AccountEnvironment,
 } from '../../../src/client/generated';
-import { getCapableAccountId } from '../../utils/capable-accounts';
+import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { Pageable, paginated } from '../../utils/pagination';
 import config from '../../../src/config';
 import Client from '../../../src/client';
 
-describe('Account Link', () => {
+const noCollateralCapability = !hasCapability('transfers');
+
+describe.skipIf(noCollateralCapability)('Account Link', () => {
   const client = new Client();
 
   describe('Creates a new link between a collateral account and a provider account', () => {
-    describe.each([
-      { env: Environment.PROD, expectedTestAsset: false },
-      { env: Environment.SANDBOX, expectedTestAsset: true },
-    ])('Successful request', (testParams) => {
-      const { env, expectedTestAsset } = testParams;
+    describe('Successful request', () => {
       it('Should return valid response', async () => {
         const accountId: string = getCapableAccountId('collateral');
         const collateralId: string = config.get('collateral.collateralAccount.accountId');
@@ -30,7 +27,7 @@ describe('Account Link', () => {
             requestBody: {
               collateralId,
               collateralSigners,
-              env: env,
+              env: AccountEnvironment.PROD,
             },
           }
         );
@@ -39,14 +36,7 @@ describe('Account Link', () => {
         expect(response.collateralSigners).toEqual(collateralSigners);
         expect(response.rejectionReason).toBeUndefined();
         expect(response.status).toBe(CollateralLinkStatus.ELIGIBLE);
-        expect(response.env).toBe(env);
-
-        const assetsList: CryptocurrencyReference[] = response.eligibleCollateralAssets;
-        for (const asset of assetsList) {
-          if (typeof asset['testAsset'] === 'boolean') {
-            expect(asset['testAsset']).toBe(expectedTestAsset);
-          }
-        }
+        expect(response.env).toBe(AccountEnvironment.PROD);
       });
     });
 
@@ -57,7 +47,7 @@ describe('Account Link', () => {
       const requestBody: CollateralAccount = {
         collateralId,
         collateralSigners,
-        env: Environment.PROD,
+        env: AccountEnvironment.PROD,
       };
       const response = await client.collateral.createCollateralAccountLink({
         accountId,
@@ -70,24 +60,6 @@ describe('Account Link', () => {
   });
 
   describe('Get list of collateral account links', () => {
-    const checkCollateralAccountLink = (collateralAccountLink: CollateralAccountLink) => {
-      if (
-        collateralAccountLink.status === CollateralLinkStatus.FAILED ||
-        collateralAccountLink.status === CollateralLinkStatus.DISABLED
-      ) {
-        expect(collateralAccountLink).toHaveProperty('rejectionReason');
-      }
-
-      const assetsList: CryptocurrencyReference[] = collateralAccountLink.eligibleCollateralAssets;
-      const expectedTestAsset: boolean =
-        collateralAccountLink.env === Environment.SANDBOX ? true : false;
-
-      for (const asset of assetsList) {
-        if (typeof asset['testAsset'] === 'boolean') {
-          expect(asset['testAsset']).toBe(expectedTestAsset);
-        }
-      }
-    };
     it('Simple valid response - one page', async () => {
       const accountId: string = getCapableAccountId('collateral');
       const singlePageResponse = await client.collateral.getCollateralAccountLinks({
@@ -95,7 +67,12 @@ describe('Account Link', () => {
       });
 
       for await (const collateralAccountLink of singlePageResponse.collateralLinks) {
-        await checkCollateralAccountLink(collateralAccountLink);
+        if (
+          collateralAccountLink.status === CollateralLinkStatus.FAILED ||
+          collateralAccountLink.status === CollateralLinkStatus.DISABLED
+        ) {
+          expect(collateralAccountLink).toHaveProperty('rejectionReason');
+        }
       }
     });
 
@@ -115,7 +92,12 @@ describe('Account Link', () => {
       };
 
       for await (const collateralAccountLink of paginated(getCollateralAccountLinks)) {
-        await checkCollateralAccountLink(collateralAccountLink);
+        if (
+          collateralAccountLink.status === CollateralLinkStatus.FAILED ||
+          collateralAccountLink.status === CollateralLinkStatus.DISABLED
+        ) {
+          expect(collateralAccountLink).toHaveProperty('rejectionReason');
+        }
       }
     });
   });

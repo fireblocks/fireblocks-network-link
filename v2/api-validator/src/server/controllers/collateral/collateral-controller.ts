@@ -3,7 +3,7 @@ import {
   CollateralAccountLink,
   CollateralAccount,
   CollateralLinkStatus,
-  Environment,
+  AccountEnvironment,
   Blockchain,
   CryptocurrencySymbol,
   NativeCryptocurrency,
@@ -60,12 +60,6 @@ export class CollateralController {
         delete accountLink.rejectionReason;
       }
 
-      for (const asset of accountLink.eligibleCollateralAssets) {
-        accountLink.env === Environment.SANDBOX
-          ? (asset['testAsset'] = true)
-          : (asset['testAsset'] = false);
-      }
-
       this.accountLinksRepository.create(accountLink);
 
       const depositAddress = fakeSchemaObject('CollateralAssetAddress') as CollateralAssetAddress;
@@ -100,7 +94,7 @@ export class CollateralController {
     }
   }
 
-  public generateCollateralAssets(numAssets: number, env: Environment): CryptocurrencyReference[] {
+  public generateCollateralAssets(numAssets: number, env: AccountEnvironment): CryptocurrencyReference[] {
     const assets: CryptocurrencyReference[] = [];
 
     for (let i = 0; i < numAssets; i++) {
@@ -110,8 +104,8 @@ export class CollateralController {
     return assets;
   }
 
-  private createCollateralAsset(env: Environment): NativeCryptocurrency {
-    const isTestAsset: boolean = env === Environment.SANDBOX ? true : false;
+  private createCollateralAsset(env: AccountEnvironment): NativeCryptocurrency {
+    const isTestAsset: boolean = env === AccountEnvironment.SANDBOX ? true : false;
     return {
       blockchain: Blockchain.BITCOIN,
       cryptocurrencySymbol: CryptocurrencySymbol.BTC,

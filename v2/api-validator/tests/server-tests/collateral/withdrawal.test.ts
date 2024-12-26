@@ -5,18 +5,20 @@ import {
   CollateralWithdrawalTransactions,
   PublicBlockchainAddress,
 } from '../../../src/client/generated';
-import { getCapableAccountId } from '../../utils/capable-accounts';
+import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { Pageable, paginated } from '../../utils/pagination';
 import config from '../../../src/config';
 import Client from '../../../src/client';
 
-describe('Collateral Withdrawal', () => {
+const noCollateralCapability = !hasCapability('transfers');
+
+describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
   const client: Client = new Client();
-  const accountId = getCapableAccountId('collateral');
+  const accountId: string = getCapableAccountId('collateral');
   const collateralId = config.get('collateral.signers.userId');
 
   describe('Create collateral withdrawal & fetch by collateralTxId ', () => {
-    const address: PublicBlockchainAddress[] = config.get('collateral.withdrawal.addresses');
+    const address: PublicBlockchainAddress[] = JSON.parse(config.get('collateral.withdrawal.addresses'));
     describe.each(address)('Status validation', (testParams) => {
       let collateralTxId: string;
       const requestBody: CollateralWithdrawalTransactionRequest = {

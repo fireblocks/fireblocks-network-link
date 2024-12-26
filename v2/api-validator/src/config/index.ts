@@ -62,34 +62,34 @@ const config = convict({
     withdrawal: {
       addresses: {
         format: Array<PublicBlockchainAddress>,
-        default: [
+        default: `[
           {
-            address: 'J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ',
-            addressTag: '5494396EB65E6615D307',
-            asset: {
-              blockchain: 'Algorand',
-              cryptocurrencySymbol: 'ALGO',
-              testAsset: false,
+            "address": "J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ",
+            "addressTag": "5494396EB65E6615D307",
+            "asset": {
+              "blockchain": "Algorand",
+              "cryptocurrencySymbol": "ALGO",
+              "testAsset": false
             },
-            transferMethod: 'PublicBlockchain',
+            "transferMethod": "PublicBlockchain"
           },
           {
-            address: '18csoDRstrn2YqpxQMgnTh1BqgA1m9T9xQ',
-            asset: {
-              blockchain: 'Bitcoin',
-              cryptocurrencySymbol: 'BTC',
-              testAsset: false,
+            "address": "18csoDRstrn2YqpxQMgnTh1BqgA1m9T9xQ",
+            "asset": {
+              "blockchain": "Bitcoin",
+              "cryptocurrencySymbol": "BTC",
+              "testAsset": false
             },
-            transferMethod: 'PublicBlockchain',
+            "transferMethod": "PublicBlockchain"
           },
           {
-            address: '0x1Dd0386E43C0F66981e46C6e6A57E9d8919b6125',
-            asset: {
-              assetId: 'ac7d9d17-1f88-41f7-9cda-c074f800ba05',
+            "address": "0x1Dd0386E43C0F66981e46C6e6A57E9d8919b6125",
+            "asset": {
+              "assetId": "ac7d9d17-1f88-41f7-9cda-c074f800ba05"
             },
-            transferMethod: 'PublicBlockchain',
-          },
-        ],
+            "transferMethod": "PublicBlockchain"
+          }
+        ]`,        
         env: 'COLLATERAL_WIHTDRAWAL_ADDRESSES',
       },
     },

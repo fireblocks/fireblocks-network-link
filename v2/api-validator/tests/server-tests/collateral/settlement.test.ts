@@ -1,4 +1,4 @@
-import { getCapableAccountId } from '../../utils/capable-accounts';
+import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import {
   SettlementInstructions,
   SettlementState,
@@ -9,7 +9,9 @@ import { v4 as uuid } from 'uuid';
 import config from '../../../src/config';
 import Client from '../../../src/client';
 
-describe('Collateral Settlements', () => {
+const noCollateralCapability = !hasCapability('transfers');
+
+describe.skipIf(noCollateralCapability)('Collateral Settlements', () => {
   const client: Client = new Client();
   const accountId: string = getCapableAccountId('collateral');
   const collateralId: string = config.get('collateral.signers.userId');
