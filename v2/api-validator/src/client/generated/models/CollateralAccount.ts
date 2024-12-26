@@ -3,13 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { AccountEnvironment } from './AccountEnvironment';
 import type { CollateralId } from './CollateralId';
 import type { CollateralSignerId } from './CollateralSignerId';
-import type { Environment } from './Environment';
 
 export type CollateralAccount = {
     collateralId: CollateralId;
     collateralSigners: Array<CollateralSignerId>;
-    env: Environment;
+    env: AccountEnvironment;
 };
 

@@ -2,7 +2,7 @@ import convict from 'convict';
 import path from 'path';
 import fs from 'fs';
 import { config as dotenvConfig } from 'dotenv';
-import { InternalTransferDestinationPolicy } from '../client/generated';
+import { InternalTransferDestinationPolicy, PublicBlockchainAddress } from '../client/generated';
 
 dotenvConfig();
 
@@ -42,6 +42,57 @@ const config = convict({
     format: Number,
     default: 2,
     env: 'PAGINATION_LIMIT',
+  },
+  collateral: {
+    signers: {
+      userId: {
+        format: Array<string>,
+        default: ['be5ff76b-6cc8-4a39-af40-fc71aea1865c', 'c5bb0880-523c-4c1c-bfe7-bcf2941517a0'],
+        env: 'COLLATERAL_SIGNERS',
+      },
+    },
+    collateralAccount: {
+      accountId: {
+        format: String,
+        default:
+          'c8dd0660-555c-4c1c-bfe7-bcf2941517a0.be5ff76b-6cc8-4a39-af40-fc71aea1865c.c5bb0880-523c-4c1c-bfe7-bcf2941517a0',
+        env: 'COLLATERAL_ACCOUNT',
+      },
+    },
+    withdrawal: {
+      addresses: {
+        format: Array<PublicBlockchainAddress>,
+        default: `[
+          {
+            "address": "J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ",
+            "addressTag": "5494396EB65E6615D307",
+            "asset": {
+              "blockchain": "Algorand",
+              "cryptocurrencySymbol": "ALGO",
+              "testAsset": false
+            },
+            "transferMethod": "PublicBlockchain"
+          },
+          {
+            "address": "18csoDRstrn2YqpxQMgnTh1BqgA1m9T9xQ",
+            "asset": {
+              "blockchain": "Bitcoin",
+              "cryptocurrencySymbol": "BTC",
+              "testAsset": false
+            },
+            "transferMethod": "PublicBlockchain"
+          },
+          {
+            "address": "0x1Dd0386E43C0F66981e46C6e6A57E9d8919b6125",
+            "asset": {
+              "assetId": "ac7d9d17-1f88-41f7-9cda-c074f800ba05"
+            },
+            "transferMethod": "PublicBlockchain"
+          }
+        ]`,
+        env: 'COLLATERAL_WIHTDRAWAL_ADDRESSES',
+      },
+    },
   },
   withdrawal: {
     peerAccount: {

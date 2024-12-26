@@ -4,10 +4,10 @@
 /* eslint-disable */
 
 /**
- * Environment field describes which environment is being run at the moment
+ * AccountEnvironment field describes which environment is being run at the moment
  *
  */
-export enum Environment {
+export enum AccountEnvironment {
     PROD = 'prod',
     SANDBOX = 'sandbox',
     STAGE = 'stage',

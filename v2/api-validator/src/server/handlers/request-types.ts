@@ -10,6 +10,24 @@ export type AccountIdPathParam = {
   };
 };
 
+export type CollateralIdPathParam = {
+  Params: {
+    collateralId: string;
+  };
+};
+
+export type CollateralTxIdPathParam = {
+  Params: {
+    collateralTxId: string;
+  };
+};
+
+export type SettlementVersionPathParam = {
+  Params: {
+    settlementVersion: string;
+  };
+};
+
 export type PaginationQuerystring = {
   Querystring: {
     limit: number;

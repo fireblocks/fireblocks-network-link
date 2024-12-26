@@ -619,14 +619,14 @@ components:
       type: string
       description: "Unique Id of the collateral signer"
       example: "4cd3e66b-4ee4-4750-bcfd-d2d43054fc5d"
-    Environment:
+    AccountEnvironment:
       type: string
       enum:
         - "prod"
         - "sandbox"
         - "stage"
       description: >
-        Environment field describes which environment is being run at the moment 
+        AccountEnvironment field describes which environment is being run at the moment 
 
     CollateralLinkStatus:
       type: string
@@ -660,7 +660,7 @@ components:
           items:
             $ref: '#/components/schemas/CollateralSignerId'
         env:
-          $ref: '#/components/schemas/Environment'
+          $ref: '#/components/schemas/AccountEnvironment'
     CollateralAccountLink:
       allOf:
         - type: object
