@@ -18,7 +18,9 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
   const collateralId = config.get('collateral.signers.userId');
 
   describe('Create collateral withdrawal & fetch by collateralTxId ', () => {
-    const address: PublicBlockchainAddress[] = JSON.parse(config.get('collateral.withdrawal.addresses'));
+    const address: PublicBlockchainAddress[] = JSON.parse(
+      config.get('collateral.withdrawal.addresses')
+    );
     describe.each(address)('Status validation', (testParams) => {
       let collateralTxId: string;
       const requestBody: CollateralWithdrawalTransactionRequest = {

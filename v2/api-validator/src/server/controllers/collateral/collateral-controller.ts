@@ -94,7 +94,10 @@ export class CollateralController {
     }
   }
 
-  public generateCollateralAssets(numAssets: number, env: AccountEnvironment): CryptocurrencyReference[] {
+  public generateCollateralAssets(
+    numAssets: number,
+    env: AccountEnvironment
+  ): CryptocurrencyReference[] {
     const assets: CryptocurrencyReference[] = [];
 
     for (let i = 0; i < numAssets; i++) {

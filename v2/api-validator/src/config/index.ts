@@ -89,7 +89,7 @@ const config = convict({
             },
             "transferMethod": "PublicBlockchain"
           }
-        ]`,        
+        ]`,
         env: 'COLLATERAL_WIHTDRAWAL_ADDRESSES',
       },
     },
