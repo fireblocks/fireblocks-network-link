@@ -13,6 +13,7 @@ import {
   CollateralDepositTransactionResponse,
   CollateralWithdrawalTransaction,
   CollateralWithdrawalTransactionStatus,
+  CollateralWithdrawalTransactionExecutionResponse,
   SettlementInstructions,
   SettlementState,
   CryptocurrencyReference,
@@ -48,6 +49,8 @@ export class CollateralController {
     new Repository<CollateralDepositTransactionResponse>();
   private readonly withdrawalTransactionRepository =
     new Repository<CollateralWithdrawalTransaction>();
+  private readonly executeWithdrawalTransactionRepository =
+    new Repository<CollateralWithdrawalTransactionExecutionResponse>();
   private readonly settlementRepository = new Repository<SettlementInstructionsIdentifier>();
   private readonly settlementStateRepository = new Repository<SettlementStateIdentifier>();
 
@@ -233,18 +236,11 @@ export class CollateralController {
     }
   }
 
-  public initiateCollateralWithdrawalTransaction(
-    accountId: string,
-    tag: string
-  ): CollateralWithdrawalTransaction {
+  public initiateCollateralWithdrawalTransaction(tag: string): CollateralWithdrawalTransaction {
     const status: CollateralWithdrawalTransactionStatus = this.getWithdrawalStatus(tag);
-    const collateralTxId = `0.${accountId}.${uuid()}`;
 
     const newWithdrawalTransaction: CollateralWithdrawalTransaction = {
-      id: collateralTxId,
-      collateralTxId: collateralTxId,
-      withdrawalTxBlockchainId:
-        '0xb00b8884d17a737be3088ab222a600ef1a2ad3612a0f74406dfbb7039fdb051e',
+      id: uuid(),
       status: status,
     };
 
@@ -262,16 +258,26 @@ export class CollateralController {
     return withdrawalTransaction;
   }
 
-  public getCollateralwithdrawalTransactionDetails(
-    collateralTxId: string
-  ): CollateralWithdrawalTransaction {
-    const withdrawalTransaction = this.withdrawalTransactionRepository.find(collateralTxId);
+  public getCollateralwithdrawalTransactionDetails(id: string): CollateralWithdrawalTransaction {
+    const withdrawalTransaction = this.withdrawalTransactionRepository.find(id);
 
     if (!withdrawalTransaction) {
-      throw new NotFound('collateralTxId');
+      throw new NotFound('id not found');
     }
 
     return withdrawalTransaction;
+  }
+
+  public executeCollateralWithdrawalTransaction(
+    collateralTxId: string
+  ): CollateralWithdrawalTransactionExecutionResponse {
+    const newWithdrawalExecution: CollateralWithdrawalTransactionExecutionResponse = {
+      id: uuid(),
+      collateralTxId: collateralTxId,
+    };
+
+    this.executeWithdrawalTransactionRepository.create(newWithdrawalExecution);
+    return newWithdrawalExecution;
   }
 
   public getCurrentSettlementInstructions(): SettlementInstructions {

@@ -8,6 +8,6 @@ import type { SettlementWithdrawInstruction } from './SettlementWithdrawInstruct
 
 export type SettlementWithdrawTransaction = (SettlementWithdrawInstruction & {
     status: SettlementTransactionStatus;
-    rejectionReason?: string | null;
+    rejectionReason?: string;
 });
 

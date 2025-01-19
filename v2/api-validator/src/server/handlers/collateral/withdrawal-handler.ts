@@ -5,6 +5,8 @@ import {
   CollateralWithdrawalTransaction,
   CollateralWithdrawalTransactionRequest,
   CollateralWithdrawalTransactions,
+  CollateralWithdrawalTransactionExecutionRequest,
+  CollateralWithdrawalTransactionExecutionResponse,
 } from '../../../client/generated';
 import { ControllersContainer } from '../../controllers/controllers-container';
 import { getPaginationResult } from '../../controllers/pagination-controller';
@@ -12,7 +14,7 @@ import {
   AccountIdPathParam,
   PaginationQuerystring,
   CollateralIdPathParam,
-  CollateralTxIdPathParam,
+  EntityIdPathParam,
 } from '../request-types';
 
 const controllers = new ControllersContainer(() => new CollateralController());
@@ -28,14 +30,13 @@ export async function initiateCollateralWithdrawalTransaction(
     const { destinationAddress } = request.body;
     const controller = controllers.getController(accountId);
     const tag = destinationAddress.addressTag != undefined ? destinationAddress.addressTag : '';
+
     if (!controller) {
       return ErrorFactory.notFound(reply);
     }
 
-    const newCollateralDepositTransaction = controller.initiateCollateralWithdrawalTransaction(
-      accountId,
-      tag
-    );
+    const newCollateralDepositTransaction = controller.initiateCollateralWithdrawalTransaction(tag);
+
     return newCollateralDepositTransaction;
   }
 }
@@ -60,13 +61,35 @@ export async function getCollateralWithdrawalTransactions(
   };
 }
 
+export async function executeCollateralWithdrawalTransaction(
+  request: FastifyRequest<
+    AccountIdPathParam &
+      CollateralIdPathParam & { Body: CollateralWithdrawalTransactionExecutionRequest }
+  >,
+  reply: FastifyReply
+): Promise<CollateralWithdrawalTransactionExecutionResponse> {
+  {
+    const { accountId } = request.params;
+    const { collateralTxId } = request.body;
+    const controller = controllers.getController(accountId);
+
+    if (!controller) {
+      return ErrorFactory.notFound(reply);
+    }
+
+    const newCollateralDepositTransaction =
+      controller.executeCollateralWithdrawalTransaction(collateralTxId);
+    return newCollateralDepositTransaction;
+  }
+}
+
 export async function getCollateralWithdrawalTransactionDetails(
   request: FastifyRequest<
-    PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam & CollateralTxIdPathParam
+    PaginationQuerystring & AccountIdPathParam & CollateralIdPathParam & EntityIdPathParam
   >,
   reply: FastifyReply
 ): Promise<CollateralWithdrawalTransaction> {
-  const { accountId, collateralTxId } = request.params;
+  const { accountId, id } = request.params;
 
   const controller = controllers.getController(accountId);
 
@@ -74,7 +97,7 @@ export async function getCollateralWithdrawalTransactionDetails(
     return ErrorFactory.notFound(reply);
   }
 
-  const transaction = controller.getCollateralwithdrawalTransactionDetails(collateralTxId);
+  const transaction = controller.getCollateralwithdrawalTransactionDetails(id);
 
   return transaction;
 }

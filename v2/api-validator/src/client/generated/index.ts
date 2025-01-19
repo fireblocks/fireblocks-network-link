@@ -48,6 +48,8 @@ export { CollateralLinkStatus } from './models/CollateralLinkStatus';
 export type { CollateralSignerId } from './models/CollateralSignerId';
 export type { CollateralTxIdPathParam } from './models/CollateralTxIdPathParam';
 export type { CollateralWithdrawalTransaction } from './models/CollateralWithdrawalTransaction';
+export type { CollateralWithdrawalTransactionExecutionRequest } from './models/CollateralWithdrawalTransactionExecutionRequest';
+export type { CollateralWithdrawalTransactionExecutionResponse } from './models/CollateralWithdrawalTransactionExecutionResponse';
 export type { CollateralWithdrawalTransactionRequest } from './models/CollateralWithdrawalTransactionRequest';
 export type { CollateralWithdrawalTransactions } from './models/CollateralWithdrawalTransactions';
 export { CollateralWithdrawalTransactionStatus } from './models/CollateralWithdrawalTransactionStatus';

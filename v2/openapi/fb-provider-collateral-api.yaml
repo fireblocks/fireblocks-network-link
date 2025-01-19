@@ -444,7 +444,50 @@ paths:
           $ref: '#/x-responses/ErrorResponse'
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
-  /accounts/{accountId}/collateral/{collateralId}/withdrawals/{collateralTxId}:
+  /accounts/{accountId}/collateral/{collateralId}/withdrawals/execute:
+    post:
+      tags: [ collateral ]
+      summary: execute a withdrawal from a collateral account
+      description: >
+        execute a withdrawal request from the customers collateral account. 
+        A blockchain withdrawal operation for moving funds from the collateral account.
+      operationId: executeCollateralWithdrawalTransaction
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+      requestBody:
+        description: Collateral withdrawal transaction details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollateralWithdrawalTransactionExecutionRequest'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollateralWithdrawalTransactionExecutionResponse'
+        '400':
+          description: Return Bad Request.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+  /accounts/{accountId}/collateral/{collateralId}/withdrawals/{id}:
     get:
       operationId: getCollateralWithdrawalTransactionDetails
       summary: Get a collateral withdrawal transaction details
@@ -457,7 +500,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
         - $ref: '#/components/parameters/CollateralIdPathParam'
-        - $ref: '#/components/parameters/CollateralTxIdPathParam'
+        - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
         '200':
           description: A collateral withdrawal transaction details
@@ -765,23 +808,14 @@ components:
         - **Rejected** - The withdrawal transaction has been rejected
     CollateralWithdrawalTransaction:
       type: object
-      required: [ id, collateralTxId, status ]
+      required: [ id, status ]
       properties:
         id:
           type: string
-        collateralTxId:
-          type: string
-          description: >
-            A unique identifier of the transaction to track.
-            This field will contain information to help Fireblocks poll the status of the transaction from the provider.
-          example: "0.8e4cfce8-0182-4c6d-b9dd-a291c105e1d2.0.5a814998-ec0f-4f1c-92bf-fb5f7dc09ea2"
         status:
           $ref: '#/components/schemas/CollateralWithdrawalTransactionStatus'
-        withdrawalTxBlockchainId:
-          type: string
         rejectionReason:
           type: string
-          nullable: true
     CollateralWithdrawalTransactionRequest:
       type: object
       required: [ amount, destinationAddress ]
@@ -790,6 +824,33 @@ components:
           $ref: '#/x-schemas/PositiveAmount'
         destinationAddress:
           $ref: '#/x-schemas/PublicBlockchainAddress'
+    CollateralWithdrawalTransactionExecutionRequest:
+      type: object
+      required: [ withdrawalId, collateralTxId, amount, destinationAddress ]
+      properties:
+        withdrawalId:
+          type: string
+          description: >
+            A unique identifier of the initiateCollateralWithdrawal entityId created by the provider.
+            This field will contain information to help the provider make the connection between initiateCollateralWithdrawal (eligiblity verification) id and Fireblocks collateral transaction.
+        collateralTxId:
+          type: string
+          description: >
+            A unique identifier of the transaction to track.
+            This field will contain information to help the provider poll the status of the transaction from Fireblocks.
+          example: "0.8e4cfce8-0182-4c6d-b9dd-a291c105e1d2.0.5a814998-ec0f-4f1c-92bf-fb5f7dc09ea2"
+        amount:
+          $ref: '#/x-schemas/PositiveAmount'
+        destinationAddress:
+          $ref: '#/x-schemas/PublicBlockchainAddress'
+    CollateralWithdrawalTransactionExecutionResponse:
+      type: object
+      required: [ id, collateralTxId ]
+      properties:
+        id:
+          type: string
+        collateralTxId:
+          type: string
     CollateralWithdrawalTransactions:
       type: object
       required:
@@ -856,7 +917,6 @@ components:
               $ref: '#/components/schemas/SettlementTransactionStatus'
             rejectionReason:
               type: string
-              nullable: true
     SettlementDepositTransaction:
       allOf:
         - $ref: '#/components/schemas/SettlementDepositInstruction'
@@ -867,7 +927,6 @@ components:
               $ref: '#/components/schemas/SettlementTransactionStatus'
             rejectionReason:
               type: string
-              nullable: true
     SettlementInstructions:
       type: object
       required: [ settlementVersion, withdrawInstructions, depositInstructions ]
