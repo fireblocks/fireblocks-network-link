@@ -25,7 +25,7 @@ export async function initiateCollateralWithdrawalTransaction(
 ): Promise<CollateralWithdrawalTransaction> {
   {
     const { accountId } = request.params;
-    const { destinationAddress } = request.body;
+    const { destinationAddress, collateralTxId } = request.body;
     const controller = controllers.getController(accountId);
     const tag = destinationAddress.addressTag != undefined ? destinationAddress.addressTag : '';
     if (!controller) {
@@ -34,6 +34,7 @@ export async function initiateCollateralWithdrawalTransaction(
 
     const newCollateralDepositTransaction = controller.initiateCollateralWithdrawalTransaction(
       accountId,
+      collateralTxId,
       tag
     );
     return newCollateralDepositTransaction;

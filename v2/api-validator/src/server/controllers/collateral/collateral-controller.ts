@@ -235,10 +235,10 @@ export class CollateralController {
 
   public initiateCollateralWithdrawalTransaction(
     accountId: string,
+    collateralTxId,
     tag: string
   ): CollateralWithdrawalTransaction {
     const status: CollateralWithdrawalTransactionStatus = this.getWithdrawalStatus(tag);
-    const collateralTxId = `0.${accountId}.${uuid()}`;
 
     const newWithdrawalTransaction: CollateralWithdrawalTransaction = {
       id: collateralTxId,

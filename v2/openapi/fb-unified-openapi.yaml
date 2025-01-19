@@ -4105,9 +4105,15 @@ components:
     CollateralWithdrawalTransactionRequest:
       type: object
       required:
+        - collateralTxId
         - amount
         - destinationAddress
       properties:
+        collateralTxId:
+          type: string
+          description: |
+            A unique identifier of the transaction to track. This field will contain information to help Fireblocks poll the status of the transaction from the provider.
+          example: 0.8e4cfce8-0182-4c6d-b9dd-a291c105e1d2.0.5a814998-ec0f-4f1c-92bf-fb5f7dc09ea2
         amount:
           $ref: '#/components/schemas/PositiveAmount'
         destinationAddress:

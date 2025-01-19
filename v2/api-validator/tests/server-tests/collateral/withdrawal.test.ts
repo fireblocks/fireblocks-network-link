@@ -7,6 +7,7 @@ import {
 } from '../../../src/client/generated';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { Pageable, paginated } from '../../utils/pagination';
+import { v4 as uuid } from 'uuid';
 import config from '../../../src/config';
 import Client from '../../../src/client';
 
@@ -22,8 +23,9 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
       config.get('collateral.withdrawal.addresses')
     );
     describe.each(address)('Status validation', (testParams) => {
-      let collateralTxId: string;
+      const collateralTxId = `0.${accountId}.${uuid()}`;
       const requestBody: CollateralWithdrawalTransactionRequest = {
+        collateralTxId,
         amount: '50',
         destinationAddress: testParams,
       };
@@ -35,7 +37,7 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
             requestBody,
           });
 
-        collateralTxId = collateralWithdrawalTransaction.collateralTxId;
+        expect(collateralWithdrawalTransaction.collateralTxId).toBe(collateralTxId);
 
         if (
           collateralWithdrawalTransaction.status === CollateralWithdrawalTransactionStatus.REJECTED
