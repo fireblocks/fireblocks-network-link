@@ -4,6 +4,8 @@ import { CollateralController } from '../../controllers/collateral/collateral-co
 import {
   CollateralWithdrawalTransaction,
   CollateralWithdrawalTransactionRequest,
+  CollateralWithdrawalTransactionIntentRequest,
+  CollateralWithdrawalTransactionIntentResponse,
   CollateralWithdrawalTransactions,
 } from '../../../client/generated';
 import { ControllersContainer } from '../../controllers/controllers-container';
@@ -17,7 +19,30 @@ import {
 
 const controllers = new ControllersContainer(() => new CollateralController());
 
-export async function initiateCollateralWithdrawalTransaction(
+export async function initiateCollateralWithdrawalTransactionIntent(
+  request: FastifyRequest<
+    AccountIdPathParam &
+      CollateralIdPathParam & { Body: CollateralWithdrawalTransactionIntentRequest }
+  >,
+  reply: FastifyReply
+): Promise<CollateralWithdrawalTransactionIntentResponse> {
+  {
+    const { accountId } = request.params;
+    const { approvalRequest } = request.body;
+    const controller = controllers.getController(accountId);
+
+    if (!controller) {
+      return ErrorFactory.notFound(reply);
+    }
+
+    const newCollateralDepositTransaction =
+      controller.initiateCollateralWithdrawalTransactionIntent(undefined, approvalRequest);
+
+    return newCollateralDepositTransaction;
+  }
+}
+
+export async function createCollateralWithdrawalTransaction(
   request: FastifyRequest<
     AccountIdPathParam & CollateralIdPathParam & { Body: CollateralWithdrawalTransactionRequest }
   >,
@@ -25,16 +50,16 @@ export async function initiateCollateralWithdrawalTransaction(
 ): Promise<CollateralWithdrawalTransaction> {
   {
     const { accountId } = request.params;
-    const { destinationAddress } = request.body;
+    const { collateralTxId, approvalRequest } = request.body;
     const controller = controllers.getController(accountId);
-    const tag = destinationAddress.addressTag != undefined ? destinationAddress.addressTag : '';
+
     if (!controller) {
       return ErrorFactory.notFound(reply);
     }
 
-    const newCollateralDepositTransaction = controller.initiateCollateralWithdrawalTransaction(
-      accountId,
-      tag
+    const newCollateralDepositTransaction = controller.createCollateralWithdrawalTransaction(
+      collateralTxId,
+      approvalRequest
     );
     return newCollateralDepositTransaction;
   }

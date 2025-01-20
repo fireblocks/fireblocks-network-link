@@ -14,7 +14,7 @@ const noCollateralCapability = !hasCapability('transfers');
 describe.skipIf(noCollateralCapability)('Collateral Settlements', () => {
   const client: Client = new Client();
   const accountId: string = getCapableAccountId('collateral');
-  const collateralId: string = config.get('collateral.signers.userId');
+  const collateralId: string = config.get('collateral.collateralAccount.accountId');
 
   describe('Check full settlement flow', () => {
     let settlementVersion: string;

@@ -4,13 +4,16 @@
 /* eslint-disable */
 
 import type { ApprovalRequest } from './ApprovalRequest';
+import type { CollateralTransactionIntentStatus } from './CollateralTransactionIntentStatus';
 
-export type CollateralDepositTransactionRequest = {
+export type CollateralWithdrawalTransactionIntentResponse = {
     /**
      * A unique identifier of the transaction to track. This field will contain information to help the provider poll the status of the transaction from Fireblocks.
      *
      */
-    collateralTxId: string;
+    id: string;
     approvalRequest: ApprovalRequest;
+    status: CollateralTransactionIntentStatus;
+    rejectionReason?: string;
 };
 

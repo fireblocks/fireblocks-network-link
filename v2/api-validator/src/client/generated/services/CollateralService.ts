@@ -7,12 +7,14 @@ import type { CollateralAccountLink } from '../models/CollateralAccountLink';
 import type { CollateralAddress } from '../models/CollateralAddress';
 import type { CollateralAssetAddress } from '../models/CollateralAssetAddress';
 import type { CollateralDepositAddresses } from '../models/CollateralDepositAddresses';
+import type { CollateralDepositTransactionIntentRequest } from '../models/CollateralDepositTransactionIntentRequest';
+import type { CollateralDepositTransactionIntentResponse } from '../models/CollateralDepositTransactionIntentResponse';
 import type { CollateralDepositTransactionRequest } from '../models/CollateralDepositTransactionRequest';
 import type { CollateralDepositTransactionResponse } from '../models/CollateralDepositTransactionResponse';
 import type { CollateralDepositTransactionsResponse } from '../models/CollateralDepositTransactionsResponse';
 import type { CollateralWithdrawalTransaction } from '../models/CollateralWithdrawalTransaction';
-import type { CollateralWithdrawalTransactionExecutionRequest } from '../models/CollateralWithdrawalTransactionExecutionRequest';
-import type { CollateralWithdrawalTransactionExecutionResponse } from '../models/CollateralWithdrawalTransactionExecutionResponse';
+import type { CollateralWithdrawalTransactionIntentRequest } from '../models/CollateralWithdrawalTransactionIntentRequest';
+import type { CollateralWithdrawalTransactionIntentResponse } from '../models/CollateralWithdrawalTransactionIntentResponse';
 import type { CollateralWithdrawalTransactionRequest } from '../models/CollateralWithdrawalTransactionRequest';
 import type { CollateralWithdrawalTransactions } from '../models/CollateralWithdrawalTransactions';
 import type { CryptocurrencySymbol } from '../models/CryptocurrencySymbol';
@@ -422,6 +424,83 @@ export class CollateralService {
     }
 
     /**
+     * Initiate a collateral deposit transaction
+     * Notifies the provider to have start listening to a new collateral deposit transaction. The provider is expected to listen to this address and credit the account accordingly
+     *
+     * @returns CollateralDepositTransactionIntentResponse Successful Operation
+     * @throws ApiError
+     */
+    public initiateCollateralDepositTransactionIntent({
+        xFbPlatformSignature,
+        xFbapiKey,
+        xFbapiNonce,
+        xFbapiSignature,
+        xFbapiTimestamp,
+        accountId,
+        collateralId,
+        requestBody,
+    }: {
+        /**
+         * Authentication signature of Fireblocks as the originator of the request
+         */
+        xFbPlatformSignature: string,
+        /**
+         * API authentication key.
+         */
+        xFbapiKey: string,
+        /**
+         * Unique identifier of the request.
+         */
+        xFbapiNonce: string,
+        /**
+         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+         */
+        xFbapiSignature: string,
+        /**
+         * Request timestamp in milliseconds since Unix epoch.
+         */
+        xFbapiTimestamp: number,
+        /**
+         * Sub-account identifier.
+         */
+        accountId: string,
+        /**
+         * ID of a collateral account
+         */
+        collateralId: string,
+        /**
+         * Collateral deposit transaction details
+         */
+        requestBody: CollateralDepositTransactionIntentRequest,
+    }): CancelablePromise<CollateralDepositTransactionIntentResponse> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/accounts/{accountId}/collateral/{collateralId}/intents/deposits',
+            path: {
+                'accountId': accountId,
+                'collateralId': collateralId,
+            },
+            headers: {
+                'X-FB-PLATFORM-SIGNATURE': xFbPlatformSignature,
+                'X-FBAPI-KEY': xFbapiKey,
+                'X-FBAPI-NONCE': xFbapiNonce,
+                'X-FBAPI-SIGNATURE': xFbapiSignature,
+                'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `Return Bad Request.`,
+                401: `Unauthorized. Either API details are missing or invalid`,
+                403: `Forbidden- You do not have access to the requested resource.`,
+                415: `Unsupported media type. You need to use application/json.`,
+                500: `Exchange internal error.`,
+            },
+        });
+    }
+
+    /**
      * Register a collateral deposit transaction
      * Notifies the provider to have start listening to a new collateral deposit transaction. The provider is expected to listen to this address and credit the account accordingly
      *
@@ -655,13 +734,90 @@ export class CollateralService {
     }
 
     /**
-     * Initiate a withdrawal from a collateral account
-     * Initiates a withdrawal request from the customers collateral account.  The withdrawal must be confirmed by the provider before it can be signed by the customer.  Once the provider approve the withdrawal, it can be reduced from the customers available balance in the provider main account based on the withdrawal amount.
+     * Initiates a withdrawal from a collateral account
+     * Initiates a withdrawal request from the customers collateral account.  A blockchain withdrawal operation for moving funds from the collateral account.
+     *
+     * @returns CollateralWithdrawalTransactionIntentResponse Successful Operation
+     * @throws ApiError
+     */
+    public initiateCollateralWithdrawalTransactionIntent({
+        xFbPlatformSignature,
+        xFbapiKey,
+        xFbapiNonce,
+        xFbapiSignature,
+        xFbapiTimestamp,
+        accountId,
+        collateralId,
+        requestBody,
+    }: {
+        /**
+         * Authentication signature of Fireblocks as the originator of the request
+         */
+        xFbPlatformSignature: string,
+        /**
+         * API authentication key.
+         */
+        xFbapiKey: string,
+        /**
+         * Unique identifier of the request.
+         */
+        xFbapiNonce: string,
+        /**
+         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+         */
+        xFbapiSignature: string,
+        /**
+         * Request timestamp in milliseconds since Unix epoch.
+         */
+        xFbapiTimestamp: number,
+        /**
+         * Sub-account identifier.
+         */
+        accountId: string,
+        /**
+         * ID of a collateral account
+         */
+        collateralId: string,
+        /**
+         * Collateral withdrawal transaction details
+         */
+        requestBody: CollateralWithdrawalTransactionIntentRequest,
+    }): CancelablePromise<CollateralWithdrawalTransactionIntentResponse> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/accounts/{accountId}/collateral/{collateralId}/intents/withdrawals',
+            path: {
+                'accountId': accountId,
+                'collateralId': collateralId,
+            },
+            headers: {
+                'X-FB-PLATFORM-SIGNATURE': xFbPlatformSignature,
+                'X-FBAPI-KEY': xFbapiKey,
+                'X-FBAPI-NONCE': xFbapiNonce,
+                'X-FBAPI-SIGNATURE': xFbapiSignature,
+                'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `Return Bad Request.`,
+                401: `Unauthorized. Either API details are missing or invalid`,
+                403: `Forbidden- You do not have access to the requested resource.`,
+                415: `Unsupported media type. You need to use application/json.`,
+                500: `Exchange internal error.`,
+            },
+        });
+    }
+
+    /**
+     * Create a withdrawal from a collateral account
+     * Create a withdrawal from the customers collateral account.  The withdrawal has been confirmed by the provider and signed by the customer. The amount can be reduced from the customers available balance in the provider main account based on the withdrawal amount.
      *
      * @returns CollateralWithdrawalTransaction Successful Operation
      * @throws ApiError
      */
-    public initiateCollateralWithdrawalTransaction({
+    public createCollateralWithdrawalTransaction({
         xFbPlatformSignature,
         xFbapiKey,
         xFbapiNonce,
@@ -817,89 +973,6 @@ export class CollateralService {
     }
 
     /**
-     * execute a withdrawal from a collateral account
-     * execute a withdrawal request from the customers collateral account.  A blockchain withdrawal operation for moving funds from the collateral account.
-     *
-     * @returns CollateralWithdrawalTransactionExecutionResponse Successful Operation
-     * @throws ApiError
-     */
-    public executeCollateralWithdrawalTransaction({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        id,
-        requestBody,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Entity unique identifier.
-         */
-        id: string,
-        /**
-         * Collateral withdrawal transaction details
-         */
-        requestBody: CollateralWithdrawalTransactionExecutionRequest,
-    }): CancelablePromise<CollateralWithdrawalTransactionExecutionResponse> {
-        return this.httpRequest.request({
-            method: 'PATCH',
-            url: '/accounts/{accountId}/collateral/{collateralId}/withdrawals/{id}',
-            path: {
-                'accountId': accountId,
-                'collateralId': collateralId,
-                'id': id,
-            },
-            headers: {
-                'X-FB-PLATFORM-SIGNATURE': xFbPlatformSignature,
-                'X-FBAPI-KEY': xFbapiKey,
-                'X-FBAPI-NONCE': xFbapiNonce,
-                'X-FBAPI-SIGNATURE': xFbapiSignature,
-                'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `Return Bad Request.`,
-                401: `Unauthorized. Either API details are missing or invalid`,
-                403: `Forbidden- You do not have access to the requested resource.`,
-                415: `Unsupported media type. You need to use application/json.`,
-                500: `Exchange internal error.`,
-            },
-        });
-    }
-
-    /**
      * Get a collateral withdrawal transaction details
      * @returns CollateralWithdrawalTransaction A collateral withdrawal transaction details
      * @throws ApiError
@@ -912,7 +985,7 @@ export class CollateralService {
         xFbapiTimestamp,
         accountId,
         collateralId,
-        id,
+        collateralTxId,
     }: {
         /**
          * Authentication signature of Fireblocks as the originator of the request
@@ -944,17 +1017,17 @@ export class CollateralService {
          */
         collateralId: string,
         /**
-         * Entity unique identifier.
+         * A Fireblocks' ID of a collateral transaction
          */
-        id: string,
+        collateralTxId: string,
     }): CancelablePromise<CollateralWithdrawalTransaction> {
         return this.httpRequest.request({
             method: 'GET',
-            url: '/accounts/{accountId}/collateral/{collateralId}/withdrawals/{id}',
+            url: '/accounts/{accountId}/collateral/{collateralId}/withdrawals/{collateralTxId}',
             path: {
                 'accountId': accountId,
                 'collateralId': collateralId,
-                'id': id,
+                'collateralTxId': collateralTxId,
             },
             headers: {
                 'X-FB-PLATFORM-SIGNATURE': xFbPlatformSignature,

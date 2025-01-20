@@ -1,63 +1,94 @@
 import {
   CollateralWithdrawalTransaction,
-  CollateralWithdrawalTransactionStatus,
+  CollateralTransactionIntentStatus,
   CollateralWithdrawalTransactionRequest,
+  CollateralWithdrawalTransactionStatus,
+  CollateralWithdrawalTransactionIntentResponse,
+  CollateralWithdrawalTransactionIntentRequest,
   CollateralWithdrawalTransactions,
   PublicBlockchainAddress,
+  IntentApprovalRequest,
+  ApprovalRequest,
 } from '../../../src/client/generated';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { Pageable, paginated } from '../../utils/pagination';
 import config from '../../../src/config';
 import Client from '../../../src/client';
+import { v4 as uuid } from 'uuid';
 
 const noCollateralCapability = !hasCapability('transfers');
 
 describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
   const client: Client = new Client();
   const accountId: string = getCapableAccountId('collateral');
-  const collateralId = config.get('collateral.signers.userId');
+  const collateralId = config.get('collateral.collateralAccount.accountId');
+  const collateralTxId = `0.${uuid()}.${collateralId}`;
+  const fireblocksIntentId = uuid();
+  const approvalRequest: IntentApprovalRequest = { FireblocksIntentId: fireblocksIntentId };
 
-  describe('Create collateral withdrawal & fetch by collateralTxId ', () => {
+  describe('Create collateral withdrawal transaction (remove collateral) & fetch by collateralTxId ', () => {
     const address: PublicBlockchainAddress[] = JSON.parse(
       config.get('collateral.withdrawal.addresses')
     );
-    describe.each(address)('Status validation', (testParams) => {
-      let collateralTxId: string;
-      const requestBody: CollateralWithdrawalTransactionRequest = {
-        amount: '50',
-        destinationAddress: testParams,
-      };
-      it('Create request should return with a valid response', async () => {
-        const collateralWithdrawalTransaction: CollateralWithdrawalTransaction =
-          await client.collateral.initiateCollateralWithdrawalTransaction({
+    describe.each(address)('test each address', (testParams) => {
+      let partnerIntentId: string;
+      it('Initiate request should return with a valid response', async () => {
+        const requestBody: CollateralWithdrawalTransactionIntentRequest = {
+          amount: '5',
+          destinationAddress: testParams,
+          approvalRequest: approvalRequest,
+        };
+        const initiateWithdrawalTransaction: CollateralWithdrawalTransactionIntentResponse =
+          await client.collateral.initiateCollateralWithdrawalTransactionIntent({
             accountId,
             collateralId,
             requestBody,
           });
 
-        collateralTxId = collateralWithdrawalTransaction.collateralTxId;
+        partnerIntentId = initiateWithdrawalTransaction.approvalRequest.PartnerIntentId;
 
-        if (
-          collateralWithdrawalTransaction.status === CollateralWithdrawalTransactionStatus.REJECTED
-        ) {
-          expect(collateralWithdrawalTransaction).toHaveProperty('rejectionReason');
+        if (initiateWithdrawalTransaction.status === CollateralTransactionIntentStatus.REJECTED) {
+          expect(initiateWithdrawalTransaction).toHaveProperty('rejectionReason');
+        }
+      });
+
+      it('Create request should return with a valid response', async () => {
+        const newApprovalRequest: ApprovalRequest = {
+          FireblocksIntentId: fireblocksIntentId,
+          PartnerIntentId: partnerIntentId,
+        };
+        const requestBody: CollateralWithdrawalTransactionRequest = {
+          collateralTxId: collateralTxId,
+          approvalRequest: newApprovalRequest,
+        };
+        const createWithdrawalTransaction: CollateralWithdrawalTransaction =
+          await client.collateral.createCollateralWithdrawalTransaction({
+            accountId,
+            collateralId,
+            requestBody,
+          });
+
+        expect(createWithdrawalTransaction.approvalRequest.PartnerIntentId).toBe(partnerIntentId);
+        expect(createWithdrawalTransaction.collateralTxId).toBe(collateralTxId);
+
+        if (createWithdrawalTransaction.status === CollateralWithdrawalTransactionStatus.REJECTED) {
+          expect(createWithdrawalTransaction).toHaveProperty('rejectionReason');
         }
       });
 
       it('Get request should return with a valid response', async () => {
-        const collateralWithdrawalTransaction: CollateralWithdrawalTransaction =
+        const createWithdrawalTransaction: CollateralWithdrawalTransaction =
           await client.collateral.getCollateralWithdrawalTransactionDetails({
             accountId,
             collateralId,
             collateralTxId,
           });
 
-        expect(collateralWithdrawalTransaction.collateralTxId).toBe(collateralTxId);
+        expect(createWithdrawalTransaction.approvalRequest.PartnerIntentId).toBe(partnerIntentId);
+        expect(createWithdrawalTransaction.collateralTxId).toBe(collateralTxId);
 
-        if (
-          collateralWithdrawalTransaction.status === CollateralWithdrawalTransactionStatus.REJECTED
-        ) {
-          expect(collateralWithdrawalTransaction).toHaveProperty('rejectionReason');
+        if (createWithdrawalTransaction.status === CollateralWithdrawalTransactionStatus.REJECTED) {
+          expect(createWithdrawalTransaction).toHaveProperty('rejectionReason');
         }
       });
     });

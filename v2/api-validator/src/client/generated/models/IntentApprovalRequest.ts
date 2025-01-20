@@ -3,8 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type CollateralWithdrawalTransactionExecutionResponse = {
-    id: string;
-    collateralTxId: string;
+export type IntentApprovalRequest = {
+    FireblocksIntentId: string;
 };
 

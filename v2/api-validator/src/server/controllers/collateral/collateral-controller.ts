@@ -13,6 +13,11 @@ import {
   CollateralDepositTransactionResponse,
   CollateralWithdrawalTransaction,
   CollateralWithdrawalTransactionStatus,
+  CollateralTransactionIntentStatus,
+  CollateralDepositTransactionIntentResponse,
+  IntentApprovalRequest,
+  ApprovalRequest,
+  CollateralWithdrawalTransactionIntentResponse,
   SettlementInstructions,
   SettlementState,
   CryptocurrencyReference,
@@ -44,10 +49,14 @@ export class NotValid extends XComError {
 export class CollateralController {
   private readonly accountLinksRepository = new Repository<CollateralAccountLink>();
   private readonly depositAddressesRepository = new Repository<CollateralAssetAddress>();
+  private readonly initiateDepositTransactionRepository =
+    new Repository<CollateralDepositTransactionIntentResponse>();
   private readonly depositTransactionRepository =
     new Repository<CollateralDepositTransactionResponse>();
   private readonly withdrawalTransactionRepository =
     new Repository<CollateralWithdrawalTransaction>();
+  private readonly initiateWithdrawalTransactionRepository =
+    new Repository<CollateralWithdrawalTransactionIntentResponse>();
   private readonly settlementRepository = new Repository<SettlementInstructionsIdentifier>();
   private readonly settlementStateRepository = new Repository<SettlementStateIdentifier>();
 
@@ -193,16 +202,39 @@ export class CollateralController {
     return CollateralAssetAddress;
   }
 
+  public initiateCollateralDepositTransactionIntent(
+    amount: string,
+    asset: CryptocurrencyReference,
+    approvalRequest: IntentApprovalRequest
+  ): CollateralDepositTransactionIntentResponse {
+    const id: string = uuid();
+    const newApprovalRequest: ApprovalRequest = {
+      FireblocksIntentId: approvalRequest.FireblocksIntentId,
+      PartnerIntentId: id,
+    };
+    const newCollateralDepositTransaction: CollateralDepositTransactionIntentResponse = {
+      id: id,
+      amount: amount,
+      asset: asset,
+      approvalRequest: newApprovalRequest,
+      status: CollateralTransactionIntentStatus.APPROVED,
+    };
+
+    this.initiateDepositTransactionRepository.create(newCollateralDepositTransaction);
+    return newCollateralDepositTransaction;
+  }
+
   public registerCollateralDepositTransaction(
-    amount: string | undefined,
-    collateralTxId: string
+    collateralTxId: string,
+    approvalRequest: ApprovalRequest
   ): CollateralDepositTransactionResponse {
     const newCollateralDepositTransaction: CollateralDepositTransactionResponse = {
       id: collateralTxId,
       collateralTxId: collateralTxId,
-      amount: amount,
+      approvalRequest: approvalRequest,
       status: CollateralDepositTransactionStatus.PENDING,
     };
+
     this.depositTransactionRepository.create(newCollateralDepositTransaction);
     return newCollateralDepositTransaction;
   }
@@ -225,27 +257,45 @@ export class CollateralController {
     return collateralDepositTransaction;
   }
 
-  private getWithdrawalStatus(tag): CollateralWithdrawalTransactionStatus {
-    if (tag) {
-      return CollateralWithdrawalTransactionStatus.APPROVED;
-    } else {
-      return CollateralWithdrawalTransactionStatus.REJECTED;
+  public initiateCollateralWithdrawalTransactionIntent(
+    status: CollateralTransactionIntentStatus = CollateralTransactionIntentStatus.APPROVED,
+    approvalRequest: IntentApprovalRequest
+  ): CollateralWithdrawalTransactionIntentResponse {
+    const id: string = uuid();
+    const newApprovalRequest: ApprovalRequest = {
+      FireblocksIntentId: approvalRequest.FireblocksIntentId,
+      PartnerIntentId: id,
+    };
+    const newWithdrawalTransactionIntent: CollateralWithdrawalTransactionIntentResponse = {
+      id: id,
+      status: status,
+      approvalRequest: newApprovalRequest,
+    };
+
+    if (status === CollateralTransactionIntentStatus.REJECTED) {
+      newWithdrawalTransactionIntent.rejectionReason = 'Rejected due to ongoing settlement';
     }
+
+    this.initiateWithdrawalTransactionRepository.create(newWithdrawalTransactionIntent);
+    return newWithdrawalTransactionIntent;
   }
 
-  public initiateCollateralWithdrawalTransaction(
-    accountId: string,
-    tag: string
-  ): CollateralWithdrawalTransaction {
-    const status: CollateralWithdrawalTransactionStatus = this.getWithdrawalStatus(tag);
-    const collateralTxId = `0.${accountId}.${uuid()}`;
+  public getCollateralWithdrawalTransactions(): CollateralWithdrawalTransaction[] {
+    const withdrawalTransaction = this.withdrawalTransactionRepository.list();
 
+    return withdrawalTransaction;
+  }
+
+  public createCollateralWithdrawalTransaction(
+    collateralTxId: string,
+    approvalRequest: ApprovalRequest,
+    status: CollateralWithdrawalTransactionStatus = CollateralWithdrawalTransactionStatus.APPROVED
+  ): CollateralWithdrawalTransaction {
     const newWithdrawalTransaction: CollateralWithdrawalTransaction = {
       id: collateralTxId,
-      collateralTxId: collateralTxId,
-      withdrawalTxBlockchainId:
-        '0xb00b8884d17a737be3088ab222a600ef1a2ad3612a0f74406dfbb7039fdb051e',
+      approvalRequest: approvalRequest,
       status: status,
+      collateralTxId: collateralTxId,
     };
 
     if (status === CollateralWithdrawalTransactionStatus.REJECTED) {
@@ -256,19 +306,11 @@ export class CollateralController {
     return newWithdrawalTransaction;
   }
 
-  public getCollateralWithdrawalTransactions(): CollateralWithdrawalTransaction[] {
-    const withdrawalTransaction = this.withdrawalTransactionRepository.list();
-
-    return withdrawalTransaction;
-  }
-
-  public getCollateralwithdrawalTransactionDetails(
-    collateralTxId: string
-  ): CollateralWithdrawalTransaction {
-    const withdrawalTransaction = this.withdrawalTransactionRepository.find(collateralTxId);
+  public getCollateralwithdrawalTransactionDetails(id: string): CollateralWithdrawalTransaction {
+    const withdrawalTransaction = this.withdrawalTransactionRepository.find(id);
 
     if (!withdrawalTransaction) {
-      throw new NotFound('collateralTxId');
+      throw new NotFound('id not found');
     }
 
     return withdrawalTransaction;
