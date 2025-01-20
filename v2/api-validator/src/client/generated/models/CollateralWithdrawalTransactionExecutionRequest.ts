@@ -5,9 +5,12 @@
 
 import type { CollateralWithdrawalTransactionStatus } from './CollateralWithdrawalTransactionStatus';
 
-export type CollateralWithdrawalTransaction = {
-    id: string;
+export type CollateralWithdrawalTransactionExecutionRequest = {
     status: CollateralWithdrawalTransactionStatus;
-    rejectionReason?: string;
+    /**
+     * A unique identifier of the transaction to track. This field will contain information to help the provider poll the status of the transaction from Fireblocks.
+     *
+     */
+    collateralTxId: string;
 };
 
