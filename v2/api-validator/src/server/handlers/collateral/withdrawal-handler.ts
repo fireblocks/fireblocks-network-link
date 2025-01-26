@@ -36,7 +36,12 @@ export async function initiateCollateralWithdrawalTransactionIntent(
     }
 
     const newCollateralDepositTransaction =
-      controller.initiateCollateralWithdrawalTransactionIntent(undefined, amount, destinationAddress, approvalRequest);
+      controller.initiateCollateralWithdrawalTransactionIntent(
+        undefined,
+        amount,
+        destinationAddress,
+        approvalRequest
+      );
 
     return newCollateralDepositTransaction;
   }

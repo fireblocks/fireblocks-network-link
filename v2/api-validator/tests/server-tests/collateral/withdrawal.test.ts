@@ -22,7 +22,7 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
   const client: Client = new Client();
   const accountId: string = getCapableAccountId('collateral');
   const collateralId = config.get('collateral.collateralAccount.accountId');
-  const collateralTxId = `0.${uuid()}.${collateralId}`
+  const collateralTxId = `0.${uuid()}.${collateralId}`;
   const fireblocksIntentId = uuid();
   const approvalRequest: IntentApprovalRequest = { FireblocksIntentId: fireblocksIntentId };
 
@@ -45,38 +45,39 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
             requestBody,
           });
 
-          partnerIntentId = initiateWithdrawalTransaction.approvalRequest.PartnerIntentId;
-          expect(initiateWithdrawalTransaction).toHaveProperty('id');
-          expect(initiateWithdrawalTransaction.amount).toBe(requestBody.amount);
-          expect(initiateWithdrawalTransaction.destinationAddress).toEqual(requestBody.destinationAddress);
+        partnerIntentId = initiateWithdrawalTransaction.approvalRequest.PartnerIntentId;
+        expect(initiateWithdrawalTransaction).toHaveProperty('id');
+        expect(initiateWithdrawalTransaction.amount).toBe(requestBody.amount);
+        expect(initiateWithdrawalTransaction.destinationAddress).toEqual(
+          requestBody.destinationAddress
+        );
 
-        if (
-          initiateWithdrawalTransaction.status === CollateralTransactionIntentStatus.REJECTED
-        ) {
+        if (initiateWithdrawalTransaction.status === CollateralTransactionIntentStatus.REJECTED) {
           expect(initiateWithdrawalTransaction).toHaveProperty('rejectionReason');
         }
       });
 
       it('Create request should return with a valid response', async () => {
-        const newApprovalRequest: ApprovalRequest = {FireblocksIntentId: fireblocksIntentId, PartnerIntentId: partnerIntentId};
+        const newApprovalRequest: ApprovalRequest = {
+          FireblocksIntentId: fireblocksIntentId,
+          PartnerIntentId: partnerIntentId,
+        };
         const requestBody: CollateralWithdrawalTransactionRequest = {
           collateralTxId: collateralTxId,
-          approvalRequest: newApprovalRequest
-        }
+          approvalRequest: newApprovalRequest,
+        };
         const createWithdrawalTransaction: CollateralWithdrawalTransaction =
           await client.collateral.createCollateralWithdrawalTransaction({
             accountId,
             collateralId,
             requestBody,
           });
-        
+
         expect(createWithdrawalTransaction).toHaveProperty('id');
         expect(createWithdrawalTransaction.approvalRequest).toEqual(newApprovalRequest);
         expect(createWithdrawalTransaction.collateralTxId).toBe(collateralTxId);
 
-        if (
-          createWithdrawalTransaction.status === CollateralWithdrawalTransactionStatus.REJECTED
-        ) {
+        if (createWithdrawalTransaction.status === CollateralWithdrawalTransactionStatus.REJECTED) {
           expect(createWithdrawalTransaction).toHaveProperty('rejectionReason');
         }
       });
@@ -89,16 +90,16 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
             collateralTxId,
           });
 
-          expect(createWithdrawalTransaction).toHaveProperty('id');
-          expect(createWithdrawalTransaction.approvalRequest.PartnerIntentId).toBe(partnerIntentId);
-          expect(createWithdrawalTransaction.approvalRequest.FireblocksIntentId).toBe(fireblocksIntentId);
-          expect(createWithdrawalTransaction.collateralTxId).toBe(collateralTxId);
-  
-          if (
-            createWithdrawalTransaction.status === CollateralWithdrawalTransactionStatus.REJECTED
-          ) {
-            expect(createWithdrawalTransaction).toHaveProperty('rejectionReason');
-          }
+        expect(createWithdrawalTransaction).toHaveProperty('id');
+        expect(createWithdrawalTransaction.approvalRequest.PartnerIntentId).toBe(partnerIntentId);
+        expect(createWithdrawalTransaction.approvalRequest.FireblocksIntentId).toBe(
+          fireblocksIntentId
+        );
+        expect(createWithdrawalTransaction.collateralTxId).toBe(collateralTxId);
+
+        if (createWithdrawalTransaction.status === CollateralWithdrawalTransactionStatus.REJECTED) {
+          expect(createWithdrawalTransaction).toHaveProperty('rejectionReason');
+        }
       });
     });
   });

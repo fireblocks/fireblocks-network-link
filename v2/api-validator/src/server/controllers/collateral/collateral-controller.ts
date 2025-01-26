@@ -259,7 +259,7 @@ export class CollateralController {
 
   public initiateCollateralWithdrawalTransactionIntent(
     status: CollateralTransactionIntentStatus = CollateralTransactionIntentStatus.APPROVED,
-    amount: string, 
+    amount: string,
     destinationAddress: PublicBlockchainAddress,
     approvalRequest: IntentApprovalRequest
   ): CollateralWithdrawalTransactionIntentResponse {
