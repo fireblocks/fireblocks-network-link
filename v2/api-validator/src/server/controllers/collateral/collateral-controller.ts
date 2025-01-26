@@ -259,6 +259,8 @@ export class CollateralController {
 
   public initiateCollateralWithdrawalTransactionIntent(
     status: CollateralTransactionIntentStatus = CollateralTransactionIntentStatus.APPROVED,
+    amount: string, 
+    destinationAddress: PublicBlockchainAddress,
     approvalRequest: IntentApprovalRequest
   ): CollateralWithdrawalTransactionIntentResponse {
     const id: string = uuid();
@@ -269,6 +271,8 @@ export class CollateralController {
     const newWithdrawalTransactionIntent: CollateralWithdrawalTransactionIntentResponse = {
       id: id,
       status: status,
+      amount: amount,
+      destinationAddress: destinationAddress,
       approvalRequest: newApprovalRequest,
     };
 

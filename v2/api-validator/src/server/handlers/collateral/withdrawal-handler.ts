@@ -28,7 +28,7 @@ export async function initiateCollateralWithdrawalTransactionIntent(
 ): Promise<CollateralWithdrawalTransactionIntentResponse> {
   {
     const { accountId } = request.params;
-    const { approvalRequest } = request.body;
+    const { approvalRequest, amount, destinationAddress } = request.body;
     const controller = controllers.getController(accountId);
 
     if (!controller) {
@@ -36,7 +36,7 @@ export async function initiateCollateralWithdrawalTransactionIntent(
     }
 
     const newCollateralDepositTransaction =
-      controller.initiateCollateralWithdrawalTransactionIntent(undefined, approvalRequest);
+      controller.initiateCollateralWithdrawalTransactionIntent(undefined, amount, destinationAddress, approvalRequest);
 
     return newCollateralDepositTransaction;
   }
