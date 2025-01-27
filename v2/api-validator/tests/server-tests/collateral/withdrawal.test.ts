@@ -24,7 +24,7 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
   const collateralId = config.get('collateral.collateralAccount.accountId');
   const collateralTxId = `0.${uuid()}.${collateralId}`;
   const fireblocksIntentId = uuid();
-  const approvalRequest: IntentApprovalRequest = { FireblocksIntentId: fireblocksIntentId };
+  const approvalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
 
   describe('Create collateral withdrawal transaction (remove collateral) & fetch by collateralTxId ', () => {
     const address: PublicBlockchainAddress[] = JSON.parse(
@@ -45,7 +45,7 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
             requestBody,
           });
 
-        partnerIntentId = initiateWithdrawalTransaction.approvalRequest.PartnerIntentId;
+        partnerIntentId = initiateWithdrawalTransaction.approvalRequest.partnerIntentId;
         expect(initiateWithdrawalTransaction).toHaveProperty('id');
         expect(initiateWithdrawalTransaction.amount).toBe(requestBody.amount);
         expect(initiateWithdrawalTransaction.destinationAddress).toEqual(
@@ -59,8 +59,8 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
 
       it('Create request should return with a valid response', async () => {
         const newApprovalRequest: ApprovalRequest = {
-          FireblocksIntentId: fireblocksIntentId,
-          PartnerIntentId: partnerIntentId,
+          fireblocksIntentId: fireblocksIntentId,
+          partnerIntentId: partnerIntentId,
         };
         const requestBody: CollateralWithdrawalTransactionRequest = {
           collateralTxId: collateralTxId,
@@ -91,8 +91,8 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
           });
 
         expect(createWithdrawalTransaction).toHaveProperty('id');
-        expect(createWithdrawalTransaction.approvalRequest.PartnerIntentId).toBe(partnerIntentId);
-        expect(createWithdrawalTransaction.approvalRequest.FireblocksIntentId).toBe(
+        expect(createWithdrawalTransaction.approvalRequest.partnerIntentId).toBe(partnerIntentId);
+        expect(createWithdrawalTransaction.approvalRequest.fireblocksIntentId).toBe(
           fireblocksIntentId
         );
         expect(createWithdrawalTransaction.collateralTxId).toBe(collateralTxId);

@@ -424,8 +424,8 @@ export class CollateralService {
     }
 
     /**
-     * Initiate a collateral deposit transaction
-     * Notifies the provider to have start listening to a new collateral deposit transaction. The provider is expected to listen to this address and credit the account accordingly
+     * Initiate a collateral deposit transaction intent request
+     * Initiates a request for a new collateral deposit transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
      *
      * @returns CollateralDepositTransactionIntentResponse Successful Operation
      * @throws ApiError
@@ -470,7 +470,7 @@ export class CollateralService {
          */
         collateralId: string,
         /**
-         * Collateral deposit transaction details
+         * Collateral deposit transaction intent rewuest details
          */
         requestBody: CollateralDepositTransactionIntentRequest,
     }): CancelablePromise<CollateralDepositTransactionIntentResponse> {
@@ -734,8 +734,8 @@ export class CollateralService {
     }
 
     /**
-     * Initiates a withdrawal from a collateral account
-     * Initiates a withdrawal request from the customers collateral account.  A blockchain withdrawal operation for moving funds from the collateral account.
+     * Initiates a withdrawal transaction intent request for a collateral account
+     * Initiates a request for a new collateral deposit transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
      *
      * @returns CollateralWithdrawalTransactionIntentResponse Successful Operation
      * @throws ApiError
@@ -780,7 +780,7 @@ export class CollateralService {
          */
         collateralId: string,
         /**
-         * Collateral withdrawal transaction details
+         * Collateral withdrawal transaction intent request details
          */
         requestBody: CollateralWithdrawalTransactionIntentRequest,
     }): CancelablePromise<CollateralWithdrawalTransactionIntentResponse> {

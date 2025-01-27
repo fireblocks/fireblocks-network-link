@@ -4,6 +4,9 @@
 /* eslint-disable */
 
 export type IntentApprovalRequest = {
-    FireblocksIntentId: string;
+    /**
+     * Fireblocks intent request id.
+     */
+    fireblocksIntentId: string;
 };
 

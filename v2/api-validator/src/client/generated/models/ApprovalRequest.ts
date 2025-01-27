@@ -7,7 +7,13 @@
  * Approval request object.
  */
 export type ApprovalRequest = {
-    FireblocksIntentId: string;
-    PartnerIntentId: string;
+    /**
+     * Fireblocks intent request id.
+     */
+    fireblocksIntentId: string;
+    /**
+     * Provider intent approval request id.
+     */
+    partnerIntentId: string;
 };
 

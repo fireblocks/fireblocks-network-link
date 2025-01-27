@@ -30,7 +30,7 @@ describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
 
   describe('Register collateral deposit transaction (add collateral) & fetch by collateralTxId', () => {
     const collateralTxId = `2.${uuid()}.${collateralId}`;
-    const approvalRequest: IntentApprovalRequest = { FireblocksIntentId: fireblocksIntentId };
+    const approvalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
     let partnerIntentId: string;
     it('Initiate should return valid response', async () => {
       const asset: CryptocurrencyReference = { assetId: assetId };
@@ -48,15 +48,15 @@ describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
       partnerIntentId = initiateDepositTransaction.id;
       expect(initiateDepositTransaction.asset).toEqual(asset);
       expect(initiateDepositTransaction.amount).toBe('100');
-      expect(initiateDepositTransaction.approvalRequest?.FireblocksIntentId).toBe(
+      expect(initiateDepositTransaction.approvalRequest?.fireblocksIntentId).toBe(
         fireblocksIntentId
       );
     });
 
     it('Register should return valid response', async () => {
       const newApprovalRequest: ApprovalRequest = {
-        FireblocksIntentId: fireblocksIntentId,
-        PartnerIntentId: partnerIntentId,
+        fireblocksIntentId: fireblocksIntentId,
+        partnerIntentId: partnerIntentId,
       };
       const requestBody: CollateralDepositTransactionRequest = {
         collateralTxId,
@@ -81,8 +81,8 @@ describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
           collateralTxId,
         });
 
-      expect(collateralDepositTransaction.approvalRequest.PartnerIntentId).toBe(partnerIntentId);
-      expect(collateralDepositTransaction.approvalRequest.FireblocksIntentId).toBe(
+      expect(collateralDepositTransaction.approvalRequest.partnerIntentId).toBe(partnerIntentId);
+      expect(collateralDepositTransaction.approvalRequest.fireblocksIntentId).toBe(
         fireblocksIntentId
       );
       expect(collateralDepositTransaction.collateralTxId).toBe(collateralTxId);

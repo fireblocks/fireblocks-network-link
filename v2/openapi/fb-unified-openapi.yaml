@@ -1907,9 +1907,9 @@ paths:
     post:
       tags:
         - collateral
-      summary: Initiate a collateral deposit transaction
+      summary: Initiate a collateral deposit transaction intent request
       description: |
-        Notifies the provider to have start listening to a new collateral deposit transaction. The provider is expected to listen to this address and credit the account accordingly
+        Initiates a request for a new collateral deposit transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
       operationId: initiateCollateralDepositTransactionIntent
       parameters:
         - $ref: '#/components/parameters/X-FB-PLATFORM-SIGNATURE'
@@ -1920,7 +1920,7 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/CollateralIdPathParam'
       requestBody:
-        description: Collateral deposit transaction details
+        description: Collateral deposit transaction intent rewuest details
         required: true
         content:
           application/json:
@@ -2060,9 +2060,9 @@ paths:
     post:
       tags:
         - collateral
-      summary: Initiates a withdrawal from a collateral account
+      summary: Initiates a withdrawal transaction intent request for a collateral account
       description: |
-        Initiates a withdrawal request from the customers collateral account.  A blockchain withdrawal operation for moving funds from the collateral account.
+        Initiates a request for a new collateral deposit transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
       operationId: initiateCollateralWithdrawalTransactionIntent
       parameters:
         - $ref: '#/components/parameters/X-FB-PLATFORM-SIGNATURE'
@@ -2073,7 +2073,7 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/CollateralIdPathParam'
       requestBody:
-        description: Collateral withdrawal transaction details
+        description: Collateral withdrawal transaction intent request details
         required: true
         content:
           application/json:
@@ -4054,20 +4054,23 @@ components:
     IntentApprovalRequest:
       type: object
       required:
-        - FireblocksIntentId
+        - fireblocksIntentId
       properties:
-        FireblocksIntentId:
+        fireblocksIntentId:
           type: string
+          description: Fireblocks intent request id.
     ApprovalRequest:
       type: object
       required:
-        - FireblocksIntentId
-        - PartnerIntentId
+        - fireblocksIntentId
+        - partnerIntentId
       properties:
-        FireblocksIntentId:
+        fireblocksIntentId:
           type: string
-        PartnerIntentId:
+          description: Fireblocks intent request id.
+        partnerIntentId:
           type: string
+          description: Provider intent approval request id.
       description: Approval request object.
     CollateralAccount:
       type: object

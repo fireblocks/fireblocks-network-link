@@ -209,8 +209,8 @@ export class CollateralController {
   ): CollateralDepositTransactionIntentResponse {
     const id: string = uuid();
     const newApprovalRequest: ApprovalRequest = {
-      FireblocksIntentId: approvalRequest.FireblocksIntentId,
-      PartnerIntentId: id,
+      fireblocksIntentId: approvalRequest.fireblocksIntentId,
+      partnerIntentId: id,
     };
     const newCollateralDepositTransaction: CollateralDepositTransactionIntentResponse = {
       id: id,
@@ -265,8 +265,8 @@ export class CollateralController {
   ): CollateralWithdrawalTransactionIntentResponse {
     const id: string = uuid();
     const newApprovalRequest: ApprovalRequest = {
-      FireblocksIntentId: approvalRequest.FireblocksIntentId,
-      PartnerIntentId: id,
+      fireblocksIntentId: approvalRequest.fireblocksIntentId,
+      partnerIntentId: id,
     };
     const newWithdrawalTransactionIntent: CollateralWithdrawalTransactionIntentResponse = {
       id: id,

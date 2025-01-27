@@ -260,10 +260,10 @@ paths:
   /accounts/{accountId}/collateral/{collateralId}/intents/deposits:
     post:
       tags: [ collateral ]
-      summary: Initiate a collateral deposit transaction
+      summary: Initiate a collateral deposit transaction intent request
       description: >
-        Notifies the provider to have start listening to a new collateral deposit transaction.
-        The provider is expected to listen to this address and credit the account accordingly
+        Initiates a request for a new collateral deposit transaction.
+        The provider is notified, and Fireblocks waits for their approval before proceeding.
       operationId: initiateCollateralDepositTransactionIntent
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -274,7 +274,7 @@ paths:
         - $ref: '#/x-path-params/SubAccountIdPathParam'
         - $ref: '#/components/parameters/CollateralIdPathParam'
       requestBody:
-        description: Collateral deposit transaction details
+        description: Collateral deposit transaction intent rewuest details
         required: true
         content:
           application/json:
@@ -412,10 +412,10 @@ paths:
   /accounts/{accountId}/collateral/{collateralId}/intents/withdrawals:
     post:
       tags: [ collateral ]
-      summary: Initiates a withdrawal from a collateral account
+      summary: Initiates a withdrawal transaction intent request for a collateral account
       description: >
-        Initiates a withdrawal request from the customers collateral account. 
-        A blockchain withdrawal operation for moving funds from the collateral account.
+        Initiates a request for a new collateral deposit transaction.
+        The provider is notified, and Fireblocks waits for their approval before proceeding.
       operationId: initiateCollateralWithdrawalTransactionIntent
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -426,7 +426,7 @@ paths:
         - $ref: '#/x-path-params/SubAccountIdPathParam'
         - $ref: '#/components/parameters/CollateralIdPathParam'
       requestBody:
-        description: Collateral withdrawal transaction details
+        description: Collateral withdrawal transaction intent request details
         required: true
         content:
           application/json:
@@ -730,18 +730,21 @@ components:
         - **Failed** - The link creation failed
     IntentApprovalRequest:
       type: object
-      required: [FireblocksIntentId]
+      required: [fireblocksIntentId]
       properties:
-        FireblocksIntentId:
+        fireblocksIntentId:
           type: string
+          description: Fireblocks intent request id.
     ApprovalRequest:
       type: object
-      required: [FireblocksIntentId, PartnerIntentId]
+      required: [fireblocksIntentId, partnerIntentId]
       properties:
-        FireblocksIntentId:
+        fireblocksIntentId:
           type: string
-        PartnerIntentId:
+          description: Fireblocks intent request id.
+        partnerIntentId:
           type: string
+          description: Provider intent approval request id.
       description: "Approval request object."
     CollateralAccount:
       type: object
