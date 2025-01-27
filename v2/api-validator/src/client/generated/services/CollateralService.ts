@@ -424,8 +424,8 @@ export class CollateralService {
     }
 
     /**
-     * Initiate a collateral deposit transaction intent request
-     * Initiates a request for a new collateral deposit transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
+     * Preflight check before initiating a collateral deposit
+     * Initiates a preflight request for a new collateral deposit transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
      *
      * @returns CollateralDepositTransactionIntentResponse Successful Operation
      * @throws ApiError
@@ -470,7 +470,7 @@ export class CollateralService {
          */
         collateralId: string,
         /**
-         * Collateral deposit transaction intent rewuest details
+         * Collateral deposit transaction preflight request details
          */
         requestBody: CollateralDepositTransactionIntentRequest,
     }): CancelablePromise<CollateralDepositTransactionIntentResponse> {
@@ -734,8 +734,8 @@ export class CollateralService {
     }
 
     /**
-     * Initiates a withdrawal transaction intent request for a collateral account
-     * Initiates a request for a new collateral deposit transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
+     * Preflight check before initiating a collateral withdrawal
+     * Initiates a preflight request for a new collateral deposit transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
      *
      * @returns CollateralWithdrawalTransactionIntentResponse Successful Operation
      * @throws ApiError
@@ -780,7 +780,7 @@ export class CollateralService {
          */
         collateralId: string,
         /**
-         * Collateral withdrawal transaction intent request details
+         * Collateral withdrawal transaction preflight request details
          */
         requestBody: CollateralWithdrawalTransactionIntentRequest,
     }): CancelablePromise<CollateralWithdrawalTransactionIntentResponse> {
@@ -811,13 +811,13 @@ export class CollateralService {
     }
 
     /**
-     * Create a withdrawal from a collateral account
-     * Create a withdrawal from the customers collateral account.  The withdrawal has been confirmed by the provider and signed by the customer. The amount can be reduced from the customers available balance in the provider main account based on the withdrawal amount.
+     * Notify of a withdrawal from a collateral account
+     * Initiate a withdrawal from the customers collateral account.  The withdrawal has been confirmed by the provider and signed by the customer. The amount can be reduced from the customers available balance in the provider main account based on the withdrawal amount.
      *
      * @returns CollateralWithdrawalTransaction Successful Operation
      * @throws ApiError
      */
-    public createCollateralWithdrawalTransaction({
+    public initiateCollateralWithdrawalTransaction({
         xFbPlatformSignature,
         xFbapiKey,
         xFbapiNonce,

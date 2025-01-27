@@ -30,13 +30,13 @@ describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
 
   describe('Register collateral deposit transaction (add collateral) & fetch by collateralTxId', () => {
     const collateralTxId = `2.${uuid()}.${collateralId}`;
-    const approvalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
+    const intentApprovalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
     let partnerIntentId: string;
     it('Initiate should return valid response', async () => {
       const asset: CryptocurrencyReference = { assetId: assetId };
       const requestBody: CollateralDepositTransactionIntentRequest = {
         asset: asset,
-        approvalRequest: approvalRequest,
+        intentApprovalRequest: intentApprovalRequest,
         amount: '100',
       };
       const initiateDepositTransaction: CollateralDepositTransactionIntentResponse =
@@ -45,7 +45,7 @@ describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
           collateralId,
           requestBody,
         });
-      partnerIntentId = initiateDepositTransaction.id;
+      partnerIntentId = initiateDepositTransaction.approvalRequest.partnerIntentId;
       expect(initiateDepositTransaction.asset).toEqual(asset);
       expect(initiateDepositTransaction.amount).toBe('100');
       expect(initiateDepositTransaction.approvalRequest?.fireblocksIntentId).toBe(

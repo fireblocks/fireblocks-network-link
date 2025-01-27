@@ -10,6 +10,6 @@ import type { PositiveAmount } from './PositiveAmount';
 export type CollateralDepositTransactionIntentRequest = {
     asset: CryptocurrencyReference;
     amount: PositiveAmount;
-    approvalRequest: IntentApprovalRequest;
+    intentApprovalRequest: IntentApprovalRequest;
 };
 

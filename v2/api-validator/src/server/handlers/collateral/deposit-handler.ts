@@ -26,7 +26,7 @@ export async function initiateCollateralDepositTransactionIntent(
   reply: FastifyReply
 ): Promise<CollateralDepositTransactionIntentResponse> {
   {
-    const { asset, amount, approvalRequest } = request.body;
+    const { asset, amount, intentApprovalRequest } = request.body;
     const { accountId } = request.params;
     const controller = controllers.getController(accountId);
 
@@ -37,7 +37,7 @@ export async function initiateCollateralDepositTransactionIntent(
     const newCollateralDepositTransaction = controller.initiateCollateralDepositTransactionIntent(
       amount,
       asset,
-      approvalRequest
+      intentApprovalRequest
     );
     return newCollateralDepositTransaction;
   }

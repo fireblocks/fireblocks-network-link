@@ -205,18 +205,19 @@ export class CollateralController {
   public initiateCollateralDepositTransactionIntent(
     amount: string,
     asset: CryptocurrencyReference,
-    approvalRequest: IntentApprovalRequest
+    intentApprovalRequest: IntentApprovalRequest
   ): CollateralDepositTransactionIntentResponse {
     const id: string = uuid();
-    const newApprovalRequest: ApprovalRequest = {
-      fireblocksIntentId: approvalRequest.fireblocksIntentId,
+    const approvalRequest: ApprovalRequest = {
+      fireblocksIntentId: intentApprovalRequest.fireblocksIntentId,
       partnerIntentId: id,
     };
+    
     const newCollateralDepositTransaction: CollateralDepositTransactionIntentResponse = {
       id: id,
       amount: amount,
       asset: asset,
-      approvalRequest: newApprovalRequest,
+      approvalRequest: approvalRequest,
       status: CollateralTransactionIntentStatus.APPROVED,
     };
 
@@ -261,11 +262,11 @@ export class CollateralController {
     status: CollateralTransactionIntentStatus = CollateralTransactionIntentStatus.APPROVED,
     amount: string,
     destinationAddress: PublicBlockchainAddress,
-    approvalRequest: IntentApprovalRequest
+    intentApprovalRequest: IntentApprovalRequest
   ): CollateralWithdrawalTransactionIntentResponse {
     const id: string = uuid();
-    const newApprovalRequest: ApprovalRequest = {
-      fireblocksIntentId: approvalRequest.fireblocksIntentId,
+    const approvalRequest: ApprovalRequest = {
+      fireblocksIntentId: intentApprovalRequest.fireblocksIntentId,
       partnerIntentId: id,
     };
     const newWithdrawalTransactionIntent: CollateralWithdrawalTransactionIntentResponse = {
@@ -273,7 +274,7 @@ export class CollateralController {
       status: status,
       amount: amount,
       destinationAddress: destinationAddress,
-      approvalRequest: newApprovalRequest,
+      approvalRequest: approvalRequest,
     };
 
     if (status === CollateralTransactionIntentStatus.REJECTED) {
@@ -290,7 +291,7 @@ export class CollateralController {
     return withdrawalTransaction;
   }
 
-  public createCollateralWithdrawalTransaction(
+  public initiateCollateralWithdrawalTransaction(
     collateralTxId: string,
     approvalRequest: ApprovalRequest,
     status: CollateralWithdrawalTransactionStatus = CollateralWithdrawalTransactionStatus.APPROVED

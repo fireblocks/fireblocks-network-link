@@ -10,6 +10,6 @@ import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 export type CollateralWithdrawalTransactionIntentRequest = {
     amount: PositiveAmount;
     destinationAddress: PublicBlockchainAddress;
-    approvalRequest: IntentApprovalRequest;
+    intentApprovalRequest: IntentApprovalRequest;
 };
 

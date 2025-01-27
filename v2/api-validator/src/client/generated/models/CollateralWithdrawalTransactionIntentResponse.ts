@@ -9,10 +9,6 @@ import type { PositiveAmount } from './PositiveAmount';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
 export type CollateralWithdrawalTransactionIntentResponse = {
-    /**
-     * A unique identifier of the transaction to track. This field will contain information to help the provider poll the status of the transaction from Fireblocks.
-     *
-     */
     id: string;
     amount: PositiveAmount;
     destinationAddress: PublicBlockchainAddress;

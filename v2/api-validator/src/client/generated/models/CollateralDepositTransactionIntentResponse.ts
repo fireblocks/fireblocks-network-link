@@ -14,5 +14,6 @@ export type CollateralDepositTransactionIntentResponse = {
     asset: CryptocurrencyReference;
     amount: PositiveAmount;
     approvalRequest: ApprovalRequest;
+    rejectionReason?: string;
 };
 

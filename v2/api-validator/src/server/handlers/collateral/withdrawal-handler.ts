@@ -28,7 +28,7 @@ export async function initiateCollateralWithdrawalTransactionIntent(
 ): Promise<CollateralWithdrawalTransactionIntentResponse> {
   {
     const { accountId } = request.params;
-    const { approvalRequest, amount, destinationAddress } = request.body;
+    const { intentApprovalRequest, amount, destinationAddress } = request.body;
     const controller = controllers.getController(accountId);
 
     if (!controller) {
@@ -40,14 +40,14 @@ export async function initiateCollateralWithdrawalTransactionIntent(
         undefined,
         amount,
         destinationAddress,
-        approvalRequest
+        intentApprovalRequest
       );
 
     return newCollateralDepositTransaction;
   }
 }
 
-export async function createCollateralWithdrawalTransaction(
+export async function initiateCollateralWithdrawalTransaction(
   request: FastifyRequest<
     AccountIdPathParam & CollateralIdPathParam & { Body: CollateralWithdrawalTransactionRequest }
   >,
@@ -62,7 +62,7 @@ export async function createCollateralWithdrawalTransaction(
       return ErrorFactory.notFound(reply);
     }
 
-    const newCollateralDepositTransaction = controller.createCollateralWithdrawalTransaction(
+    const newCollateralDepositTransaction = controller.initiateCollateralWithdrawalTransaction(
       collateralTxId,
       approvalRequest
     );

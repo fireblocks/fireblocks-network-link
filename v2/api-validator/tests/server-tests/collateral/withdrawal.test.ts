@@ -24,7 +24,7 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
   const collateralId = config.get('collateral.collateralAccount.accountId');
   const collateralTxId = `0.${uuid()}.${collateralId}`;
   const fireblocksIntentId = uuid();
-  const approvalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
+  const intentApprovalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
 
   describe('Create collateral withdrawal transaction (remove collateral) & fetch by collateralTxId ', () => {
     const address: PublicBlockchainAddress[] = JSON.parse(
@@ -36,7 +36,7 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
         const requestBody: CollateralWithdrawalTransactionIntentRequest = {
           amount: '5',
           destinationAddress: testParams,
-          approvalRequest: approvalRequest,
+          intentApprovalRequest: intentApprovalRequest,
         };
         const initiateWithdrawalTransaction: CollateralWithdrawalTransactionIntentResponse =
           await client.collateral.initiateCollateralWithdrawalTransactionIntent({
@@ -67,7 +67,7 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
           approvalRequest: newApprovalRequest,
         };
         const createWithdrawalTransaction: CollateralWithdrawalTransaction =
-          await client.collateral.createCollateralWithdrawalTransaction({
+          await client.collateral.initiateCollateralWithdrawalTransaction({
             accountId,
             collateralId,
             requestBody,
