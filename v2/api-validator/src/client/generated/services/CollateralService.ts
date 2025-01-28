@@ -735,7 +735,7 @@ export class CollateralService {
 
     /**
      * Preflight check before initiating a collateral withdrawal
-     * Initiates a preflight request for a new collateral deposit transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
+     * Initiates a preflight request for a new collateral withdrawal transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
      *
      * @returns CollateralWithdrawalTransactionIntentResponse Successful Operation
      * @throws ApiError

@@ -414,7 +414,7 @@ paths:
       tags: [ collateral ]
       summary: Preflight check before initiating a collateral withdrawal
       description: >
-        Initiates a preflight request for a new collateral deposit transaction.
+        Initiates a preflight request for a new collateral withdrawal transaction.
         The provider is notified, and Fireblocks waits for their approval before proceeding.
       operationId: initiateCollateralWithdrawalTransactionIntent
       parameters:

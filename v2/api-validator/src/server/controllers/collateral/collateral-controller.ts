@@ -212,7 +212,7 @@ export class CollateralController {
       fireblocksIntentId: intentApprovalRequest.fireblocksIntentId,
       partnerIntentId: id,
     };
-    
+
     const newCollateralDepositTransaction: CollateralDepositTransactionIntentResponse = {
       id: id,
       amount: amount,
