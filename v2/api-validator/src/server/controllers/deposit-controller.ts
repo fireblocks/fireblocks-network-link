@@ -107,7 +107,7 @@ export class DepositController {
   }
 
   public getAllDeposits(): Deposit[] {
-    return this.depositRepository.list();
+    return _.sortBy(this.depositRepository.list(), 'createdAt').reverse();
   }
 
   public getDeposit(depositId: string): Deposit {
