@@ -2,6 +2,11 @@ import {
   CollateralDepositTransactionResponse,
   CollateralDepositTransactionRequest,
   CollateralDepositTransactionsResponse,
+  CollateralDepositTransactionIntentRequest,
+  CollateralDepositTransactionIntentResponse,
+  CryptocurrencyReference,
+  ApprovalRequest,
+  IntentApprovalRequest,
 } from '../../../src/client/generated';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
@@ -14,25 +19,58 @@ const noCollateralCapability = !hasCapability('transfers');
 describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
   const client: Client = new Client();
   const accountId: string = getCapableAccountId('collateral');
-  const collateralId: string = config.get('collateral.signers.userId');
+  const collateralId: string = config.get('collateral.collateralAccount.accountId');
+  const fireblocksIntentId = uuid();
+  let assetId: string;
 
-  describe('Register collateral deposit transaction & fetch by collateralTxId', () => {
-    const collateralTxId = `2.${accountId}.${uuid()}`;
-    const depositDetails: CollateralDepositTransactionRequest = {
-      collateralTxId: collateralTxId,
-      amount: '100',
-    };
+  beforeAll(async () => {
+    const agetAssetsResults = await client.capabilities.getAdditionalAssets({});
+    assetId = agetAssetsResults.assets[0]?.id;
+  });
+
+  describe('Register collateral deposit transaction (add collateral) & fetch by collateralTxId', () => {
+    const collateralTxId = `2.${uuid()}.${collateralId}`;
+    const intentApprovalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
+    let partnerIntentId: string;
+    it('Initiate should return valid response', async () => {
+      const asset: CryptocurrencyReference = { assetId: assetId };
+      const requestBody: CollateralDepositTransactionIntentRequest = {
+        asset: asset,
+        intentApprovalRequest: intentApprovalRequest,
+        amount: '100',
+      };
+      const initiateDepositTransaction: CollateralDepositTransactionIntentResponse =
+        await client.collateral.initiateCollateralDepositTransactionIntent({
+          accountId,
+          collateralId,
+          requestBody,
+        });
+      partnerIntentId = initiateDepositTransaction.approvalRequest.partnerIntentId;
+      expect(initiateDepositTransaction.asset).toEqual(asset);
+      expect(initiateDepositTransaction.amount).toBe('100');
+      expect(initiateDepositTransaction.approvalRequest?.fireblocksIntentId).toBe(
+        fireblocksIntentId
+      );
+    });
+
     it('Register should return valid response', async () => {
-      const collateralDepositTransaction: CollateralDepositTransactionResponse =
+      const newApprovalRequest: ApprovalRequest = {
+        fireblocksIntentId: fireblocksIntentId,
+        partnerIntentId: partnerIntentId,
+      };
+      const requestBody: CollateralDepositTransactionRequest = {
+        collateralTxId,
+        approvalRequest: newApprovalRequest,
+      };
+      const createDepositTransaction: CollateralDepositTransactionResponse =
         await client.collateral.registerCollateralDepositTransaction({
           accountId,
           collateralId,
-          requestBody: {
-            ...depositDetails,
-          },
+          requestBody,
         });
 
-      expect(collateralDepositTransaction.collateralTxId).toBe(collateralTxId);
+      expect(createDepositTransaction.approvalRequest).toEqual(newApprovalRequest);
+      expect(createDepositTransaction.collateralTxId).toBe(collateralTxId);
     });
 
     it('Get by collateralTxId return valid response', async () => {
@@ -43,7 +81,11 @@ describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
           collateralTxId,
         });
 
-      expect(collateralDepositTransaction.collateralTxId).toEqual(collateralTxId);
+      expect(collateralDepositTransaction.approvalRequest.partnerIntentId).toBe(partnerIntentId);
+      expect(collateralDepositTransaction.approvalRequest.fireblocksIntentId).toBe(
+        fireblocksIntentId
+      );
+      expect(collateralDepositTransaction.collateralTxId).toBe(collateralTxId);
     });
   });
 

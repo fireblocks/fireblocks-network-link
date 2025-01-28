@@ -70,6 +70,7 @@ paths:
                       transfersInternal: "*"
                       trading: "*"
                       liquidity: "*"
+                      collateral: "*"
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:

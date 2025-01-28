@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { PositiveAmount } from './PositiveAmount';
+import type { ApprovalRequest } from './ApprovalRequest';
 
 export type CollateralDepositTransactionRequest = {
     /**
@@ -11,6 +11,6 @@ export type CollateralDepositTransactionRequest = {
      *
      */
     collateralTxId: string;
-    amount?: PositiveAmount;
+    approvalRequest: ApprovalRequest;
 };
 

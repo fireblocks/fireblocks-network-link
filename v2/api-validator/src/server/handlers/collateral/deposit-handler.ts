@@ -5,6 +5,8 @@ import {
   CollateralDepositTransactionRequest,
   CollateralDepositTransactionResponse,
   CollateralDepositTransactionsResponse,
+  CollateralDepositTransactionIntentRequest,
+  CollateralDepositTransactionIntentResponse,
 } from '../../../client/generated';
 import { ControllersContainer } from '../../controllers/controllers-container';
 import { getPaginationResult } from '../../controllers/pagination-controller';
@@ -17,6 +19,30 @@ import {
 
 const controllers = new ControllersContainer(() => new CollateralController());
 
+export async function initiateCollateralDepositTransactionIntent(
+  request: FastifyRequest<
+    AccountIdPathParam & CollateralIdPathParam & { Body: CollateralDepositTransactionIntentRequest }
+  >,
+  reply: FastifyReply
+): Promise<CollateralDepositTransactionIntentResponse> {
+  {
+    const { asset, amount, intentApprovalRequest } = request.body;
+    const { accountId } = request.params;
+    const controller = controllers.getController(accountId);
+
+    if (!controller) {
+      return ErrorFactory.notFound(reply);
+    }
+
+    const newCollateralDepositTransaction = controller.initiateCollateralDepositTransactionIntent(
+      amount,
+      asset,
+      intentApprovalRequest
+    );
+    return newCollateralDepositTransaction;
+  }
+}
+
 export async function registerCollateralDepositTransaction(
   request: FastifyRequest<
     AccountIdPathParam & CollateralIdPathParam & { Body: CollateralDepositTransactionRequest }
@@ -24,7 +50,7 @@ export async function registerCollateralDepositTransaction(
   reply: FastifyReply
 ): Promise<CollateralDepositTransactionResponse> {
   {
-    const { collateralTxId, amount } = request.body;
+    const { collateralTxId, approvalRequest } = request.body;
     const { accountId } = request.params;
 
     const controller = controllers.getController(accountId);
@@ -34,8 +60,8 @@ export async function registerCollateralDepositTransaction(
     }
 
     const newCollateralDepositTransaction = controller.registerCollateralDepositTransaction(
-      amount,
-      collateralTxId
+      collateralTxId,
+      approvalRequest
     );
     return newCollateralDepositTransaction;
   }

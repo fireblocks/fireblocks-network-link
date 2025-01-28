@@ -257,7 +257,49 @@ paths:
           $ref: '#/x-responses/ErrorResponse'
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
-
+  /accounts/{accountId}/collateral/{collateralId}/intents/deposits:
+    post:
+      tags: [ collateral ]
+      summary: Preflight check before initiating a collateral deposit
+      description: >
+        Initiates a preflight request for a new collateral deposit transaction.
+        The provider is notified, and Fireblocks waits for their approval before proceeding.
+      operationId: initiateCollateralDepositTransactionIntent
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+      requestBody:
+        description: Collateral deposit transaction preflight request details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollateralDepositTransactionIntentRequest'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollateralDepositTransactionIntentResponse'
+        '400':
+          description: Return Bad Request.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
   /accounts/{accountId}/collateral/{collateralId}/deposits:
     post:
       tags: [ collateral ]
@@ -367,14 +409,58 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
+  /accounts/{accountId}/collateral/{collateralId}/intents/withdrawals:
+    post:
+      tags: [ collateral ]
+      summary: Preflight check before initiating a collateral withdrawal
+      description: >
+        Initiates a preflight request for a new collateral withdrawal transaction.
+        The provider is notified, and Fireblocks waits for their approval before proceeding.
+      operationId: initiateCollateralWithdrawalTransactionIntent
+      parameters:
+        - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/CollateralIdPathParam'
+      requestBody:
+        description: Collateral withdrawal transaction preflight request details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CollateralWithdrawalTransactionIntentRequest'
+      responses:
+        '200':
+          description: Successful Operation
+          headers:
+            X-PROVIDER-SIGNATURE:
+              $ref: '#/x-headers/X-PROVIDER-SIGNATURE'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollateralWithdrawalTransactionIntentResponse'
+        '400':
+          description: Return Bad Request.
+        '401':
+          description: Unauthorized. Either API details are missing or invalid
+        '403':
+          description: Forbidden- You do not have access to the requested resource.
+        '415':
+          description: Unsupported media type. You need to use application/json.
+        '500':
+          description: Exchange internal error.
+
   /accounts/{accountId}/collateral/{collateralId}/withdrawals:
     post:
       tags: [ collateral ]
-      summary: Initiate a withdrawal from a collateral account
+      summary: Notify of a withdrawal from a collateral account
       description: >
-        Initiates a withdrawal request from the customers collateral account. 
-        The withdrawal must be confirmed by the provider before it can be signed by the customer. 
-        Once the provider approve the withdrawal, it can be reduced from the customers available balance in the provider main account based on the withdrawal amount.
+        Initiate a withdrawal from the customers collateral account. 
+        The withdrawal has been confirmed by the provider and signed by the customer.
+        The amount can be reduced from the customers available balance in the provider main account based on the withdrawal amount.
       operationId: initiateCollateralWithdrawalTransaction
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -627,7 +713,6 @@ components:
         - "stage"
       description: >
         AccountEnvironment field describes which environment is being run at the moment 
-
     CollateralLinkStatus:
       type: string
       enum:
@@ -643,9 +728,24 @@ components:
         - **Disabled** - The link is disabled at the moment, but can be re-enabled
         
         - **Failed** - The link creation failed
-
-
-
+    IntentApprovalRequest:
+      type: object
+      required: [fireblocksIntentId]
+      properties:
+        fireblocksIntentId:
+          type: string
+          description: Fireblocks intent request id.
+    ApprovalRequest:
+      type: object
+      required: [fireblocksIntentId, partnerIntentId]
+      properties:
+        fireblocksIntentId:
+          type: string
+          description: Fireblocks intent request id.
+        partnerIntentId:
+          type: string
+          description: Provider intent approval request id.
+      description: "Approval request object."
     CollateralAccount:
       type: object
       required:
@@ -708,6 +808,15 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CollateralAssetAddress'
+    CollateralTransactionIntentStatus:
+      type: string
+      enum:
+        - Approved
+        - Rejected
+      description: >
+        - **Approved** - The transaction is approved by the provider's
+        
+        - **Rejected** - The transaction has been rejected by the provider's
     CollateralDepositTransactionStatus:
       type: string
       enum:
@@ -720,9 +829,36 @@ components:
         - **Credited** - The transaction has been completed successfully and the account has been credited
         
         - **Rejected** - The transaction has been rejected and the account has not been credited
+    CollateralDepositTransactionIntentRequest:
+      type: object
+      required: [ asset, amount, intentApprovalRequest ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/CryptocurrencyReference'
+        amount:
+          $ref: '#/x-schemas/PositiveAmount'
+        intentApprovalRequest:
+          $ref: '#/components/schemas/IntentApprovalRequest'
+    CollateralDepositTransactionIntentResponse:
+      allOf:
+        - type: object
+          required: [id, status, asset, amount, approvalRequest]
+          properties:
+            id:
+              type: string
+            status:
+              $ref: '#/components/schemas/CollateralTransactionIntentStatus'
+            asset:
+              $ref: '#/x-schemas/CryptocurrencyReference'
+            amount:
+              $ref: '#/x-schemas/PositiveAmount'
+            approvalRequest:
+              $ref: '#/components/schemas/ApprovalRequest'
+            rejectionReason:
+              type: string
     CollateralDepositTransactionRequest:
       type: object
-      required: [ collateralTxId ]
+      required: [ collateralTxId, approvalRequest ]
       properties:
         collateralTxId:
           type: string
@@ -730,8 +866,8 @@ components:
             A unique identifier of the transaction to track.
             This field will contain information to help the provider poll the status of the transaction from Fireblocks.
           example: "0.8e4cfce8-0182-4c6d-b9dd-a291c105e1d2.0.5a814998-ec0f-4f1c-92bf-fb5f7dc09ea2"
-        amount:
-          $ref: '#/x-schemas/PositiveAmount'
+        approvalRequest:
+          $ref: '#/components/schemas/ApprovalRequest'
     CollateralDepositTransactionResponse:
       allOf:
         - type: object
@@ -765,31 +901,52 @@ components:
         - **Rejected** - The withdrawal transaction has been rejected
     CollateralWithdrawalTransaction:
       type: object
-      required: [ id, collateralTxId, status ]
+      required: [ id, status, collateralTxId, approvalRequest ]
       properties:
         id:
           type: string
-        collateralTxId:
-          type: string
-          description: >
-            A unique identifier of the transaction to track.
-            This field will contain information to help Fireblocks poll the status of the transaction from the provider.
-          example: "0.8e4cfce8-0182-4c6d-b9dd-a291c105e1d2.0.5a814998-ec0f-4f1c-92bf-fb5f7dc09ea2"
         status:
           $ref: '#/components/schemas/CollateralWithdrawalTransactionStatus'
-        withdrawalTxBlockchainId:
+        collateralTxId:
           type: string
+        approvalRequest:
+          $ref: '#/components/schemas/ApprovalRequest'
         rejectionReason:
           type: string
-          nullable: true
-    CollateralWithdrawalTransactionRequest:
+    CollateralWithdrawalTransactionIntentRequest:
       type: object
-      required: [ amount, destinationAddress ]
+      required: [ amount, destinationAddress, intentApprovalRequest ]
       properties:
         amount:
           $ref: '#/x-schemas/PositiveAmount'
         destinationAddress:
           $ref: '#/x-schemas/PublicBlockchainAddress'
+        intentApprovalRequest:
+          $ref: '#/components/schemas/IntentApprovalRequest'
+    CollateralWithdrawalTransactionRequest:
+      type: object
+      required: [ collateralTxId, approvalRequest ]
+      properties:
+        collateralTxId:
+          type: string
+        approvalRequest:
+          $ref: '#/components/schemas/ApprovalRequest'
+    CollateralWithdrawalTransactionIntentResponse:
+      type: object
+      required: [ id, status, amount, destinationAddress, approvalRequest ]
+      properties:
+        id:
+          type: string
+        amount:
+          $ref: '#/x-schemas/PositiveAmount'
+        destinationAddress:
+          $ref: '#/x-schemas/PublicBlockchainAddress'
+        approvalRequest:
+          $ref: '#/components/schemas/ApprovalRequest'
+        status:
+          $ref: '#/components/schemas/CollateralTransactionIntentStatus'
+        rejectionReason:
+          type: string
     CollateralWithdrawalTransactions:
       type: object
       required:
@@ -856,7 +1013,6 @@ components:
               $ref: '#/components/schemas/SettlementTransactionStatus'
             rejectionReason:
               type: string
-              nullable: true
     SettlementDepositTransaction:
       allOf:
         - $ref: '#/components/schemas/SettlementDepositInstruction'
@@ -867,7 +1023,6 @@ components:
               $ref: '#/components/schemas/SettlementTransactionStatus'
             rejectionReason:
               type: string
-              nullable: true
     SettlementInstructions:
       type: object
       required: [ settlementVersion, withdrawInstructions, depositInstructions ]

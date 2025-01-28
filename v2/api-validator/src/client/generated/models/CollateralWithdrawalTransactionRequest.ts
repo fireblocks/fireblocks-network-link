@@ -3,11 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { PositiveAmount } from './PositiveAmount';
-import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
+import type { ApprovalRequest } from './ApprovalRequest';
 
 export type CollateralWithdrawalTransactionRequest = {
-    amount: PositiveAmount;
-    destinationAddress: PublicBlockchainAddress;
+    collateralTxId: string;
+    approvalRequest: ApprovalRequest;
 };
 
