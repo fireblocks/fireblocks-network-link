@@ -572,7 +572,7 @@ paths:
   /accounts/{accountId}/transfers/deposits:
     get:
       operationId: getDeposits
-      summary: Get list of deposits sorted by creation time
+      summary: Get list of deposits sorted by creation time in a descending order
       tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'

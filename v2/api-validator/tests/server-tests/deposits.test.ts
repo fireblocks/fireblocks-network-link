@@ -430,6 +430,18 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
       accountDepositsMap = await getResponsePerIdMapping(getDeposits, accountIds);
     });
 
+    it('should return deposits in descending order of creation', () => {
+      for (const deposits of accountDepositsMap.values()) {
+        if (deposits.length < 2) {
+          expect({}).fail('Not enough deposits to test order');
+        }
+        const sortedDeposits = deposits.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        expect(deposits).toEqual(sortedDeposits);
+      }
+    });
+
     it('should find each returned deposit on getDepositDetails', async () => {
       for (const [accountId, deposits] of accountDepositsMap.entries()) {
         for (const { id } of deposits) {
