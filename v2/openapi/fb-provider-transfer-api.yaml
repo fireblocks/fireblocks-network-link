@@ -1041,6 +1041,8 @@ components:
         - $ref: '#/x-schemas/PublicBlockchainAddress'
         - $ref: '#/components/schemas/IbanAddress'
         - $ref: '#/components/schemas/SwiftAddress'
+        - $ref: '#/components/schemas/PeerAccountTransferAddress'
+        - $ref: '#/components/schemas/InternalTransferAddress'
 
     DepositAddressStatus:
       enum:
