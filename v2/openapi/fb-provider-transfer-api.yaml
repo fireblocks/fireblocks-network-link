@@ -1071,8 +1071,6 @@ components:
             - $ref: '#/x-schemas/PublicBlockchainCapability'
             - $ref: '#/components/schemas/IbanCapability'
             - $ref: '#/components/schemas/SwiftCapability'
-            - $ref: '#/components/schemas/PeerAccountTransferCapability'
-            - $ref: '#/components/schemas/InternalTransferCapability'
 
 
     DepositCapability:

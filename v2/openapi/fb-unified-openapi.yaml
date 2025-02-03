@@ -3802,8 +3802,6 @@ components:
             - $ref: '#/components/schemas/PublicBlockchainCapability'
             - $ref: '#/components/schemas/IbanCapability'
             - $ref: '#/components/schemas/SwiftCapability'
-            - $ref: '#/components/schemas/PeerAccountTransferCapability'
-            - $ref: '#/components/schemas/InternalTransferCapability'
     DepositCapability:
       type: object
       description: Capability to deposit to a balance asset using a specific transfer capability. `addressCreationPolicy` determines whether new deposit addresses could be requested for this deposit capability.
