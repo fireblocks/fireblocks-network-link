@@ -17,15 +17,18 @@ import Client from '../../../src/client';
 const noCollateralCapability = !hasCapability('collateral');
 
 describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
-  const client: Client = new Client();
-  const accountId: string = getCapableAccountId('collateral');
-  const collateralId: string = config.get('collateral.collateralAccount.accountId');
+  let client: Client;
+  let accountId: string;
+  let collateralId: string;
   const fireblocksIntentId = uuid();
   let assetId: string;
 
   beforeAll(async () => {
     const agetAssetsResults = await client.capabilities.getAdditionalAssets({});
     assetId = agetAssetsResults.assets[0]?.id;
+    client = new Client();
+    accountId = getCapableAccountId('collateral');
+    collateralId = config.get('collateral.collateralAccount.accountId');
   });
 
   describe('Register collateral deposit transaction (add collateral) & fetch by collateralTxId', () => {
