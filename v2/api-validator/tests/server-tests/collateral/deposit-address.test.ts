@@ -11,7 +11,7 @@ import { Pageable, paginated } from '../../utils/pagination';
 import Client from '../../../src/client';
 import config from '../../../src/config';
 
-const noCollateralCapability = !hasCapability('transfers');
+const noCollateralCapability = !hasCapability('collateral');
 
 describe.skipIf(noCollateralCapability)('Collateral Deposit Address', () => {
   const client = new Client();

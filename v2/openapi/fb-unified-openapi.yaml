@@ -14,8 +14,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: 
-    $ref: README.md
+  description: Placeholder for automatic documentation injection from README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -1511,7 +1510,7 @@ paths:
   /accounts/{accountId}/transfers/deposits:
     get:
       operationId: getDeposits
-      summary: Get list of deposits sorted by creation time
+      summary: Get list of deposits sorted by creation time in a descending order
       tags:
         - transfers
       parameters:
@@ -2652,9 +2651,9 @@ components:
       type: array
       description: Maps balance assets to their balances.
       items:
-        oneOf:
-          - $ref: '#/components/schemas/AssetBalance'
+        anyOf:
           - $ref: '#/components/schemas/AssetCreditBalance'
+          - $ref: '#/components/schemas/AssetBalance'
     AssetBalance:
       type: object
       required:

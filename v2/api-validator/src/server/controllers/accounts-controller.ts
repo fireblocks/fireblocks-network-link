@@ -1,6 +1,7 @@
 import {
   Account,
   AssetBalance,
+  AssetCreditBalance,
   Balances,
   CryptocurrencySymbol,
   NationalCurrencyCode,
@@ -12,6 +13,7 @@ import { XComError } from '../../error';
 import { JSONSchemaFaker } from 'json-schema-faker';
 import { isParentAccount } from '../../utils/account-helper';
 import { loadCapabilitiesJson } from './capabilities-loader';
+import { hasCapability } from '../../../tests/utils/capable-accounts';
 
 const SUB_ACCOUNT_COUNT = 10;
 
@@ -96,20 +98,22 @@ export class AccountsController {
 function getEveryAssetBalances(knownAdditionalAssetIds: string[]) {
   const balances: Balances = [];
 
+  const hasCollateralCapability = hasCapability('collateral');
+
+  let balance = !hasCollateralCapability ? fakeSchemaObject('AssetBalance') as AssetBalance : 
+    fakeSchemaObject('AssetCreditBalance') as AssetCreditBalance;
+
   for (const assetId of knownAdditionalAssetIds) {
-    const balance = fakeSchemaObject('AssetBalance') as AssetBalance;
     balance.asset = { assetId };
     balances.push(balance);
   }
 
   for (const cryptocurrencySymbol of Object.values(CryptocurrencySymbol)) {
-    const balance = fakeSchemaObject('AssetBalance') as AssetBalance;
     balance.asset = { cryptocurrencySymbol };
     balances.push(balance);
   }
 
   for (const nationalCurrencyCode of Object.values(NationalCurrencyCode)) {
-    const balance = fakeSchemaObject('AssetBalance') as AssetBalance;
     balance.asset = { nationalCurrencyCode };
     balances.push(balance);
   }
