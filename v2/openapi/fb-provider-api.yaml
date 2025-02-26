@@ -767,9 +767,9 @@ components:
       description: >-
         Maps balance assets to their balances.
       items:
-        oneOf:
-          - $ref: '#/components/schemas/AssetBalance'
+        anyOf:
           - $ref: '#/components/schemas/AssetCreditBalance'
+          - $ref: '#/components/schemas/AssetBalance'
 
     AssetBalance:
       type: object

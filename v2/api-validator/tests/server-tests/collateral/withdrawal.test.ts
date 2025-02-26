@@ -16,7 +16,7 @@ import config from '../../../src/config';
 import Client from '../../../src/client';
 import { v4 as uuid } from 'uuid';
 
-const noCollateralCapability = !hasCapability('transfers');
+const noCollateralCapability = !hasCapability('collateral');
 
 describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
   const client: Client = new Client();

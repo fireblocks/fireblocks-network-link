@@ -9,7 +9,7 @@ import { v4 as uuid } from 'uuid';
 import config from '../../../src/config';
 import Client from '../../../src/client';
 
-const noCollateralCapability = !hasCapability('transfers');
+const noCollateralCapability = !hasCapability('collateral');
 
 describe.skipIf(noCollateralCapability)('Collateral Settlements', () => {
   const client: Client = new Client();

@@ -402,7 +402,8 @@
           "cryptocurrencySymbol": "EVMOS"
         },
         "availableAmount": "6634155328",
-        "lockedAmount": "490"
+        "lockedAmount": "490",
+        "creditAmount": "1000"
       },
       {
         "id": "2e11a319-0319-41f4-b08b-100d96b46c85",
@@ -410,7 +411,8 @@
           "cryptocurrencySymbol": "FLR"
         },
         "availableAmount": "897",
-        "lockedAmount": "999048"
+        "lockedAmount": "999048",
+        "creditAmount": "1000"
       },
       {
         "id": "25c2a2a6-c0e7-4912-9bdf-8fafa9d45ebe",
