@@ -67,7 +67,10 @@ describe('Balances', () => {
       for (const account of accounts) {
         const balances: Balances = [];
 
-        const getBalances: Pageable<AssetBalance | AssetCreditBalance> = async (limit, startingAfter?) => {
+        const getBalances: Pageable<AssetBalance | AssetCreditBalance> = async (
+          limit,
+          startingAfter?
+        ) => {
           const response = await client.balances.getBalances({
             accountId: account.id,
             limit,
@@ -178,7 +181,10 @@ describe('Balances', () => {
       for (const account of accounts) {
         const historicBalances: Balances = [];
 
-        const getHistoricBalances: Pageable<AssetBalance | AssetCreditBalance> = async (limit, startingAfter?) => {
+        const getHistoricBalances: Pageable<AssetBalance | AssetCreditBalance> = async (
+          limit,
+          startingAfter?
+        ) => {
           const response = await client.historicBalances.getHistoricBalances({
             time,
             accountId: account.id,

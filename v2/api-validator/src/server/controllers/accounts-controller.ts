@@ -100,8 +100,9 @@ function getEveryAssetBalances(knownAdditionalAssetIds: string[]) {
 
   const hasCollateralCapability = hasCapability('collateral');
 
-  let balance = !hasCollateralCapability ? fakeSchemaObject('AssetBalance') as AssetBalance : 
-    fakeSchemaObject('AssetCreditBalance') as AssetCreditBalance;
+  const balance = !hasCollateralCapability
+    ? (fakeSchemaObject('AssetBalance') as AssetBalance)
+    : (fakeSchemaObject('AssetCreditBalance') as AssetCreditBalance);
 
   for (const assetId of knownAdditionalAssetIds) {
     balance.asset = { assetId };
