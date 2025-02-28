@@ -19,12 +19,19 @@ import { v4 as uuid } from 'uuid';
 const noCollateralCapability = !hasCapability('collateral');
 
 describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
-  const client: Client = new Client();
-  const accountId: string = getCapableAccountId('collateral');
-  const collateralId = config.get('collateral.collateralAccount.accountId');
-  const collateralTxId = `0.${uuid()}.${collateralId}`;
+  let client: Client;
+  let accountId: string;
+  let collateralId: string;
+  let collateralTxId: string;
+
   const fireblocksIntentId = uuid();
   const intentApprovalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
+  beforeAll(async () => {
+    client = new Client();
+    accountId = getCapableAccountId('collateral');
+    collateralId = config.get('collateral.collateralAccount.accountId');
+    collateralTxId = `0.${uuid()}.${collateralId}`;
+  });
 
   describe('Create collateral withdrawal transaction (remove collateral) & fetch by collateralTxId ', () => {
     const address: PublicBlockchainAddress[] = JSON.parse(
