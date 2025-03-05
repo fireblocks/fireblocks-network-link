@@ -18,6 +18,7 @@ interface OpenAPI {
     parameters: Record<string, any>;
     headers: Record<string, any>;
     responses: Record<string, any>;
+    requestBodies: Record<string, any>;
     schemas: Record<string, any>;
   };
   [name: string]: any;
@@ -77,6 +78,10 @@ async function makeUnifiedOpenApi() {
       completeOpenAPI.components.responses,
       serviceOpenAPI.components.responses
     );
+    completeOpenAPI.components.requestBodies = _.merge(
+      completeOpenAPI.components.requestBodies,
+      serviceOpenAPI.components.requestBodies
+    );
     for (const key of Object.keys(serviceOpenAPI)) {
       if (key.startsWith('x-')) {
         if (key.endsWith('-params')) {
@@ -87,6 +92,9 @@ async function makeUnifiedOpenApi() {
         }
         if (key.endsWith('-responses')) {
           refReplacements[key] = 'components/responses';
+        }
+        if (key.endsWith('-requestBodies')) {
+          refReplacements[key] = 'components/requestBodies';
         }
         if (key.endsWith('-headers')) {
           refReplacements[key] = 'components/headers';

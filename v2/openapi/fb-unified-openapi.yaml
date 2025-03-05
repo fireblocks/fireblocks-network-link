@@ -14,7 +14,8 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: Placeholder for automatic documentation injection from README.md
+  description: 
+    $ref: README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -40,6 +41,8 @@ tags:
     description: Transfers to a sub account in the same account.
   - name: collateral
     description: Collateral management operations.
+  - name: ramps
+    description: On-ramp, off-ramp and bridging operations.
 paths:
   /capabilities:
     get:
@@ -79,6 +82,7 @@ paths:
                       trading: '*'
                       liquidity: '*'
                       collateral: '*'
+                      ramps: '*'
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:
@@ -2316,6 +2320,108 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/capabilities/ramps:
+    get:
+      operationId: getRampMethods
+      summary: Get list of supported ramp methods
+      tags:
+        - capabilities
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetRampMethodsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/ramps:
+    get:
+      operationId: getRamps
+      summary: Get list of ramps sorted by creation time
+      tags:
+        - ramps
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: '#/components/parameters/ListOrderQueryParam'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetRampsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+    post:
+      operationId: createRamp
+      summary: Initiates a new ramp
+      description: Return the newly created ramp along with it's delivery instructions.
+      tags:
+        - ramps
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+      requestBody:
+        $ref: '#/components/requestBodies/RampRequestBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/CreateRampResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/ramps/{id}:
+    get:
+      operationId: getRampDetails
+      summary: Get details of a specific ramp
+      tags:
+        - ramps
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetRampDetailsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
 components:
   parameters:
     X-FB-PLATFORM-SIGNATURE:
@@ -2484,6 +2590,190 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Withdrawal'
+    GetRampMethodsResponse:
+      description: List of ramps methods for account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RampMethodsResponse'
+          examples:
+            allUsdMethods:
+              summary: USDs ramps
+              description: |-
+                This response indicates that on ramp from USD to USDC, off ramp from USDC to USD  and bridging between USDC and USDC on different blockchains are supported. The USD balance  can be specified directly while tokens must be defined in `GET /capabilities/assets`  and referenced using their IDs.
+                The asset IDs in this example are the same IDs used in the examples of `GET /capabilities/assets`.
+              value:
+                capabilities:
+                  - id: 16b8b2c3-bd61-4745-9c48-3d30c2bc6907
+                    from:
+                      asset:
+                        nationalCurrencyCode: USD
+                      transferMethod: Iban
+                    to:
+                      asset:
+                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                      transferMethod: PublicBlockchain
+                  - id: 69fa4f38-c1fd-4215-a310-82272225c4ef
+                    from:
+                      asset:
+                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                      transferMethod: PublicBlockchain
+                    to:
+                      asset:
+                        nationalCurrencyCode: USD
+                      transferMethod: Iban
+                  - id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
+                    from:
+                      asset:
+                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                      transferMethod: PublicBlockchain
+                    to:
+                      asset:
+                        assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                      transferMethod: PublicBlockchain
+    CreateRampResponse:
+      description: New ramp has been successfully created.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Ramp'
+    GetRampDetailsResponse:
+      description: List of ramps methods for account.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Ramp'
+    GetRampsResponse:
+      description: List of ramps for account.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - ramps
+            properties:
+              ramps:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ramp'
+          examples:
+            allRamps:
+              summary: All ramps
+              description: This response indicates that there are 3 ramps in the account.
+              value:
+                ramps:
+                  - id: 16b8b2c3-bd61-4745-9c48-3d30c2bc6907
+                    createdAt: '2021-09-01T12:00:00Z'
+                    updatedAt: '2021-09-01T12:00:00Z'
+                    status: Created
+                    amount: '1231.45'
+                    type: OnRamp
+                    from:
+                      asset:
+                        nationalCurrencyCode: USD
+                      transferMethod: Iban
+                    to:
+                      asset:
+                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                      transferMethod: PublicBlockchain
+                    deliveryInstructions:
+                      asset:
+                        nationalCurrencyCode: USD
+                      transferMethod: Iban
+                      accountHolder:
+                        name: John Doe
+                        address: 123 Main St, New York, NY 10001
+                      iban: US1234567890
+                    recipient:
+                      asset:
+                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                      transferMethod: PublicBlockchain
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                      tag: 1234567890abcdef
+                  - id: 69fa4f38-c1fd-4215-a310-82272225c4ef
+                    createdAt: '2021-09-01T12:00:00Z'
+                    updatedAt: '2021-09-01T12:00:00Z'
+                    status: Completed
+                    amount: '1231.45'
+                    type: OffRamp
+                    from:
+                      asset:
+                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                      transferMethod: PublicBlockchain
+                    to:
+                      asset:
+                        nationalCurrencyCode: USD
+                      transferMethod: Iban
+                    deliveryInstructions:
+                      asset:
+                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                      transferMethod: PublicBlockchain
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                    recipient:
+                      referenceId: 1234567890abcdef
+                      asset:
+                        nationalCurrencyCode: USD
+                      transferMethod: Iban
+                      accountHolder:
+                        name: John Doe
+                        address: 123 Main St, New York, NY 10001
+                      iban: US1234567890
+                    delivery:
+                      blockchainTxId: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
+                      amount: '1231.45'
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                      asset:
+                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                      transferMethod: PublicBlockchain
+                    receipt:
+                      referenceId: 1234567890abcdef
+                      asset:
+                        nationalCurrencyCode: USD
+                      transferMethod: Iban
+                      accountHolder:
+                        name: John Doe
+                        address: 123 Main St, New York, NY 10001
+                      iban: US1234567890
+                      amount: '1231.45'
+                  - id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
+                    createdAt: '2021-09-01T12:00:00Z'
+                    updatedAt: '2021-09-01T12:00:00Z'
+                    status: DeliveryReceived
+                    amount: '1231.45'
+                    type: Bridge
+                    from:
+                      asset:
+                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                      transferMethod: PublicBlockchain
+                    to:
+                      asset:
+                        assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                      transferMethod: PublicBlockchain
+                    deliveryInstructions:
+                      asset:
+                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                      transferMethod: PublicBlockchain
+                      address: '0x1234567890abcdef1234567890abcdef12355678'
+                    recipient:
+                      asset:
+                        assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                      transferMethod: PublicBlockchain
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                      tag: 1234567890abcdef
+                    delivery:
+                      blockchainTxId: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
+                      amount: '1231.45'
+                      address: '0x1234567890abcdef1234567890abcdef12355678'
+                      asset:
+                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                      transferMethod: PublicBlockchain
+                    receipt:
+                      blockchainTxId: '0x1234567890abcdef1234567899abcdef1234567890abcdef1234567890abcdef'
+                      amount: '1231.45'
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                      asset:
+                        assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                      transferMethod: PublicBlockchain
   schemas:
     GeneralError:
       description: Should be returned only if there in no more specific object.
@@ -2602,6 +2892,8 @@ components:
         liquidity:
           $ref: '#/components/schemas/AccountsSet'
         collateral:
+          $ref: '#/components/schemas/AccountsSet'
+        ramps:
           $ref: '#/components/schemas/AccountsSet'
     AccountsSet:
       description: Indicates to which sub-accounts an operation applies. The value could be either a list of sub-account IDs or "*". The value "*" indicates all the sub-accounts.
@@ -2804,6 +3096,18 @@ components:
       oneOf:
         - $ref: '#/components/schemas/NativeCryptocurrency'
         - $ref: '#/components/schemas/OtherAssetReference'
+    FiatCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          enum:
+            - Iban
+            - Swift
     PublicBlockchainCapability:
       type: object
       required:
@@ -3764,6 +4068,15 @@ components:
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
         - $ref: '#/components/schemas/OtherFiatTransfer'
+    FiatDepositDestination:
+      allOf:
+        - type: object
+          properties:
+            referenceId:
+              type: string
+        - oneOf:
+            - $ref: '#/components/schemas/IbanAddress'
+            - $ref: '#/components/schemas/SwiftAddress'
     DepositDestination:
       oneOf:
         - $ref: '#/components/schemas/PublicBlockchainAddress'
@@ -4429,4 +4742,207 @@ components:
           type: string
           description: |
             A unique identifier of the settlement state version. This field is optional and can be used to indicate the version of the settlement state the client is referring to.
+    RampMethodsResponse:
+      type: object
+      required:
+        - capabilities
+      properties:
+        capabilities:
+          type: array
+          items:
+            $ref: '#/components/schemas/RampMethod'
+    OnRampCapability:
+      type: object
+      required:
+        - from
+        - to
+      properties:
+        from:
+          $ref: '#/components/schemas/FiatCapability'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
+    OffRampCapability:
+      type: object
+      required:
+        - from
+        - to
+      properties:
+        from:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
+        to:
+          $ref: '#/components/schemas/FiatCapability'
+    BridgeCapability:
+      type: object
+      required:
+        - from
+        - to
+      properties:
+        from:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
+    RampMethod:
+      allOf:
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+        - oneOf:
+            - $ref: '#/components/schemas/OnRampCapability'
+            - $ref: '#/components/schemas/OffRampCapability'
+            - $ref: '#/components/schemas/BridgeCapability'
+    OnRampProperties:
+      type: object
+      required:
+        - type
+        - from
+        - to
+        - recipient
+      properties:
+        type:
+          type: string
+          enum:
+            - OnRamp
+        from:
+          $ref: '#/components/schemas/FiatCapability'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
+        recipient:
+          $ref: '#/components/schemas/PublicBlockchainAddress'
+    OffRampProperties:
+      type: object
+      required:
+        - type
+        - from
+        - to
+        - recipient
+      properties:
+        type:
+          type: string
+          enum:
+            - OffRamp
+        from:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
+        to:
+          $ref: '#/components/schemas/FiatCapability'
+        recipient:
+          $ref: '#/components/schemas/FiatDepositDestination'
+    BridgeProperties:
+      type: object
+      required:
+        - type
+        - from
+        - to
+        - recipient
+      properties:
+        type:
+          type: string
+          enum:
+            - Bridge
+        from:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
+        recipient:
+          $ref: '#/components/schemas/PublicBlockchainAddress'
+    CommonRampRequestProperties:
+      type: object
+      required:
+        - idempotencyKey
+      properties:
+        idempotencyKey:
+          type: string
+        amount:
+          $ref: '#/components/schemas/PositiveAmount'
+    RampRequest:
+      allOf:
+        - $ref: '#/components/schemas/CommonRampRequestProperties'
+        - oneOf:
+            - $ref: '#/components/schemas/OnRampProperties'
+            - $ref: '#/components/schemas/OffRampProperties'
+            - $ref: '#/components/schemas/BridgeProperties'
+    CommonRamp:
+      type: object
+      required:
+        - id
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum:
+            - Created
+            - PendingDelivery
+            - DeliveryReceived
+            - ReceiptSubmitted
+            - Completed
+            - Failed
+        amount:
+          $ref: '#/components/schemas/PositiveAmount'
+    OnRampTransfer:
+      allOf:
+        - $ref: '#/components/schemas/CommonRamp'
+        - $ref: '#/components/schemas/OnRampProperties'
+        - type: object
+          required:
+            - deliveryInstructions
+          properties:
+            deliveryInstructions:
+              $ref: '#/components/schemas/FiatDepositDestination'
+            delivery:
+              $ref: '#/components/schemas/FiatTransfer'
+            receipt:
+              $ref: '#/components/schemas/PublicBlockchainTransaction'
+    OffRampTransfer:
+      allOf:
+        - $ref: '#/components/schemas/CommonRamp'
+        - $ref: '#/components/schemas/OffRampProperties'
+        - type: object
+          required:
+            - deliveryInstructions
+          properties:
+            deliveryInstructions:
+              $ref: '#/components/schemas/PublicBlockchainAddress'
+            delivery:
+              $ref: '#/components/schemas/PublicBlockchainTransaction'
+            receipt:
+              $ref: '#/components/schemas/FiatTransfer'
+    BridgeTransfer:
+      allOf:
+        - $ref: '#/components/schemas/CommonRamp'
+        - $ref: '#/components/schemas/BridgeProperties'
+        - type: object
+          required:
+            - deliveryInstructions
+          properties:
+            deliveryInstructions:
+              $ref: '#/components/schemas/PublicBlockchainAddress'
+            delivery:
+              $ref: '#/components/schemas/PublicBlockchainTransaction'
+            receipt:
+              $ref: '#/components/schemas/PublicBlockchainTransaction'
+    Ramp:
+      oneOf:
+        - $ref: '#/components/schemas/OnRampTransfer'
+        - $ref: '#/components/schemas/OffRampTransfer'
+        - $ref: '#/components/schemas/BridgeTransfer'
   securitySchemes: {}
+  requestBodies:
+    RampRequestBody:
+      description: Ramp details
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RampRequest'

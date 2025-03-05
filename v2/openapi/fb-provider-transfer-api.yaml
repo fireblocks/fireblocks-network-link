@@ -1082,7 +1082,6 @@ components:
     FiatDepositDestination:
       allOf:
         - type: object
-          required: [referenceId]
           properties:
             referenceId:
               type: string

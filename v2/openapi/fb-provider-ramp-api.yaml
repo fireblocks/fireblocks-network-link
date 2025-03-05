@@ -10,8 +10,8 @@ info:
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
-  - name: Ramps
-    description: Fund transfers management operations.
+  - name: ramps
+    description: On-ramp, off-ramp and bridging operations.
 
 x-path-params:
   EntityIdPathParam:
@@ -112,7 +112,7 @@ paths:
     get:
       operationId: getRamps
       summary: Get list of ramps sorted by creation time
-      tags: [Ramps]
+      tags: [ramps]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
         - $ref: "#/x-header-params/X-FBAPI-NONCE"
@@ -138,7 +138,7 @@ paths:
       operationId: createRamp
       summary: Initiates a new ramp
       description: Return the newly created ramp along with it's delivery instructions.
-      tags: [Ramps]
+      tags: [ramps]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
         - $ref: "#/x-header-params/X-FBAPI-NONCE"
@@ -163,7 +163,7 @@ paths:
     get:
       operationId: getRampDetails
       summary: Get details of a specific ramp
-      tags: [Ramps]
+      tags: [ramps]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
         - $ref: "#/x-header-params/X-FBAPI-NONCE"
@@ -297,6 +297,9 @@ components:
                         address: "123 Main St, New York, NY 10001"
                       iban: "US1234567890"
                     recipient:
+                      asset:
+                        assetId: "360de0ad-9ba1-45d5-8074-22453f193d65"
+                      transferMethod: "PublicBlockchain"
                       address: "0x1234567890abcdef1234567890abcdef12345678"
                       tag: "1234567890abcdef"
                   - id: "69fa4f38-c1fd-4215-a310-82272225c4ef"
@@ -362,26 +365,27 @@ components:
                       asset:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
-                      address: "0x1234567890abcdef1234567890abcdef12345678"
+                      address: "0x1234567890abcdef1234567890abcdef12355678"
                     recipient:
+                      asset:
+                        assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff"
+                      transferMethod: "PublicBlockchain"
                       address: "0x1234567890abcdef1234567890abcdef12345678"
                       tag: "1234567890abcdef"
                     delivery:
                       blockchainTxId: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
                       amount: "1231.45"
-                      address: "0x1234567890abcdef1234567890abcdef12345678"
+                      address: "0x1234567890abcdef1234567890abcdef12355678"
                       asset:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
                     receipt:
-                      referenceId: "1234567890abcdef"
+                      blockchainTxId: "0x1234567890abcdef1234567899abcdef1234567890abcdef1234567890abcdef"
+                      amount: "1231.45"
+                      address: "0x1234567890abcdef1234567890abcdef12345678"
                       asset:
-                        nationalCurrencyCode: "USD"
-                      transferMethod: "Iban"
-                      accountHolder:
-                        name: "John Doe"
-                        address: "123 Main St, New York, NY 10001"
-                      iban: "US1234567890"
+                        assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" # USDC on Polygon
+                      transferMethod: "PublicBlockchain"
 
   schemas:
     RampMethodsResponse:
