@@ -155,7 +155,7 @@ export class TransfersService {
     }
 
     /**
-     * Get list of deposits sorted by creation time
+     * Get list of deposits sorted by creation time in a descending order
      * @returns any Deposits details.
      * @throws ApiError
      */

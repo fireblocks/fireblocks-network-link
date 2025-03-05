@@ -5,10 +5,12 @@
 
 import type { AssetReference } from './AssetReference';
 import type { PublicBlockchainTransactionDestination } from './PublicBlockchainTransactionDestination';
+import type { TravelRule } from './TravelRule';
 import type { WithdrawalRequestCommonProperties } from './WithdrawalRequestCommonProperties';
 
 export type BlockchainWithdrawalRequest = (WithdrawalRequestCommonProperties & {
     balanceAsset: AssetReference;
     destination: PublicBlockchainTransactionDestination;
+    travelRule?: TravelRule;
 });
 

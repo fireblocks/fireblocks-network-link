@@ -14,7 +14,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description:
+  description: 
     $ref: README.md
 tags:
   - name: capabilities
@@ -3866,6 +3866,99 @@ components:
           $ref: '#/components/schemas/AssetReference'
         minWithdrawalAmount:
           $ref: '#/components/schemas/PositiveAmount'
+    Address:
+      type: object
+      description: Information that locates and identifies a specific address, presented in free format text.
+      properties:
+        streetName:
+          type: string
+        buildingNumber:
+          type: string
+        postalCode:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        province:
+          type: string
+        district:
+          type: string
+        country:
+          $ref: '#/components/schemas/NationalCurrencyCode'
+    FullName:
+      type: object
+      description: PII first name and lat name information.
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+    PersonaIdentificationInfo:
+      type: object
+      description: Personal information about the beneficiary of the transaction.
+      properties:
+        entityType:
+          $ref: '#/components/schemas/EntityType'
+        externalReferenceId:
+          type: string
+        relationshipType:
+          $ref: '#/components/schemas/RelationshipType'
+        fullName:
+          $ref: '#/components/schemas/FullName'
+        dateOfBirth:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+    BusinessIdentificationInfo:
+      type: object
+      description: Buisness information about the beneficiary of the transaction.
+      properties:
+        entityType:
+          $ref: '#/components/schemas/EntityType'
+        externalReferenceId:
+          type: string
+        relationshipType:
+          $ref: '#/components/schemas/RelationshipType'
+        businessName:
+          type: string
+        registrationNumber:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+    Originator:
+      description: Information about the originator of the transaction.
+      oneOf:
+        - type: object
+          properties:
+            personaIdentificationInfo:
+              $ref: '#/components/schemas/PersonaIdentificationInfo'
+        - type: object
+          properties:
+            businessIdentificationInfo:
+              $ref: '#/components/schemas/BusinessIdentificationInfo'
+    Beneficiary:
+      description: Information about the beneficiary of the transaction.
+      oneOf:
+        - type: object
+          properties:
+            personaIdentificationInfo:
+              $ref: '#/components/schemas/PersonaIdentificationInfo'
+        - type: object
+          properties:
+            businessIdentificationInfo:
+              $ref: '#/components/schemas/BusinessIdentificationInfo'
+    TravelRule:
+      description: Travel Rule compliance requires VASPs to share originator and beneficiary details for qualifying transactions.  The `travelRule` object ensures that either an `originator` or `beneficiary` is provided, facilitating secure and compliant data exchange.
+      anyOf:
+        - type: object
+          properties:
+            originator:
+              $ref: '#/components/schemas/Originator'
+        - type: object
+          properties:
+            beneficiary:
+              $ref: '#/components/schemas/Beneficiary'
     WithdrawalRequestCommonProperties:
       type: object
       required:
@@ -3900,6 +3993,8 @@ components:
               $ref: '#/components/schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
+            travelRule:
+              $ref: '#/components/schemas/TravelRule'
     PeerAccountWithdrawalRequest:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
@@ -4025,6 +4120,15 @@ components:
       enum:
         - CanCreate
         - CannotCreate
+    EntityType:
+      enum:
+        - Individual
+        - Business
+    RelationshipType:
+      enum:
+        - FirstParty
+        - SecondParty
+        - ThirdParty
     CollateralId:
       type: string
       description: Unique string representing the collateral account Id (<cvaTenantId>.<accountId>.<tenantId>)
