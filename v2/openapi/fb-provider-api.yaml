@@ -71,6 +71,7 @@ paths:
                       trading: "*"
                       liquidity: "*"
                       collateral: "*"
+                      ramps: "*"
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:
@@ -711,6 +712,12 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         collateral:
           $ref: '#/components/schemas/AccountsSet'
+        crossTransfersOnRamp:
+          $ref: '#/components/schemas/AccountsSet'
+        crossTransfersOffRamp:
+          $ref: '#/components/schemas/AccountsSet'
+        crossTransfersBridge:
+          $ref: '#/components/schemas/AccountsSet'
 
     AccountsSet:
       description: >-
@@ -909,6 +916,15 @@ components:
         - $ref: '#/components/schemas/NativeCryptocurrency'
         - $ref: '#/components/schemas/OtherAssetReference'
 
+
+    FiatCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          enum: [ Iban, Swift ]
 
     PublicBlockchainCapability:
       type: object
