@@ -712,11 +712,7 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         collateral:
           $ref: '#/components/schemas/AccountsSet'
-        crossTransfersOnRamp:
-          $ref: '#/components/schemas/AccountsSet'
-        crossTransfersOffRamp:
-          $ref: '#/components/schemas/AccountsSet'
-        crossTransfersBridge:
+        ramps:
           $ref: '#/components/schemas/AccountsSet'
 
     AccountsSet:
