@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: '[Draft] Fireblocks Provider Transfer API'
+  title: '[ Draft ] Fireblocks Provider Transfer API'
   version: 0.0.1
 
   contact:
@@ -56,7 +56,7 @@ paths:
     get:
       operationId: getWithdrawalMethods
       summary: Get list of supported withdrawal methods
-      tags: [capabilities]
+      tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -73,7 +73,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [capabilities]
+                required: [ capabilities ]
                 properties:
                   capabilities:
                     type: array
@@ -139,7 +139,7 @@ paths:
     get:
       operationId: getDepositMethods
       summary: Get list of supported deposit methods
-      tags: [capabilities]
+      tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -156,7 +156,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [capabilities]
+                required: [ capabilities ]
                 properties:
                   capabilities:
                     type: array
@@ -228,7 +228,7 @@ paths:
     get:
       operationId: getWithdrawals
       summary: Get list of withdrawals sorted by creation time
-      tags: [transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -255,7 +255,7 @@ paths:
     get:
       operationId: getWithdrawalDetails
       summary: Get withdrawal details
-      tags: [transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -283,7 +283,7 @@ paths:
     get:
       operationId: getBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
-      tags: [transfersBlockchain]
+      tags: [ transfersBlockchain ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -301,7 +301,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [withdrawals]
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array
@@ -319,7 +319,7 @@ paths:
       operationId: createBlockchainWithdrawal
       summary: Create new withdrawal over public blockchain
       description: Should reject any non blockchain withdrawal request.
-      tags: [transfersBlockchain]
+      tags: [ transfersBlockchain ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -353,7 +353,7 @@ paths:
     get:
       operationId: getFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
-      tags: [transfersFiat]
+      tags: [ transfersFiat ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -371,7 +371,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [withdrawals]
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array
@@ -389,7 +389,7 @@ paths:
       operationId: createFiatWithdrawal
       summary: Create new fiat withdrawal
       description: Should reject any non fiat withdrawal request.
-      tags: [transfersFiat]
+      tags: [ transfersFiat ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -423,7 +423,7 @@ paths:
     get:
       operationId: getPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
-      tags: [transfersPeerAccounts]
+      tags: [ transfersPeerAccounts ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -441,7 +441,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [withdrawals]
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array
@@ -460,7 +460,7 @@ paths:
       operationId: createPeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
       description: Should reject any non peer acount withdrawal request.
-      tags: [transfersPeerAccounts]
+      tags: [ transfersPeerAccounts ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -494,7 +494,7 @@ paths:
     get:
       operationId: getSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
-      tags: [transfersInternal]
+      tags: [ transfersInternal ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -512,7 +512,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [withdrawals]
+                required: [ withdrawals ]
                 properties:
                   withdrawals:
                     type: array
@@ -533,7 +533,7 @@ paths:
         Transfers assets between different sub-accounts of the same user. Should reject any withdrawals that are not sub-account transfers.
 
 
-      tags: [transfersInternal]
+      tags: [ transfersInternal ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -567,7 +567,7 @@ paths:
     get:
       operationId: getDeposits
       summary: Get list of deposits sorted by creation time in a descending order
-      tags: [transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -584,7 +584,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [deposits]
+                required: [ deposits ]
                 properties:
                   deposits:
                     type: array
@@ -603,7 +603,7 @@ paths:
     get:
       operationId: getDepositDetails
       summary: Get deposit details
-      tags: [transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -631,7 +631,7 @@ paths:
     post:
       operationId: createDepositAddress
       summary: Create new deposit address
-      tags: [transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -663,7 +663,7 @@ paths:
     get:
       operationId: getDepositAddresses
       summary: Get list of existing deposit addresses
-      tags: [transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -680,7 +680,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [addresses]
+                required: [ addresses ]
                 properties:
                   addresses:
                     type: array
@@ -699,7 +699,7 @@ paths:
     get:
       operationId: getDepositAddressDetails
       summary: Get details of a deposit address
-      tags: [transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -726,7 +726,7 @@ paths:
     delete:
       operationId: disableDepositAddress
       summary: Disable a deposit address
-      tags: [transfers]
+      tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -754,7 +754,7 @@ components:
         application/json:
           schema:
             type: object
-            required: [withdrawals]
+            required: [ withdrawals ]
             properties:
               withdrawals:
                 type: array
@@ -764,7 +764,7 @@ components:
   schemas:
     AccountHolderDetails:
       type: object
-      required: [name]
+      required: [ name ]
       properties:
         name:
           description: Full name of the account holder.
@@ -785,22 +785,22 @@ components:
 
     Iban:
       type: string
-      pattern: ^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$
+      pattern: ^[ A-Z ]{2}\d{2}[ a-zA-Z0-9 ]{1,30}$
 
     IbanCapability:
       type: object
-      required: [asset, transferMethod]
+      required: [ asset, transferMethod ]
       properties:
         asset:
           $ref: '#/x-schemas/NationalCurrency'
         transferMethod:
-          enum: [Iban]
+          enum: [ Iban ]
 
     IbanAddress:
       allOf:
         - $ref: '#/components/schemas/IbanCapability'
         - type: object
-          required: [accountHolder, iban]
+          required: [ accountHolder, iban ]
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
@@ -811,7 +811,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/IbanAddress'
         - type: object
-          required: [amount]
+          required: [ amount ]
           properties:
             amount:
               $ref: '#/x-schemas/PositiveAmount'
@@ -826,22 +826,22 @@ components:
 
     SwiftCode:
       type: string
-      pattern: ^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      pattern: ^[ A-Z ]{6}[ A-Z0-9 ]{2}([ A-Z0-9 ]{3})?$
 
     SwiftCapability:
       type: object
-      required: [asset, transferMethod]
+      required: [ asset, transferMethod ]
       properties:
         asset:
           $ref: '#/x-schemas/NationalCurrency'
         transferMethod:
-          enum: [Swift]
+          enum: [ Swift ]
 
     SwiftAddress:
       allOf:
         - $ref: '#/components/schemas/SwiftCapability'
         - type: object
-          required: [accountHolder, swiftCode, routingNumber]
+          required: [ accountHolder, swiftCode, routingNumber ]
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
@@ -855,7 +855,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/SwiftAddress'
         - type: object
-          required: [amount]
+          required: [ amount ]
           properties:
             amount:
               $ref: '#/x-schemas/PositiveAmount'
@@ -874,10 +874,10 @@ components:
         Used for historic fiat transfers that do not fit a more specific transfer method.  It is impossible to create new deposits or withdrawal of this type using this API.
 
 
-      required: [transferMethod, asset, amount, description]
+      required: [ transferMethod, asset, amount, description ]
       properties:
         transferMethod:
-          enum: [OtherFiat]
+          enum: [ OtherFiat ]
         asset:
           $ref: '#/x-schemas/NationalCurrency'
         amount:
@@ -894,7 +894,7 @@ components:
       allOf:
         - $ref: '#/x-schemas/PublicBlockchainAddress'
         - type: object
-          required: [amount]
+          required: [ amount ]
           properties:
             amount:
               $ref: '#/x-schemas/PositiveAmount'
@@ -910,7 +910,7 @@ components:
 
     PeerAccountTransferCapability:
       type: object
-      required: [asset, transferMethod]
+      required: [ asset, transferMethod ]
       properties:
         asset:
           $ref: '#/x-schemas/AssetReference'
@@ -920,7 +920,7 @@ components:
 
     InternalTransferMethod:
       type: object
-      required: [asset, transferMethod]
+      required: [ asset, transferMethod ]
       properties:
         asset:
           $ref: '#/x-schemas/AssetReference'
@@ -933,7 +933,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/InternalTransferMethod'
         - type: object
-          required: [destinationPolicy]
+          required: [ destinationPolicy ]
           properties:
             destinationPolicy:
               $ref: '#/components/schemas/InternalTransferDestinationPolicy'
@@ -953,7 +953,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/PeerAccountTransferCapability'
         - type: object
-          required: [accountId]
+          required: [ accountId ]
           properties:
             accountId:
               type: string
@@ -963,7 +963,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/PeerAccountTransferAddress'
         - type: object
-          required: [amount]
+          required: [ amount ]
           properties:
             amount:
               $ref: '#/x-schemas/PositiveAmount'
@@ -973,7 +973,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/InternalTransferMethod'
         - type: object
-          required: [accountId]
+          required: [ accountId ]
           properties:
             accountId:
               type: string
@@ -983,7 +983,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/InternalTransferAddress'
         - type: object
-          required: [amount]
+          required: [ amount ]
           properties:
             amount:
               $ref: '#/x-schemas/PositiveAmount'
@@ -1055,7 +1055,7 @@ components:
 
     DepositAddress:
       type: object
-      required: [id, destination, status]
+      required: [ id, destination, status ]
       properties:
         id:
           type: string
@@ -1066,7 +1066,7 @@ components:
 
     DepositAddressCreationRequest:
       type: object
-      required: [idempotencyKey, transferMethod]
+      required: [ idempotencyKey, transferMethod ]
       properties:
         idempotencyKey:
           type: string
@@ -1082,7 +1082,7 @@ components:
         Capability to deposit to a balance asset using a specific transfer capability. `addressCreationPolicy` determines whether new deposit addresses could be requested for this deposit capability.
 
 
-      required: [id, deposit, balanceAsset, addressCreationPolicy]
+      required: [ id, deposit, balanceAsset, addressCreationPolicy ]
       properties:
         id:
           type: string
@@ -1095,7 +1095,7 @@ components:
 
     Deposit:
       type: object
-      required: [id, balanceAsset, balanceAmount, source, status, createdAt]
+      required: [ id, balanceAsset, balanceAmount, source, status, createdAt ]
       properties:
         id:
           type: string
@@ -1125,7 +1125,7 @@ components:
         Capability to withdraw a balance asset using a specific transfer capability. `minWithdrawalAmount` is the minimum amount of the balance currency that can be withdrawn using this capability. If `minWithdrawalAmount` is not specified, it will be assumed that the minimum withdrawal amount is zero.
 
 
-      required: [id, withdrawal, balanceAsset]
+      required: [ id, withdrawal, balanceAsset ]
       properties:
         id:
           type: string
@@ -1138,7 +1138,7 @@ components:
 
     WithdrawalRequestCommonProperties:
       type: object
-      required: [idempotencyKey, balanceAmount]
+      required: [ idempotencyKey, balanceAmount ]
       properties:
         idempotencyKey:
           type: string
@@ -1149,7 +1149,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
-          required: [balanceAsset, destination]
+          required: [ balanceAsset, destination ]
           properties:
             balanceAsset:
               $ref: '#/x-schemas/AssetReference'
@@ -1160,7 +1160,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
-          required: [balanceAsset, destination]
+          required: [ balanceAsset, destination ]
           properties:
             balanceAsset:
               $ref: '#/x-schemas/AssetReference'
@@ -1171,7 +1171,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
-          required: [balanceAsset, destination]
+          required: [ balanceAsset, destination ]
           properties:
             balanceAsset:
               $ref: '#/x-schemas/AssetReference'
@@ -1182,7 +1182,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
         - type: object
-          required: [balanceAsset, destination]
+          required: [ balanceAsset, destination ]
           properties:
             balanceAsset:
               $ref: '#/x-schemas/AssetReference'
@@ -1191,7 +1191,7 @@ components:
 
     WithdrawalCommonProperties:
       type: object
-      required: [id, balanceAsset, balanceAmount, status, createdAt]
+      required: [ id, balanceAsset, balanceAmount, status, createdAt ]
       properties:
         id:
           type: string
@@ -1218,7 +1218,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalCommonProperties'
         - type: object
-          required: [destination]
+          required: [ destination ]
           properties:
             destination:
               $ref: '#/components/schemas/FiatTransfer'
@@ -1227,7 +1227,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalCommonProperties'
         - type: object
-          required: [destination]
+          required: [ destination ]
           properties:
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransaction'
@@ -1236,7 +1236,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalCommonProperties'
         - type: object
-          required: [destination]
+          required: [ destination ]
           properties:
             destination:
               $ref: '#/components/schemas/PeerAccountTransfer'
@@ -1245,7 +1245,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/WithdrawalCommonProperties'
         - type: object
-          required: [destination]
+          required: [ destination ]
           properties:
             destination:
               $ref: '#/components/schemas/InternalTransfer'
@@ -1263,7 +1263,7 @@ components:
         Describes an event during withdrawal processing. The granularity and verbosity of the events it at the discretion of the API implementor.
 
 
-      required: [status, message, createdAt]
+      required: [ status, message, createdAt ]
       properties:
         status:
           $ref: '#/components/schemas/WithdrawalStatus'
