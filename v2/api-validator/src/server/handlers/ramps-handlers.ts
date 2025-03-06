@@ -1,6 +1,6 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { Ramp, RampMethod } from '../../client/generated';
+import { Ramp, RampMethod, RampRequest } from '../../client/generated';
 import { ControllersContainer } from '../controllers/controllers-container';
 import { RampNotFoundError, RampsController } from '../controllers/ramps-controller';
 import {
@@ -82,3 +82,19 @@ export async function getRampDetails(
 }
 
 // createRamp
+type CreateRampRequestBody = { Body: RampRequest };
+
+export async function createRamp(
+  { body, params }: FastifyRequest<AccountIdPathParam & CreateRampRequestBody>,
+  reply: FastifyReply
+): Promise<RampMethod> {
+  const { accountId } = params;
+  const controller = controllers.getController(accountId);
+  if (!controller) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  return controller.createRamp(body);
+}
+
+// getRampDetails

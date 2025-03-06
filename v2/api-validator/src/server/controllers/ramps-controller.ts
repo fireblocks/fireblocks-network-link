@@ -1,9 +1,24 @@
 import { JSONSchemaFaker } from 'json-schema-faker';
 import _ from 'lodash';
-import { Ramp, RampMethod } from '../../client/generated';
 import { fakeSchemaObject } from '../../schemas';
 import { AssetsController } from './assets-controller';
 import { Repository } from './repository';
+import {
+  BridgeProperties,
+  CommonRamp,
+  FiatCapability,
+  IbanAddress,
+  OffRampProperties,
+  OffRampTransfer,
+  OnRampProperties,
+  OnRampTransfer,
+  PublicBlockchainAddress,
+  Ramp,
+  RampMethod,
+  RampRequest,
+  SwiftAddress,
+} from '../../client/generated';
+import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
 
 const RAMPS_COUNT = 10;
@@ -68,6 +83,50 @@ export class RampsController {
       throw new RampNotFoundError();
     }
     return ramp;
+  }
+
+  public createRamp(ramp: RampRequest): Ramp {
+    if (
+      ramp.type === OffRampProperties.type.OFF_RAMP ||
+      ramp.type === BridgeProperties.type.BRIDGE
+    ) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { idempotencyKey, ...rampProps } = ramp;
+      const deliveryInstructions: OffRampTransfer['deliveryInstructions'] = fakeSchemaObject(
+        'PublicBlockchainAddress'
+      ) as PublicBlockchainAddress;
+      const newRamp: Ramp = {
+        ...rampProps,
+        id: randomUUID(),
+        deliveryInstructions,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        status: CommonRamp.status.CREATED,
+      };
+      this.rampsRepository.create(newRamp);
+      return newRamp;
+    }
+    if (ramp.type === OnRampProperties.type.ON_RAMP) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { idempotencyKey, ...rampProps } = ramp;
+      const deliveryInstructions: OnRampTransfer['deliveryInstructions'] = {
+        ...(ramp.from.transferMethod === FiatCapability.transferMethod.IBAN
+          ? (fakeSchemaObject('IbanAddress') as IbanAddress)
+          : (fakeSchemaObject('SwiftAddress') as SwiftAddress)),
+        asset: ramp.from.asset,
+      };
+      const newRamp: Ramp = {
+        ...rampProps,
+        id: randomUUID(),
+        deliveryInstructions,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        status: CommonRamp.status.CREATED,
+      };
+      this.rampsRepository.create(newRamp);
+      return newRamp;
+    }
+    throw new XComError('Invalid ramp type', { ramp });
   }
 }
 

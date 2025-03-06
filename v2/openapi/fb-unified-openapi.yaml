@@ -4851,6 +4851,7 @@ components:
       type: object
       required:
         - idempotencyKey
+        - amount
       properties:
         idempotencyKey:
           type: string
