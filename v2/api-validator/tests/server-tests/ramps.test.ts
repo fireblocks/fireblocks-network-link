@@ -39,6 +39,32 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         }
       }
     });
+
+    it('should return at least one capability per account', () => {
+      for (const capabilities of rampCapabilitiesMap.values()) {
+        expect(capabilities.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('should return unique capabilities per account', () => {
+      const hasDuplicatesCapability = (capabilities: RampMethod[]) => {
+        const seen = new Set<string>();
+        for (const item of capabilities) {
+          const key = JSON.stringify({ from: item.from, to: item.to });
+          if (seen.has(key)) {
+            return true;
+          }
+          seen.add(key);
+        }
+        return false;
+      };
+
+      for (const capabilities of rampCapabilitiesMap.values()) {
+        const uniqueCapabilities = new Set(capabilities.map((capability) => capability.id));
+        expect(hasDuplicatesCapability(capabilities)).toBeFalsy();
+        expect(uniqueCapabilities.size).toEqual(capabilities.length);
+      }
+    });
   });
 
   describe('Get ramps', () => {
