@@ -1,8 +1,18 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { Ramp, RampMethod, RampRequest } from '../../client/generated';
+import {
+  BadRequestError,
+  Ramp,
+  RampMethod,
+  RampRequest,
+  RequestPart,
+} from '../../client/generated';
 import { ControllersContainer } from '../controllers/controllers-container';
-import { RampNotFoundError, RampsController } from '../controllers/ramps-controller';
+import {
+  RampNotFoundError,
+  RampsController,
+  UnsupportedRampMethod,
+} from '../controllers/ramps-controller';
 import {
   AccountIdPathParam,
   EntityIdPathParam,
@@ -10,6 +20,7 @@ import {
   PaginationQuerystring,
 } from './request-types';
 import { getPaginationResult } from '../controllers/pagination-controller';
+import { UnknownAssetError } from '../controllers/withdrawal-controller';
 
 const controllers = new ControllersContainer(() => new RampsController());
 type RampMethodResponse = { capabilities: RampMethod[] };
@@ -93,8 +104,25 @@ export async function createRamp(
   if (!controller) {
     return ErrorFactory.notFound(reply);
   }
-
-  return controller.createRamp(body);
+  try {
+    return controller.createRamp(body);
+  } catch (err) {
+    if (err instanceof UnknownAssetError) {
+      return ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.UNKNOWN_ASSET,
+        requestPart: RequestPart.BODY,
+      });
+    }
+    if (err instanceof UnsupportedRampMethod) {
+      return ErrorFactory.badRequest(reply, {
+        message: err.message,
+        errorType: BadRequestError.errorType.UNSUPPORTED_RAMP_METHOD,
+        requestPart: RequestPart.BODY,
+      });
+    }
+    throw err;
+  }
 }
 
 // getRampDetails

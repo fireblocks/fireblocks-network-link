@@ -20,6 +20,7 @@ import {
 } from '../../client/generated';
 import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
+import { UnknownAssetError } from './withdrawal-controller';
 
 const RAMPS_COUNT = 10;
 const RAMP_CAPABILITIES_COUNT = 5;
@@ -28,6 +29,12 @@ type Order = 'asc' | 'desc';
 export class RampNotFoundError extends XComError {
   constructor() {
     super('Ramp not found');
+  }
+}
+
+export class UnsupportedRampMethod extends XComError {
+  constructor() {
+    super('Unsupported ramp method');
   }
 }
 
@@ -68,6 +75,23 @@ export class RampsController {
     return capabilities;
   }
 
+  private validateRampRequest(ramp: RampRequest) {
+    if (
+      !AssetsController.isKnownAsset(ramp.from.asset) ||
+      !AssetsController.isKnownAsset(ramp.to.asset) ||
+      !AssetsController.isKnownAsset(ramp.recipient.asset)
+    ) {
+      throw new UnknownAssetError();
+    }
+
+    const capability = this.rampMethodRepository.findBy(
+      (c) => _.isEqual(c.from, ramp.from) && _.isEqual(c.to, ramp.to)
+    );
+    if (!capability) {
+      throw new UnsupportedRampMethod();
+    }
+  }
+
   public getRampMethods(): RampMethod[] {
     return this.rampMethodRepository.list();
   }
@@ -86,47 +110,39 @@ export class RampsController {
   }
 
   public createRamp(ramp: RampRequest): Ramp {
+    this.validateRampRequest(ramp);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { idempotencyKey, ...rampProps } = ramp;
+    let deliveryInstructions;
     if (
       ramp.type === OffRampProperties.type.OFF_RAMP ||
       ramp.type === BridgeProperties.type.BRIDGE
     ) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { idempotencyKey, ...rampProps } = ramp;
-      const deliveryInstructions: OffRampTransfer['deliveryInstructions'] = fakeSchemaObject(
-        'PublicBlockchainAddress'
-      ) as PublicBlockchainAddress;
-      const newRamp: Ramp = {
-        ...rampProps,
-        id: randomUUID(),
-        deliveryInstructions,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        status: CommonRamp.status.CREATED,
+      deliveryInstructions = {
+        ...(fakeSchemaObject('PublicBlockchainAddress') as PublicBlockchainAddress),
+        asset: ramp.to.asset,
       };
-      this.rampsRepository.create(newRamp);
-      return newRamp;
-    }
-    if (ramp.type === OnRampProperties.type.ON_RAMP) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { idempotencyKey, ...rampProps } = ramp;
-      const deliveryInstructions: OnRampTransfer['deliveryInstructions'] = {
+    } else if (ramp.type === OnRampProperties.type.ON_RAMP) {
+      deliveryInstructions = {
         ...(ramp.from.transferMethod === FiatCapability.transferMethod.IBAN
           ? (fakeSchemaObject('IbanAddress') as IbanAddress)
           : (fakeSchemaObject('SwiftAddress') as SwiftAddress)),
         asset: ramp.from.asset,
       };
-      const newRamp: Ramp = {
-        ...rampProps,
-        id: randomUUID(),
-        deliveryInstructions,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        status: CommonRamp.status.CREATED,
-      };
-      this.rampsRepository.create(newRamp);
-      return newRamp;
+    } else {
+      throw new XComError('Invalid ramp type', { ramp });
     }
-    throw new XComError('Invalid ramp type', { ramp });
+
+    const newRamp: Ramp = {
+      ...rampProps,
+      id: randomUUID(),
+      deliveryInstructions,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: CommonRamp.status.CREATED,
+    };
+    this.rampsRepository.create(newRamp);
+    return newRamp;
   }
 }
 
