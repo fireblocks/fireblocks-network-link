@@ -1,7 +1,7 @@
 import Client from '../../src/client';
 import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
 import { AssetsDirectory } from '../utils/assets-directory';
-import { AssetReference, RampMethod } from '../../src/client/generated';
+import { AssetReference, Ramp, RampMethod } from '../../src/client/generated';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 
 const noRampsCapability = !hasCapability('ramps');
@@ -41,7 +41,36 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
     });
   });
 
-  describe('Get ramps', () => {});
+  describe('Get ramps', () => {
+    let accountRampsMap: Map<string, Ramp[]>;
+
+    const getRamps = async (accountId, limit, startingAfter?) => {
+      const response = await client.ramps.getRamps({
+        accountId,
+        limit,
+        startingAfter,
+      });
+      return response.ramps;
+    };
+
+    beforeAll(async () => {
+      accountRampsMap = await getResponsePerIdMapping(getRamps, accountIds);
+    });
+
+    it('should be sorted by creation date in desc order', () => {
+      const isSortedByDescendingCreationTime = (ramps: Ramp[]) => {
+        const withdrawalsCreationTimes = ramps.map((ramp) => ramp.createdAt);
+        return (
+          JSON.stringify(withdrawalsCreationTimes) ==
+          JSON.stringify(withdrawalsCreationTimes.sort((a, b) => (a <= b ? 1 : -1)))
+        );
+      };
+
+      for (const ramps of accountRampsMap.values()) {
+        expect(ramps).toSatisfy(isSortedByDescendingCreationTime);
+      }
+    });
+  });
 
   describe('Create ramp order', () => {});
 });

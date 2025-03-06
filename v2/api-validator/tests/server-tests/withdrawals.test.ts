@@ -207,7 +207,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         ...accountPeerAccountWithdrawalsMap.values(),
       ];
 
-      const isSortedByDecendingCreationTime = (withdrawals: Withdrawal[]) => {
+      const isSortedByDescendingCreationTime = (withdrawals: Withdrawal[]) => {
         const withdrawalsCreationTimes = withdrawals.map((withdrawal) => withdrawal.createdAt);
         return (
           JSON.stringify(withdrawalsCreationTimes) ==
@@ -216,7 +216,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
       };
 
       for (const withdrawals of allWithdrawalResponses) {
-        expect(withdrawals).toSatisfy(isSortedByDecendingCreationTime);
+        expect(withdrawals).toSatisfy(isSortedByDescendingCreationTime);
       }
     });
 
