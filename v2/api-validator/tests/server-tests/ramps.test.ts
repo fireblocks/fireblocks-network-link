@@ -82,6 +82,15 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         }
       }
     });
+
+    it('should use know assets only', () => {
+      for (const ramps of accountRampsMap.values()) {
+        for (const ramp of ramps) {
+          expect(ramp.from.asset).toSatisfy(isKnownAsset);
+          expect(ramp.to.asset).toSatisfy(isKnownAsset);
+        }
+      }
+    });
   });
 
   describe('Create ramp order', () => {});
