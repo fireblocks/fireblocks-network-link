@@ -41,9 +41,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
     });
   });
 
-  describe('Get ramp methods', () => {});
+  describe('Get ramps', () => {});
 
   describe('Create ramp order', () => {});
-
-  describe('Get ramp order details', () => {});
 });
