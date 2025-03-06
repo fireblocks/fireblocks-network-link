@@ -4068,6 +4068,13 @@ components:
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
         - $ref: '#/components/schemas/OtherFiatTransfer'
+    DepositDestination:
+      oneOf:
+        - $ref: '#/components/schemas/PublicBlockchainAddress'
+        - $ref: '#/components/schemas/IbanAddress'
+        - $ref: '#/components/schemas/SwiftAddress'
+        - $ref: '#/components/schemas/PeerAccountTransferAddress'
+        - $ref: '#/components/schemas/InternalTransferAddress'
     FiatDepositDestination:
       allOf:
         - type: object
@@ -4077,13 +4084,6 @@ components:
         - oneOf:
             - $ref: '#/components/schemas/IbanAddress'
             - $ref: '#/components/schemas/SwiftAddress'
-    DepositDestination:
-      oneOf:
-        - $ref: '#/components/schemas/PublicBlockchainAddress'
-        - $ref: '#/components/schemas/IbanAddress'
-        - $ref: '#/components/schemas/SwiftAddress'
-        - $ref: '#/components/schemas/PeerAccountTransferAddress'
-        - $ref: '#/components/schemas/InternalTransferAddress'
     DepositAddressStatus:
       enum:
         - enabled
