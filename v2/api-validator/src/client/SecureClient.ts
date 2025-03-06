@@ -20,6 +20,7 @@ import {
   LiquidityService,
   OpenAPI,
   OpenAPIConfig,
+  RampsService,
   TradingService,
   TransfersBlockchainService,
   TransfersFiatService,
@@ -103,7 +104,7 @@ export class SecureClient {
   public readonly transfersPeerAccounts: SecureService<TransfersPeerAccountsService>;
   public readonly transfersInternal: SecureService<TransfersInternalService>;
   public readonly collateral: SecureService<CollateralService>;
-
+  public readonly ramps: SecureService<RampsService>;
   private readonly request: BaseHttpRequest;
 
   private static cachedApiComponents?: ApiComponents;
@@ -131,6 +132,7 @@ export class SecureClient {
       new TransfersPeerAccountsService(this.request)
     );
     this.transfersInternal = stripSecurityHeaderArgs(new TransfersInternalService(this.request));
+    this.ramps = stripSecurityHeaderArgs(new RampsService(this.request));
   }
 
   public async cacheCapabilities(): Promise<void> {
