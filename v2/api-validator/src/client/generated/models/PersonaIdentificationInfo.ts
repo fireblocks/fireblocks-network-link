@@ -9,7 +9,7 @@ import type { FullName } from './FullName';
 import type { RelationshipType } from './RelationshipType';
 
 /**
- * Personal information about the beneficiary of the transaction.
+ * Individual information about the beneficiary of the transaction.
  */
 export type PersonaIdentificationInfo = {
     entityType?: EntityType;

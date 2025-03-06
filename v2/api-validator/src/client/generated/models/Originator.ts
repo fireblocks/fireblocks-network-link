@@ -9,9 +9,5 @@ import type { PersonaIdentificationInfo } from './PersonaIdentificationInfo';
 /**
  * Information about the originator of the transaction.
  */
-export type Originator = ({
-    personaIdentificationInfo?: PersonaIdentificationInfo;
-} | {
-    businessIdentificationInfo?: BusinessIdentificationInfo;
-});
+export type Originator = (PersonaIdentificationInfo | BusinessIdentificationInfo);
 

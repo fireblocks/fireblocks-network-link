@@ -1166,13 +1166,13 @@ components:
 
     PersonaIdentificationInfo:
       type: object
-      description: Personal information about the beneficiary of the transaction.
+      description: Individual information about the beneficiary of the transaction.
       properties:
-        entityType:	
+        entityType: 
           $ref: '#/components/schemas/EntityType'
         externalReferenceId:
           type: string
-        relationshipType:	
+        relationshipType: 
           $ref: '#/components/schemas/RelationshipType'
         fullName:
           $ref: '#/components/schemas/FullName'
@@ -1185,7 +1185,7 @@ components:
       type: object
       description: Buisness information about the beneficiary of the transaction.
       properties:
-        entityType:	
+        entityType: 
           $ref: '#/components/schemas/EntityType'
         externalReferenceId:
           type: string
@@ -1201,40 +1201,22 @@ components:
     Originator:
       description: Information about the originator of the transaction.
       oneOf:
-        - type: object
-          properties:
-            personaIdentificationInfo:
-              $ref: '#/components/schemas/PersonaIdentificationInfo'
-        - type: object
-          properties:
-            businessIdentificationInfo:
-              $ref: '#/components/schemas/BusinessIdentificationInfo'
+        - $ref: '#/components/schemas/PersonaIdentificationInfo'
+        - $ref: '#/components/schemas/BusinessIdentificationInfo'
 
     Beneficiary:
       description: Information about the beneficiary of the transaction.
       oneOf:
-        - type: object
-          properties:
-            personaIdentificationInfo:
-              $ref: '#/components/schemas/PersonaIdentificationInfo'
-        - type: object
-          properties:
-            businessIdentificationInfo:
-              $ref: '#/components/schemas/BusinessIdentificationInfo'
+        - $ref: '#/components/schemas/PersonaIdentificationInfo'
+        - $ref: '#/components/schemas/BusinessIdentificationInfo'
 
     TravelRule:
       description: >-
         Travel Rule compliance requires VASPs to share originator and beneficiary details for qualifying transactions. 
         The `travelRule` object ensures that either an `originator` or `beneficiary` is provided, facilitating secure and compliant data exchange.
       anyOf:
-        - type: object
-          properties:
-            originator:
-              $ref: '#/components/schemas/Originator'
-        - type: object
-          properties:
-            beneficiary:
-              $ref: '#/components/schemas/Beneficiary'
+        - $ref: '#/components/schemas/Originator'
+        - $ref: '#/components/schemas/Beneficiary'
 
     WithdrawalRequestCommonProperties:
       type: object
@@ -1399,7 +1381,7 @@ components:
         - Individual
         - Business
 
-    RelationshipType:	
+    RelationshipType: 
       enum:
         - FirstParty
         - SecondParty
