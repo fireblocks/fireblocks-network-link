@@ -4,10 +4,17 @@ import { Ramp, RampMethod } from '../../client/generated';
 import { fakeSchemaObject } from '../../schemas';
 import { AssetsController } from './assets-controller';
 import { Repository } from './repository';
+import { XComError } from '../../error';
 
 const RAMPS_COUNT = 10;
 const RAMP_CAPABILITIES_COUNT = 5;
 type Order = 'asc' | 'desc';
+
+export class RampNotFoundError extends XComError {
+  constructor() {
+    super('Ramp not found');
+  }
+}
 
 export class RampsController {
   private readonly rampsRepository = new Repository<Ramp>();
@@ -53,6 +60,14 @@ export class RampsController {
   public getRamps(order: Order): Ramp[] {
     const ramps = this.rampsRepository.list();
     return _.orderBy(ramps, 'createdAt', order);
+  }
+
+  public getRamp(id: string): Ramp {
+    const ramp = this.rampsRepository.find(id);
+    if (!ramp) {
+      throw new RampNotFoundError();
+    }
+    return ramp;
   }
 }
 

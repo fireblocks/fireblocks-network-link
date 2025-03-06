@@ -2,8 +2,13 @@ import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { Ramp, RampMethod } from '../../client/generated';
 import { ControllersContainer } from '../controllers/controllers-container';
-import { RampsController } from '../controllers/ramps-controller';
-import { AccountIdPathParam, ListOrderQuerystring, PaginationQuerystring } from './request-types';
+import { RampNotFoundError, RampsController } from '../controllers/ramps-controller';
+import {
+  AccountIdPathParam,
+  EntityIdPathParam,
+  ListOrderQuerystring,
+  PaginationQuerystring,
+} from './request-types';
 import { getPaginationResult } from '../controllers/pagination-controller';
 
 const controllers = new ControllersContainer(() => new RampsController());
@@ -54,6 +59,26 @@ export async function getRamps(
     ),
   };
 }
-// createRamp
 
-// getRampDetails
+export async function getRampDetails(
+  request: FastifyRequest<AccountIdPathParam & EntityIdPathParam>,
+  reply: FastifyReply
+): Promise<Ramp> {
+  const { accountId, id: rampId } = request.params;
+
+  const controller = controllers.getController(accountId);
+  if (!controller) {
+    return ErrorFactory.notFound(reply);
+  }
+
+  try {
+    return controller.getRamp(rampId);
+  } catch (err) {
+    if (err instanceof RampNotFoundError) {
+      return ErrorFactory.notFound(reply);
+    }
+    throw err;
+  }
+}
+
+// createRamp

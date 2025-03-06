@@ -199,7 +199,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
       );
     });
 
-    it('should be sorted by creation time in a decending order', () => {
+    it('should be sorted by creation time in a descending order', () => {
       const allWithdrawalResponses = [
         ...accountWithdrawalsMap.values(),
         ...accountFiatWithdrawalsMap.values(),

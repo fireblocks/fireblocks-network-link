@@ -70,6 +70,18 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         expect(ramps).toSatisfy(isSortedByDescendingCreationTime);
       }
     });
+
+    it('should find every listed ramp get ramp details endpoint', async () => {
+      for (const [accountId, ramps] of accountRampsMap.entries()) {
+        for (const ramp of ramps) {
+          const response = await client.ramps.getRampDetails({
+            accountId,
+            id: ramp.id,
+          });
+          expect(response).toEqual(ramp);
+        }
+      }
+    });
   });
 
   describe('Create ramp order', () => {});
