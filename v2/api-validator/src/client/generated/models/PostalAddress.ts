@@ -13,8 +13,10 @@ export type PostalAddress = {
     buildingNumber?: string;
     postalCode?: string;
     city?: string;
-    state?: string;
-    province?: string;
+    /**
+     * Identifies a subdivision of a country such as state, region, or province.
+     */
+    subdivision?: string;
     district?: string;
     country?: NationalCountryCode;
 };

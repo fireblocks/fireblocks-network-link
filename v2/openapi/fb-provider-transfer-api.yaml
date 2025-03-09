@@ -1148,9 +1148,8 @@ components:
           type: string
         city:
           type: string
-        state:
-          type: string
-        province:
+        subdivision:
+          description: Identifies a subdivision of a country such as state, region, or province.
           type: string
         district:
           type: string
