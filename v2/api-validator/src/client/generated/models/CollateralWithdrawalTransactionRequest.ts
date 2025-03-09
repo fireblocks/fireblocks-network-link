@@ -4,9 +4,11 @@
 /* eslint-disable */
 
 import type { ApprovalRequest } from './ApprovalRequest';
+import type { CollateralWithdrawalSettlementTransaction } from './CollateralWithdrawalSettlementTransaction';
 
 export type CollateralWithdrawalTransactionRequest = {
     collateralTxId: string;
     approvalRequest: ApprovalRequest;
+    settlementDetails?: CollateralWithdrawalSettlementTransaction;
 };
 
