@@ -143,7 +143,6 @@ export type { QuoteRequest } from './models/QuoteRequest';
 export { QuoteStatus } from './models/QuoteStatus';
 export type { Ramp } from './models/Ramp';
 export type { RampMethod } from './models/RampMethod';
-export type { RampMethodsResponse } from './models/RampMethodsResponse';
 export type { RampRequest } from './models/RampRequest';
 export { RequestPart } from './models/RequestPart';
 export type { SettlementDepositInstruction } from './models/SettlementDepositInstruction';

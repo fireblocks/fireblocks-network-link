@@ -98,7 +98,7 @@ paths:
         - $ref: "#/x-path-params/SubAccountIdPathParam"
       responses:
         "200":
-          $ref: "#/components/responses/GetRampMethodsResponse"
+          $ref: "#/components/responses/RampMethodsResponse"
         "400":
           $ref: "#/x-responses/BadRequestResponse"
         "401":
@@ -194,12 +194,18 @@ components:
             $ref: "#/components/schemas/RampRequest"
 
   responses:
-    GetRampMethodsResponse:
+    RampMethodsResponse:
       description: List of ramps methods for account.
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/RampMethodsResponse"
+            type: object
+            required: [capabilities]
+            properties:
+              capabilities:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RampMethod"
           examples:
             allUsdMethods:
               summary: USDs ramps
@@ -388,15 +394,6 @@ components:
                       transferMethod: "PublicBlockchain"
 
   schemas:
-    RampMethodsResponse:
-      type: object
-      required: [capabilities]
-      properties:
-        capabilities:
-          type: array
-          items:
-            $ref: "#/components/schemas/RampMethod"
-
     OnRampCapability:
       type: object
       required: [from, to]

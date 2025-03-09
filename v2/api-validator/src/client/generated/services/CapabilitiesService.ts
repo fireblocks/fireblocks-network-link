@@ -7,7 +7,7 @@ import type { Capabilities } from '../models/Capabilities';
 import type { DepositCapability } from '../models/DepositCapability';
 import type { OrderBook } from '../models/OrderBook';
 import type { QuoteCapabilities } from '../models/QuoteCapabilities';
-import type { RampMethodsResponse } from '../models/RampMethodsResponse';
+import type { RampMethod } from '../models/RampMethod';
 import type { WithdrawalCapability } from '../models/WithdrawalCapability';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -451,7 +451,7 @@ export class CapabilitiesService {
 
     /**
      * Get list of supported ramp methods
-     * @returns RampMethodsResponse List of ramps methods for account.
+     * @returns any List of ramps methods for account.
      * @throws ApiError
      */
     public getRampMethods({
@@ -497,7 +497,9 @@ export class CapabilitiesService {
          * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
          */
         endingBefore?: string,
-    }): CancelablePromise<RampMethodsResponse> {
+    }): CancelablePromise<{
+        capabilities: Array<RampMethod>;
+    }> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/capabilities/ramps',

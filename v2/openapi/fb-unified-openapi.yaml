@@ -2337,7 +2337,7 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
         '200':
-          $ref: '#/components/responses/GetRampMethodsResponse'
+          $ref: '#/components/responses/RampMethodsResponse'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -2590,12 +2590,19 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Withdrawal'
-    GetRampMethodsResponse:
+    RampMethodsResponse:
       description: List of ramps methods for account.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/RampMethodsResponse'
+            type: object
+            required:
+              - capabilities
+            properties:
+              capabilities:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RampMethod'
           examples:
             allUsdMethods:
               summary: USDs ramps
@@ -4742,15 +4749,6 @@ components:
           type: string
           description: |
             A unique identifier of the settlement state version. This field is optional and can be used to indicate the version of the settlement state the client is referring to.
-    RampMethodsResponse:
-      type: object
-      required:
-        - capabilities
-      properties:
-        capabilities:
-          type: array
-          items:
-            $ref: '#/components/schemas/RampMethod'
     OnRampCapability:
       type: object
       required:
