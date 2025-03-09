@@ -3,6 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
+/**
+ * Defines the relationship between the Originator and the Beneficiary in a transaction.
+ */
 export enum RelationshipType {
     FIRST_PARTY = 'FirstParty',
     SECOND_PARTY = 'SecondParty',

@@ -45,7 +45,6 @@ x-schemas:
   PublicBlockchainAddress: { $ref: './fb-provider-api.yaml#/components/schemas/PublicBlockchainAddress'}
   Blockchain: { $ref: './fb-provider-api.yaml#/components/schemas/Blockchain'}
   NationalCurrency: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrency' }
-  NationalCurrencyCode: { $ref: './fb-provider-api.yaml#/components/schemas/NationalCurrencyCode'}
 
 x-responses:
   BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
@@ -1134,9 +1133,12 @@ components:
         minWithdrawalAmount:
           $ref: '#/x-schemas/PositiveAmount'
 
-    Address:
+    PostalAddress:
       type: object
-      description: Information that locates and identifies a specific address, presented in free format text.
+      description: >-
+        A postal address in free-form text, containing details like street,
+        building number, postal code, city, state, province, district, and 
+        country.
       properties:
         streetName:
           type: string
@@ -1153,11 +1155,11 @@ components:
         district:
           type: string
         country:
-          $ref: '#/x-schemas/NationalCurrencyCode'
+          $ref: '#/components/schemas/NationalCountryCode'
 
     FullName:
       type: object
-      description: PII first name and lat name information.
+      description: Contains the first name and last name of a person.
       properties:
         firstName:
           type: string
@@ -1168,35 +1170,53 @@ components:
       type: object
       description: Individual information about the beneficiary of the transaction.
       properties:
-        entityType: 
-          $ref: '#/components/schemas/EntityType'
+        entityType:
+          type: string
+          enum: ["Individual"]
         externalReferenceId:
           type: string
+          description: A unique identifier assigned by an external system to track the transaction or entity across different platforms.
         relationshipType: 
           $ref: '#/components/schemas/RelationshipType'
         fullName:
           $ref: '#/components/schemas/FullName'
         dateOfBirth:
           type: string
-        address:
-          $ref: '#/components/schemas/Address'
+          example:
+            '1999-01-01'
+        postalAddress:
+          $ref: '#/components/schemas/PostalAddress'
 
     BusinessIdentificationInfo:
       type: object
-      description: Buisness information about the beneficiary of the transaction.
+      description: >-
+        Information related to the business entity acting as the beneficiary of 
+        the transaction, including the business name, registration number, and 
+        any relevant identifiers, as well as its relationship type and postal 
+        address for communication.
       properties:
-        entityType: 
-          $ref: '#/components/schemas/EntityType'
+        entityType:
+          type: string
+          enum: ["Business"]
         externalReferenceId:
           type: string
+          description: >-
+            A unique identifier assigned by an external system to track the 
+            transaction or entity across different platforms.
         relationshipType:
           $ref: '#/components/schemas/RelationshipType'
         businessName:
           type: string
+          description: >-
+            The legal name of the business entity as registered with the relevant 
+            authorities. This name is used in official documents and transactions.
         registrationNumber:
           type: string
-        address:
-          $ref: '#/components/schemas/Address'
+          description: >-
+            A unique identifier assigned to the business entity by the relevant 
+            regulatory authority, often used for tax and legal purposes.
+        postalAddress:
+          $ref: '#/components/schemas/PostalAddress'
 
     Originator:
       description: Information about the originator of the transaction.
@@ -1211,12 +1231,17 @@ components:
         - $ref: '#/components/schemas/BusinessIdentificationInfo'
 
     TravelRule:
+      type: object
       description: >-
-        Travel Rule compliance requires VASPs to share originator and beneficiary details for qualifying transactions. 
-        The `travelRule` object ensures that either an `originator` or `beneficiary` is provided, facilitating secure and compliant data exchange.
-      anyOf:
-        - $ref: '#/components/schemas/Originator'
-        - $ref: '#/components/schemas/Beneficiary'
+        An object that ensures the inclusion of either the originator or 
+        beneficiary details for transactions subject to Travel Rule compliance. 
+        This object is used to facilitate the secure exchange of information 
+        between Virtual Asset Service Providers (VASPs) for qualifying transactions.
+      properties:
+        originator:
+          $ref: '#/components/schemas/Originator'
+        beneficiary:
+          $ref: '#/components/schemas/Beneficiary'
 
     WithdrawalRequestCommonProperties:
       type: object
@@ -1370,19 +1395,266 @@ components:
         - succeeded
         - failed
 
-
     DepositAddressCreationPolicy:
       enum:
         - CanCreate
         - CannotCreate
 
-    EntityType:
-      enum:
-        - Individual
-        - Business
-
     RelationshipType: 
+      description: Defines the relationship between the Originator and the Beneficiary in a transaction.
       enum:
-        - FirstParty
-        - SecondParty
-        - ThirdParty
+        - FirstParty  # The Originator and Beneficiary are the same entity.
+        - SecondParty # The Originator and Beneficiary have a direct relationship.
+        - ThirdParty  # The transaction involves an intermediary between the Originator and Beneficiary.
+
+    NationalCountryCode:
+      type: string
+      description: National a2 country codes as defined in ISO 3166.
+      enum:
+        - US # United States
+        - AL # Albania
+        - DZ # Algeria
+        - AS # American Samoa
+        - AD # Andorra
+        - AO # Angola
+        - AI # Anguilla
+        - AQ # Antarctica
+        - AG # Antigua and Barbuda
+        - AR # Argentina
+        - AM # Armenia
+        - AW # Aruba
+        - AU # Australia
+        - AT # Austria
+        - AZ # Azerbaijan
+        - BS # Bahamas
+        - BH # Bahrain
+        - BD # Bangladesh
+        - BB # Barbados
+        - BY # Belarus
+        - BE # Belgium
+        - BZ # Belize
+        - BJ # Benin
+        - BM # Bermuda
+        - BT # Bhutan
+        - BO # Bolivia
+        - BQ # Bonaire, Sint Eustatius and Saba
+        - BA # Bosnia and Herzegovina
+        - BW # Botswana
+        - BV # Bouvet Island
+        - BR # Brazil
+        - IO # British Indian Ocean Territory
+        - BN # Brunei
+        - BG # Bulgaria
+        - BF # Burkina Faso
+        - BI # Burundi
+        - CV # Cabo Verde
+        - KH # Cambodia
+        - CM # Cameroon
+        - CA # Canada
+        - KY # Cayman Islands
+        - CF # Central African Republic
+        - TD # Chad
+        - CL # Chile
+        - CN # China
+        - CX # Christmas Island
+        - CCK # Cocos (Keeling) Islands
+        - CO # Colombia
+        - KM # Comoros
+        - CD # Democratic Republic of the Congo
+        - CG # Republic of the Congo
+        - CK # Cook Islands
+        - CR # Costa Rica
+        - HR # Croatia
+        - CU # Cuba
+        - CW # Curaçao
+        - CY # Cyprus
+        - CZ # Czech Republic
+        - CI # Ivory Coast
+        - DK # Denmark
+        - DJ # Djibouti
+        - DM # Dominica
+        - DO # Dominican Republic
+        - EC # Ecuador
+        - EG # Egypt
+        - SV # El Salvador
+        - GQ # Equatorial Guinea
+        - ER # Eritrea
+        - EE # Estonia
+        - SZ # Eswatini
+        - ET # Ethiopia
+        - FK # Falkland Islands
+        - FO # Faroe Islands
+        - FJ # Fiji
+        - FI # Finland
+        - FR # France
+        - GF # French Guiana
+        - PF # French Polynesia
+        - TF # French Southern and Antarctic Lands
+        - GA # Gabon
+        - GM # Gambia
+        - GE # Georgia
+        - DE # Germany
+        - GH # Ghana
+        - GI # Gibraltar
+        - GR # Greece
+        - GL # Greenland
+        - GD # Grenada
+        - GP # Guadeloupe
+        - GU # Guam
+        - GT # Guatemala
+        - GG # Guernsey
+        - GN # Guinea
+        - GW # Guinea-Bissau
+        - GY # Guyana
+        - HT # Haiti
+        - HM # Heard Island and McDonald Islands
+        - VA # Holy See
+        - HN # Honduras
+        - HK # Hong Kong
+        - HU # Hungary
+        - IS # Iceland
+        - IN # India
+        - ID # Indonesia
+        - IR # Iran
+        - IQ # Iraq
+        - IE # Ireland
+        - IM # Isle of Man
+        - IL # Israel
+        - IT # Italy
+        - JM # Jamaica
+        - JP # Japan
+        - JE # Jersey
+        - JO # Jordan
+        - KZ # Kazakhstan
+        - KE # Kenya
+        - KI # Kiribati
+        - KP # North Korea
+        - KR # South Korea
+        - KW # Kuwait
+        - KG # Kyrgyzstan
+        - LA # Laos
+        - LV # Latvia
+        - LB # Lebanon
+        - LS # Lesotho
+        - LR # Liberia
+        - LY # Libya
+        - LI # Liechtenstein
+        - LT # Lithuania
+        - LU # Luxembourg
+        - MO # Macau
+        - MG # Madagascar
+        - MW # Malawi
+        - MY # Malaysia
+        - MV # Maldives
+        - MLI # Mali
+        - MT # Malta
+        - MH # Marshall Islands
+        - MQ # Martinique
+        - MR # Mauritania
+        - MU # Mauritius
+        - YT # Mayotte
+        - MX # Mexico
+        - FM # Micronesia
+        - MD # Moldova
+        - MC # Monaco
+        - MN # Mongolia
+        - ME # Montenegro
+        - MS # Montserrat
+        - MA # Morocco
+        - MZ # Mozambique
+        - MM # Myanmar
+        - NA # Namibia
+        - NR # Nauru
+        - NP # Nepal
+        - NL # Netherlands
+        - NC # New Caledonia
+        - NZ # New Zealand
+        - NI # Nicaragua
+        - NE # Niger
+        - NG # Nigeria
+        - NU # Niue
+        - NF # Norfolk Island
+        - MP # Northern Mariana Islands
+        - NO # Norway
+        - OM # Oman
+        - PK # Pakistan
+        - PW # Palau
+        - PS # Palestine
+        - PA # Panama
+        - PG # Papua New Guinea
+        - PY # Paraguay
+        - PE # Peru
+        - PH # Philippines
+        - PN # Pitcairn Islands
+        - PL # Poland
+        - PT # Portugal
+        - PR # Puerto Rico
+        - QA # Qatar
+        - MK # North Macedonia
+        - RO # Romania
+        - RU # Russia
+        - RW # Rwanda
+        - RE # Réunion
+        - BL # Saint Barthélemy
+        - SH # Saint Helena
+        - KN # Saint Kitts and Nevis
+        - LC # Saint Lucia
+        - MF # Saint Martin
+        - PM # Saint Pierre and Miquelon
+        - VC # Saint Vincent and the Grenadines
+        - WS # Samoa
+        - SM # San Marino
+        - ST # São Tomé and Príncipe
+        - SA # Saudi Arabia
+        - SN # Senegal
+        - SR # Suriname
+        - SC # Seychelles
+        - SL # Sierra Leone
+        - SG # Singapore
+        - SX # Sint Maarten
+        - SK # Slovakia
+        - SI # Slovenia
+        - SB # Solomon Islands
+        - SO # Somalia
+        - ZA # South Africa
+        - GS # South Georgia and the South Sandwich Islands
+        - SS # South Sudan
+        - ES # Spain
+        - LK # Sri Lanka
+        - SD # Sudan
+        - SJ # Svalbard and Jan Mayen
+        - SE # Sweden
+        - CH # Switzerland
+        - SY # Syria
+        - TW # Taiwan
+        - TJ # Tajikistan
+        - TZ # Tanzania
+        - TH # Thailand
+        - TL # Timor-Leste
+        - TG # Togo
+        - TK # Tokelau
+        - TO # Tonga
+        - TT # Trinidad and Tobago
+        - TN # Tunisia
+        - TR # Turkey
+        - TM # Turkmenistan
+        - TC # Turks and Caicos Islands
+        - TV # Tuvalu
+        - UG # Uganda
+        - UA # Ukraine
+        - AE # United Arab Emirates
+        - GB # United Kingdom
+        - UM # United States Minor Outlying Islands
+        - UY # Uruguay
+        - UZ # Uzbekistan
+        - VU # Vanuatu
+        - VE # Venezuela
+        - VN # Vietnam
+        - VG # British Virgin Islands
+        - VI # United States Virgin Islands
+        - WF # Wallis and Futuna
+        - EH # Western Sahara
+        - YE # Yemen
+        - ZM # Zambia
+        - ZW # Zimbabwe
+        - AX # Åland Islands

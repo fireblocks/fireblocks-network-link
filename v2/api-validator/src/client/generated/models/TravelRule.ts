@@ -7,7 +7,10 @@ import type { Beneficiary } from './Beneficiary';
 import type { Originator } from './Originator';
 
 /**
- * Travel Rule compliance requires VASPs to share originator and beneficiary details for qualifying transactions.  The `travelRule` object ensures that either an `originator` or `beneficiary` is provided, facilitating secure and compliant data exchange.
+ * An object that ensures the inclusion of either the originator or  beneficiary details for transactions subject to Travel Rule compliance.  This object is used to facilitate the secure exchange of information  between Virtual Asset Service Providers (VASPs) for qualifying transactions.
  */
-export type TravelRule = (Originator | Beneficiary);
+export type TravelRule = {
+    originator?: Originator;
+    beneficiary?: Beneficiary;
+};
 

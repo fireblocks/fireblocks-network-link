@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 /**
- * PII first name and lat name information.
+ * Contains the first name and last name of a person.
  */
 export type FullName = {
     firstName?: string;

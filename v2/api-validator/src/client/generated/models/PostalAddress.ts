@@ -3,12 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { NationalCurrencyCode } from './NationalCurrencyCode';
+import type { NationalCountryCode } from './NationalCountryCode';
 
 /**
- * Information that locates and identifies a specific address, presented in free format text.
+ * A postal address in free-form text, containing details like street, building number, postal code, city, state, province, district, and  country.
  */
-export type Address = {
+export type PostalAddress = {
     streetName?: string;
     buildingNumber?: string;
     postalCode?: string;
@@ -16,6 +16,6 @@ export type Address = {
     state?: string;
     province?: string;
     district?: string;
-    country?: NationalCurrencyCode;
+    country?: NationalCountryCode;
 };
 
