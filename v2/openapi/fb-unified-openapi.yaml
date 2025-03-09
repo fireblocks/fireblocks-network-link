@@ -3945,7 +3945,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/PersonaIdentificationInfo'
         - $ref: '#/components/schemas/BusinessIdentificationInfo'
-    TravelRule:
+    TransactionParticipants:
       type: object
       description: An object that ensures the inclusion of either the originator or  beneficiary details for transactions subject to Travel Rule compliance.  This object is used to facilitate the secure exchange of information  between Virtual Asset Service Providers (VASPs) for qualifying transactions.
       properties:
@@ -3987,8 +3987,8 @@ components:
               $ref: '#/components/schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
-            travelRule:
-              $ref: '#/components/schemas/TravelRule'
+            transactionParticipants:
+              $ref: '#/components/schemas/TransactionParticipants'
     PeerAccountWithdrawalRequest:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'

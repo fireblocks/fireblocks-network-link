@@ -1230,7 +1230,7 @@ components:
         - $ref: '#/components/schemas/PersonaIdentificationInfo'
         - $ref: '#/components/schemas/BusinessIdentificationInfo'
 
-    TravelRule:
+    TransactionParticipants:
       type: object
       description: >-
         An object that ensures the inclusion of either the originator or 
@@ -1273,8 +1273,8 @@ components:
               $ref: '#/x-schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
-            travelRule:
-              $ref: '#/components/schemas/TravelRule'
+            transactionParticipants:
+              $ref: '#/components/schemas/TransactionParticipants'
 
     PeerAccountWithdrawalRequest:
       allOf:
