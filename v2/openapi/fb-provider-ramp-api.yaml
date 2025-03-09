@@ -10,7 +10,7 @@ info:
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
-  - name: ramps
+  - name: ramp
     description: On-ramp, off-ramp and bridging operations.
 
 x-path-params:
@@ -112,7 +112,7 @@ paths:
     get:
       operationId: getRamps
       summary: Get list of ramps sorted by creation time
-      tags: [ramps]
+      tags: [ramp]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
         - $ref: "#/x-header-params/X-FBAPI-NONCE"
@@ -138,7 +138,7 @@ paths:
       operationId: createRamp
       summary: Initiates a new ramp
       description: Return the newly created ramp along with it's delivery instructions.
-      tags: [ramps]
+      tags: [ramp]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
         - $ref: "#/x-header-params/X-FBAPI-NONCE"
@@ -163,7 +163,7 @@ paths:
     get:
       operationId: getRampDetails
       summary: Get details of a specific ramp
-      tags: [ramps]
+      tags: [ramp]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
         - $ref: "#/x-header-params/X-FBAPI-NONCE"
@@ -497,6 +497,7 @@ components:
       type: object
       required:
         - idempotencyKey
+        - amount
       properties:
         idempotencyKey:
           type: string

@@ -7,6 +7,6 @@ import type { PositiveAmount } from './PositiveAmount';
 
 export type CommonRampRequestProperties = {
     idempotencyKey: string;
-    amount?: PositiveAmount;
+    amount: PositiveAmount;
 };
 
