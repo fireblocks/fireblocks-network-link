@@ -1137,21 +1137,26 @@ components:
       type: object
       description: >-
         A postal address in free-form text, containing details like street,
-        building number, postal code, city, state, province, district, and 
+        building number, postal code, city, subdivision, and 
         country.
       properties:
         streetName:
+          description: Name of a street or thoroughfare
           type: string
         buildingNumber:
+          description: Number that identifies the position of a building on a street
           type: string
         postalCode:
+          description: Identifier consisting of a group of letters and/or numbers added to a postal address to assist the sorting of mail
           type: string
         city:
+          description: Name of a built-up area, with defined boundaries, and a local government.
           type: string
         subdivision:
           description: Identifies a subdivision of a country such as state, region, or province.
           type: string
         district:
+          description: Identifies a subdivision within a country subdivision.
           type: string
         country:
           $ref: '#/components/schemas/NationalCountryCode'
@@ -1169,9 +1174,6 @@ components:
       type: object
       description: Individual information about the beneficiary of the transaction.
       properties:
-        entityType:
-          type: string
-          enum: ["Individual"]
         externalReferenceId:
           type: string
           description: A unique identifier assigned by an external system to track the transaction or entity across different platforms.
@@ -1194,9 +1196,6 @@ components:
         any relevant identifiers, as well as its relationship type and postal 
         address for communication.
       properties:
-        entityType:
-          type: string
-          enum: ["Business"]
         externalReferenceId:
           type: string
           description: >-
@@ -1208,7 +1207,7 @@ components:
           type: string
           description: >-
             The legal name of the business entity as registered with the relevant 
-            authorities. This name is used in official documents and transactions.
+            authorities.
         registrationNumber:
           type: string
           description: >-
@@ -1233,9 +1232,7 @@ components:
       type: object
       description: >-
         An object that ensures the inclusion of either the originator or 
-        beneficiary details for transactions subject to Travel Rule compliance. 
-        This object is used to facilitate the secure exchange of information 
-        between Virtual Asset Service Providers (VASPs) for qualifying transactions.
+        beneficiary details for transactions.
       properties:
         originator:
           $ref: '#/components/schemas/Originator'

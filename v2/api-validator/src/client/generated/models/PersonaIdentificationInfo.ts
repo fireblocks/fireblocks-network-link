@@ -11,7 +11,6 @@ import type { RelationshipType } from './RelationshipType';
  * Individual information about the beneficiary of the transaction.
  */
 export type PersonaIdentificationInfo = {
-    entityType?: PersonaIdentificationInfo.entityType;
     /**
      * A unique identifier assigned by an external system to track the transaction or entity across different platforms.
      */
@@ -21,13 +20,4 @@ export type PersonaIdentificationInfo = {
     dateOfBirth?: string;
     postalAddress?: PostalAddress;
 };
-
-export namespace PersonaIdentificationInfo {
-
-    export enum entityType {
-        INDIVIDUAL = 'Individual',
-    }
-
-
-}
 

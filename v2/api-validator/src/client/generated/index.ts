@@ -34,7 +34,7 @@ export { Blockchain } from './models/Blockchain';
 export type { BlockchainWithdrawal } from './models/BlockchainWithdrawal';
 export type { BlockchainWithdrawalRequest } from './models/BlockchainWithdrawalRequest';
 export { BucketAsset } from './models/BucketAsset';
-export { BusinessIdentificationInfo } from './models/BusinessIdentificationInfo';
+export type { BusinessIdentificationInfo } from './models/BusinessIdentificationInfo';
 export type { Capabilities } from './models/Capabilities';
 export type { CollateralAccount } from './models/CollateralAccount';
 export type { CollateralAccountLink } from './models/CollateralAccountLink';
@@ -124,7 +124,7 @@ export { PeerAccountTransferCapability } from './models/PeerAccountTransferCapab
 export type { PeerAccountTransferDestination } from './models/PeerAccountTransferDestination';
 export type { PeerAccountWithdrawal } from './models/PeerAccountWithdrawal';
 export type { PeerAccountWithdrawalRequest } from './models/PeerAccountWithdrawalRequest';
-export { PersonaIdentificationInfo } from './models/PersonaIdentificationInfo';
+export type { PersonaIdentificationInfo } from './models/PersonaIdentificationInfo';
 export type { PositiveAmount } from './models/PositiveAmount';
 export type { PostalAddress } from './models/PostalAddress';
 export type { PublicBlockchainAddress } from './models/PublicBlockchainAddress';
