@@ -21,6 +21,7 @@ import {
 } from './request-types';
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { UnknownAssetError } from '../controllers/withdrawal-controller';
+import { IdempotencyHandler } from '../controllers/idempotency-handler';
 
 const controllers = new ControllersContainer(() => new RampsController());
 type RampMethodResponse = { capabilities: RampMethod[] };
@@ -94,6 +95,7 @@ export async function getRampDetails(
 
 // createRamp
 type CreateRampRequestBody = { Body: RampRequest };
+const createRampIdempotencyHandler = new IdempotencyHandler<RampRequest, Ramp | BadRequestError>();
 
 export async function createRamp(
   { body, params }: FastifyRequest<AccountIdPathParam & CreateRampRequestBody>,
@@ -105,21 +107,30 @@ export async function createRamp(
     return ErrorFactory.notFound(reply);
   }
   try {
-    return controller.createRamp(body);
+    if (createRampIdempotencyHandler.isKnownKey(body.idempotencyKey)) {
+      return createRampIdempotencyHandler.reply(body, reply);
+    }
+    const createdRamp = controller.createRamp(body);
+    createRampIdempotencyHandler.add(body, 200, createdRamp);
+    return createdRamp;
   } catch (err) {
     if (err instanceof UnknownAssetError) {
-      return ErrorFactory.badRequest(reply, {
+      const response = {
         message: err.message,
         errorType: BadRequestError.errorType.UNKNOWN_ASSET,
         requestPart: RequestPart.BODY,
-      });
+      };
+      createRampIdempotencyHandler.add(body, 400, response);
+      return ErrorFactory.badRequest(reply, response);
     }
     if (err instanceof UnsupportedRampMethod) {
-      return ErrorFactory.badRequest(reply, {
+      const response = {
         message: err.message,
         errorType: BadRequestError.errorType.UNSUPPORTED_RAMP_METHOD,
         requestPart: RequestPart.BODY,
-      });
+      };
+      createRampIdempotencyHandler.add(body, 400, response);
+      return ErrorFactory.badRequest(reply, response);
     }
     throw err;
   }

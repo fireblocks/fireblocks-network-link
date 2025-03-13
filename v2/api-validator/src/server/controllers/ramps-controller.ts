@@ -9,9 +9,7 @@ import {
   FiatCapability,
   IbanAddress,
   OffRampProperties,
-  OffRampTransfer,
   OnRampProperties,
-  OnRampTransfer,
   PublicBlockchainAddress,
   Ramp,
   RampMethod,
@@ -120,7 +118,7 @@ export class RampsController {
     ) {
       deliveryInstructions = {
         ...(fakeSchemaObject('PublicBlockchainAddress') as PublicBlockchainAddress),
-        asset: ramp.to.asset,
+        asset: ramp.from.asset,
       };
     } else if (ramp.type === OnRampProperties.type.ON_RAMP) {
       deliveryInstructions = {

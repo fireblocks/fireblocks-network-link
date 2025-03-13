@@ -216,6 +216,18 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
     const accountId = accountIds[0];
     let capability: RampMethod;
 
+    const getCreateRampFailureResult = async (requestBody: RampRequest): Promise<ApiError> => {
+      try {
+        await client.ramps.createRamp({ accountId, requestBody });
+      } catch (err) {
+        if (err instanceof ApiError) {
+          return err;
+        }
+        throw err;
+      }
+      throw new Error('Expected to throw');
+    };
+
     beforeAll(() => {
       const firstCapability = rampCapabilitiesMap.get(accountId)?.[0];
 
@@ -226,8 +238,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
 
       capability = firstCapability;
     });
-    // TODO(shaked): fix flakyness in this test
-    // TODO(shaked): idempotency tests
+
     describe('Successful Creation', () => {
       let createdRamp: Ramp;
 
@@ -272,18 +283,6 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
     });
 
     describe('Invalid Creation', () => {
-      const getCreateRampFailureResult = async (requestBody: RampRequest): Promise<ApiError> => {
-        try {
-          await client.ramps.createRamp({ accountId, requestBody });
-        } catch (err) {
-          if (err instanceof ApiError) {
-            return err;
-          }
-          throw err;
-        }
-        throw new Error('Expected to throw');
-      };
-
       it('should fail when invalid asset is used', async () => {
         const invalidAsset = { assetId: randomUUID() };
         const requestBody = rampRequestFromMethod({
@@ -320,6 +319,33 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         expect(error.status).toBe(400);
         expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_RAMP_METHOD);
         expect(error.body.requestPart).toBe(RequestPart.BODY);
+      });
+    });
+
+    describe('Idempotency', () => {
+      let rampRequest: RampRequest;
+      let rampResponse: Ramp;
+      beforeAll(async () => {
+        rampRequest = rampRequestFromMethod(capability);
+        rampResponse = await client.ramps.createRamp({ accountId, requestBody: rampRequest });
+      });
+
+      it('should return same response when using the same idempotency key', async () => {
+        const idempotentResponse = await client.ramps.createRamp({
+          accountId,
+          requestBody: rampRequest,
+        });
+        expect(idempotentResponse).toEqual(rampResponse);
+      });
+
+      it('should return idempotency key reuse error when using used key for different request', async () => {
+        const invalidRequest: RampRequest = { ...rampRequest, amount: '0.2' };
+        const idempotencyKeyReuseResponse = await getCreateRampFailureResult(invalidRequest);
+
+        expect(idempotencyKeyReuseResponse.status).toBe(400);
+        expect(idempotencyKeyReuseResponse.body.errorType).toBe(
+          BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE
+        );
       });
     });
   });
