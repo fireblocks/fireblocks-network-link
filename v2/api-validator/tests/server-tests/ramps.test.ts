@@ -6,13 +6,11 @@ import {
   AssetReference,
   BridgeProperties,
   FiatCapability,
-  IbanCapability,
   OffRampProperties,
   OnRampProperties,
   PublicBlockchainCapability,
   RampMethod,
   RampRequest,
-  SwiftCapability,
   CommonRamp,
   ApiError,
   BadRequestError,
@@ -20,9 +18,14 @@ import {
 } from '../../src/client/generated';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 import { randomUUID } from 'crypto';
+import config from '../../src/config';
 
 const noRampsCapability = !hasCapability('ramps');
 const accountIds = getAllCapableAccountIds('ramps');
+
+const blockchainDestinationConfig = config.get('withdrawal.blockchain');
+const swiftDestinationConfig = config.get('withdrawal.swift');
+const ibanDestinationConfig = config.get('withdrawal.iban');
 
 function isBlockchainMethod(
   capability: FiatCapability | PublicBlockchainCapability
@@ -50,7 +53,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       recipient: {
         asset: method.to.asset,
         transferMethod: method.to.transferMethod,
-        address: '0x123',
+        ...blockchainDestinationConfig,
       },
     };
   }
@@ -65,7 +68,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       recipient: {
         asset: method.to.asset,
         transferMethod: method.to.transferMethod,
-        address: '0x123',
+        ...blockchainDestinationConfig,
       },
     };
   }
@@ -79,20 +82,9 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       amount: '0.1',
       recipient: {
         asset: method.to.asset,
-        accountHolder: {
-          name: 'John Doe',
-        },
         ...(method.to.transferMethod === FiatCapability.transferMethod.IBAN
-          ? {
-              transferMethod: IbanCapability.transferMethod.IBAN,
-              iban: 'DE89370400440532013000',
-            }
-          : {
-              transferMethod: SwiftCapability.transferMethod.SWIFT,
-              swift: 'DEUTDEFF',
-              swiftCode: 'DEUTDEFFXXX',
-              routingNumber: '123456789',
-            }),
+          ? { ...ibanDestinationConfig, transferMethod: FiatCapability.transferMethod.IBAN }
+          : { ...swiftDestinationConfig, transferMethod: FiatCapability.transferMethod.SWIFT }),
       },
     };
   }
