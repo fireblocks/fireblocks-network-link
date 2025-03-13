@@ -18,7 +18,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 
   description:
-    Placeholder for automatic documentation injection from README.md
+    $ref: README.md
 
 tags:
   - name: capabilities
