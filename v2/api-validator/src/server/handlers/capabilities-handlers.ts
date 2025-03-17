@@ -16,6 +16,7 @@ const CAPABILITIES: Capabilities = {
     trading: '*',
     liquidity: '*',
     collateral: '*',
+    ramps: '*',
   },
 };
 

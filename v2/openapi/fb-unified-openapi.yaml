@@ -2822,6 +2822,7 @@ components:
             - deposit-address-creation-not-allowed
             - unsupported-transfer-method
             - transfer-destination-not-allowed
+            - unsupported-ramp-method
         propertyName:
           description: |-
             Name of property that caused the error. By convention, should always start with a slash ("/"). If the property is nested, the path should be separated by slashes.
