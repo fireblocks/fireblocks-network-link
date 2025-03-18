@@ -182,7 +182,7 @@ export { CapabilitiesService } from './services/CapabilitiesService';
 export { CollateralService } from './services/CollateralService';
 export { HistoricBalancesService } from './services/HistoricBalancesService';
 export { LiquidityService } from './services/LiquidityService';
-export { RampService } from './services/RampService';
+export { RampsService } from './services/RampsService';
 export { TradingService } from './services/TradingService';
 export { TransfersService } from './services/TransfersService';
 export { TransfersBlockchainService } from './services/TransfersBlockchainService';

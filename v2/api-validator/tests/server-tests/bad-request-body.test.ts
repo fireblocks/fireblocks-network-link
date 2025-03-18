@@ -164,6 +164,32 @@ const ambiguousProperties = {
       '/asset/assetId',
     ],
   ],
+  '/accounts/:accountId/ramps': [
+    [
+      '/to/transferMethod',
+      '/to/asset',
+      '/to/asset/cryptocurrencySymbol',
+      '/to/asset/assetId',
+      '/to/asset/nationalCurrencyCode',
+      '/from/transferMethod',
+      '/from/asset',
+      '/from/asset/cryptocurrencySymbol',
+      '/from/asset/assetId',
+      '/from/asset/nationalCurrencyCode',
+      '/recipient/routingNumber',
+      '/recipient/iban',
+      '/recipient/swiftCode',
+      '/recipient/transferMethod',
+      '/recipient/address',
+      '/recipient/asset',
+      '/recipient/asset/cryptocurrencySymbol',
+      '/recipient/asset/assetId',
+      '/recipient/asset/nationalCurrencyCode',
+      '/recipient/accountHolder',
+      '/recipient/accountHolder/name',
+      '/type',
+    ],
+  ],
 };
 
 /**

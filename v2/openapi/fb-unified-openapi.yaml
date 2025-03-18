@@ -41,7 +41,7 @@ tags:
     description: Transfers to a sub account in the same account.
   - name: collateral
     description: Collateral management operations.
-  - name: ramp
+  - name: ramps
     description: On-ramp, off-ramp and bridging operations.
 paths:
   /capabilities:
@@ -2351,7 +2351,7 @@ paths:
       operationId: getRamps
       summary: Get list of ramps sorted by creation time
       tags:
-        - ramp
+        - ramps
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -2378,7 +2378,7 @@ paths:
       summary: Initiates a new ramp
       description: Return the newly created ramp along with it's delivery instructions.
       tags:
-        - ramp
+        - ramps
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -2403,7 +2403,7 @@ paths:
       operationId: getRampDetails
       summary: Get details of a specific ramp
       tags:
-        - ramp
+        - ramps
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'

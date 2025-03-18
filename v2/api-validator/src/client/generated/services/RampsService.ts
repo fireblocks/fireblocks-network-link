@@ -8,7 +8,7 @@ import type { RampRequest } from '../models/RampRequest';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 
-export class RampService {
+export class RampsService {
 
     constructor(public readonly httpRequest: BaseHttpRequest) {}
 
