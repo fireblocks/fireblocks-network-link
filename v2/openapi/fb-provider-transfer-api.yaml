@@ -1177,6 +1177,8 @@ components:
         externalReferenceId:
           type: string
           description: A unique identifier assigned by an external system to track the transaction or entity across different platforms.
+        entityType:
+          $ref: '#/components/schemas/EntityType'
         relationshipType: 
           $ref: '#/components/schemas/RelationshipType'
         fullName:
@@ -1201,6 +1203,8 @@ components:
           description: >-
             A unique identifier assigned by an external system to track the 
             transaction or entity across different platforms.
+        entityType:
+          $ref: '#/components/schemas/EntityType'
         relationshipType:
           $ref: '#/components/schemas/RelationshipType'
         businessName:
@@ -1228,7 +1232,7 @@ components:
         - $ref: '#/components/schemas/PersonaIdentificationInfo'
         - $ref: '#/components/schemas/BusinessIdentificationInfo'
 
-    TransactionParticipants:
+    ParticipantsIdentification:
       type: object
       description: >-
         An object that ensures the inclusion of either the originator or 
@@ -1269,8 +1273,8 @@ components:
               $ref: '#/x-schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
-            transactionParticipants:
-              $ref: '#/components/schemas/TransactionParticipants'
+            participantsIdentification:
+              $ref: '#/components/schemas/ParticipantsIdentification'
 
     PeerAccountWithdrawalRequest:
       allOf:
@@ -1395,6 +1399,11 @@ components:
       enum:
         - CanCreate
         - CannotCreate
+
+    EntityType: 
+      enum:
+        - Individual
+        - Business
 
     RelationshipType: 
       description: Defines the relationship between the Originator and the Beneficiary in a transaction.
@@ -1654,3 +1663,6 @@ components:
         - ZM # Zambia
         - ZW # Zimbabwe
         - AX # Åland Islands
+        - ZZ # Unknown or Placeholder Country
+        - XX # Invalid or Unknown Country
+        - CS # Serbia and Montenegro (obsolete, no longer in use)

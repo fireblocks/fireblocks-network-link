@@ -22,6 +22,9 @@ import {
   type TransferCapability,
   Withdrawal,
   WithdrawalCapability,
+  EntityType,
+  RelationshipType,
+  NationalCountryCode
 } from '../../src/client/generated';
 import { fakeSchemaObject } from '../../src/schemas';
 import _ from 'lodash';
@@ -331,6 +334,163 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
 
       return balances[0];
     };
+    describe.skipIf(noTransfersBlockchainCapability)(
+      'Create Withdrawal with travel rule', 
+      () => {
+        const OriginatorPerson = {
+          entityType: EntityType.INDIVIDUAL,
+          fullName: { firstName: "John", lastName: "Doe" },
+          dateOfBirth: "1985-05-10",
+          postalAddress: {
+            streetName: "Main St",
+            buildingNumber: "101",
+            postalCode: "54321",
+            city: "Los Angeles",
+            subdivision: "CA",
+            district: "Los Angeles",
+            country: NationalCountryCode.US,
+          },
+        };
+    
+        const OriginatorBusiness = {
+          entityType: EntityType.BUSINESS,
+          businessName: "Tech Innovators",
+          registrationNumber: "TI2021",
+          postalAddress: {
+            streetName: "Tech Rd",
+            buildingNumber: "301",
+            postalCode: "12346",
+            city: "San Francisco",
+            subdivision: "CA",
+            district: "San Francisco",
+            country: NationalCountryCode.US,
+          },
+        };
+    
+        const BeneficiaryPerson = {
+          entityType: EntityType.INDIVIDUAL,
+          fullName: { firstName: "Alice", lastName: "Smith" },
+          dateOfBirth: "1992-07-15",
+          postalAddress: {
+            streetName: "Elm St",
+            buildingNumber: "150",
+            postalCode: "67891",
+            city: "Manchester",
+            subdivision: "Greater Manchester",
+            district: "England",
+            country: NationalCountryCode.GB,
+          },
+        };
+    
+        const BeneficiaryBusiness = {
+          entityType: EntityType.BUSINESS,
+          businessName: "Tech Solutions Ltd.",
+          registrationNumber: "TSL001",
+          postalAddress: {
+            streetName: "Business Blvd",
+            buildingNumber: "102",
+            postalCode: "10001",
+            city: "London",
+            subdivision: "Greater London",
+            district: "England",
+            country: NationalCountryCode.GB,
+          },
+        };
+    
+        describe.each([
+          [
+            'Full Business Originator and Business Beneficiary',
+            OriginatorBusiness,
+            BeneficiaryBusiness
+          ],
+          [
+            'Personal Originator and Business Beneficiary',
+            OriginatorPerson,
+            BeneficiaryBusiness
+          ],
+          [
+            'Business Originator and Personal Beneficiary',
+            OriginatorBusiness,
+            BeneficiaryPerson
+          ],
+          [
+            'Personal Originator and Personal Beneficiary',
+            OriginatorPerson,
+            BeneficiaryPerson
+          ],
+          [
+            'Only Originator ',
+            OriginatorPerson,
+            {}
+          ],
+          [
+            'Only Beneficiary',
+            {},
+            BeneficiaryBusiness
+          ],
+          [
+            'Partial Originator',
+            { postalAddress: {streetName: "Business Blvd"}},
+            BeneficiaryPerson
+          ],
+          [
+            'Partial Beneficiary',
+            OriginatorPerson,
+            {fullName: { firstName: "Alice", lastName: "Smith" }}
+          ],
+          [
+            'Partial Originator and Beneficiary',
+            {entityType: EntityType.BUSINESS},
+            {entityType: EntityType.INDIVIDUAL,
+              dateOfBirth: "1992-07-15"
+            }
+          ]
+        ])('Scenario: %s', (scenarioName, originator, beneficiary) => {
+          it('Blockchain withdrawal with travel rule should succeed', async () => {
+            for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+              const transferMethodSpecificCapabilities = capabilities.filter(
+                (capability) =>
+                  capability.withdrawal.transferMethod ===
+                  PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+              );
+    
+              for (const capability of transferMethodSpecificCapabilities) {
+                const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
+                const assetBalance = await getCapabilityAssetBalance(accountId, capability);
+    
+                if (!assetBalance || Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)) {
+                  continue;
+                }
+    
+                const requestBody = {
+                  idempotencyKey: randomUUID(),
+                  balanceAmount: minWithdrawalAmount,
+                  balanceAsset: capability.balanceAsset,
+                  destination: {
+                    ...blockchainDestinationConfig,
+                    amount: minWithdrawalAmount,
+                    ...capability.withdrawal,
+                  },
+                  participantsIdentification: {
+                    originator,
+                    beneficiary,
+                  },
+                };
+    
+                const response = await client.transfersBlockchain.createBlockchainWithdrawal({
+                  accountId,
+                  requestBody,
+                });
+    
+                expect(response).toBeDefined();
+                expect(response.status).toBe('success');
+              }
+            }
+          });
+        });
+      }
+    );    
+
     describe.each([
       {
         transferMethod: InternalTransferMethod.transferMethod.INTERNAL_TRANSFER,
@@ -660,7 +820,6 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         }
       })
     );
-
     describe.skipIf(noTransfersSubaccountCapability)(
       'InternalTransfer withdrawal - special cases',
       () => {

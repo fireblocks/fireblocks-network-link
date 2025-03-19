@@ -254,4 +254,7 @@ export enum NationalCountryCode {
     ZM = 'ZM',
     ZW = 'ZW',
     AX = 'AX',
+    ZZ = 'ZZ',
+    XX = 'XX',
+    CS = 'CS',
 }

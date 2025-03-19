@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { EntityType } from './EntityType';
 import type { PostalAddress } from './PostalAddress';
 import type { RelationshipType } from './RelationshipType';
 
@@ -14,6 +15,7 @@ export type BusinessIdentificationInfo = {
      * A unique identifier assigned by an external system to track the  transaction or entity across different platforms.
      */
     externalReferenceId?: string;
+    entityType?: EntityType;
     relationshipType?: RelationshipType;
     /**
      * The legal name of the business entity as registered with the relevant  authorities.

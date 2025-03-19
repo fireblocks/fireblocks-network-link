@@ -4,13 +4,13 @@
 /* eslint-disable */
 
 import type { AssetReference } from './AssetReference';
+import type { ParticipantsIdentification } from './ParticipantsIdentification';
 import type { PublicBlockchainTransactionDestination } from './PublicBlockchainTransactionDestination';
-import type { TransactionParticipants } from './TransactionParticipants';
 import type { WithdrawalRequestCommonProperties } from './WithdrawalRequestCommonProperties';
 
 export type BlockchainWithdrawalRequest = (WithdrawalRequestCommonProperties & {
     balanceAsset: AssetReference;
     destination: PublicBlockchainTransactionDestination;
-    transactionParticipants?: TransactionParticipants;
+    participantsIdentification?: ParticipantsIdentification;
 });
 
