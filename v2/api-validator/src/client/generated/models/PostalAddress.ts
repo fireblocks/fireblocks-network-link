@@ -29,10 +29,6 @@ export type PostalAddress = {
      * Identifies a subdivision of a country such as state, region, or province.
      */
     subdivision?: string;
-    /**
-     * Identifies a subdivision within a country subdivision.
-     */
-    district?: string;
     country?: NationalCountryCode;
 };
 

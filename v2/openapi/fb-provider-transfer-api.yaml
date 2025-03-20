@@ -1155,9 +1155,6 @@ components:
         subdivision:
           description: Identifies a subdivision of a country such as state, region, or province.
           type: string
-        district:
-          description: Identifies a subdivision within a country subdivision.
-          type: string
         country:
           $ref: '#/components/schemas/NationalCountryCode'
 
@@ -1234,7 +1231,7 @@ components:
 
     ParticipantsIdentification:
       type: object
-      description: >-
+      description: >
         An object that ensures the inclusion of either the originator or 
         beneficiary details for transactions.
       properties:

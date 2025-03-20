@@ -24,7 +24,14 @@ import {
   WithdrawalCapability,
   EntityType,
   RelationshipType,
-  NationalCountryCode
+  NationalCountryCode,
+  ParticipantsIdentification,
+  PersonaIdentificationInfo,
+  BusinessIdentificationInfo,
+  PostalAddress,
+  Originator,
+  Beneficiary,
+  FullName
 } from '../../src/client/generated';
 import { fakeSchemaObject } from '../../src/schemas';
 import _ from 'lodash';
@@ -337,65 +344,42 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
     describe.skipIf(noTransfersBlockchainCapability)(
       'Create Withdrawal with travel rule', 
       () => {
-        const OriginatorPerson = {
-          entityType: EntityType.INDIVIDUAL,
-          fullName: { firstName: "John", lastName: "Doe" },
-          dateOfBirth: "1985-05-10",
-          postalAddress: {
-            streetName: "Main St",
-            buildingNumber: "101",
-            postalCode: "54321",
-            city: "Los Angeles",
-            subdivision: "CA",
-            district: "Los Angeles",
-            country: NationalCountryCode.US,
-          },
+        const fullName: FullName = { firstName: "John", lastName: "Doe" };
+
+        const postalAddress: PostalAddress = {
+          streetName: "Main St",
+          buildingNumber: "101",
+          postalCode: "54321",
+          city: "Los Angeles",
+          subdivision: "CA",
+          country: NationalCountryCode.US,
         };
-    
-        const OriginatorBusiness = {
+
+        const personaIdentificationInfo: PersonaIdentificationInfo = {
+          externalReferenceId: 'externalReferenceId',
+          relationshipType: RelationshipType.FIRST_PARTY,
+          entityType: EntityType.INDIVIDUAL,
+          fullName,
+          dateOfBirth: "1985-05-10",
+          postalAddress
+          };
+
+        const businessIdentificationInfo: BusinessIdentificationInfo = {
+          externalReferenceId: 'externalReferenceId',
+          relationshipType: RelationshipType.SECOND_PARTY,
           entityType: EntityType.BUSINESS,
           businessName: "Tech Innovators",
           registrationNumber: "TI2021",
-          postalAddress: {
-            streetName: "Tech Rd",
-            buildingNumber: "301",
-            postalCode: "12346",
-            city: "San Francisco",
-            subdivision: "CA",
-            district: "San Francisco",
-            country: NationalCountryCode.US,
-          },
-        };
+          postalAddress
+          };
     
-        const BeneficiaryPerson = {
-          entityType: EntityType.INDIVIDUAL,
-          fullName: { firstName: "Alice", lastName: "Smith" },
-          dateOfBirth: "1992-07-15",
-          postalAddress: {
-            streetName: "Elm St",
-            buildingNumber: "150",
-            postalCode: "67891",
-            city: "Manchester",
-            subdivision: "Greater Manchester",
-            district: "England",
-            country: NationalCountryCode.GB,
-          },
-        };
-    
-        const BeneficiaryBusiness = {
-          entityType: EntityType.BUSINESS,
-          businessName: "Tech Solutions Ltd.",
-          registrationNumber: "TSL001",
-          postalAddress: {
-            streetName: "Business Blvd",
-            buildingNumber: "102",
-            postalCode: "10001",
-            city: "London",
-            subdivision: "Greater London",
-            district: "England",
-            country: NationalCountryCode.GB,
-          },
-        };
+        const OriginatorPerson: Originator = personaIdentificationInfo;
+
+        const OriginatorBusiness: Originator = businessIdentificationInfo;
+
+        const BeneficiaryPerson: Beneficiary = personaIdentificationInfo;
+
+        const BeneficiaryBusiness: Beneficiary = businessIdentificationInfo;
     
         describe.each([
           [
@@ -461,6 +445,11 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                 if (!assetBalance || Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)) {
                   continue;
                 }
+
+                const participantsIdentification: ParticipantsIdentification = {
+                  originator,
+                  beneficiary,
+                }
     
                 const requestBody = {
                   idempotencyKey: randomUUID(),
@@ -471,10 +460,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                     amount: minWithdrawalAmount,
                     ...capability.withdrawal,
                   },
-                  participantsIdentification: {
-                    originator,
-                    beneficiary,
-                  },
+                  participantsIdentification
                 };
     
                 const response = await client.transfersBlockchain.createBlockchainWithdrawal({
@@ -483,7 +469,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                 });
     
                 expect(response).toBeDefined();
-                expect(response.status).toBe('success');
+                expect(response.status).toBe('pending');
               }
             }
           });
