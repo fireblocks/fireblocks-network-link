@@ -350,6 +350,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         postalCode: '54321',
         city: 'Los Angeles',
         subdivision: 'CA',
+        district: 'La La Land',
         country: NationalCountryCode.US,
       };
 
