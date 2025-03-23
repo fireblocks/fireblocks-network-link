@@ -3903,33 +3903,38 @@ components:
           type: string
           description: A unique identifier assigned by an external system to track the transaction or entity across different platforms.
         entityType:
-          $ref: '#/components/schemas/EntityType'
+          type: string
+          enum:
+            - Individual
         relationshipType:
           $ref: '#/components/schemas/RelationshipType'
         fullName:
           $ref: '#/components/schemas/FullName'
         dateOfBirth:
           type: string
+          format: date
           example: '1999-01-01'
         postalAddress:
           $ref: '#/components/schemas/PostalAddress'
     BusinessIdentificationInfo:
       type: object
-      description: Information related to the business entity acting as the beneficiary of  the transaction, including the business name, registration number, and  any relevant identifiers, as well as its relationship type and postal  address for communication.
+      description: Information related to the business entity acting as the beneficiary of the transaction.
       properties:
         externalReferenceId:
           type: string
-          description: A unique identifier assigned by an external system to track the  transaction or entity across different platforms.
+          description: A unique identifier assigned by an external system to track the transaction or entity across different platforms.
         entityType:
-          $ref: '#/components/schemas/EntityType'
+          type: string
+          enum:
+            - Business
         relationshipType:
           $ref: '#/components/schemas/RelationshipType'
         businessName:
           type: string
-          description: The legal name of the business entity as registered with the relevant  authorities.
+          description: The legal name of the business entity as registered with the relevant authorities.
         registrationNumber:
           type: string
-          description: A unique identifier assigned to the business entity by the relevant  regulatory authority, often used for tax and legal purposes.
+          description: A unique identifier assigned to the business entity by the relevant regulatory authority, often used for tax and legal purposes.
         postalAddress:
           $ref: '#/components/schemas/PostalAddress'
     Originator:
@@ -4112,10 +4117,6 @@ components:
       enum:
         - CanCreate
         - CannotCreate
-    EntityType:
-      enum:
-        - Individual
-        - Business
     RelationshipType:
       description: Defines the relationship between the Originator and the Beneficiary in a transaction.
       enum:

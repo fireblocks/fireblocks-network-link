@@ -22,7 +22,6 @@ import {
   type TransferCapability,
   Withdrawal,
   WithdrawalCapability,
-  EntityType,
   RelationshipType,
   NationalCountryCode,
   ParticipantsIdentification,
@@ -31,7 +30,8 @@ import {
   PostalAddress,
   Originator,
   Beneficiary,
-  FullName
+  FullName,
+  BlockchainWithdrawalRequest,
 } from '../../src/client/generated';
 import { fakeSchemaObject } from '../../src/schemas';
 import _ from 'lodash';
@@ -341,141 +341,106 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
 
       return balances[0];
     };
-    describe.skipIf(noTransfersBlockchainCapability)(
-      'Create Withdrawal with travel rule', 
-      () => {
-        const fullName: FullName = { firstName: "John", lastName: "Doe" };
+    describe.skipIf(noTransfersBlockchainCapability)('Create Withdrawal with travel rule', () => {
+      const fullName: FullName = { firstName: 'John', lastName: 'Doe' };
 
-        const postalAddress: PostalAddress = {
-          streetName: "Main St",
-          buildingNumber: "101",
-          postalCode: "54321",
-          city: "Los Angeles",
-          subdivision: "CA",
-          country: NationalCountryCode.US,
-        };
+      const postalAddress: PostalAddress = {
+        streetName: 'Main St',
+        buildingNumber: '101',
+        postalCode: '54321',
+        city: 'Los Angeles',
+        subdivision: 'CA',
+        country: NationalCountryCode.US,
+      };
 
-        const personaIdentificationInfo: PersonaIdentificationInfo = {
-          externalReferenceId: 'externalReferenceId',
-          relationshipType: RelationshipType.FIRST_PARTY,
-          entityType: EntityType.INDIVIDUAL,
-          fullName,
-          dateOfBirth: "1985-05-10",
-          postalAddress
-          };
+      const personaIdentificationInfo: PersonaIdentificationInfo = {
+        externalReferenceId: 'externalReferenceId',
+        relationshipType: RelationshipType.FIRST_PARTY,
+        entityType: PersonaIdentificationInfo.entityType.INDIVIDUAL,
+        fullName,
+        dateOfBirth: '1985-05-10',
+        postalAddress,
+      };
 
-        const businessIdentificationInfo: BusinessIdentificationInfo = {
-          externalReferenceId: 'externalReferenceId',
-          relationshipType: RelationshipType.SECOND_PARTY,
-          entityType: EntityType.BUSINESS,
-          businessName: "Tech Innovators",
-          registrationNumber: "TI2021",
-          postalAddress
-          };
-    
-        const OriginatorPerson: Originator = personaIdentificationInfo;
+      const businessIdentificationInfo: BusinessIdentificationInfo = {
+        externalReferenceId: 'externalReferenceId',
+        relationshipType: RelationshipType.SECOND_PARTY,
+        entityType: BusinessIdentificationInfo.entityType.BUSINESS,
+        businessName: 'Tech Innovators',
+        registrationNumber: 'TI2021',
+        postalAddress,
+      };
 
-        const OriginatorBusiness: Originator = businessIdentificationInfo;
+      const OriginatorPerson: Originator = personaIdentificationInfo;
 
-        const BeneficiaryPerson: Beneficiary = personaIdentificationInfo;
+      const OriginatorBusiness: Originator = businessIdentificationInfo;
 
-        const BeneficiaryBusiness: Beneficiary = businessIdentificationInfo;
-    
-        describe.each([
-          [
-            'Full Business Originator and Business Beneficiary',
-            OriginatorBusiness,
-            BeneficiaryBusiness
-          ],
-          [
-            'Personal Originator and Business Beneficiary',
-            OriginatorPerson,
-            BeneficiaryBusiness
-          ],
-          [
-            'Business Originator and Personal Beneficiary',
-            OriginatorBusiness,
-            BeneficiaryPerson
-          ],
-          [
-            'Personal Originator and Personal Beneficiary',
-            OriginatorPerson,
-            BeneficiaryPerson
-          ],
-          [
-            'Only Originator ',
-            OriginatorPerson,
-            {}
-          ],
-          [
-            'Only Beneficiary',
-            {},
-            BeneficiaryBusiness
-          ],
-          [
-            'Partial Originator',
-            { postalAddress: {streetName: "Business Blvd"}},
-            BeneficiaryPerson
-          ],
-          [
-            'Partial Beneficiary',
-            OriginatorPerson,
-            {fullName: { firstName: "Alice", lastName: "Smith" }}
-          ],
-          [
-            'Partial Originator and Beneficiary',
-            {entityType: EntityType.BUSINESS},
-            {entityType: EntityType.INDIVIDUAL,
-              dateOfBirth: "1992-07-15"
-            }
-          ]
-        ])('Scenario: %s', (scenarioName, originator, beneficiary) => {
-          it('Blockchain withdrawal with travel rule should succeed', async () => {
-            for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
-              const transferMethodSpecificCapabilities = capabilities.filter(
-                (capability) =>
-                  capability.withdrawal.transferMethod ===
-                  PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
-              );
-    
-              for (const capability of transferMethodSpecificCapabilities) {
-                const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
-                const assetBalance = await getCapabilityAssetBalance(accountId, capability);
-    
-                if (!assetBalance || Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)) {
-                  continue;
-                }
+      const BeneficiaryPerson: Beneficiary = personaIdentificationInfo;
 
-                const participantsIdentification: ParticipantsIdentification = {
-                  originator,
-                  beneficiary,
-                }
-    
-                const requestBody = {
-                  idempotencyKey: randomUUID(),
-                  balanceAmount: minWithdrawalAmount,
-                  balanceAsset: capability.balanceAsset,
-                  destination: {
-                    ...blockchainDestinationConfig,
-                    amount: minWithdrawalAmount,
-                    ...capability.withdrawal,
-                  },
-                  participantsIdentification
-                };
-    
-                const response = await client.transfersBlockchain.createBlockchainWithdrawal({
-                  accountId,
-                  requestBody,
-                });
-    
-                expect(response).toBeDefined();
-                expect(response.status).toBe('pending');
+      const BeneficiaryBusiness: Beneficiary = businessIdentificationInfo;
+
+      describe.each([
+        ['business originator and business beneficiary', OriginatorBusiness, BeneficiaryBusiness],
+        ['personal originator and business beneficiary', OriginatorPerson, BeneficiaryBusiness],
+        ['business originator and personal beneficiary', OriginatorBusiness, BeneficiaryPerson],
+        ['personal originator and personal beneficiary', OriginatorPerson, BeneficiaryPerson],
+        [
+          'partial originator and beneficiary',
+          {
+            entityType: PersonaIdentificationInfo.entityType.INDIVIDUAL,
+            dateOfBirth: '1992-07-15',
+          } as Originator,
+          { entityType: BusinessIdentificationInfo.entityType.BUSINESS } as Beneficiary,
+        ],
+      ])('Scenario: %s', (scenarioName, originator, beneficiary) => {
+        it('Blockchain withdrawal with travel rule should succeed', async () => {
+          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+            const transferMethodSpecificCapabilities = capabilities.filter(
+              (capability) =>
+                capability.withdrawal.transferMethod ===
+                PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            );
+
+            for (const capability of transferMethodSpecificCapabilities) {
+              const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
+              const assetBalance = await getCapabilityAssetBalance(accountId, capability);
+
+              if (
+                !assetBalance ||
+                Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
+              ) {
+                continue;
               }
+
+              const participantsIdentification: ParticipantsIdentification = {
+                originator,
+                beneficiary,
+              };
+
+              const requestBody: BlockchainWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: minWithdrawalAmount,
+                balanceAsset: capability.balanceAsset,
+                destination: {
+                  ...blockchainDestinationConfig,
+                  amount: minWithdrawalAmount,
+                  ...capability.withdrawal,
+                },
+                participantsIdentification,
+              };
+
+              const response = await client.transfersBlockchain.createBlockchainWithdrawal({
+                accountId,
+                requestBody,
+              });
+
+              expect(response).toBeDefined();
+              expect(response.status).toBe('pending');
             }
-          });
+          }
         });
-      }
-    );    
+      });
+    });
 
     describe.each([
       {

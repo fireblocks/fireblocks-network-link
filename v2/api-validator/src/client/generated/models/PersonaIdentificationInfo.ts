@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { EntityType } from './EntityType';
 import type { FullName } from './FullName';
 import type { PostalAddress } from './PostalAddress';
 import type { RelationshipType } from './RelationshipType';
@@ -16,10 +15,19 @@ export type PersonaIdentificationInfo = {
      * A unique identifier assigned by an external system to track the transaction or entity across different platforms.
      */
     externalReferenceId?: string;
-    entityType?: EntityType;
+    entityType?: PersonaIdentificationInfo.entityType;
     relationshipType?: RelationshipType;
     fullName?: FullName;
     dateOfBirth?: string;
     postalAddress?: PostalAddress;
 };
+
+export namespace PersonaIdentificationInfo {
+
+    export enum entityType {
+        INDIVIDUAL = 'Individual',
+    }
+
+
+}
 
