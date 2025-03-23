@@ -3940,25 +3940,21 @@ components:
           description: A unique identifier assigned to the business entity by the relevant regulatory authority, often used for tax and legal purposes.
         postalAddress:
           $ref: '#/components/schemas/PostalAddress'
-    Originator:
-      description: Information about the originator of the transaction.
-      oneOf:
-        - $ref: '#/components/schemas/PersonaIdentificationInfo'
-        - $ref: '#/components/schemas/BusinessIdentificationInfo'
-    Beneficiary:
-      description: Information about the beneficiary of the transaction.
-      oneOf:
-        - $ref: '#/components/schemas/PersonaIdentificationInfo'
-        - $ref: '#/components/schemas/BusinessIdentificationInfo'
     ParticipantsIdentification:
       type: object
       description: |
         An object that ensures the inclusion of either the originator or  beneficiary details for transactions.
       properties:
         originator:
-          $ref: '#/components/schemas/Originator'
+          description: Information about the originator of the transaction.
+          oneOf:
+            - $ref: '#/components/schemas/PersonaIdentificationInfo'
+            - $ref: '#/components/schemas/BusinessIdentificationInfo'
         beneficiary:
-          $ref: '#/components/schemas/Beneficiary'
+          description: Information about the beneficiary of the transaction.
+          oneOf:
+            - $ref: '#/components/schemas/PersonaIdentificationInfo'
+            - $ref: '#/components/schemas/BusinessIdentificationInfo'
     WithdrawalRequestCommonProperties:
       type: object
       required:

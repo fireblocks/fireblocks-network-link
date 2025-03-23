@@ -1215,18 +1215,6 @@ components:
         postalAddress:
           $ref: '#/components/schemas/PostalAddress'
 
-    Originator:
-      description: Information about the originator of the transaction.
-      oneOf:
-        - $ref: '#/components/schemas/PersonaIdentificationInfo'
-        - $ref: '#/components/schemas/BusinessIdentificationInfo'
-
-    Beneficiary:
-      description: Information about the beneficiary of the transaction.
-      oneOf:
-        - $ref: '#/components/schemas/PersonaIdentificationInfo'
-        - $ref: '#/components/schemas/BusinessIdentificationInfo'
-
     ParticipantsIdentification:
       type: object
       description: >
@@ -1234,9 +1222,15 @@ components:
         beneficiary details for transactions.
       properties:
         originator:
-          $ref: '#/components/schemas/Originator'
+          description: Information about the originator of the transaction.
+          oneOf:
+            - $ref: '#/components/schemas/PersonaIdentificationInfo'
+            - $ref: '#/components/schemas/BusinessIdentificationInfo'
         beneficiary:
-          $ref: '#/components/schemas/Beneficiary'
+          description: Information about the beneficiary of the transaction.
+          oneOf:
+            - $ref: '#/components/schemas/PersonaIdentificationInfo'
+            - $ref: '#/components/schemas/BusinessIdentificationInfo'
 
     WithdrawalRequestCommonProperties:
       type: object

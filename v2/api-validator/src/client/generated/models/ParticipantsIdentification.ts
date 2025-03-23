@@ -3,15 +3,21 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Beneficiary } from './Beneficiary';
-import type { Originator } from './Originator';
+import type { BusinessIdentificationInfo } from './BusinessIdentificationInfo';
+import type { PersonaIdentificationInfo } from './PersonaIdentificationInfo';
 
 /**
  * An object that ensures the inclusion of either the originator or  beneficiary details for transactions.
  *
  */
 export type ParticipantsIdentification = {
-    originator?: Originator;
-    beneficiary?: Beneficiary;
+    /**
+     * Information about the originator of the transaction.
+     */
+    originator?: (PersonaIdentificationInfo | BusinessIdentificationInfo);
+    /**
+     * Information about the beneficiary of the transaction.
+     */
+    beneficiary?: (PersonaIdentificationInfo | BusinessIdentificationInfo);
 };
 

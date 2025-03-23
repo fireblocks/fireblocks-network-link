@@ -28,8 +28,6 @@ import {
   PersonaIdentificationInfo,
   BusinessIdentificationInfo,
   PostalAddress,
-  Originator,
-  Beneficiary,
   FullName,
   BlockchainWithdrawalRequest,
 } from '../../src/client/generated';
@@ -372,13 +370,13 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         postalAddress,
       };
 
-      const OriginatorPerson: Originator = personaIdentificationInfo;
+      const OriginatorPerson = personaIdentificationInfo;
 
-      const OriginatorBusiness: Originator = businessIdentificationInfo;
+      const OriginatorBusiness = businessIdentificationInfo;
 
-      const BeneficiaryPerson: Beneficiary = personaIdentificationInfo;
+      const BeneficiaryPerson = personaIdentificationInfo;
 
-      const BeneficiaryBusiness: Beneficiary = businessIdentificationInfo;
+      const BeneficiaryBusiness = businessIdentificationInfo;
 
       describe.each([
         ['business originator and business beneficiary', OriginatorBusiness, BeneficiaryBusiness],
@@ -390,8 +388,10 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           {
             entityType: PersonaIdentificationInfo.entityType.INDIVIDUAL,
             dateOfBirth: '1992-07-15',
-          } as Originator,
-          { entityType: BusinessIdentificationInfo.entityType.BUSINESS } as Beneficiary,
+          } as PersonaIdentificationInfo,
+          {
+            entityType: BusinessIdentificationInfo.entityType.BUSINESS,
+          } as BusinessIdentificationInfo,
         ],
       ])('Scenario: %s', (scenarioName, originator, beneficiary) => {
         it('Blockchain withdrawal with travel rule should succeed', async () => {
