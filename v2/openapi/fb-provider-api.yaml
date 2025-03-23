@@ -17,8 +17,8 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 
-  description:
-    $ref: README.md
+  description: >-
+    Placeholder for automatic documentation injection from README.md
 
 tags:
   - name: capabilities
@@ -764,8 +764,7 @@ components:
 
     Balances:
       type: array
-      description: >-
-        Maps balance assets to their balances.
+      description: Maps balance assets to their balances.
       items:
         anyOf:
           - $ref: '#/components/schemas/AssetCreditBalance'

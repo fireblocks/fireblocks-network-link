@@ -899,6 +899,19 @@ components:
         - **Approved** - The withdrawal transaction has been approved and it is in progress
         
         - **Rejected** - The withdrawal transaction has been rejected
+    CollateralWithdrawalSettlementTransaction:
+      type: object
+      description: >-
+        Represents a collateral withdrawal settlement transaction. 
+        Provide details about a withdrawal transaction in case of a settlement.
+      required: [ settlementId, settlementTxId ]
+      properties:
+        settlementId:
+          type: string
+          description: Unique identifier for the settlement.
+        settlementTxId:
+          type: string
+          description: The transaction ID associated with the settlement.
     CollateralWithdrawalTransaction:
       type: object
       required: [ id, status, collateralTxId, approvalRequest ]
@@ -931,6 +944,8 @@ components:
           type: string
         approvalRequest:
           $ref: '#/components/schemas/ApprovalRequest'
+        settlementDetails:
+          $ref: '#/components/schemas/CollateralWithdrawalSettlementTransaction'
     CollateralWithdrawalTransactionIntentResponse:
       type: object
       required: [ id, status, amount, destinationAddress, approvalRequest ]
