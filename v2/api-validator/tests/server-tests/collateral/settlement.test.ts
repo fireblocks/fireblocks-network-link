@@ -12,9 +12,15 @@ import Client from '../../../src/client';
 const noCollateralCapability = !hasCapability('collateral');
 
 describe.skipIf(noCollateralCapability)('Collateral Settlements', () => {
-  const client: Client = new Client();
-  const accountId: string = getCapableAccountId('collateral');
-  const collateralId: string = config.get('collateral.collateralAccount.accountId');
+  let client: Client;
+  let accountId: string;
+  let collateralId: string;
+
+  beforeAll(async () => {
+    client = new Client();
+    accountId = getCapableAccountId('collateral');
+    collateralId = config.get('collateral.collateralAccount.accountId');
+  });
 
   describe('Check full settlement flow', () => {
     let settlementVersion: string;
