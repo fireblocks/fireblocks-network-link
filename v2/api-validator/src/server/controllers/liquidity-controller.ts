@@ -35,7 +35,7 @@ export class UnknownToAssetError extends XComError {
 }
 export class UnknownQuoteCapabilityError extends XComError {
   constructor({ fromAsset, toAsset }: QuoteCapabilityAssets) {
-    super('Converstion not supported', { fromAsset, toAsset });
+    super('Conversion not supported', { fromAsset, toAsset });
   }
 }
 
