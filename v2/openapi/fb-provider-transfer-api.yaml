@@ -893,6 +893,11 @@ components:
           type: string
         referenceId:
           type: string
+    
+    FiatCapability:
+      oneOf:
+        - $ref: '#/components/schemas/IbanCapability'
+        - $ref: '#/components/schemas/SwiftCapability'
 
     PublicBlockchainTransactionDestination:
       type: object

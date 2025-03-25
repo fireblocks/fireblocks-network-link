@@ -11,10 +11,12 @@ import {
   PublicBlockchainCapability,
   RampMethod,
   RampRequest,
-  CommonRamp,
   ApiError,
   BadRequestError,
   RequestPart,
+  IbanCapability,
+  SwiftCapability,
+  RampStatus,
 } from '../../src/client/generated';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 import { randomUUID } from 'crypto';
@@ -37,8 +39,8 @@ function isFiatMethod(
   capability: FiatCapability | PublicBlockchainCapability
 ): capability is FiatCapability {
   return (
-    capability.transferMethod === FiatCapability.transferMethod.IBAN ||
-    capability.transferMethod === FiatCapability.transferMethod.SWIFT
+    capability.transferMethod === IbanCapability.transferMethod.IBAN ||
+    capability.transferMethod === SwiftCapability.transferMethod.SWIFT
   );
 }
 
@@ -82,9 +84,9 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       amount: '0.1',
       recipient: {
         asset: method.to.asset,
-        ...(method.to.transferMethod === FiatCapability.transferMethod.IBAN
-          ? { ...ibanDestinationConfig, transferMethod: FiatCapability.transferMethod.IBAN }
-          : { ...swiftDestinationConfig, transferMethod: FiatCapability.transferMethod.SWIFT }),
+        ...(method.to.transferMethod === IbanCapability.transferMethod.IBAN
+          ? { ...ibanDestinationConfig, transferMethod: IbanCapability.transferMethod.IBAN }
+          : { ...swiftDestinationConfig, transferMethod: SwiftCapability.transferMethod.SWIFT }),
       },
     };
   }
@@ -259,10 +261,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
       });
 
       it('should receive initial status CREATED', async () => {
-        expect(createdRamp.status).toBeOneOf([
-          CommonRamp.status.CREATED,
-          CommonRamp.status.PENDING_DELIVERY,
-        ]);
+        expect(createdRamp.status).toBe(RampStatus.PENDING_DELIVERY);
       });
 
       it('should find ramp in details endpoint', async () => {

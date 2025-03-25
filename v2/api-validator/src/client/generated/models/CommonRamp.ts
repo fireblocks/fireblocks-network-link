@@ -4,26 +4,13 @@
 /* eslint-disable */
 
 import type { PositiveAmount } from './PositiveAmount';
+import type { RampStatus } from './RampStatus';
 
 export type CommonRamp = {
     id: string;
     createdAt: string;
     updatedAt: string;
-    status: CommonRamp.status;
+    status: RampStatus;
     amount?: PositiveAmount;
 };
-
-export namespace CommonRamp {
-
-    export enum status {
-        CREATED = 'Created',
-        PENDING_DELIVERY = 'PendingDelivery',
-        DELIVERY_RECEIVED = 'DeliveryReceived',
-        RECEIPT_SUBMITTED = 'ReceiptSubmitted',
-        COMPLETED = 'Completed',
-        FAILED = 'Failed',
-    }
-
-
-}
 

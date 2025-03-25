@@ -5,15 +5,15 @@ import { AssetsController } from './assets-controller';
 import { Repository } from './repository';
 import {
   BridgeProperties,
-  CommonRamp,
-  FiatCapability,
   IbanAddress,
+  IbanCapability,
   OffRampProperties,
   OnRampProperties,
   PublicBlockchainAddress,
   Ramp,
   RampMethod,
   RampRequest,
+  RampStatus,
   SwiftAddress,
 } from '../../client/generated';
 import { randomUUID } from 'crypto';
@@ -122,7 +122,7 @@ export class RampsController {
       };
     } else if (ramp.type === OnRampProperties.type.ON_RAMP) {
       deliveryInstructions = {
-        ...(ramp.from.transferMethod === FiatCapability.transferMethod.IBAN
+        ...(ramp.from.transferMethod === IbanCapability.transferMethod.IBAN
           ? (fakeSchemaObject('IbanAddress') as IbanAddress)
           : (fakeSchemaObject('SwiftAddress') as SwiftAddress)),
         asset: ramp.from.asset,
@@ -137,7 +137,7 @@ export class RampsController {
       deliveryInstructions,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      status: CommonRamp.status.CREATED,
+      status: RampStatus.PENDING_DELIVERY,
     };
     this.rampsRepository.create(newRamp);
     return newRamp;

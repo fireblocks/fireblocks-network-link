@@ -95,7 +95,7 @@ export class RampsService {
 
     /**
      * Initiates a new ramp
-     * Return the newly created ramp along with it's delivery instructions.
+     * Creates the delivery instructions for the new ramp and return it in the response.
      * @returns Ramp New ramp has been successfully created.
      * @throws ApiError
      */

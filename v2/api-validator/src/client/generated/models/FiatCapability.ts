@@ -3,20 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { NationalCurrency } from './NationalCurrency';
+import type { IbanCapability } from './IbanCapability';
+import type { SwiftCapability } from './SwiftCapability';
 
-export type FiatCapability = {
-    asset: NationalCurrency;
-    transferMethod: FiatCapability.transferMethod;
-};
-
-export namespace FiatCapability {
-
-    export enum transferMethod {
-        IBAN = 'Iban',
-        SWIFT = 'Swift',
-    }
-
-
-}
+export type FiatCapability = (IbanCapability | SwiftCapability);
 

@@ -54,11 +54,13 @@ x-schemas:
     {
       $ref: "./fb-provider-api.yaml#/components/schemas/PublicBlockchainCapability",
     }
-  FiatCapability:
-    { $ref: "./fb-provider-api.yaml#/components/schemas/FiatCapability" }
   PublicBlockchainAddress:
     {
       $ref: "./fb-provider-api.yaml#/components/schemas/PublicBlockchainAddress",
+    }
+  FiatCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatCapability",
     }
   FiatDepositDestination:
     {
@@ -137,7 +139,9 @@ paths:
     post:
       operationId: createRamp
       summary: Initiates a new ramp
-      description: Return the newly created ramp along with it's delivery instructions.
+      description:
+        Creates the delivery instructions for the new ramp and return it in
+        the response.
       tags: [ramps]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
@@ -146,7 +150,12 @@ paths:
         - $ref: "#/x-header-params/X-FBAPI-TIMESTAMP"
         - $ref: "#/x-path-params/SubAccountIdPathParam"
       requestBody:
-        $ref: "#/components/requestBodies/RampRequestBody"
+        description: Ramp details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RampRequest"
       responses:
         "201":
           $ref: "#/components/responses/CreateRampResponse"
@@ -184,15 +193,6 @@ paths:
           $ref: "#/x-responses/ErrorResponse"
 
 components:
-  requestBodies:
-    RampRequestBody:
-      description: Ramp details
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/RampRequest"
-
   responses:
     RampMethodsResponse:
       description: List of ramps methods for account.
@@ -210,13 +210,14 @@ components:
             allUsdMethods:
               summary: USDs ramps
               description: >-
-                This response indicates that on ramp from USD to USDC, off ramp from USDC to USD 
-                and bridging between USDC and USDC on different blockchains are supported. The USD balance 
-                can be specified directly while tokens must be defined in `GET /capabilities/assets` 
-                and referenced using their IDs.
+                This response indicates that on ramp from USD to USDC, off 
+                ramp from USDC to USD and bridging between USDC and USDC on 
+                different blockchains are supported. The USD balance can be 
+                specified directly while tokens must be defined in 
+                `GET /capabilities/assets` and referenced using their IDs.
 
-                The asset IDs in this example are the same IDs used in the examples of
-                `GET /capabilities/assets`.
+                The asset IDs in this example are the same IDs used in the 
+                examples of `GET /capabilities/assets`.
               value:
                 capabilities:
                   - id: "16b8b2c3-bd61-4745-9c48-3d30c2bc6907"
@@ -283,7 +284,7 @@ components:
                   - id: "16b8b2c3-bd61-4745-9c48-3d30c2bc6907"
                     createdAt: "2021-09-01T12:00:00Z"
                     updatedAt: "2021-09-01T12:00:00Z"
-                    status: "Created"
+                    status: "PendingDelivery"
                     amount: "1231.45"
                     type: "OnRamp"
                     from:
@@ -394,6 +395,14 @@ components:
                       transferMethod: "PublicBlockchain"
 
   schemas:
+    RampStatus:
+      enum:
+        - PendingDelivery
+        - DeliveryReceived
+        - ReceiptSubmitted
+        - Completed
+        - Failed
+
     OnRampCapability:
       type: object
       required: [from, to]
@@ -522,14 +531,7 @@ components:
           type: string
           format: date-time
         status:
-          type: string
-          enum:
-            - Created
-            - PendingDelivery
-            - DeliveryReceived
-            - ReceiptSubmitted
-            - Completed
-            - Failed
+          $ref: "#/components/schemas/RampStatus"
         amount:
           $ref: "#/x-schemas/PositiveAmount"
 

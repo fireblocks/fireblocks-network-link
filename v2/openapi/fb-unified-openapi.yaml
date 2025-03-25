@@ -2376,7 +2376,7 @@ paths:
     post:
       operationId: createRamp
       summary: Initiates a new ramp
-      description: Return the newly created ramp along with it's delivery instructions.
+      description: Creates the delivery instructions for the new ramp and return it in the response.
       tags:
         - ramps
       parameters:
@@ -2386,7 +2386,12 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
-        $ref: '#/components/requestBodies/RampRequestBody'
+        description: Ramp details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RampRequest'
       responses:
         '201':
           $ref: '#/components/responses/CreateRampResponse'
@@ -2607,8 +2612,8 @@ components:
             allUsdMethods:
               summary: USDs ramps
               description: |-
-                This response indicates that on ramp from USD to USDC, off ramp from USDC to USD  and bridging between USDC and USDC on different blockchains are supported. The USD balance  can be specified directly while tokens must be defined in `GET /capabilities/assets`  and referenced using their IDs.
-                The asset IDs in this example are the same IDs used in the examples of `GET /capabilities/assets`.
+                This response indicates that on ramp from USD to USDC, off  ramp from USDC to USD and bridging between USDC and USDC on  different blockchains are supported. The USD balance can be  specified directly while tokens must be defined in  `GET /capabilities/assets` and referenced using their IDs.
+                The asset IDs in this example are the same IDs used in the  examples of `GET /capabilities/assets`.
               value:
                 capabilities:
                   - id: 16b8b2c3-bd61-4745-9c48-3d30c2bc6907
@@ -2672,7 +2677,7 @@ components:
                   - id: 16b8b2c3-bd61-4745-9c48-3d30c2bc6907
                     createdAt: '2021-09-01T12:00:00Z'
                     updatedAt: '2021-09-01T12:00:00Z'
-                    status: Created
+                    status: PendingDelivery
                     amount: '1231.45'
                     type: OnRamp
                     from:
@@ -3104,18 +3109,6 @@ components:
       oneOf:
         - $ref: '#/components/schemas/NativeCryptocurrency'
         - $ref: '#/components/schemas/OtherAssetReference'
-    FiatCapability:
-      type: object
-      required:
-        - asset
-        - transferMethod
-      properties:
-        asset:
-          $ref: '#/components/schemas/NationalCurrency'
-        transferMethod:
-          enum:
-            - Iban
-            - Swift
     PublicBlockchainCapability:
       type: object
       required:
@@ -3942,6 +3935,10 @@ components:
           type: string
         referenceId:
           type: string
+    FiatCapability:
+      oneOf:
+        - $ref: '#/components/schemas/IbanCapability'
+        - $ref: '#/components/schemas/SwiftCapability'
     PublicBlockchainTransactionDestination:
       type: object
       allOf:
@@ -4750,6 +4747,13 @@ components:
           type: string
           description: |
             A unique identifier of the settlement state version. This field is optional and can be used to indicate the version of the settlement state the client is referring to.
+    RampStatus:
+      enum:
+        - PendingDelivery
+        - DeliveryReceived
+        - ReceiptSubmitted
+        - Completed
+        - Failed
     OnRampCapability:
       type: object
       required:
@@ -4880,14 +4884,7 @@ components:
           type: string
           format: date-time
         status:
-          type: string
-          enum:
-            - Created
-            - PendingDelivery
-            - DeliveryReceived
-            - ReceiptSubmitted
-            - Completed
-            - Failed
+          $ref: '#/components/schemas/RampStatus'
         amount:
           $ref: '#/components/schemas/PositiveAmount'
     OnRampTransfer:
@@ -4938,11 +4935,3 @@ components:
         - $ref: '#/components/schemas/OffRampTransfer'
         - $ref: '#/components/schemas/BridgeTransfer'
   securitySchemes: {}
-  requestBodies:
-    RampRequestBody:
-      description: Ramp details
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/RampRequest'

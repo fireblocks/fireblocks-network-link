@@ -913,16 +913,6 @@ components:
         - $ref: '#/components/schemas/NativeCryptocurrency'
         - $ref: '#/components/schemas/OtherAssetReference'
 
-
-    FiatCapability:
-      type: object
-      required: [ asset, transferMethod ]
-      properties:
-        asset:
-          $ref: '#/components/schemas/NationalCurrency'
-        transferMethod:
-          enum: [ Iban, Swift ]
-
     PublicBlockchainCapability:
       type: object
       required: [ asset, transferMethod ]
