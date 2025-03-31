@@ -4,8 +4,8 @@
 /* eslint-disable */
 
 import type { FullName } from './FullName';
+import type { ParticipantRelationshipType } from './ParticipantRelationshipType';
 import type { PostalAddress } from './PostalAddress';
-import type { RelationshipType } from './RelationshipType';
 
 /**
  * Individual information about the beneficiary of the transaction.
@@ -16,7 +16,7 @@ export type PersonaIdentificationInfo = {
      */
     externalReferenceId?: string;
     entityType?: PersonaIdentificationInfo.entityType;
-    relationshipType?: RelationshipType;
+    participantRelationshipType?: ParticipantRelationshipType;
     fullName?: FullName;
     dateOfBirth?: string;
     postalAddress?: PostalAddress;

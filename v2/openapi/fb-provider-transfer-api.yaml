@@ -1181,8 +1181,8 @@ components:
           type: string
           enum:
             - Individual
-        relationshipType: 
-          $ref: '#/components/schemas/RelationshipType'
+        participantRelationshipType: 
+          $ref: '#/components/schemas/ParticipantRelationshipType'
         fullName:
           $ref: '#/components/schemas/FullName'
         dateOfBirth:
@@ -1204,8 +1204,8 @@ components:
           type: string
           enum:
             - Business
-        relationshipType:
-          $ref: '#/components/schemas/RelationshipType'
+        participantRelationshipType:
+          $ref: '#/components/schemas/ParticipantRelationshipType'
         businessName:
           type: string
           description: The legal name of the business entity as registered with the relevant authorities.
@@ -1389,12 +1389,17 @@ components:
         - CanCreate
         - CannotCreate
 
-    RelationshipType: 
-      description: Defines the relationship between the Originator and the Beneficiary in a transaction.
+    ParticipantRelationshipType:
+      description: >-
+        Defines the relationship between the Originator and the Beneficiary in a transaction.
+
+        - FirstParty: The Originator and Beneficiary are the same entity.
+        - SecondParty: The Originator and Beneficiary have a direct relationship.
+        - ThirdParty: The transaction involves an intermediary between the Originator and Beneficiary.
       enum:
-        - FirstParty  # The Originator and Beneficiary are the same entity.
-        - SecondParty # The Originator and Beneficiary have a direct relationship.
-        - ThirdParty  # The transaction involves an intermediary between the Originator and Beneficiary.
+        - FirstParty
+        - SecondParty
+        - ThirdParty
 
     NationalCountryCode:
       type: string

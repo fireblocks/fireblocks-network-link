@@ -3,8 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { ParticipantRelationshipType } from './ParticipantRelationshipType';
 import type { PostalAddress } from './PostalAddress';
-import type { RelationshipType } from './RelationshipType';
 
 /**
  * Information related to the business entity acting as the beneficiary of the transaction.
@@ -15,7 +15,7 @@ export type BusinessIdentificationInfo = {
      */
     externalReferenceId?: string;
     entityType?: BusinessIdentificationInfo.entityType;
-    relationshipType?: RelationshipType;
+    participantRelationshipType?: ParticipantRelationshipType;
     /**
      * The legal name of the business entity as registered with the relevant authorities.
      */

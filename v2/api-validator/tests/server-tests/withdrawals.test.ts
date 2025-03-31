@@ -22,7 +22,7 @@ import {
   type TransferCapability,
   Withdrawal,
   WithdrawalCapability,
-  RelationshipType,
+  ParticipantRelationshipType,
   NationalCountryCode,
   ParticipantsIdentification,
   PersonaIdentificationInfo,
@@ -354,7 +354,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
 
       const personaIdentificationInfo: PersonaIdentificationInfo = {
         externalReferenceId: 'externalReferenceId',
-        relationshipType: RelationshipType.FIRST_PARTY,
+        participantRelationshipType: ParticipantRelationshipType.FIRST_PARTY,
         entityType: PersonaIdentificationInfo.entityType.INDIVIDUAL,
         fullName,
         dateOfBirth: '1985-05-10',
@@ -363,7 +363,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
 
       const businessIdentificationInfo: BusinessIdentificationInfo = {
         externalReferenceId: 'externalReferenceId',
-        relationshipType: RelationshipType.SECOND_PARTY,
+        participantRelationshipType: ParticipantRelationshipType.SECOND_PARTY,
         entityType: BusinessIdentificationInfo.entityType.BUSINESS,
         businessName: 'Tech Innovators',
         registrationNumber: 'TI2021',
