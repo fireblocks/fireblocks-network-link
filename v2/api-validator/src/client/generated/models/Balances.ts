@@ -9,4 +9,4 @@ import type { AssetCreditBalance } from './AssetCreditBalance';
 /**
  * Maps balance assets to their balances.
  */
-export type Balances = Array<(AssetBalance | AssetCreditBalance)>;
+export type Balances = Array<(AssetCreditBalance | AssetBalance)>;
