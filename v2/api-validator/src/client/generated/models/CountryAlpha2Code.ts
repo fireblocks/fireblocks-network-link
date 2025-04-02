@@ -4,9 +4,9 @@
 /* eslint-disable */
 
 /**
- * Alpha2 country codes as defined in ISO 3166.
+ * Alpha-2 country codes as defined in ISO 3166.
  */
-export enum NationalCountryCode {
+export enum CountryAlpha2Code {
     US = 'US',
     AL = 'AL',
     DZ = 'DZ',

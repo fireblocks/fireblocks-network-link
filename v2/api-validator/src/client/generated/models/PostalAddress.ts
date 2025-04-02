@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { NationalCountryCode } from './NationalCountryCode';
+import type { CountryAlpha2Code } from './CountryAlpha2Code';
 
 /**
  * A postal address in free-form text, containing details like street, building number, postal code, city, subdivision, and  country.
@@ -33,6 +33,6 @@ export type PostalAddress = {
      * Identifies a subdivision within a country subdivision
      */
     district?: string;
-    country?: NationalCountryCode;
+    country?: CountryAlpha2Code;
 };
 

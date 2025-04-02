@@ -59,6 +59,7 @@ export type { CollateralWithdrawalTransactionIntentResponse } from './models/Col
 export type { CollateralWithdrawalTransactionRequest } from './models/CollateralWithdrawalTransactionRequest';
 export type { CollateralWithdrawalTransactions } from './models/CollateralWithdrawalTransactions';
 export { CollateralWithdrawalTransactionStatus } from './models/CollateralWithdrawalTransactionStatus';
+export { CountryAlpha2Code } from './models/CountryAlpha2Code';
 export type { CryptocurrencyReference } from './models/CryptocurrencyReference';
 export { CryptocurrencySymbol } from './models/CryptocurrencySymbol';
 export type { CryptocurrencySymbolQueryParam } from './models/CryptocurrencySymbolQueryParam';
@@ -97,7 +98,6 @@ export { ListOrderQueryParam } from './models/ListOrderQueryParam';
 export type { MarketEntry } from './models/MarketEntry';
 export { MarketOrderData } from './models/MarketOrderData';
 export type { MarketTrade } from './models/MarketTrade';
-export { NationalCountryCode } from './models/NationalCountryCode';
 export type { NationalCurrency } from './models/NationalCurrency';
 export { NationalCurrencyCode } from './models/NationalCurrencyCode';
 export type { NationalCurrencyCodeQueryParam } from './models/NationalCurrencyCodeQueryParam';

@@ -23,7 +23,7 @@ import {
   Withdrawal,
   WithdrawalCapability,
   ParticipantRelationshipType,
-  NationalCountryCode,
+  CountryAlpha2Code,
   ParticipantsIdentification,
   PersonaIdentificationInfo,
   BusinessIdentificationInfo,
@@ -349,7 +349,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         city: 'Los Angeles',
         subdivision: 'CA',
         district: 'La La Land',
-        country: NationalCountryCode.US,
+        country: CountryAlpha2Code.US,
       };
 
       const personaIdentificationInfo: PersonaIdentificationInfo = {

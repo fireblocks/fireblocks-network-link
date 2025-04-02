@@ -3889,7 +3889,7 @@ components:
           description: Identifies a subdivision within a country subdivision
           type: string
         country:
-          $ref: '#/components/schemas/NationalCountryCode'
+          $ref: '#/components/schemas/CountryAlpha2Code'
     FullName:
       type: object
       description: Contains the first name and last name of a person.
@@ -4124,9 +4124,9 @@ components:
         - FirstParty
         - SecondParty
         - ThirdParty
-    NationalCountryCode:
+    CountryAlpha2Code:
       type: string
-      description: Alpha2 country codes as defined in ISO 3166.
+      description: Alpha-2 country codes as defined in ISO 3166.
       enum:
         - US
         - AL
