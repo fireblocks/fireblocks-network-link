@@ -4,8 +4,8 @@
 /* eslint-disable */
 
 /**
- * Defines the relationship between the Originator and the Beneficiary in a transaction.
- * - FirstParty: The Originator and Beneficiary are the same entity. - SecondParty: The Originator and Beneficiary have a direct relationship. - ThirdParty: The transaction involves an intermediary between the Originator and Beneficiary.
+ * Defines the relationship between the originator and the beneficiary in a transaction.
+ * - FirstParty: The originator and beneficiary are the same entity. - SecondParty: The originator and beneficiary have a direct relationship. - ThirdParty: The transaction involves an intermediary between the originator and beneficiary.
  */
 export enum ParticipantRelationshipType {
     FIRST_PARTY = 'FirstParty',

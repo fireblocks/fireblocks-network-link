@@ -4118,15 +4118,15 @@ components:
         - CannotCreate
     ParticipantRelationshipType:
       description: |-
-        Defines the relationship between the Originator and the Beneficiary in a transaction.
-        - FirstParty: The Originator and Beneficiary are the same entity. - SecondParty: The Originator and Beneficiary have a direct relationship. - ThirdParty: The transaction involves an intermediary between the Originator and Beneficiary.
+        Defines the relationship between the originator and the beneficiary in a transaction.
+        - FirstParty: The originator and beneficiary are the same entity. - SecondParty: The originator and beneficiary have a direct relationship. - ThirdParty: The transaction involves an intermediary between the originator and beneficiary.
       enum:
         - FirstParty
         - SecondParty
         - ThirdParty
     NationalCountryCode:
       type: string
-      description: National a2 country codes as defined in ISO 3166.
+      description: Alpha2 country codes as defined in ISO 3166.
       enum:
         - US
         - AL

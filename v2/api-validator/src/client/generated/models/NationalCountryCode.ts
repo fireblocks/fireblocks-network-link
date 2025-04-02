@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 /**
- * National a2 country codes as defined in ISO 3166.
+ * Alpha2 country codes as defined in ISO 3166.
  */
 export enum NationalCountryCode {
     US = 'US',
