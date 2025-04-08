@@ -402,6 +402,9 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
       responses:
         '200':
           description: List of possible asset conversions.
@@ -3338,7 +3341,7 @@ components:
           $ref: '#/components/schemas/PositiveAmount'
         conversionFeeBps:
           type: integer
-          description: Conversion fee in basis points.
+          description: Conversion fee in basis points. The amounts are expected to include the fee.
         status:
           $ref: '#/components/schemas/QuoteStatus'
         createdAt:
