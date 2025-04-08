@@ -67,6 +67,14 @@ async function downloadCapabilities() {
     await downloadJsonFile('books', getBooks);
   }
 
+  if (hasCapability('liquidity')) {
+    const getQuoteCapabilities = makeDownloader(async (limit: number, startingAfter?: string) => {
+      const response = await client.capabilities.getQuoteCapabilities({ limit, startingAfter });
+      return response.capabilities;
+    });
+    await downloadJsonFile('liquidity', getQuoteCapabilities);
+  }
+
   for (const id of getAllCapableAccountIds('transfers')) {
     const getDepositMethods = makeDownloader(async (limit: number, startingAfter?: string) => {
       const response = await client.capabilities.getDepositMethods({

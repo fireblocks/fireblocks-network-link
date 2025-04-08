@@ -14,7 +14,7 @@ export type Quote = {
     toAsset: AssetReference;
     toAmount: PositiveAmount;
     /**
-     * Conversion fee in basis points.
+     * Conversion fee in basis points. The amounts are expected to include the fee.
      */
     conversionFeeBps: number;
     status: QuoteStatus;

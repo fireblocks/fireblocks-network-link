@@ -50,6 +50,9 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-query-params/PaginationLimit'
+        - $ref: '#/x-query-params/PaginationStartingAfter'
+        - $ref: '#/x-query-params/PaginationEndingBefore'
       responses:
         '200':
           description: List of possible asset conversions.
@@ -271,7 +274,7 @@ components:
           $ref: '#/x-schemas/PositiveAmount'
         conversionFeeBps:
           type: integer
-          description: Conversion fee in basis points.
+          description: Conversion fee in basis points. The amounts are expected to include the fee.
         status:
           $ref: '#/components/schemas/QuoteStatus'
         createdAt:
