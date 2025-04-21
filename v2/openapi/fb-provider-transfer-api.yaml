@@ -1447,7 +1447,7 @@ components:
         - CL # Chile
         - CN # China
         - CX # Christmas Island
-        - CCK # Cocos (Keeling) Islands
+        - CC # Cocos (Keeling) Islands
         - CO # Colombia
         - KM # Comoros
         - CD # Democratic Republic of the Congo
@@ -1536,7 +1536,7 @@ components:
         - MW # Malawi
         - MY # Malaysia
         - MV # Maldives
-        - MLI # Mali
+        - ML # Mali
         - MT # Malta
         - MH # Marshall Islands
         - MQ # Martinique
