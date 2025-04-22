@@ -1,10 +1,10 @@
 import {
   Blockchain,
-  CryptocurrencySymbol,
-  CollateralAssetAddress,
-  PublicBlockchainCapability,
   CollateralAddress,
+  CollateralAssetAddress,
   CollateralDepositAddresses,
+  CryptocurrencySymbol,
+  PublicBlockchainCapability,
 } from '../../../src/client/generated';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { Pageable, paginated } from '../../utils/pagination';
@@ -14,17 +14,15 @@ import config from '../../../src/config';
 const noCollateralCapability = !hasCapability('collateral');
 
 describe.skipIf(noCollateralCapability)('Collateral Deposit Address', () => {
-  let client: Client;
-  let accountId: string;
-  let collateralId: string;
+  const client = new Client();
+  const collateralId: string = config.get('collateral.collateralAccount.accountId');
   let assetId: string;
+  let accountId: string;
 
   beforeAll(async () => {
-    client = new Client();
     accountId = getCapableAccountId('collateral');
-    collateralId = config.get('collateral.collateralAccount.accountId');
-    const agetAssetsResults = await client.capabilities.getAdditionalAssets({});
-    assetId = agetAssetsResults.assets[0]?.id;
+    const assetsResult = await client.capabilities.getAdditionalAssets({});
+    assetId = assetsResult.assets[0]?.id;
   });
 
   describe('Create collateral deposit address & fetch by entityId', () => {

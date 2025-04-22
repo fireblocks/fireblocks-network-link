@@ -1,8 +1,8 @@
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import {
+  SettlementDepositInstruction,
   SettlementInstructions,
   SettlementState,
-  SettlementDepositInstruction,
   SettlementWithdrawInstruction,
 } from '../../../src/client/generated';
 import { v4 as uuid } from 'uuid';
@@ -12,14 +12,12 @@ import Client from '../../../src/client';
 const noCollateralCapability = !hasCapability('collateral');
 
 describe.skipIf(noCollateralCapability)('Collateral Settlements', () => {
-  let client: Client;
+  const client: Client = new Client();
+  const collateralId: string = config.get('collateral.collateralAccount.accountId');
   let accountId: string;
-  let collateralId: string;
 
   beforeAll(async () => {
-    client = new Client();
     accountId = getCapableAccountId('collateral');
-    collateralId = config.get('collateral.collateralAccount.accountId');
   });
 
   describe('Check full settlement flow', () => {
