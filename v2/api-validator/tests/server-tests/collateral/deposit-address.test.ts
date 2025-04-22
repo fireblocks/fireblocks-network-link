@@ -14,12 +14,15 @@ import config from '../../../src/config';
 const noCollateralCapability = !hasCapability('collateral');
 
 describe.skipIf(noCollateralCapability)('Collateral Deposit Address', () => {
-  const client = new Client();
-  const accountId: string = getCapableAccountId('collateral');
-  const collateralId: string = config.get('collateral.collateralAccount.accountId');
+  let client: Client;
+  let accountId: string;
+  let collateralId: string;
   let assetId: string;
 
   beforeAll(async () => {
+    client = new Client();
+    accountId = getCapableAccountId('collateral');
+    collateralId = config.get('collateral.collateralAccount.accountId');
     const agetAssetsResults = await client.capabilities.getAdditionalAssets({});
     assetId = agetAssetsResults.assets[0]?.id;
   });
