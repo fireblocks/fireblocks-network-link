@@ -1,14 +1,14 @@
 import {
-  CollateralWithdrawalTransaction,
-  CollateralTransactionIntentStatus,
-  CollateralWithdrawalTransactionRequest,
-  CollateralWithdrawalTransactionStatus,
-  CollateralWithdrawalTransactionIntentResponse,
-  CollateralWithdrawalTransactionIntentRequest,
-  CollateralWithdrawalTransactions,
-  PublicBlockchainAddress,
-  IntentApprovalRequest,
   ApprovalRequest,
+  CollateralTransactionIntentStatus,
+  CollateralWithdrawalTransaction,
+  CollateralWithdrawalTransactionIntentRequest,
+  CollateralWithdrawalTransactionIntentResponse,
+  CollateralWithdrawalTransactionRequest,
+  CollateralWithdrawalTransactions,
+  CollateralWithdrawalTransactionStatus,
+  IntentApprovalRequest,
+  PublicBlockchainAddress,
 } from '../../../src/client/generated';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { Pageable, paginated } from '../../utils/pagination';
@@ -20,11 +20,15 @@ const noCollateralCapability = !hasCapability('collateral');
 
 describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
   const client: Client = new Client();
-  const accountId: string = getCapableAccountId('collateral');
   const collateralId = config.get('collateral.collateralAccount.accountId');
   const collateralTxId = `0.${uuid()}.${collateralId}`;
   const fireblocksIntentId = uuid();
   const intentApprovalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
+  let accountId: string;
+
+  beforeAll(async () => {
+    accountId = getCapableAccountId('collateral');
+  });
 
   describe('Create collateral withdrawal transaction (remove collateral) & fetch by collateralTxId ', () => {
     const address: PublicBlockchainAddress[] = JSON.parse(
