@@ -1,11 +1,11 @@
 import {
-  CollateralDepositTransactionResponse,
-  CollateralDepositTransactionRequest,
-  CollateralDepositTransactionsResponse,
+  ApprovalRequest,
   CollateralDepositTransactionIntentRequest,
   CollateralDepositTransactionIntentResponse,
+  CollateralDepositTransactionRequest,
+  CollateralDepositTransactionResponse,
+  CollateralDepositTransactionsResponse,
   CryptocurrencyReference,
-  ApprovalRequest,
   IntentApprovalRequest,
 } from '../../../src/client/generated';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
@@ -17,18 +17,16 @@ import Client from '../../../src/client';
 const noCollateralCapability = !hasCapability('collateral');
 
 describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
-  let client: Client;
-  let accountId: string;
-  let collateralId: string;
+  const client: Client = new Client();
+  const collateralId: string = config.get('collateral.collateralAccount.accountId');
   const fireblocksIntentId = uuid();
   let assetId: string;
+  let accountId: string;
 
   beforeAll(async () => {
-    const agetAssetsResults = await client.capabilities.getAdditionalAssets({});
-    assetId = agetAssetsResults.assets[0]?.id;
-    client = new Client();
     accountId = getCapableAccountId('collateral');
-    collateralId = config.get('collateral.collateralAccount.accountId');
+    const assetsResult = await client.capabilities.getAdditionalAssets({});
+    assetId = assetsResult.assets[0]?.id;
   });
 
   describe('Register collateral deposit transaction (add collateral) & fetch by collateralTxId', () => {
