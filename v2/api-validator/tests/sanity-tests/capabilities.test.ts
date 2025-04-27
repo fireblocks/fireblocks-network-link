@@ -34,6 +34,7 @@ describe('Capabilities', () => {
         'transfersPeerAccounts',
         'trading',
         'liquidity',
+        'ramps',
       ];
 
       let accountIds: string[];

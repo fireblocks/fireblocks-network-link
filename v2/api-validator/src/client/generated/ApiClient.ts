@@ -12,6 +12,7 @@ import { CapabilitiesService } from './services/CapabilitiesService';
 import { CollateralService } from './services/CollateralService';
 import { HistoricBalancesService } from './services/HistoricBalancesService';
 import { LiquidityService } from './services/LiquidityService';
+import { RampsService } from './services/RampsService';
 import { TradingService } from './services/TradingService';
 import { TransfersService } from './services/TransfersService';
 import { TransfersBlockchainService } from './services/TransfersBlockchainService';
@@ -29,6 +30,7 @@ export class ApiClient {
     public readonly collateral: CollateralService;
     public readonly historicBalances: HistoricBalancesService;
     public readonly liquidity: LiquidityService;
+    public readonly ramps: RampsService;
     public readonly trading: TradingService;
     public readonly transfers: TransfersService;
     public readonly transfersBlockchain: TransfersBlockchainService;
@@ -57,6 +59,7 @@ export class ApiClient {
         this.collateral = new CollateralService(this.request);
         this.historicBalances = new HistoricBalancesService(this.request);
         this.liquidity = new LiquidityService(this.request);
+        this.ramps = new RampsService(this.request);
         this.trading = new TradingService(this.request);
         this.transfers = new TransfersService(this.request);
         this.transfersBlockchain = new TransfersBlockchainService(this.request);

@@ -71,6 +71,7 @@ paths:
                       trading: "*"
                       liquidity: "*"
                       collateral: "*"
+                      ramps: "*"
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:
@@ -629,6 +630,7 @@ components:
             - deposit-address-creation-not-allowed
             - unsupported-transfer-method
             - transfer-destination-not-allowed
+            - unsupported-ramp-method
         propertyName:
           description: >-
             Name of property that caused the error.
@@ -710,6 +712,8 @@ components:
         liquidity:
           $ref: '#/components/schemas/AccountsSet'
         collateral:
+          $ref: '#/components/schemas/AccountsSet'
+        ramps:
           $ref: '#/components/schemas/AccountsSet'
 
     AccountsSet:
@@ -907,7 +911,6 @@ components:
       oneOf:
         - $ref: '#/components/schemas/NativeCryptocurrency'
         - $ref: '#/components/schemas/OtherAssetReference'
-
 
     PublicBlockchainCapability:
       type: object

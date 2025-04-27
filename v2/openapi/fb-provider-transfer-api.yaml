@@ -893,6 +893,11 @@ components:
           type: string
         referenceId:
           type: string
+    
+    FiatCapability:
+      oneOf:
+        - $ref: '#/components/schemas/IbanCapability'
+        - $ref: '#/components/schemas/SwiftCapability'
 
     PublicBlockchainTransactionDestination:
       type: object
@@ -1043,6 +1048,16 @@ components:
         - $ref: '#/components/schemas/SwiftAddress'
         - $ref: '#/components/schemas/PeerAccountTransferAddress'
         - $ref: '#/components/schemas/InternalTransferAddress'
+
+    FiatDepositDestination:
+      allOf:
+        - type: object
+          properties:
+            referenceId:
+              type: string
+        - oneOf:
+            - $ref: '#/components/schemas/IbanAddress'
+            - $ref: '#/components/schemas/SwiftAddress'
 
     DepositAddressStatus:
       enum:

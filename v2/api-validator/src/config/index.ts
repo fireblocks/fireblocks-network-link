@@ -273,6 +273,7 @@ const config = convict({
         'fb-provider-trading-api.yaml',
         'fb-provider-transfer-api.yaml',
         'fb-provider-collateral-api.yaml',
+        'fb-provider-ramp-api.yaml',
       ],
     },
     unifiedFilename: {

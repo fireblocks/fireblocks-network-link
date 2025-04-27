@@ -207,7 +207,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
       );
     });
 
-    it('should be sorted by creation time in a decending order', () => {
+    it('should be sorted by creation time in a descending order', () => {
       const allWithdrawalResponses = [
         ...accountWithdrawalsMap.values(),
         ...accountFiatWithdrawalsMap.values(),
@@ -215,7 +215,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         ...accountPeerAccountWithdrawalsMap.values(),
       ];
 
-      const isSortedByDecendingCreationTime = (withdrawals: Withdrawal[]) => {
+      const isSortedByDescendingCreationTime = (withdrawals: Withdrawal[]) => {
         const withdrawalsCreationTimes = withdrawals.map((withdrawal) => withdrawal.createdAt);
         return (
           JSON.stringify(withdrawalsCreationTimes) ==
@@ -224,7 +224,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
       };
 
       for (const withdrawals of allWithdrawalResponses) {
-        expect(withdrawals).toSatisfy(isSortedByDecendingCreationTime);
+        expect(withdrawals).toSatisfy(isSortedByDescendingCreationTime);
       }
     });
 
