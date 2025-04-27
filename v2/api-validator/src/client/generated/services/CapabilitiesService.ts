@@ -197,6 +197,9 @@ export class CapabilitiesService {
         xFbapiNonce,
         xFbapiSignature,
         xFbapiTimestamp,
+        limit = 10,
+        startingAfter,
+        endingBefore,
     }: {
         /**
          * API authentication key.
@@ -215,6 +218,18 @@ export class CapabilitiesService {
          * Request timestamp in milliseconds since Unix epoch.
          */
         xFbapiTimestamp: number,
+        /**
+         * Maximum number of returned items.
+         */
+        limit?: number,
+        /**
+         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
+         */
+        startingAfter?: string,
+        /**
+         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
+         */
+        endingBefore?: string,
     }): CancelablePromise<QuoteCapabilities> {
         return this.httpRequest.request({
             method: 'GET',
@@ -224,6 +239,11 @@ export class CapabilitiesService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+            },
+            query: {
+                'limit': limit,
+                'startingAfter': startingAfter,
+                'endingBefore': endingBefore,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,

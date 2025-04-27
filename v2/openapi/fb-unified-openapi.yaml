@@ -14,7 +14,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description:
+  description: 
     $ref: README.md
 tags:
   - name: capabilities
@@ -405,6 +405,9 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/PaginationLimit'
+        - $ref: '#/components/parameters/PaginationStartingAfter'
+        - $ref: '#/components/parameters/PaginationEndingBefore'
       responses:
         '200':
           description: List of possible asset conversions.
@@ -3642,7 +3645,7 @@ components:
           $ref: '#/components/schemas/PositiveAmount'
         conversionFeeBps:
           type: integer
-          description: Conversion fee in basis points.
+          description: Conversion fee in basis points. The amounts are expected to include the fee.
         status:
           $ref: '#/components/schemas/QuoteStatus'
         createdAt:
@@ -4183,6 +4186,95 @@ components:
           $ref: '#/components/schemas/AssetReference'
         minWithdrawalAmount:
           $ref: '#/components/schemas/PositiveAmount'
+    PostalAddress:
+      type: object
+      description: A postal address in free-form text, containing details like street, building number, postal code, city, subdivision, and  country.
+      properties:
+        streetName:
+          description: Name of a street or thoroughfare
+          type: string
+        buildingNumber:
+          description: Number that identifies the position of a building on a street
+          type: string
+        postalCode:
+          description: Identifier consisting of a group of letters and/or numbers added to a postal address to assist the sorting of mail
+          type: string
+        city:
+          description: Name of a built-up area, with defined boundaries, and a local government.
+          type: string
+        subdivision:
+          description: Identifies a subdivision of a country such as state, region, or province.
+          type: string
+        district:
+          description: Identifies a subdivision within a country subdivision
+          type: string
+        country:
+          $ref: '#/components/schemas/CountryAlpha2Code'
+    FullName:
+      type: object
+      description: Contains the first name and last name of a person.
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+    PersonaIdentificationInfo:
+      type: object
+      description: Individual information about the beneficiary of the transaction.
+      properties:
+        externalReferenceId:
+          type: string
+          description: A unique identifier assigned by an external system to track the transaction or entity across different platforms.
+        entityType:
+          type: string
+          enum:
+            - Individual
+        participantRelationshipType:
+          $ref: '#/components/schemas/ParticipantRelationshipType'
+        fullName:
+          $ref: '#/components/schemas/FullName'
+        dateOfBirth:
+          type: string
+          format: date
+          example: '1999-01-01'
+        postalAddress:
+          $ref: '#/components/schemas/PostalAddress'
+    BusinessIdentificationInfo:
+      type: object
+      description: Information related to the business entity acting as the beneficiary of the transaction.
+      properties:
+        externalReferenceId:
+          type: string
+          description: A unique identifier assigned by an external system to track the transaction or entity across different platforms.
+        entityType:
+          type: string
+          enum:
+            - Business
+        participantRelationshipType:
+          $ref: '#/components/schemas/ParticipantRelationshipType'
+        businessName:
+          type: string
+          description: The legal name of the business entity as registered with the relevant authorities.
+        registrationNumber:
+          type: string
+          description: A unique identifier assigned to the business entity by the relevant regulatory authority, often used for tax and legal purposes.
+        postalAddress:
+          $ref: '#/components/schemas/PostalAddress'
+    ParticipantsIdentification:
+      type: object
+      description: |
+        An object that ensures the inclusion of either the originator or  beneficiary details for transactions.
+      properties:
+        originator:
+          description: Information about the originator of the transaction.
+          oneOf:
+            - $ref: '#/components/schemas/PersonaIdentificationInfo'
+            - $ref: '#/components/schemas/BusinessIdentificationInfo'
+        beneficiary:
+          description: Information about the beneficiary of the transaction.
+          oneOf:
+            - $ref: '#/components/schemas/PersonaIdentificationInfo'
+            - $ref: '#/components/schemas/BusinessIdentificationInfo'
     WithdrawalRequestCommonProperties:
       type: object
       required:
@@ -4217,6 +4309,8 @@ components:
               $ref: '#/components/schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
+            participantsIdentification:
+              $ref: '#/components/schemas/ParticipantsIdentification'
     PeerAccountWithdrawalRequest:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
@@ -4342,6 +4436,266 @@ components:
       enum:
         - CanCreate
         - CannotCreate
+    ParticipantRelationshipType:
+      description: Defines the relationship between the originator and the beneficiary in a transaction.
+      enum:
+        - FirstParty
+        - SecondParty
+        - ThirdParty
+    CountryAlpha2Code:
+      type: string
+      description: Alpha-2 country codes as defined in ISO 3166.
+      enum:
+        - US
+        - AL
+        - DZ
+        - AS
+        - AD
+        - AO
+        - AI
+        - AQ
+        - AG
+        - AR
+        - AM
+        - AW
+        - AU
+        - AT
+        - AZ
+        - BS
+        - BH
+        - BD
+        - BB
+        - BY
+        - BE
+        - BZ
+        - BJ
+        - BM
+        - BT
+        - BO
+        - BQ
+        - BA
+        - BW
+        - BV
+        - BR
+        - IO
+        - BN
+        - BG
+        - BF
+        - BI
+        - CV
+        - KH
+        - CM
+        - CA
+        - KY
+        - CF
+        - TD
+        - CL
+        - CN
+        - CX
+        - CC
+        - CO
+        - KM
+        - CD
+        - CG
+        - CK
+        - CR
+        - HR
+        - CU
+        - CW
+        - CY
+        - CZ
+        - CI
+        - DK
+        - DJ
+        - DM
+        - DO
+        - EC
+        - EG
+        - SV
+        - GQ
+        - ER
+        - EE
+        - SZ
+        - ET
+        - FK
+        - FO
+        - FJ
+        - FI
+        - FR
+        - GF
+        - PF
+        - TF
+        - GA
+        - GM
+        - GE
+        - DE
+        - GH
+        - GI
+        - GR
+        - GL
+        - GD
+        - GP
+        - GU
+        - GT
+        - GG
+        - GN
+        - GW
+        - GY
+        - HT
+        - HM
+        - VA
+        - HN
+        - HK
+        - HU
+        - IS
+        - IN
+        - ID
+        - IR
+        - IQ
+        - IE
+        - IM
+        - IL
+        - IT
+        - JM
+        - JP
+        - JE
+        - JO
+        - KZ
+        - KE
+        - KI
+        - KP
+        - KR
+        - KW
+        - KG
+        - LA
+        - LV
+        - LB
+        - LS
+        - LR
+        - LY
+        - LI
+        - LT
+        - LU
+        - MO
+        - MG
+        - MW
+        - MY
+        - MV
+        - ML
+        - MT
+        - MH
+        - MQ
+        - MR
+        - MU
+        - YT
+        - MX
+        - FM
+        - MD
+        - MC
+        - MN
+        - ME
+        - MS
+        - MA
+        - MZ
+        - MM
+        - NA
+        - NR
+        - NP
+        - NL
+        - NC
+        - NZ
+        - NI
+        - NE
+        - NG
+        - NU
+        - NF
+        - MP
+        - NO
+        - OM
+        - PK
+        - PW
+        - PS
+        - PA
+        - PG
+        - PY
+        - PE
+        - PH
+        - PN
+        - PL
+        - PT
+        - PR
+        - QA
+        - MK
+        - RO
+        - RU
+        - RW
+        - RE
+        - BL
+        - SH
+        - KN
+        - LC
+        - MF
+        - PM
+        - VC
+        - WS
+        - SM
+        - ST
+        - SA
+        - SN
+        - SR
+        - SC
+        - SL
+        - SG
+        - SX
+        - SK
+        - SI
+        - SB
+        - SO
+        - ZA
+        - GS
+        - SS
+        - ES
+        - LK
+        - SD
+        - SJ
+        - SE
+        - CH
+        - SY
+        - TW
+        - TJ
+        - TZ
+        - TH
+        - TL
+        - TG
+        - TK
+        - TO
+        - TT
+        - TN
+        - TR
+        - TM
+        - TC
+        - TV
+        - UG
+        - UA
+        - AE
+        - GB
+        - UM
+        - UY
+        - UZ
+        - VU
+        - VE
+        - VN
+        - VG
+        - VI
+        - WF
+        - EH
+        - YE
+        - ZM
+        - ZW
+        - AX
+        - ZZ
+        - XX
+        - CS
     CollateralId:
       type: string
       description: Unique string representing the collateral account Id (<cvaTenantId>.<accountId>.<tenantId>)
@@ -4552,6 +4906,19 @@ components:
         - **Pending** - The withdrawal transaction is pending the provider's approval
         - **Approved** - The withdrawal transaction has been approved and it is in progress
         - **Rejected** - The withdrawal transaction has been rejected
+    CollateralWithdrawalSettlementTransaction:
+      type: object
+      description: Represents a collateral withdrawal settlement transaction.  Provide details about a withdrawal transaction in case of a settlement.
+      required:
+        - settlementId
+        - settlementTxId
+      properties:
+        settlementId:
+          type: string
+          description: Unique identifier for the settlement.
+        settlementTxId:
+          type: string
+          description: The transaction ID associated with the settlement.
     CollateralWithdrawalTransaction:
       type: object
       required:
@@ -4593,6 +4960,8 @@ components:
           type: string
         approvalRequest:
           $ref: '#/components/schemas/ApprovalRequest'
+        settlementDetails:
+          $ref: '#/components/schemas/CollateralWithdrawalSettlementTransaction'
     CollateralWithdrawalTransactionIntentResponse:
       type: object
       required:

@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Account Linking Partners
-  version: "0.9.9"
+  version: "0.9.10"
   contact:
     email: support@fireblocks.com
   license:
@@ -1174,6 +1174,8 @@ components:
       - Tezos
       - Zcash
       - Aurora.dev
+      - Sonic
+      - Kaia
       example:
         Ethereum
     Testnet_Networks:
