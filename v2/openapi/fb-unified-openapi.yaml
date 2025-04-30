@@ -2599,7 +2599,7 @@ components:
                 items:
                   $ref: '#/components/schemas/Withdrawal'
     RampMethodsResponse:
-      description: List of ramps methods for account.
+      description: List of ramp methods for account.
       content:
         application/json:
           schema:
@@ -2615,7 +2615,7 @@ components:
             allUsdMethods:
               summary: USDs ramps
               description: |-
-                This response indicates that on ramp from USD to USDC, off  ramp from USDC to USD and bridging between USDC and USDC on  different blockchains are supported. The USD balance can be  specified directly while tokens must be defined in  `GET /capabilities/assets` and referenced using their IDs.
+                This response indicates that on ramp from USD to USDC, off  ramp from USDC to USD and bridging between USDC and USDC on  different blockchains are supported. The USD asset can be  specified directly while tokens must be defined in  `GET /capabilities/assets` and referenced using their IDs.
                 The asset IDs in this example are the same IDs used in the  examples of `GET /capabilities/assets`.
               value:
                 capabilities:
@@ -2653,7 +2653,7 @@ components:
           schema:
             $ref: '#/components/schemas/Ramp'
     GetRampDetailsResponse:
-      description: List of ramps methods for account.
+      description: Ramp details.
       content:
         application/json:
           schema:
@@ -5125,6 +5125,7 @@ components:
         - Failed
     OnRampCapability:
       type: object
+      title: Fiat to Crypto
       required:
         - from
         - to
@@ -5135,6 +5136,7 @@ components:
           $ref: '#/components/schemas/PublicBlockchainCapability'
     OffRampCapability:
       type: object
+      title: Crypto to Fiat
       required:
         - from
         - to
@@ -5145,6 +5147,7 @@ components:
           $ref: '#/components/schemas/FiatCapability'
     BridgeCapability:
       type: object
+      title: Crypto to Crypto
       required:
         - from
         - to
@@ -5167,6 +5170,7 @@ components:
             - $ref: '#/components/schemas/BridgeCapability'
     OnRampProperties:
       type: object
+      title: On Ramp
       required:
         - type
         - from
@@ -5185,6 +5189,7 @@ components:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     OffRampProperties:
       type: object
+      title: Off Ramp
       required:
         - type
         - from
@@ -5203,6 +5208,7 @@ components:
           $ref: '#/components/schemas/FiatDepositDestination'
     BridgeProperties:
       type: object
+      title: Bridge
       required:
         - type
         - from
@@ -5243,6 +5249,7 @@ components:
         - status
         - createdAt
         - updatedAt
+        - amount
       properties:
         id:
           type: string

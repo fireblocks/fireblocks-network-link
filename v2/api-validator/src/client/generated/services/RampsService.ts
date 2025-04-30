@@ -156,7 +156,7 @@ export class RampsService {
 
     /**
      * Get details of a specific ramp
-     * @returns Ramp List of ramps methods for account.
+     * @returns Ramp Ramp details.
      * @throws ApiError
      */
     public getRampDetails({

@@ -471,7 +471,7 @@ export class CapabilitiesService {
 
     /**
      * Get list of supported ramp methods
-     * @returns any List of ramps methods for account.
+     * @returns any List of ramp methods for account.
      * @throws ApiError
      */
     public getRampMethods({

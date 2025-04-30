@@ -195,7 +195,7 @@ paths:
 components:
   responses:
     RampMethodsResponse:
-      description: List of ramps methods for account.
+      description: List of ramp methods for account.
       content:
         application/json:
           schema:
@@ -212,7 +212,7 @@ components:
               description: >-
                 This response indicates that on ramp from USD to USDC, off 
                 ramp from USDC to USD and bridging between USDC and USDC on 
-                different blockchains are supported. The USD balance can be 
+                different blockchains are supported. The USD asset can be 
                 specified directly while tokens must be defined in 
                 `GET /capabilities/assets` and referenced using their IDs.
 
@@ -256,7 +256,7 @@ components:
             $ref: "#/components/schemas/Ramp"
 
     GetRampDetailsResponse:
-      description: List of ramps methods for account.
+      description: Ramp details.
       content:
         application/json:
           schema:
@@ -405,6 +405,7 @@ components:
 
     OnRampCapability:
       type: object
+      title: Fiat to Crypto
       required: [from, to]
       properties:
         from:
@@ -414,6 +415,7 @@ components:
 
     OffRampCapability:
       type: object
+      title: Crypto to Fiat
       required: [from, to]
       properties:
         from:
@@ -423,6 +425,7 @@ components:
 
     BridgeCapability:
       type: object
+      title: Crypto to Crypto
       required: [from, to]
       properties:
         from:
@@ -444,6 +447,7 @@ components:
 
     OnRampProperties:
       type: object
+      title: On Ramp
       required:
         - type
         - from
@@ -463,6 +467,7 @@ components:
 
     OffRampProperties:
       type: object
+      title: Off Ramp
       required:
         - type
         - from
@@ -482,6 +487,7 @@ components:
 
     BridgeProperties:
       type: object
+      title: Bridge
       required:
         - type
         - from
@@ -520,7 +526,7 @@ components:
 
     CommonRamp:
       type: object
-      required: [id, status, createdAt, updatedAt]
+      required: [id, status, createdAt, updatedAt, amount]
       properties:
         id:
           type: string
