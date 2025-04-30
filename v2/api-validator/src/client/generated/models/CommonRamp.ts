@@ -11,6 +11,6 @@ export type CommonRamp = {
     createdAt: string;
     updatedAt: string;
     status: RampStatus;
-    amount?: PositiveAmount;
+    amount: PositiveAmount;
 };
 

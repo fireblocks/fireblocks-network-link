@@ -184,7 +184,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
       }
     });
 
-    it('should find every listed ramp get ramp details endpoint', async () => {
+    it('should find every listed ramp with get-ramp-details endpoint', async () => {
       for (const [accountId, ramps] of accountRampsMap.entries()) {
         for (const ramp of ramps) {
           const response = await client.ramps.getRampDetails({
@@ -196,7 +196,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
       }
     });
 
-    it('should use know assets only', () => {
+    it('should use known assets only', () => {
       for (const ramps of accountRampsMap.values()) {
         for (const ramp of ramps) {
           expect(ramp.from.asset).toSatisfy(isKnownAsset);
@@ -260,7 +260,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         expect(createdRamp.deliveryInstructions.asset).toEqual(capability.from.asset);
       });
 
-      it('should receive initial status CREATED', async () => {
+      it('should receive initial status PENDING_DELIVERY', async () => {
         expect(createdRamp.status).toBe(RampStatus.PENDING_DELIVERY);
       });
 
