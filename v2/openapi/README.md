@@ -545,6 +545,8 @@ We will enable providers to mark the last settlement ID for up to 7 days since t
 
 We will enable providers to force a settlement for up to 10 days since the settlement ID creation.
 
+**NOTE**: If a to-exchange settlement transaction has been cancelled, you will not be able to force that settlement.
+
 ### Collateral Signer Creation Automation
 
 To ensure a seamless onboarding process the off-exchange clients, we have developed an automation for creating the Collateral Signer user.
