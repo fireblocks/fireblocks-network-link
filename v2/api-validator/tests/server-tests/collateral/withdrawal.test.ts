@@ -28,6 +28,10 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
 
   beforeAll(async () => {
     accountId = getCapableAccountId('collateral');
+
+    await client.capabilities.getWithdrawalMethods({
+      accountId
+    });
   });
 
   describe('Create collateral withdrawal transaction (remove collateral) & fetch by collateralTxId ', () => {

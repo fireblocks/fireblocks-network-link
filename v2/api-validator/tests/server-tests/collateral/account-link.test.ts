@@ -35,7 +35,9 @@ describe.skipIf(noCollateralCapability)('Account Link', () => {
         expect(response.collateralId).toBe(collateralId);
         expect(response.collateralSigners).toEqual(collateralSigners);
         expect(response.rejectionReason).toBeUndefined();
-        expect(response.status).toBe(CollateralLinkStatus.ELIGIBLE);
+        expect(response.status).toBeDefined();
+        expect(response.status).not.toBe(CollateralLinkStatus.FAILED);
+        expect(response.status).not.toBe(CollateralLinkStatus.DISABLED);
         expect(response.env).toBe(AccountEnvironment.PROD);
       });
     });

@@ -18,6 +18,14 @@ describe.skipIf(noCollateralCapability)('Collateral Settlements', () => {
 
   beforeAll(async () => {
     accountId = getCapableAccountId('collateral');
+
+    await client.capabilities.getWithdrawalMethods({
+      accountId
+    });
+
+    await client.capabilities.getDepositMethods({
+      accountId
+    });
   });
 
   describe('Check full settlement flow', () => {

@@ -27,6 +27,10 @@ describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
     accountId = getCapableAccountId('collateral');
     const assetsResult = await client.capabilities.getAdditionalAssets({});
     assetId = assetsResult.assets[0]?.id;
+    
+    await client.capabilities.getDepositMethods({
+      accountId
+    });
   });
 
   describe('Register collateral deposit transaction (add collateral) & fetch by collateralTxId', () => {
