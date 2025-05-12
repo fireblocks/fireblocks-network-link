@@ -81,7 +81,7 @@ as follows:
   the server should return exactly the same response with exactly the same status code.
 - If the original request was handled with HTTP response status code 5xx,
   the server should handle the new request and consider the new response as the original
-  response when handling any consecutive retires.
+  response when handling any consecutive retries.
 
 Servers are expected to recognize a retry for 7 days, at least, since the last attempt.
 
@@ -213,11 +213,11 @@ with ID `A1234`. These are the request properties:
 | Timestamp    | `1691606624184` (2023-08-09T18:43:44.184Z) |
 | Nonce        | `c3d5f400-0e7e-4f94-a199-44b8cc7b6b81`     |
 | Method       | `GET`                                      |
-| Endpoint     | `/accounts/A1234/balances&limit=2`         |
+| Endpoint     | `/accounts/A1234/balances?limit=2`         |
 | Request body | no request body for this request           |
 
 The message to sign will
-be: `1691606624184c3d5f400-0e7e-4f94-a199-44b8cc7b6b81GET/accounts/A1234/balances&limit=2`
+be: `1691606624184c3d5f400-0e7e-4f94-a199-44b8cc7b6b81GET/accounts/A1234/balances?limit=2`
 
 #### Computing the signature
 
