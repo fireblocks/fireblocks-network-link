@@ -15,8 +15,9 @@ import config from '../../../src/config';
 import Client from '../../../src/client';
 
 const noCollateralCapability = !hasCapability('collateral');
+const noTransferCapability = !hasCapability('transfers');
 
-describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
+describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Deposit', () => {
   const client: Client = new Client();
   const collateralId: string = config.get('collateral.collateralAccount.accountId');
   const fireblocksIntentId = uuid();
@@ -28,6 +29,7 @@ describe.skipIf(noCollateralCapability)('Collateral Deposit', () => {
     const assetsResult = await client.capabilities.getAdditionalAssets({});
     assetId = assetsResult.assets[0]?.id;
     
+    // Validating that deposit capabilities are enabled, as it is a must for collateral deposit operations.
     await client.capabilities.getDepositMethods({
       accountId
     });

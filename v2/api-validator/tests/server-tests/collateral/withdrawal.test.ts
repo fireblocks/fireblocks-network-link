@@ -17,8 +17,9 @@ import Client from '../../../src/client';
 import { v4 as uuid } from 'uuid';
 
 const noCollateralCapability = !hasCapability('collateral');
+const noTransferCapability = !hasCapability('transfers');
 
-describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
+describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Withdrawal', () => {
   const client: Client = new Client();
   const collateralId = config.get('collateral.collateralAccount.accountId');
   const collateralTxId = `0.${uuid()}.${collateralId}`;
@@ -29,6 +30,7 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
   beforeAll(async () => {
     accountId = getCapableAccountId('collateral');
 
+    // Validating that withdrawal capabilities are enabled, as it is a must for collateral withdrawal operations.
     await client.capabilities.getWithdrawalMethods({
       accountId
     });

@@ -10,8 +10,9 @@ import config from '../../../src/config';
 import Client from '../../../src/client';
 
 const noCollateralCapability = !hasCapability('collateral');
+const noTransferCapability = !hasCapability('transfers');
 
-describe.skipIf(noCollateralCapability)('Collateral Settlements', () => {
+describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Settlements', () => {
   const client: Client = new Client();
   const collateralId: string = config.get('collateral.collateralAccount.accountId');
   let accountId: string;
@@ -19,6 +20,7 @@ describe.skipIf(noCollateralCapability)('Collateral Settlements', () => {
   beforeAll(async () => {
     accountId = getCapableAccountId('collateral');
 
+    // Validating that withdrawal & deposit capabilities are enabled, as it is a must for collateral settlement operations.
     await client.capabilities.getWithdrawalMethods({
       accountId
     });
