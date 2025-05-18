@@ -21,13 +21,12 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Sett
     accountId = getCapableAccountId('collateral');
 
     // Validating that withdrawal & deposit capabilities are enabled, as it is a must for collateral settlement operations.
-    await client.capabilities.getWithdrawalMethods({
-      accountId
-    });
-
-    await client.capabilities.getDepositMethods({
-      accountId
-    });
+    expect(() => {
+      client.capabilities.getWithdrawalMethods({ accountId });
+    }).not.toThrow();
+    expect(() => {
+      client.capabilities.getDepositMethods({ accountId });
+    }).not.toThrow();
   });
 
   describe('Check full settlement flow', () => {

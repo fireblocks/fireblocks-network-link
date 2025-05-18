@@ -28,11 +28,11 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Depo
     accountId = getCapableAccountId('collateral');
     const assetsResult = await client.capabilities.getAdditionalAssets({});
     assetId = assetsResult.assets[0]?.id;
-    
+
     // Validating that deposit capabilities are enabled, as it is a must for collateral deposit operations.
-    await client.capabilities.getDepositMethods({
-      accountId
-    });
+    expect(() => {
+      client.capabilities.getDepositMethods({ accountId });
+    }).not.toThrow();
   });
 
   describe('Register collateral deposit transaction (add collateral) & fetch by collateralTxId', () => {

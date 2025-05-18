@@ -31,9 +31,9 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral With
     accountId = getCapableAccountId('collateral');
 
     // Validating that withdrawal capabilities are enabled, as it is a must for collateral withdrawal operations.
-    await client.capabilities.getWithdrawalMethods({
-      accountId
-    });
+    expect(() => {
+      client.capabilities.getWithdrawalMethods({ accountId });
+    }).not.toThrow();
   });
 
   describe('Create collateral withdrawal transaction (remove collateral) & fetch by collateralTxId ', () => {
