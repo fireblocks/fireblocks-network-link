@@ -14,7 +14,8 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: Placeholder for automatic documentation injection from README.md
+  description: 
+    $ref: README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -3932,7 +3933,6 @@ components:
         - type: object
           required:
             - accountHolder
-            - bankName
             - routingNumber
             - bankAccountNumber
             - accountType
@@ -3968,9 +3968,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/AchTransferDestination'
         - type: object
-      properties:
-        referenceId:
-          type: string
+          properties:
+            referenceId:
+              type: string
     WireCapability:
       type: object
       required:
@@ -3988,11 +3988,9 @@ components:
         - type: object
           required:
             - accountHolder
-            - bankName
             - routingNumber
             - bankAccountNumber
             - address
-            - bankAddress
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
@@ -4021,9 +4019,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/WireTransferDestination'
         - type: object
-      properties:
-        referenceId:
-          type: string
+          properties:
+            referenceId:
+              type: string
     SpeiCapability:
       type: object
       required:
@@ -4041,7 +4039,6 @@ components:
         - type: object
           required:
             - accountHolder
-            - bankName
             - bankAccountNumber
             - address
           properties:
@@ -4067,9 +4064,9 @@ components:
       allOf:
         - $ref: '#/components/schemas/SpeiTransferDestination'
         - type: object
-      properties:
-        referenceId:
-          type: string
+          properties:
+            referenceId:
+              type: string
     OtherFiatTransfer:
       type: object
       description: Used for historic fiat transfers that do not fit a more specific transfer method.  It is impossible to create new deposits or withdrawal of this type using this API.

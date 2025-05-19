@@ -889,7 +889,6 @@ components:
         - type: object
           required:
             - accountHolder
-            - bankName
             - routingNumber
             - bankAccountNumber
             - accountType
@@ -925,9 +924,9 @@ components:
         allOf:
         - $ref: '#/components/schemas/AchTransferDestination'
         - type: object
-        properties:
-            referenceId:
-              type: string
+          properties:
+              referenceId:
+                type: string
 
     WireCapability:
       type: object
@@ -944,11 +943,9 @@ components:
         - type: object
           required:
             - accountHolder
-            - bankName
             - routingNumber
             - bankAccountNumber
             - address
-            - bankAddress
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
@@ -979,9 +976,9 @@ components:
         allOf:
         - $ref: '#/components/schemas/WireTransferDestination'
         - type: object
-        properties:
-            referenceId:
-              type: string
+          properties:
+              referenceId:
+                type: string
 
     SpeiCapability:
       type: object
@@ -998,7 +995,6 @@ components:
         - type: object
           required:
             - accountHolder
-            - bankName
             - bankAccountNumber
             - address
           properties:
@@ -1026,9 +1022,9 @@ components:
         allOf:
         - $ref: '#/components/schemas/SpeiTransferDestination'
         - type: object
-        properties:
-            referenceId:
-              type: string
+          properties:
+              referenceId:
+                type: string
 
     OtherFiatTransfer:
       type: object
