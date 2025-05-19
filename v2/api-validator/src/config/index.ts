@@ -209,6 +209,158 @@ const config = convict({
         env: 'WITHDRAWAL_SWIFT_ROUTING_NUMBER',
       },
     },
+    ach: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_ACH_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_ACH_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_ACH_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_ACH_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_ACH_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_ACH_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      bankName: {
+        format: String,
+        default: 'Chase',
+        env: 'WITHDRAWAL_ACH_BANK_NAME',
+      },
+      bankAccountNumber: {
+        format: String,
+        default: '12345678901',
+        env: 'WITHDRAWAL_ACH_BANK_ACCOUNT_NUMBER',
+      },
+      routingNumber: {
+        format: String,
+        default: '123456789',
+        env: 'WITHDRAWAL_ACH_ROUTING_NUMBER',
+      },
+      accountType: {
+        format: String,
+        default: 'checking',
+        env: 'WITHDRAWAL_ACH_ACCOUNT_TYPE',
+      },
+    },
+    spei: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'Juan Pérez',
+          env: 'WITHDRAWAL_SPEI_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SPEI_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SPEI_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SPEI_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SPEI_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_SPEI_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      bankName: {
+        format: String,
+        default: 'Banamex',
+        env: 'WITHDRAWAL_SPEI_BANK_NAME',
+      },
+      bankAccountNumber: {
+        format: String,
+        default: '002010077777777771',
+        env: 'WITHDRAWAL_SPEI_BANK_ACCOUNT_NUMBER',
+      },
+    },
+    wire: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_WIRE_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_WIRE_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_WIRE_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_WIRE_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_WIRE_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_WIRE_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      bankName: {
+        format: String,
+        default: 'Chase',
+        env: 'WITHDRAWAL_WIRE_BANK_NAME',
+      },
+      bankAccountNumber: {
+        format: String,
+        default: '12345678901',
+        env: 'WITHDRAWAL_WIRE_BANK_ACCOUNT_NUMBER',
+      },
+      routingNumber: {
+        format: String,
+        default: '123456789',
+        env: 'WITHDRAWAL_WIRE_ROUTING_NUMBER',
+      },
+      bankAddress: {
+        format: String,
+        default: '270 Park Ave, New York, NY 10017',
+        env: 'WITHDRAWAL_WIRE_BANK_ADDRESS',
+      },
+    },
   },
   authentication: {
     apiKey: {
