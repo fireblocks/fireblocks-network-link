@@ -517,7 +517,7 @@ components:
         to:
           $ref: "#/x-schemas/FiatCapability"
         recipient:
-          $ref: "#/x-schemas/RampFiatDestination"
+          $ref: "#/components/schemas/RampFiatDestination"
 
     BridgeProperties:
       type: object
