@@ -114,7 +114,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       },
     };
   }
-  console.log('method!!!', method);
+
   throw new Error('Unsupported method combination');
 }
 

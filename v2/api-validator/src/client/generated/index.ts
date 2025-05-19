@@ -154,6 +154,8 @@ export type { QuoteCapability } from './models/QuoteCapability';
 export type { QuoteRequest } from './models/QuoteRequest';
 export { QuoteStatus } from './models/QuoteStatus';
 export type { Ramp } from './models/Ramp';
+export type { RampFiatDestination } from './models/RampFiatDestination';
+export type { RampFiatTransfer } from './models/RampFiatTransfer';
 export type { RampMethod } from './models/RampMethod';
 export type { RampRequest } from './models/RampRequest';
 export { RampStatus } from './models/RampStatus';

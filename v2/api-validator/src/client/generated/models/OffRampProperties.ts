@@ -4,14 +4,14 @@
 /* eslint-disable */
 
 import type { FiatCapability } from './FiatCapability';
-import type { FiatDepositDestination } from './FiatDepositDestination';
 import type { PublicBlockchainCapability } from './PublicBlockchainCapability';
+import type { RampFiatDestination } from './RampFiatDestination';
 
 export type OffRampProperties = {
     type: OffRampProperties.type;
     from: PublicBlockchainCapability;
     to: FiatCapability;
-    recipient: FiatDepositDestination;
+    recipient: RampFiatDestination;
 };
 
 export namespace OffRampProperties {

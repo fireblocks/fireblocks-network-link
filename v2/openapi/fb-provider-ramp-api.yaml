@@ -62,16 +62,50 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatCapability",
     }
-  FiatDepositDestination:
+  IbanAddress:
     {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatDepositDestination",
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanAddress"
+    }
+  SwiftAddress:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SwiftAddress"
+    }
+  AchAddress:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AchAddress",
+    }
+  WireAddress:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/WireAddress",
+    }
+  SpeiAddress:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiAddress"
+    }
+  IbanTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanTransfer"
+    }
+  SwiftTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SwiftTransfer"
+    }
+  AchTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AchTransfer"
+    }
+  WireTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/WireTransfer"
+    }
+  SpeiTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiTransfer"
     }
   PublicBlockchainTransaction:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
     }
-  FiatTransfer:
-    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatTransfer" }
 
 x-responses:
   BadRequestResponse:
@@ -483,7 +517,7 @@ components:
         to:
           $ref: "#/x-schemas/FiatCapability"
         recipient:
-          $ref: "#/x-schemas/FiatDepositDestination"
+          $ref: "#/x-schemas/RampFiatDestination"
 
     BridgeProperties:
       type: object
@@ -550,9 +584,9 @@ components:
             - deliveryInstructions
           properties:
             deliveryInstructions:
-              $ref: "#/x-schemas/FiatDepositDestination"
+              $ref: "#/components/schemas/RampFiatDestination"
             delivery:
-              $ref: "#/x-schemas/FiatTransfer"
+              $ref: "#/components/schemas/RampFiatTransfer"
             receipt:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
 
@@ -569,7 +603,7 @@ components:
             delivery:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
             receipt:
-              $ref: "#/x-schemas/FiatTransfer"
+              $ref: "#/components/schemas/RampFiatTransfer"
 
     BridgeTransfer:
       allOf:
@@ -591,3 +625,20 @@ components:
         - $ref: "#/components/schemas/OnRampTransfer"
         - $ref: "#/components/schemas/OffRampTransfer"
         - $ref: "#/components/schemas/BridgeTransfer"
+
+    RampFiatDestination:
+      oneOf:
+        - $ref: "#/x-schemas/IbanAddress"
+        - $ref: "#/x-schemas/SwiftAddress"
+        - $ref: "#/x-schemas/AchAddress"
+        - $ref: "#/x-schemas/WireAddress"
+        - $ref: "#/x-schemas/SpeiAddress"
+
+    RampFiatTransfer:
+      oneOf:
+        - $ref: '#/x-schemas/IbanTransfer'
+        - $ref: '#/x-schemas/SwiftTransfer'
+        - $ref: '#/x-schemas/AchTransfer'
+        - $ref: '#/x-schemas/WireTransfer'
+        - $ref: '#/x-schemas/SpeiTransfer'
+

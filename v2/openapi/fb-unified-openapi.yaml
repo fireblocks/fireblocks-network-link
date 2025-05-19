@@ -14,8 +14,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: 
-    $ref: README.md
+  description: Placeholder for automatic documentation injection from README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -4221,9 +4220,6 @@ components:
       oneOf:
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
-        - $ref: '#/components/schemas/AchTransfer'
-        - $ref: '#/components/schemas/WireTransfer'
-        - $ref: '#/components/schemas/SpeiTransfer'
         - $ref: '#/components/schemas/OtherFiatTransfer'
     Transfer:
       oneOf:
@@ -4238,9 +4234,6 @@ components:
         - $ref: '#/components/schemas/PublicBlockchainAddress'
         - $ref: '#/components/schemas/IbanAddress'
         - $ref: '#/components/schemas/SwiftAddress'
-        - $ref: '#/components/schemas/AchAddress'
-        - $ref: '#/components/schemas/WireAddress'
-        - $ref: '#/components/schemas/SpeiAddress'
         - $ref: '#/components/schemas/PeerAccountTransferAddress'
         - $ref: '#/components/schemas/InternalTransferAddress'
     FiatDepositDestination:
@@ -4252,9 +4245,6 @@ components:
         - oneOf:
             - $ref: '#/components/schemas/IbanAddress'
             - $ref: '#/components/schemas/SwiftAddress'
-            - $ref: '#/components/schemas/AchAddress'
-            - $ref: '#/components/schemas/WireAddress'
-            - $ref: '#/components/schemas/SpeiAddress'
     DepositAddressStatus:
       enum:
         - enabled
@@ -5368,7 +5358,7 @@ components:
         to:
           $ref: '#/components/schemas/FiatCapability'
         recipient:
-          $ref: '#/components/schemas/FiatDepositDestination'
+          $ref: '#/components/schemas/RampFiatDestination'
     BridgeProperties:
       type: object
       title: Bridge
@@ -5435,9 +5425,9 @@ components:
             - deliveryInstructions
           properties:
             deliveryInstructions:
-              $ref: '#/components/schemas/FiatDepositDestination'
+              $ref: '#/components/schemas/RampFiatDestination'
             delivery:
-              $ref: '#/components/schemas/FiatTransfer'
+              $ref: '#/components/schemas/RampFiatTransfer'
             receipt:
               $ref: '#/components/schemas/PublicBlockchainTransaction'
     OffRampTransfer:
@@ -5453,7 +5443,7 @@ components:
             delivery:
               $ref: '#/components/schemas/PublicBlockchainTransaction'
             receipt:
-              $ref: '#/components/schemas/FiatTransfer'
+              $ref: '#/components/schemas/RampFiatTransfer'
     BridgeTransfer:
       allOf:
         - $ref: '#/components/schemas/CommonRamp'
@@ -5473,4 +5463,18 @@ components:
         - $ref: '#/components/schemas/OnRampTransfer'
         - $ref: '#/components/schemas/OffRampTransfer'
         - $ref: '#/components/schemas/BridgeTransfer'
+    RampFiatDestination:
+      oneOf:
+        - $ref: '#/components/schemas/IbanAddress'
+        - $ref: '#/components/schemas/SwiftAddress'
+        - $ref: '#/components/schemas/AchAddress'
+        - $ref: '#/components/schemas/WireAddress'
+        - $ref: '#/components/schemas/SpeiAddress'
+    RampFiatTransfer:
+      oneOf:
+        - $ref: '#/components/schemas/IbanTransfer'
+        - $ref: '#/components/schemas/SwiftTransfer'
+        - $ref: '#/components/schemas/AchTransfer'
+        - $ref: '#/components/schemas/WireTransfer'
+        - $ref: '#/components/schemas/SpeiTransfer'
   securitySchemes: {}

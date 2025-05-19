@@ -1185,9 +1185,6 @@ components:
       oneOf:
         - $ref: '#/components/schemas/IbanTransfer'
         - $ref: '#/components/schemas/SwiftTransfer'
-        - $ref: '#/components/schemas/AchTransfer'
-        - $ref: '#/components/schemas/WireTransfer'
-        - $ref: '#/components/schemas/SpeiTransfer'
         - $ref: '#/components/schemas/OtherFiatTransfer'
 
     Transfer:
@@ -1204,9 +1201,6 @@ components:
         - $ref: '#/x-schemas/PublicBlockchainAddress'
         - $ref: '#/components/schemas/IbanAddress'
         - $ref: '#/components/schemas/SwiftAddress'
-        - $ref: '#/components/schemas/AchAddress'
-        - $ref: '#/components/schemas/WireAddress'
-        - $ref: '#/components/schemas/SpeiAddress'
         - $ref: '#/components/schemas/PeerAccountTransferAddress'
         - $ref: '#/components/schemas/InternalTransferAddress'
 
@@ -1219,9 +1213,6 @@ components:
         - oneOf:
             - $ref: '#/components/schemas/IbanAddress'
             - $ref: '#/components/schemas/SwiftAddress'
-            - $ref: '#/components/schemas/AchAddress'
-            - $ref: '#/components/schemas/WireAddress'
-            - $ref: '#/components/schemas/SpeiAddress'
 
     DepositAddressStatus:
       enum:
