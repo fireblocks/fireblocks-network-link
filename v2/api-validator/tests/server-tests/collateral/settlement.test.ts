@@ -4,6 +4,9 @@ import {
   SettlementInstructions,
   SettlementState,
   SettlementWithdrawInstruction,
+  NativeCryptocurrency,
+  OtherAssetReference,
+  NationalCurrency,
 } from '../../../src/client/generated';
 import { v4 as uuid } from 'uuid';
 import config from '../../../src/config';
@@ -16,6 +19,18 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Sett
   const client: Client = new Client();
   const collateralId: string = config.get('collateral.collateralAccount.accountId');
   let accountId: string;
+
+  function isNativeCryptocurrency(
+    asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
+  ): asset is NativeCryptocurrency {
+    return typeof asset === 'object' && 'cryptocurrencySymbol' in asset && 'blockchain' in asset;
+  }
+
+  function isOtherAssetReference(
+    asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
+  ): asset is OtherAssetReference {
+    return typeof asset === 'object' && 'assetId' in asset;
+  }
 
   beforeAll(async () => {
     accountId = getCapableAccountId('collateral');
@@ -80,6 +95,49 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Sett
     });
 
     it('Initiate request should return valid response', async () => {
+      const depositCapability = await client.capabilities.getDepositMethods({ accountId });
+      for (const depositInstruction of depositInstructions) {
+        const testParams = depositInstruction.destinationAddress;
+        const depositAsset =
+          depositCapability.capabilities.find(
+            (capability) =>
+              isNativeCryptocurrency(capability.deposit.asset) &&
+              isNativeCryptocurrency(testParams.asset) &&
+              capability.deposit.asset.cryptocurrencySymbol ===
+                testParams.asset.cryptocurrencySymbol &&
+              capability.deposit.asset.blockchain === testParams.asset.blockchain
+          ) ||
+          depositCapability.capabilities.find(
+            (capability) =>
+              isOtherAssetReference(capability.deposit.asset) &&
+              isOtherAssetReference(testParams.asset) &&
+              capability.deposit.asset.assetId === testParams.asset.assetId
+          );
+
+        expect(depositAsset).toBeDefined();
+      }
+
+      const withdrawCapability = await client.capabilities.getWithdrawalMethods({ accountId });
+      for (const withdrawInstruction of withdrawInstructions) {
+        const testParams = withdrawInstruction.sourceAddress;
+        const withdrawAsset =
+          withdrawCapability.capabilities.find(
+            (capability) =>
+              isNativeCryptocurrency(capability.withdrawal.asset) &&
+              isNativeCryptocurrency(testParams.asset) &&
+              capability.withdrawal.asset.cryptocurrencySymbol ===
+                testParams.asset.cryptocurrencySymbol &&
+              capability.withdrawal.asset.blockchain === testParams.asset.blockchain
+          ) ||
+          withdrawCapability.capabilities.find(
+            (capability) =>
+              isOtherAssetReference(capability.withdrawal.asset) &&
+              isOtherAssetReference(testParams.asset) &&
+              capability.withdrawal.asset.assetId === testParams.asset.assetId
+          );
+        expect(withdrawAsset).toBeDefined();
+      }
+
       const collateralSettlement: SettlementInstructions =
         await client.collateral.initiateSettlement({
           accountId,

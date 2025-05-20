@@ -5,8 +5,12 @@ import {
   CollateralDepositTransactionRequest,
   CollateralDepositTransactionResponse,
   CollateralDepositTransactionsResponse,
+  PublicBlockchainAddress,
   CryptocurrencyReference,
   IntentApprovalRequest,
+  NativeCryptocurrency,
+  OtherAssetReference,
+  NationalCurrency,
 } from '../../../src/client/generated';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
@@ -21,31 +25,57 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Depo
   const client: Client = new Client();
   const collateralId: string = config.get('collateral.collateralAccount.accountId');
   const fireblocksIntentId = uuid();
-  let assetId: string;
   let accountId: string;
+
+  function isNativeCryptocurrency(
+    asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
+  ): asset is NativeCryptocurrency {
+    return typeof asset === 'object' && 'cryptocurrencySymbol' in asset && 'blockchain' in asset;
+  }
+
+  function isOtherAssetReference(
+    asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
+  ): asset is OtherAssetReference {
+    return typeof asset === 'object' && 'assetId' in asset;
+  }
 
   beforeAll(async () => {
     accountId = getCapableAccountId('collateral');
-    const assetsResult = await client.capabilities.getAdditionalAssets({});
-    assetId = assetsResult.assets[0]?.id;
-
-    // Validating that deposit capabilities are enabled, as it is a must for collateral deposit operations.
-    expect(() => {
-      client.capabilities.getDepositMethods({ accountId });
-    }).not.toThrow();
   });
 
   describe('Register collateral deposit transaction (add collateral) & fetch by collateralTxId', () => {
+    const deposits: PublicBlockchainAddress[] = JSON.parse(config.get('collateral.deposit.assets'));
     const collateralTxId = `2.${uuid()}.${collateralId}`;
     const intentApprovalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
     let partnerIntentId: string;
-    it('Initiate should return valid response', async () => {
-      const asset: CryptocurrencyReference = { assetId: assetId };
+    it.each(deposits)('Initiate should return valid response', async (testParams) => {
+      const asset: CryptocurrencyReference = testParams.asset;
       const requestBody: CollateralDepositTransactionIntentRequest = {
         asset: asset,
         intentApprovalRequest: intentApprovalRequest,
         amount: '100',
       };
+
+      const depositCapability = await client.capabilities.getDepositMethods({ accountId });
+
+      const capabilityAsset =
+        depositCapability.capabilities.find(
+          (capability) =>
+            isNativeCryptocurrency(capability.deposit.asset) &&
+            isNativeCryptocurrency(testParams.asset) &&
+            capability.deposit.asset.cryptocurrencySymbol ===
+              testParams.asset.cryptocurrencySymbol &&
+            capability.deposit.asset.blockchain === testParams.asset.blockchain
+        ) ||
+        depositCapability.capabilities.find(
+          (capability) =>
+            isOtherAssetReference(capability.deposit.asset) &&
+            isOtherAssetReference(testParams.asset) &&
+            capability.deposit.asset.assetId === testParams.asset.assetId
+        );
+
+      expect(capabilityAsset).toBeDefined();
+
       const initiateDepositTransaction: CollateralDepositTransactionIntentResponse =
         await client.collateral.initiateCollateralDepositTransactionIntent({
           accountId,

@@ -45,6 +45,7 @@ variables. Make a copy of `env.example`, rename it to `.env` and edit the values
 values.
 
 For off-exchange `.env` **COLLATERAL_WIHTDRAWAL_ADDRESSES** structure should be of type PublicBlockchainAddress[].
+For off-exchange `.env` **COLLATERAL_DEPOSIT_ASSETS** structure should be of type AssetReference[].
 
 
 ## Design

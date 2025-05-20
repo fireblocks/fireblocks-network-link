@@ -2,7 +2,11 @@ import convict from 'convict';
 import path from 'path';
 import fs from 'fs';
 import { config as dotenvConfig } from 'dotenv';
-import { InternalTransferDestinationPolicy, PublicBlockchainAddress } from '../client/generated';
+import {
+  InternalTransferDestinationPolicy,
+  PublicBlockchainAddress,
+  AssetReference,
+} from '../client/generated';
 
 dotenvConfig();
 
@@ -81,16 +85,24 @@ const config = convict({
               "testAsset": false
             },
             "transferMethod": "PublicBlockchain"
-          },
-          {
-            "address": "0x1Dd0386E43C0F66981e46C6e6A57E9d8919b6125",
-            "asset": {
-              "assetId": "ac7d9d17-1f88-41f7-9cda-c074f800ba05"
-            },
-            "transferMethod": "PublicBlockchain"
           }
         ]`,
         env: 'COLLATERAL_WIHTDRAWAL_ADDRESSES',
+      },
+    },
+    deposit: {
+      assets: {
+        format: Array<AssetReference>,
+        default: `[
+          {
+            "asset": {
+              "blockchain": "Flare",
+              "cryptocurrencySymbol": "KAVA",
+              "testAsset": true
+            }
+          }
+        ]`,
+        env: 'COLLATERAL_DEPOSIT_ASSETS',
       },
     },
   },

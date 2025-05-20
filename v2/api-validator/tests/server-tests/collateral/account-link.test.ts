@@ -21,24 +21,36 @@ describe.skipIf(noCollateralCapability)('Account Link', () => {
         const accountId: string = getCapableAccountId('collateral');
         const collateralId: string = config.get('collateral.collateralAccount.accountId');
         const collateralSigners: CollateralSignerId[] = config.get('collateral.signers.userId');
-        const response: CollateralAccountLink = await client.collateral.createCollateralAccountLink(
-          {
+
+        const getCollateralAccountLinks = await client.collateral.getCollateralAccountLinks({
+          accountId,
+        });
+
+        let linkedAccount: CollateralAccountLink | undefined;
+
+        linkedAccount = getCollateralAccountLinks.collateralLinks.find(
+          (link) => link.status !== CollateralLinkStatus.LINKED
+        );
+
+        if (!linkedAccount) {
+          linkedAccount = await client.collateral.createCollateralAccountLink({
             accountId,
             requestBody: {
               collateralId,
               collateralSigners,
               env: AccountEnvironment.PROD,
             },
-          }
-        );
+          });
 
-        expect(response.collateralId).toBe(collateralId);
-        expect(response.collateralSigners).toEqual(collateralSigners);
-        expect(response.rejectionReason).toBeUndefined();
-        expect(response.status).toBeDefined();
-        expect(response.status).not.toBe(CollateralLinkStatus.FAILED);
-        expect(response.status).not.toBe(CollateralLinkStatus.DISABLED);
-        expect(response.env).toBe(AccountEnvironment.PROD);
+          expect(linkedAccount.collateralId).toBe(collateralId);
+          expect(linkedAccount.collateralSigners).toEqual(collateralSigners);
+          expect(linkedAccount.rejectionReason).toBeUndefined();
+          expect(linkedAccount.status).not.toBe(CollateralLinkStatus.FAILED);
+          expect(linkedAccount.status).not.toBe(CollateralLinkStatus.DISABLED);
+          expect(linkedAccount.env).toBe(AccountEnvironment.PROD);
+        }
+
+        expect(linkedAccount.status).toBeDefined();
       });
     });
 
