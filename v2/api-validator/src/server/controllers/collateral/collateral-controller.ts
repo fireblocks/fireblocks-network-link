@@ -324,6 +324,26 @@ export class CollateralController {
   public getCurrentSettlementInstructions(): SettlementInstructions {
     const currentSettlement = this.settlementRepository.list();
 
+    currentSettlement[0].depositInstructions.forEach((instruction) => {
+      if (instruction.destinationAddress && instruction.destinationAddress.asset) {
+        instruction.destinationAddress.asset = {
+          blockchain: Blockchain.FLARE,
+          cryptocurrencySymbol: CryptocurrencySymbol.KAVA,
+          testAsset: true,
+        };
+      }
+    });
+
+    currentSettlement[0].withdrawInstructions.forEach((instruction) => {
+      if (instruction.sourceAddress && instruction.sourceAddress.asset) {
+        instruction.sourceAddress.asset = {
+          blockchain: Blockchain.BITCOIN,
+          cryptocurrencySymbol: CryptocurrencySymbol.BTC,
+          testAsset: false,
+        };
+      }
+    });
+
     return currentSettlement[0];
   }
 

@@ -9,6 +9,9 @@ import {
   CollateralWithdrawalTransactionStatus,
   IntentApprovalRequest,
   PublicBlockchainAddress,
+  NativeCryptocurrency,
+  OtherAssetReference,
+  NationalCurrency,
 } from '../../../src/client/generated';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { Pageable, paginated } from '../../utils/pagination';
@@ -17,8 +20,9 @@ import Client from '../../../src/client';
 import { v4 as uuid } from 'uuid';
 
 const noCollateralCapability = !hasCapability('collateral');
+const noTransferCapability = !hasCapability('transfers');
 
-describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
+describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Withdrawal', () => {
   const client: Client = new Client();
   const collateralId = config.get('collateral.collateralAccount.accountId');
   const collateralTxId = `0.${uuid()}.${collateralId}`;
@@ -26,15 +30,27 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
   const intentApprovalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
   let accountId: string;
 
+  function isNativeCryptocurrency(
+    asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
+  ): asset is NativeCryptocurrency {
+    return typeof asset === 'object' && 'cryptocurrencySymbol' in asset && 'blockchain' in asset;
+  }
+
+  function isOtherAssetReference(
+    asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
+  ): asset is OtherAssetReference {
+    return typeof asset === 'object' && 'assetId' in asset;
+  }
+
   beforeAll(async () => {
     accountId = getCapableAccountId('collateral');
   });
 
   describe('Create collateral withdrawal transaction (remove collateral) & fetch by collateralTxId ', () => {
-    const address: PublicBlockchainAddress[] = JSON.parse(
+    const withdrawals: PublicBlockchainAddress[] = JSON.parse(
       config.get('collateral.withdrawal.addresses')
     );
-    describe.each(address)('test each address', (testParams) => {
+    describe.each(withdrawals)('test each address', (testParams) => {
       let partnerIntentId: string;
       it('Initiate request should return with a valid response', async () => {
         const requestBody: CollateralWithdrawalTransactionIntentRequest = {
@@ -42,6 +58,27 @@ describe.skipIf(noCollateralCapability)('Collateral Withdrawal', () => {
           destinationAddress: testParams,
           intentApprovalRequest: intentApprovalRequest,
         };
+
+        const withdrawlCapability = await client.capabilities.getWithdrawalMethods({ accountId });
+
+        const capabilityAsset =
+          withdrawlCapability.capabilities.find(
+            (capability) =>
+              isNativeCryptocurrency(capability.withdrawal.asset) &&
+              isNativeCryptocurrency(testParams.asset) &&
+              capability.withdrawal.asset.cryptocurrencySymbol ===
+                testParams.asset.cryptocurrencySymbol &&
+              capability.withdrawal.asset.blockchain === testParams.asset.blockchain
+          ) ||
+          withdrawlCapability.capabilities.find(
+            (capability) =>
+              isOtherAssetReference(capability.withdrawal.asset) &&
+              isOtherAssetReference(testParams.asset) &&
+              capability.withdrawal.asset.assetId === testParams.asset.assetId
+          );
+
+        expect(capabilityAsset).toBeDefined();
+
         const initiateWithdrawalTransaction: CollateralWithdrawalTransactionIntentResponse =
           await client.collateral.initiateCollateralWithdrawalTransactionIntent({
             accountId,
