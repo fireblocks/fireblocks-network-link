@@ -187,6 +187,8 @@ const ambiguousProperties = {
       '/recipient/asset/nationalCurrencyCode',
       '/recipient/accountHolder',
       '/recipient/accountHolder/name',
+      '/recipient/bankAccountNumber',
+      '/recipient/accountType',
       '/type',
     ],
   ],

@@ -4,14 +4,14 @@
 /* eslint-disable */
 
 import type { CommonRamp } from './CommonRamp';
-import type { FiatDepositDestination } from './FiatDepositDestination';
-import type { FiatTransfer } from './FiatTransfer';
 import type { OnRampProperties } from './OnRampProperties';
 import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction';
+import type { RampFiatDestination } from './RampFiatDestination';
+import type { RampFiatTransfer } from './RampFiatTransfer';
 
 export type OnRampTransfer = (CommonRamp & OnRampProperties & {
-    deliveryInstructions: FiatDepositDestination;
-    delivery?: FiatTransfer;
+    deliveryInstructions: RampFiatDestination;
+    delivery?: RampFiatTransfer;
     receipt?: PublicBlockchainTransaction;
 });
 

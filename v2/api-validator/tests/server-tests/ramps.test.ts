@@ -17,6 +17,9 @@ import {
   IbanCapability,
   SwiftCapability,
   RampStatus,
+  AchCapability,
+  WireCapability,
+  SpeiCapability,
 } from '../../src/client/generated';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 import { randomUUID } from 'crypto';
@@ -28,6 +31,9 @@ const accountIds = getAllCapableAccountIds('ramps');
 const blockchainDestinationConfig = config.get('withdrawal.blockchain');
 const swiftDestinationConfig = config.get('withdrawal.swift');
 const ibanDestinationConfig = config.get('withdrawal.iban');
+const achDestinationConfig = config.get('withdrawal.ach');
+const wireDestinationConfig = config.get('withdrawal.wire');
+const speiDestinationConfig = config.get('withdrawal.spei');
 
 function isBlockchainMethod(
   capability: FiatCapability | PublicBlockchainCapability
@@ -40,8 +46,28 @@ function isFiatMethod(
 ): capability is FiatCapability {
   return (
     capability.transferMethod === IbanCapability.transferMethod.IBAN ||
-    capability.transferMethod === SwiftCapability.transferMethod.SWIFT
+    capability.transferMethod === SwiftCapability.transferMethod.SWIFT ||
+    capability.transferMethod === AchCapability.transferMethod.ACH ||
+    capability.transferMethod === WireCapability.transferMethod.WIRE ||
+    capability.transferMethod === SpeiCapability.transferMethod.SPEI
   );
+}
+
+function getFiatDestinationConfig(transferMethod: string) {
+  switch (transferMethod) {
+    case IbanCapability.transferMethod.IBAN:
+      return { ...ibanDestinationConfig, transferMethod: IbanCapability.transferMethod.IBAN };
+    case SwiftCapability.transferMethod.SWIFT:
+      return { ...swiftDestinationConfig, transferMethod: SwiftCapability.transferMethod.SWIFT };
+    case AchCapability.transferMethod.ACH:
+      return { ...achDestinationConfig, transferMethod: AchCapability.transferMethod.ACH };
+    case WireCapability.transferMethod.WIRE:
+      return { ...wireDestinationConfig, transferMethod: WireCapability.transferMethod.WIRE };
+    case SpeiCapability.transferMethod.SPEI:
+      return { ...speiDestinationConfig, transferMethod: SpeiCapability.transferMethod.SPEI };
+    default:
+      throw new Error('Unsupported transfer method');
+  }
 }
 
 function rampRequestFromMethod(method: RampMethod): RampRequest {
@@ -84,9 +110,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       amount: '0.1',
       recipient: {
         asset: method.to.asset,
-        ...(method.to.transferMethod === IbanCapability.transferMethod.IBAN
-          ? { ...ibanDestinationConfig, transferMethod: IbanCapability.transferMethod.IBAN }
-          : { ...swiftDestinationConfig, transferMethod: SwiftCapability.transferMethod.SWIFT }),
+        ...getFiatDestinationConfig(method.to.transferMethod),
       },
     };
   }
