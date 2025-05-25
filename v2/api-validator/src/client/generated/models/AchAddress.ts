@@ -5,7 +5,6 @@
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
 import type { AchCapability } from './AchCapability';
-import type { PostalAddress } from './PostalAddress';
 
 export type AchAddress = (AchCapability & {
     accountHolder: AccountHolderDetails;
@@ -13,7 +12,6 @@ export type AchAddress = (AchCapability & {
     bankAccountNumber: string;
     routingNumber: string;
     accountType: AchAddress.accountType;
-    address: PostalAddress;
 });
 
 export namespace AchAddress {

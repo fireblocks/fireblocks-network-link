@@ -12,7 +12,6 @@ export type WireAddress = (WireCapability & {
     bankName?: string;
     bankAccountNumber: string;
     routingNumber: string;
-    address: PostalAddress;
     bankAddress?: PostalAddress;
 });
 

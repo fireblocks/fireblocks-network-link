@@ -892,7 +892,6 @@ components:
             - routingNumber
             - bankAccountNumber
             - accountType
-            - address
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
@@ -907,8 +906,6 @@ components:
             accountType:
               type: string
               enum: [ checking, savings ]
-            address:
-              $ref: '#/components/schemas/PostalAddress'
 
     AchTransferDestination:
       allOf:
@@ -945,7 +942,6 @@ components:
             - accountHolder
             - routingNumber
             - bankAccountNumber
-            - address
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
@@ -957,8 +953,6 @@ components:
             routingNumber:
               type: string
               pattern: '^\d{9}$'
-            address:
-              $ref: '#/components/schemas/PostalAddress'
             bankAddress:
               $ref: '#/components/schemas/PostalAddress'
 
@@ -996,7 +990,6 @@ components:
           required:
             - accountHolder
             - bankAccountNumber
-            - address
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
@@ -1005,8 +998,6 @@ components:
             bankAccountNumber:
               type: string
               pattern: '^\d{18}$'  # CLABE format: 18 digits
-            address:
-              $ref: '#/components/schemas/PostalAddress'
 
     SpeiTransferDestination:
       allOf:
@@ -1204,15 +1195,13 @@ components:
         - $ref: '#/components/schemas/PeerAccountTransferAddress'
         - $ref: '#/components/schemas/InternalTransferAddress'
 
-    FiatDepositDestination:
-      allOf:
-        - type: object
-          properties:
-            referenceId:
-              type: string
-        - oneOf:
-            - $ref: '#/components/schemas/IbanAddress'
-            - $ref: '#/components/schemas/SwiftAddress'
+    FiatAddress:
+      oneOf:
+        - $ref: '#/components/schemas/IbanAddress'
+        - $ref: '#/components/schemas/SwiftAddress'
+        - $ref: '#/components/schemas/AchAddress'
+        - $ref: '#/components/schemas/WireAddress'
+        - $ref: '#/components/schemas/SpeiAddress'
 
     DepositAddressStatus:
       enum:
@@ -1241,7 +1230,6 @@ components:
             - $ref: '#/x-schemas/PublicBlockchainCapability'
             - $ref: '#/components/schemas/IbanCapability'
             - $ref: '#/components/schemas/SwiftCapability'
-
 
     DepositCapability:
       type: object

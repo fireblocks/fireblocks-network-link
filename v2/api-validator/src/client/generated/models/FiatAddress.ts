@@ -9,5 +9,5 @@ import type { SpeiAddress } from './SpeiAddress';
 import type { SwiftAddress } from './SwiftAddress';
 import type { WireAddress } from './WireAddress';
 
-export type RampFiatDestination = (IbanAddress | SwiftAddress | AchAddress | WireAddress | SpeiAddress);
+export type FiatAddress = (IbanAddress | SwiftAddress | AchAddress | WireAddress | SpeiAddress);
 

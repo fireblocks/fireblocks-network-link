@@ -11,7 +11,10 @@ tags:
   - name: capabilities
     description: Server capabilities discovery operations.
   - name: ramps
-    description: On-ramp, off-ramp and bridging operations.
+    description: |-
+      Beta Feature – Limited Access.
+      
+      On-ramp, off-ramp and bridging operations.
 
 x-path-params:
   EntityIdPathParam:
@@ -62,25 +65,9 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatCapability",
     }
-  IbanAddress:
+  FiatAddress:
     {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanAddress"
-    }
-  SwiftAddress:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SwiftAddress"
-    }
-  AchAddress:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AchAddress",
-    }
-  WireAddress:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/WireAddress",
-    }
-  SpeiAddress:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiAddress"
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatAddress"
     }
   IbanTransfer:
     {
@@ -363,7 +350,6 @@ components:
                       transferMethod: "PublicBlockchain"
                       address: "0x1234567890abcdef1234567890abcdef12345678"
                     recipient:
-                      referenceId: "1234567890abcdef"
                       asset:
                         nationalCurrencyCode: "USD"
                       transferMethod: "Iban"
@@ -379,7 +365,6 @@ components:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
                     receipt:
-                      referenceId: "1234567890abcdef"
                       asset:
                         nationalCurrencyCode: "USD"
                       transferMethod: "Iban"
@@ -517,7 +502,7 @@ components:
         to:
           $ref: "#/x-schemas/FiatCapability"
         recipient:
-          $ref: "#/components/schemas/RampFiatDestination"
+          $ref: "#/x-schemas/FiatAddress"
 
     BridgeProperties:
       type: object
@@ -584,7 +569,12 @@ components:
             - deliveryInstructions
           properties:
             deliveryInstructions:
-              $ref: "#/components/schemas/RampFiatDestination"
+              allOf:
+                - $ref: "#/x-schemas/FiatAddress"
+                - type: object
+                  properties:
+                    referenceId:
+                      type: string
             delivery:
               $ref: "#/components/schemas/RampFiatTransfer"
             receipt:
@@ -625,14 +615,6 @@ components:
         - $ref: "#/components/schemas/OnRampTransfer"
         - $ref: "#/components/schemas/OffRampTransfer"
         - $ref: "#/components/schemas/BridgeTransfer"
-
-    RampFiatDestination:
-      oneOf:
-        - $ref: "#/x-schemas/IbanAddress"
-        - $ref: "#/x-schemas/SwiftAddress"
-        - $ref: "#/x-schemas/AchAddress"
-        - $ref: "#/x-schemas/WireAddress"
-        - $ref: "#/x-schemas/SpeiAddress"
 
     RampFiatTransfer:
       oneOf:
