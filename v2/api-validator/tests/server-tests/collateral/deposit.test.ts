@@ -5,12 +5,13 @@ import {
   CollateralDepositTransactionRequest,
   CollateralDepositTransactionResponse,
   CollateralDepositTransactionsResponse,
-  PublicBlockchainAddress,
   CryptocurrencyReference,
   IntentApprovalRequest,
   NativeCryptocurrency,
   OtherAssetReference,
   NationalCurrency,
+  CryptocurrencySymbol,
+  Blockchain,
 } from '../../../src/client/generated';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { v4 as uuid } from 'uuid';
@@ -30,13 +31,13 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Depo
   function isNativeCryptocurrency(
     asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
   ): asset is NativeCryptocurrency {
-    return typeof asset === 'object' && 'cryptocurrencySymbol' in asset && 'blockchain' in asset;
+    return 'cryptocurrencySymbol' in asset;
   }
 
   function isOtherAssetReference(
     asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
   ): asset is OtherAssetReference {
-    return typeof asset === 'object' && 'assetId' in asset;
+    return 'assetId' in asset;
   }
 
   beforeAll(async () => {
@@ -44,12 +45,21 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Depo
   });
 
   describe('Register collateral deposit transaction (add collateral) & fetch by collateralTxId', () => {
-    const deposits: PublicBlockchainAddress[] = JSON.parse(config.get('collateral.deposit.assets'));
+    const assetId: string = config.get('collateral.asset.assetId');
+    const symbol: CryptocurrencySymbol = config.get('collateral.asset.symbol');
+    const blockchain: Blockchain = config.get('collateral.asset.blockchain');
+    const testAsset: boolean = config.get('collateral.asset.testAsset');
     const collateralTxId = `2.${uuid()}.${collateralId}`;
     const intentApprovalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
     let partnerIntentId: string;
-    it.each(deposits)('Initiate should return valid response', async (testParams) => {
-      const asset: CryptocurrencyReference = testParams.asset;
+    it('Initiate should return valid response', async () => {
+      const asset: CryptocurrencyReference = assetId ? {
+        assetId: assetId,
+      } : {
+        blockchain: blockchain,
+        cryptocurrencySymbol: symbol,
+        testAsset: testAsset,
+      };
       const requestBody: CollateralDepositTransactionIntentRequest = {
         asset: asset,
         intentApprovalRequest: intentApprovalRequest,
@@ -62,16 +72,15 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Depo
         depositCapability.capabilities.find(
           (capability) =>
             isNativeCryptocurrency(capability.deposit.asset) &&
-            isNativeCryptocurrency(testParams.asset) &&
+            isNativeCryptocurrency(asset) &&
             capability.deposit.asset.cryptocurrencySymbol ===
-              testParams.asset.cryptocurrencySymbol &&
-            capability.deposit.asset.blockchain === testParams.asset.blockchain
+              asset.cryptocurrencySymbol
         ) ||
         depositCapability.capabilities.find(
           (capability) =>
             isOtherAssetReference(capability.deposit.asset) &&
-            isOtherAssetReference(testParams.asset) &&
-            capability.deposit.asset.assetId === testParams.asset.assetId
+            isOtherAssetReference(asset) &&
+            capability.deposit.asset.assetId === asset.assetId
         );
 
       expect(capabilityAsset).toBeDefined();

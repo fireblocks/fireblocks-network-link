@@ -90,45 +90,6 @@ export class WithdrawalController {
       loadCapabilitiesJson(`withdrawals-${this.accountId}.json`) ??
       WithdrawalController.generateWithdrawalCapabilities();
 
-    const collateralWithdrawalCapabilities: WithdrawalCapability[] = [
-      {
-        id: '9d4808a8-69e4-405d-a79d-5fff28c22feb',
-        withdrawal: {
-          asset: {
-            blockchain: Blockchain.ALGORAND,
-            cryptocurrencySymbol: CryptocurrencySymbol.ALGO,
-            testAsset: false,
-          },
-          transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-        },
-        balanceAsset: {
-          blockchain: Blockchain.ALGORAND,
-          cryptocurrencySymbol: CryptocurrencySymbol.ALGO,
-          testAsset: false,
-        },
-        minWithdrawalAmount: '1',
-      },
-      {
-        id: '4a66db0c-0e30-43cf-8dc0-c7ae5787a02d',
-        withdrawal: {
-          asset: {
-            blockchain: Blockchain.BITCOIN,
-            cryptocurrencySymbol: CryptocurrencySymbol.BTC,
-            testAsset: false,
-          },
-          transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-        },
-        balanceAsset: {
-          blockchain: Blockchain.BITCOIN,
-          cryptocurrencySymbol: CryptocurrencySymbol.BTC,
-          testAsset: false,
-        },
-        minWithdrawalAmount: '1',
-      },
-    ];
-
-    capabilities.push(...collateralWithdrawalCapabilities);
-
     this.withdrawalCapabilityRepository.clear();
 
     for (const capability of capabilities) {

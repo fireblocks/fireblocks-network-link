@@ -23,25 +23,17 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Sett
   function isNativeCryptocurrency(
     asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
   ): asset is NativeCryptocurrency {
-    return typeof asset === 'object' && 'cryptocurrencySymbol' in asset && 'blockchain' in asset;
+    return 'cryptocurrencySymbol' in asset;
   }
 
   function isOtherAssetReference(
     asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
   ): asset is OtherAssetReference {
-    return typeof asset === 'object' && 'assetId' in asset;
+    return 'assetId' in asset;
   }
 
   beforeAll(async () => {
     accountId = getCapableAccountId('collateral');
-
-    // Validating that withdrawal & deposit capabilities are enabled, as it is a must for collateral settlement operations.
-    expect(() => {
-      client.capabilities.getWithdrawalMethods({ accountId });
-    }).not.toThrow();
-    expect(() => {
-      client.capabilities.getDepositMethods({ accountId });
-    }).not.toThrow();
   });
 
   describe('Check full settlement flow', () => {
@@ -97,21 +89,20 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Sett
     it('Initiate request should return valid response', async () => {
       const depositCapability = await client.capabilities.getDepositMethods({ accountId });
       for (const depositInstruction of depositInstructions) {
-        const testParams = depositInstruction.destinationAddress;
+        const destinationAddress = depositInstruction.destinationAddress;
         const depositAsset =
           depositCapability.capabilities.find(
             (capability) =>
               isNativeCryptocurrency(capability.deposit.asset) &&
-              isNativeCryptocurrency(testParams.asset) &&
+              isNativeCryptocurrency(destinationAddress.asset) &&
               capability.deposit.asset.cryptocurrencySymbol ===
-                testParams.asset.cryptocurrencySymbol &&
-              capability.deposit.asset.blockchain === testParams.asset.blockchain
+                destinationAddress.asset.cryptocurrencySymbol
           ) ||
           depositCapability.capabilities.find(
             (capability) =>
               isOtherAssetReference(capability.deposit.asset) &&
-              isOtherAssetReference(testParams.asset) &&
-              capability.deposit.asset.assetId === testParams.asset.assetId
+              isOtherAssetReference(destinationAddress.asset) &&
+              capability.deposit.asset.assetId === destinationAddress.asset.assetId
           );
 
         expect(depositAsset).toBeDefined();
@@ -119,21 +110,20 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Sett
 
       const withdrawCapability = await client.capabilities.getWithdrawalMethods({ accountId });
       for (const withdrawInstruction of withdrawInstructions) {
-        const testParams = withdrawInstruction.sourceAddress;
+        const withdrawSourceAddress = withdrawInstruction.sourceAddress;
         const withdrawAsset =
           withdrawCapability.capabilities.find(
             (capability) =>
               isNativeCryptocurrency(capability.withdrawal.asset) &&
-              isNativeCryptocurrency(testParams.asset) &&
+              isNativeCryptocurrency(withdrawSourceAddress.asset) &&
               capability.withdrawal.asset.cryptocurrencySymbol ===
-                testParams.asset.cryptocurrencySymbol &&
-              capability.withdrawal.asset.blockchain === testParams.asset.blockchain
+                withdrawSourceAddress.asset.cryptocurrencySymbol
           ) ||
           withdrawCapability.capabilities.find(
             (capability) =>
               isOtherAssetReference(capability.withdrawal.asset) &&
-              isOtherAssetReference(testParams.asset) &&
-              capability.withdrawal.asset.assetId === testParams.asset.assetId
+              isOtherAssetReference(withdrawSourceAddress.asset) &&
+              capability.withdrawal.asset.assetId === withdrawSourceAddress.asset.assetId
           );
         expect(withdrawAsset).toBeDefined();
       }

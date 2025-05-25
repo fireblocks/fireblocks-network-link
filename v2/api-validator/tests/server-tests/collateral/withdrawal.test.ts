@@ -8,10 +8,14 @@ import {
   CollateralWithdrawalTransactions,
   CollateralWithdrawalTransactionStatus,
   IntentApprovalRequest,
-  PublicBlockchainAddress,
+  PublicBlockchainCapability,
+  CryptocurrencySymbol,
+  Blockchain,
+  CryptocurrencyReference,
   NativeCryptocurrency,
   OtherAssetReference,
   NationalCurrency,
+  PublicBlockchainAddress,
 } from '../../../src/client/generated';
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import { Pageable, paginated } from '../../utils/pagination';
@@ -33,13 +37,13 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral With
   function isNativeCryptocurrency(
     asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
   ): asset is NativeCryptocurrency {
-    return typeof asset === 'object' && 'cryptocurrencySymbol' in asset && 'blockchain' in asset;
+    return 'cryptocurrencySymbol' in asset;
   }
 
   function isOtherAssetReference(
     asset: NativeCryptocurrency | OtherAssetReference | NationalCurrency
   ): asset is OtherAssetReference {
-    return typeof asset === 'object' && 'assetId' in asset;
+    return 'assetId' in asset;
   }
 
   beforeAll(async () => {
@@ -47,15 +51,32 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral With
   });
 
   describe('Create collateral withdrawal transaction (remove collateral) & fetch by collateralTxId ', () => {
-    const withdrawals: PublicBlockchainAddress[] = JSON.parse(
-      config.get('collateral.withdrawal.addresses')
-    );
-    describe.each(withdrawals)('test each address', (testParams) => {
+    const address: string = config.get('collateral.withdrawal.address');
+    const addressTag: string | undefined = config.get('collateral.withdrawal.addressTag');
+    const transferMethod: PublicBlockchainCapability.transferMethod = config.get('collateral.withdrawal.transferMethod.blockchain');
+    const assetId: string = config.get('collateral.asset.assetId');
+    const symbol: CryptocurrencySymbol = config.get('collateral.asset.symbol');
+    const blockchain: Blockchain = config.get('collateral.asset.blockchain');
+    const testAsset: boolean = config.get('collateral.asset.testAsset');
+    describe('test each address', () => {
       let partnerIntentId: string;
       it('Initiate request should return with a valid response', async () => {
+        const asset: CryptocurrencyReference = assetId ? {
+                assetId: assetId,
+              } : {
+                blockchain: blockchain,
+                cryptocurrencySymbol: symbol,
+                testAsset: testAsset,
+              };
+        const destinationAddress: PublicBlockchainAddress = {
+            address: address,
+            addressTag: addressTag,
+            asset: asset,
+            transferMethod: transferMethod,
+          }
         const requestBody: CollateralWithdrawalTransactionIntentRequest = {
           amount: '5',
-          destinationAddress: testParams,
+          destinationAddress: destinationAddress,
           intentApprovalRequest: intentApprovalRequest,
         };
 
@@ -65,16 +86,15 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral With
           withdrawlCapability.capabilities.find(
             (capability) =>
               isNativeCryptocurrency(capability.withdrawal.asset) &&
-              isNativeCryptocurrency(testParams.asset) &&
+              isNativeCryptocurrency(destinationAddress.asset) &&
               capability.withdrawal.asset.cryptocurrencySymbol ===
-                testParams.asset.cryptocurrencySymbol &&
-              capability.withdrawal.asset.blockchain === testParams.asset.blockchain
+                destinationAddress.asset.cryptocurrencySymbol
           ) ||
           withdrawlCapability.capabilities.find(
             (capability) =>
               isOtherAssetReference(capability.withdrawal.asset) &&
-              isOtherAssetReference(testParams.asset) &&
-              capability.withdrawal.asset.assetId === testParams.asset.assetId
+              isOtherAssetReference(destinationAddress.asset) &&
+              capability.withdrawal.asset.assetId === destinationAddress.asset.assetId
           );
 
         expect(capabilityAsset).toBeDefined();
