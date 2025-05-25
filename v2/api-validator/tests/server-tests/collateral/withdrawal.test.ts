@@ -53,7 +53,9 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral With
   describe('Create collateral withdrawal transaction (remove collateral) & fetch by collateralTxId ', () => {
     const address: string = config.get('collateral.withdrawal.address');
     const addressTag: string | undefined = config.get('collateral.withdrawal.addressTag');
-    const transferMethod: PublicBlockchainCapability.transferMethod = config.get('collateral.withdrawal.transferMethod.blockchain');
+    const transferMethod: PublicBlockchainCapability.transferMethod = config.get(
+      'collateral.withdrawal.transferMethod.blockchain'
+    );
     const assetId: string = config.get('collateral.asset.assetId');
     const symbol: CryptocurrencySymbol = config.get('collateral.asset.symbol');
     const blockchain: Blockchain = config.get('collateral.asset.blockchain');
@@ -61,19 +63,21 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral With
     describe('test each address', () => {
       let partnerIntentId: string;
       it('Initiate request should return with a valid response', async () => {
-        const asset: CryptocurrencyReference = assetId ? {
-                assetId: assetId,
-              } : {
-                blockchain: blockchain,
-                cryptocurrencySymbol: symbol,
-                testAsset: testAsset,
-              };
+        const asset: CryptocurrencyReference = assetId
+          ? {
+              assetId: assetId,
+            }
+          : {
+              blockchain: blockchain,
+              cryptocurrencySymbol: symbol,
+              testAsset: testAsset,
+            };
         const destinationAddress: PublicBlockchainAddress = {
-            address: address,
-            addressTag: addressTag,
-            asset: asset,
-            transferMethod: transferMethod,
-          }
+          address: address,
+          addressTag: addressTag,
+          asset: asset,
+          transferMethod: transferMethod,
+        };
         const requestBody: CollateralWithdrawalTransactionIntentRequest = {
           amount: '5',
           destinationAddress: destinationAddress,

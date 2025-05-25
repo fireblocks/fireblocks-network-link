@@ -21,8 +21,6 @@ import {
   Withdrawal,
   WithdrawalCapability,
   WithdrawalStatus,
-  CryptocurrencySymbol,
-  Blockchain,
 } from '../../client/generated';
 import { AccountsController } from './accounts-controller';
 import { loadCapabilitiesJson } from './capabilities-loader';

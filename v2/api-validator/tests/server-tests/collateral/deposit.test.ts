@@ -53,13 +53,15 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Depo
     const intentApprovalRequest: IntentApprovalRequest = { fireblocksIntentId: fireblocksIntentId };
     let partnerIntentId: string;
     it('Initiate should return valid response', async () => {
-      const asset: CryptocurrencyReference = assetId ? {
-        assetId: assetId,
-      } : {
-        blockchain: blockchain,
-        cryptocurrencySymbol: symbol,
-        testAsset: testAsset,
-      };
+      const asset: CryptocurrencyReference = assetId
+        ? {
+            assetId: assetId,
+          }
+        : {
+            blockchain: blockchain,
+            cryptocurrencySymbol: symbol,
+            testAsset: testAsset,
+          };
       const requestBody: CollateralDepositTransactionIntentRequest = {
         asset: asset,
         intentApprovalRequest: intentApprovalRequest,
@@ -73,8 +75,7 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Depo
           (capability) =>
             isNativeCryptocurrency(capability.deposit.asset) &&
             isNativeCryptocurrency(asset) &&
-            capability.deposit.asset.cryptocurrencySymbol ===
-              asset.cryptocurrencySymbol
+            capability.deposit.asset.cryptocurrencySymbol === asset.cryptocurrencySymbol
         ) ||
         depositCapability.capabilities.find(
           (capability) =>

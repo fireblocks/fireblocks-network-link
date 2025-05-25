@@ -26,9 +26,10 @@ describe.skipIf(noCollateralCapability)('Account Link', () => {
           accountId,
         });
 
-        const linkedAccount: CollateralAccountLink | undefined = getCollateralAccountLinks.collateralLinks.find(
-          (link) => link.status !== CollateralLinkStatus.LINKED
-        );
+        const linkedAccount: CollateralAccountLink | undefined =
+          getCollateralAccountLinks.collateralLinks.find(
+            (link) => link.status !== CollateralLinkStatus.LINKED
+          );
 
         if (!linkedAccount) {
           const linkAccount = await client.collateral.createCollateralAccountLink({
