@@ -3943,16 +3943,14 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              type: string
-              pattern: ^\d{4,17}$
+              $ref: '#/components/schemas/bankAccountNumber'
             routingNumber:
-              type: string
-              pattern: ^\d{9}$
+              $ref: '#/components/schemas/routingNumber'
             accountType:
               type: string
               enum:
-                - checking
-                - savings
+                - Checking
+                - Savings
     AchTransferDestination:
       allOf:
         - $ref: '#/components/schemas/AchAddress'
@@ -3994,11 +3992,9 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              type: string
-              pattern: ^\d{4,17}$
+              $ref: '#/components/schemas/bankAccountNumber'
             routingNumber:
-              type: string
-              pattern: ^\d{9}$
+              $ref: '#/components/schemas/routingNumber'
             bankAddress:
               $ref: '#/components/schemas/PostalAddress'
     WireTransferDestination:
@@ -4041,8 +4037,16 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              type: string
-              pattern: ^\d{18}$
+              $ref: '#/components/schemas/CLABE'
+    bankAccountNumber:
+      type: string
+      pattern: ^\d{4,17}$
+    routingNumber:
+      type: string
+      pattern: ^\d{9}$
+    CLABE:
+      type: string
+      pattern: ^\d{18}$
     SpeiTransferDestination:
       allOf:
         - $ref: '#/components/schemas/SpeiAddress'

@@ -496,7 +496,6 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
-
   /accounts/{accountId}/transfers/withdrawals/subaccount:
     get:
       operationId: getSubAccountWithdrawals
@@ -898,14 +897,12 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              type: string
-              pattern: '^\d{4,17}$'
+              $ref: '#/components/schemas/bankAccountNumber'
             routingNumber:
-              type: string
-              pattern: '^\d{9}$'
+              $ref: '#/components/schemas/routingNumber'
             accountType:
               type: string
-              enum: [ checking, savings ]
+              enum: [ Checking, Savings ]
 
     AchTransferDestination:
       allOf:
@@ -948,11 +945,9 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              type: string
-              pattern: '^\d{4,17}$'
+              $ref: '#/components/schemas/bankAccountNumber'
             routingNumber:
-              type: string
-              pattern: '^\d{9}$'
+                $ref: '#/components/schemas/routingNumber'
             bankAddress:
               $ref: '#/components/schemas/PostalAddress'
 
@@ -996,8 +991,19 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              type: string
-              pattern: '^\d{18}$'  # CLABE format: 18 digits
+              $ref: '#/components/schemas/CLABE'
+
+    bankAccountNumber:
+      type: string
+      pattern: '^\d{4,17}$'
+
+    routingNumber:
+      type: string
+      pattern: '^\d{9}$'
+
+    CLABE:
+      type: string
+      pattern: '^\d{18}$'
 
     SpeiTransferDestination:
       allOf:
