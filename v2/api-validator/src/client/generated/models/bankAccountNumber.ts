@@ -3,4 +3,4 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type bankAccountNumber = string;
+export type BankAccountNumber = string;

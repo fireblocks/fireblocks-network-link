@@ -3,4 +3,4 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type routingNumber = string;
+export type RoutingNumber = string;

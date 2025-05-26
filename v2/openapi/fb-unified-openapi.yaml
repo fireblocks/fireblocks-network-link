@@ -14,8 +14,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: 
-    $ref: README.md
+  description: Placeholder for automatic documentation injection from README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -3943,9 +3942,9 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              $ref: '#/components/schemas/bankAccountNumber'
+              $ref: '#/components/schemas/BankAccountNumber'
             routingNumber:
-              $ref: '#/components/schemas/routingNumber'
+              $ref: '#/components/schemas/RoutingNumber'
             accountType:
               type: string
               enum:
@@ -3992,9 +3991,9 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              $ref: '#/components/schemas/bankAccountNumber'
+              $ref: '#/components/schemas/BankAccountNumber'
             routingNumber:
-              $ref: '#/components/schemas/routingNumber'
+              $ref: '#/components/schemas/RoutingNumber'
             bankAddress:
               $ref: '#/components/schemas/PostalAddress'
     WireTransferDestination:
@@ -4037,14 +4036,14 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              $ref: '#/components/schemas/CLABE'
-    bankAccountNumber:
+              $ref: '#/components/schemas/Clabe'
+    BankAccountNumber:
       type: string
       pattern: ^\d{4,17}$
-    routingNumber:
+    RoutingNumber:
       type: string
       pattern: ^\d{9}$
-    CLABE:
+    Clabe:
       type: string
       pattern: ^\d{18}$
     SpeiTransferDestination:

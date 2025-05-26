@@ -4,16 +4,16 @@
 /* eslint-disable */
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
-import type { bankAccountNumber } from './bankAccountNumber';
+import type { BankAccountNumber } from './BankAccountNumber';
 import type { PostalAddress } from './PostalAddress';
-import type { routingNumber } from './routingNumber';
+import type { RoutingNumber } from './RoutingNumber';
 import type { WireCapability } from './WireCapability';
 
 export type WireAddress = (WireCapability & {
     accountHolder: AccountHolderDetails;
     bankName?: string;
-    bankAccountNumber: bankAccountNumber;
-    routingNumber: routingNumber;
+    bankAccountNumber: BankAccountNumber;
+    routingNumber: RoutingNumber;
     bankAddress?: PostalAddress;
 });
 

@@ -5,14 +5,14 @@
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
 import type { AchCapability } from './AchCapability';
-import type { bankAccountNumber } from './bankAccountNumber';
-import type { routingNumber } from './routingNumber';
+import type { BankAccountNumber } from './BankAccountNumber';
+import type { RoutingNumber } from './RoutingNumber';
 
 export type AchAddress = (AchCapability & {
     accountHolder: AccountHolderDetails;
     bankName?: string;
-    bankAccountNumber: bankAccountNumber;
-    routingNumber: routingNumber;
+    bankAccountNumber: BankAccountNumber;
+    routingNumber: RoutingNumber;
     accountType: AchAddress.accountType;
 });
 

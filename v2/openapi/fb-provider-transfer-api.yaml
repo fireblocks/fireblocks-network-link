@@ -897,9 +897,9 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              $ref: '#/components/schemas/bankAccountNumber'
+              $ref: '#/components/schemas/BankAccountNumber'
             routingNumber:
-              $ref: '#/components/schemas/routingNumber'
+              $ref: '#/components/schemas/RoutingNumber'
             accountType:
               type: string
               enum: [ Checking, Savings ]
@@ -945,9 +945,9 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              $ref: '#/components/schemas/bankAccountNumber'
+              $ref: '#/components/schemas/BankAccountNumber'
             routingNumber:
-                $ref: '#/components/schemas/routingNumber'
+                $ref: '#/components/schemas/RoutingNumber'
             bankAddress:
               $ref: '#/components/schemas/PostalAddress'
 
@@ -991,17 +991,17 @@ components:
             bankName:
               type: string
             bankAccountNumber:
-              $ref: '#/components/schemas/CLABE'
+              $ref: '#/components/schemas/Clabe'
 
-    bankAccountNumber:
+    BankAccountNumber:
       type: string
       pattern: '^\d{4,17}$'
 
-    routingNumber:
+    RoutingNumber:
       type: string
       pattern: '^\d{9}$'
 
-    CLABE:
+    Clabe:
       type: string
       pattern: '^\d{18}$'
 
