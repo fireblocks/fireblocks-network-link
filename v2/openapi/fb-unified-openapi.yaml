@@ -14,8 +14,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: 
-    $ref: README.md
+  description: Placeholder for automatic documentation injection from README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -42,7 +41,10 @@ tags:
   - name: collateral
     description: Collateral management operations.
   - name: ramps
-    description: On-ramp, off-ramp and bridging operations.
+    description: |-
+      Beta Feature – Limited Access.
+
+      On-ramp, off-ramp and bridging operations.
 paths:
   /capabilities:
     get:
@@ -2725,7 +2727,6 @@ components:
                       transferMethod: PublicBlockchain
                       address: '0x1234567890abcdef1234567890abcdef12345678'
                     recipient:
-                      referenceId: 1234567890abcdef
                       asset:
                         nationalCurrencyCode: USD
                       transferMethod: Iban
@@ -2741,7 +2742,6 @@ components:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
                     receipt:
-                      referenceId: 1234567890abcdef
                       asset:
                         nationalCurrencyCode: USD
                       transferMethod: Iban
@@ -3916,6 +3916,152 @@ components:
           properties:
             referenceId:
               type: string
+    AchCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          enum:
+            - Ach
+    AchAddress:
+      allOf:
+        - $ref: '#/components/schemas/AchCapability'
+        - type: object
+          required:
+            - accountHolder
+            - routingNumber
+            - bankAccountNumber
+            - accountType
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            bankName:
+              type: string
+            bankAccountNumber:
+              $ref: '#/components/schemas/BankAccountNumber'
+            routingNumber:
+              $ref: '#/components/schemas/RoutingNumber'
+            accountType:
+              type: string
+              enum:
+                - Checking
+                - Savings
+    AchTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/AchAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    AchTransfer:
+      allOf:
+        - $ref: '#/components/schemas/AchTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    WireCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          enum:
+            - Wire
+    WireAddress:
+      allOf:
+        - $ref: '#/components/schemas/WireCapability'
+        - type: object
+          required:
+            - accountHolder
+            - routingNumber
+            - bankAccountNumber
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            bankName:
+              type: string
+            bankAccountNumber:
+              $ref: '#/components/schemas/BankAccountNumber'
+            routingNumber:
+              $ref: '#/components/schemas/RoutingNumber'
+            bankAddress:
+              $ref: '#/components/schemas/PostalAddress'
+    WireTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/WireAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    WireTransfer:
+      allOf:
+        - $ref: '#/components/schemas/WireTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    SpeiCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          enum:
+            - Spei
+    SpeiAddress:
+      allOf:
+        - $ref: '#/components/schemas/SpeiCapability'
+        - type: object
+          required:
+            - accountHolder
+            - bankAccountNumber
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            bankName:
+              type: string
+            bankAccountNumber:
+              $ref: '#/components/schemas/Clabe'
+    BankAccountNumber:
+      type: string
+      pattern: ^\d{4,17}$
+    RoutingNumber:
+      type: string
+      pattern: ^\d{9}$
+    Clabe:
+      type: string
+      pattern: ^\d{18}$
+    SpeiTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/SpeiAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    SpeiTransfer:
+      allOf:
+        - $ref: '#/components/schemas/SpeiTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
     OtherFiatTransfer:
       type: object
       description: Used for historic fiat transfers that do not fit a more specific transfer method.  It is impossible to create new deposits or withdrawal of this type using this API.
@@ -3942,6 +4088,9 @@ components:
       oneOf:
         - $ref: '#/components/schemas/IbanCapability'
         - $ref: '#/components/schemas/SwiftCapability'
+        - $ref: '#/components/schemas/AchCapability'
+        - $ref: '#/components/schemas/WireCapability'
+        - $ref: '#/components/schemas/SpeiCapability'
     PublicBlockchainTransactionDestination:
       type: object
       allOf:
@@ -4083,15 +4232,13 @@ components:
         - $ref: '#/components/schemas/SwiftAddress'
         - $ref: '#/components/schemas/PeerAccountTransferAddress'
         - $ref: '#/components/schemas/InternalTransferAddress'
-    FiatDepositDestination:
-      allOf:
-        - type: object
-          properties:
-            referenceId:
-              type: string
-        - oneOf:
-            - $ref: '#/components/schemas/IbanAddress'
-            - $ref: '#/components/schemas/SwiftAddress'
+    FiatAddress:
+      oneOf:
+        - $ref: '#/components/schemas/IbanAddress'
+        - $ref: '#/components/schemas/SwiftAddress'
+        - $ref: '#/components/schemas/AchAddress'
+        - $ref: '#/components/schemas/WireAddress'
+        - $ref: '#/components/schemas/SpeiAddress'
     DepositAddressStatus:
       enum:
         - enabled
@@ -5205,7 +5352,7 @@ components:
         to:
           $ref: '#/components/schemas/FiatCapability'
         recipient:
-          $ref: '#/components/schemas/FiatDepositDestination'
+          $ref: '#/components/schemas/FiatAddress'
     BridgeProperties:
       type: object
       title: Bridge
@@ -5272,9 +5419,14 @@ components:
             - deliveryInstructions
           properties:
             deliveryInstructions:
-              $ref: '#/components/schemas/FiatDepositDestination'
+              allOf:
+                - $ref: '#/components/schemas/FiatAddress'
+                - type: object
+                  properties:
+                    referenceId:
+                      type: string
             delivery:
-              $ref: '#/components/schemas/FiatTransfer'
+              $ref: '#/components/schemas/RampFiatTransfer'
             receipt:
               $ref: '#/components/schemas/PublicBlockchainTransaction'
     OffRampTransfer:
@@ -5290,7 +5442,7 @@ components:
             delivery:
               $ref: '#/components/schemas/PublicBlockchainTransaction'
             receipt:
-              $ref: '#/components/schemas/FiatTransfer'
+              $ref: '#/components/schemas/RampFiatTransfer'
     BridgeTransfer:
       allOf:
         - $ref: '#/components/schemas/CommonRamp'
@@ -5310,4 +5462,11 @@ components:
         - $ref: '#/components/schemas/OnRampTransfer'
         - $ref: '#/components/schemas/OffRampTransfer'
         - $ref: '#/components/schemas/BridgeTransfer'
+    RampFiatTransfer:
+      oneOf:
+        - $ref: '#/components/schemas/IbanTransfer'
+        - $ref: '#/components/schemas/SwiftTransfer'
+        - $ref: '#/components/schemas/AchTransfer'
+        - $ref: '#/components/schemas/WireTransfer'
+        - $ref: '#/components/schemas/SpeiTransfer'
   securitySchemes: {}

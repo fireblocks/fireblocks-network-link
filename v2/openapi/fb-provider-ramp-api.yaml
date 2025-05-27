@@ -11,7 +11,10 @@ tags:
   - name: capabilities
     description: Server capabilities discovery operations.
   - name: ramps
-    description: On-ramp, off-ramp and bridging operations.
+    description: |-
+      Beta Feature – Limited Access.
+      
+      On-ramp, off-ramp and bridging operations.
 
 x-path-params:
   EntityIdPathParam:
@@ -62,16 +65,34 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatCapability",
     }
-  FiatDepositDestination:
+  FiatAddress:
     {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatDepositDestination",
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatAddress"
+    }
+  IbanTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanTransfer"
+    }
+  SwiftTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SwiftTransfer"
+    }
+  AchTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AchTransfer"
+    }
+  WireTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/WireTransfer"
+    }
+  SpeiTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiTransfer"
     }
   PublicBlockchainTransaction:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
     }
-  FiatTransfer:
-    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatTransfer" }
 
 x-responses:
   BadRequestResponse:
@@ -329,7 +350,6 @@ components:
                       transferMethod: "PublicBlockchain"
                       address: "0x1234567890abcdef1234567890abcdef12345678"
                     recipient:
-                      referenceId: "1234567890abcdef"
                       asset:
                         nationalCurrencyCode: "USD"
                       transferMethod: "Iban"
@@ -345,7 +365,6 @@ components:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
                     receipt:
-                      referenceId: "1234567890abcdef"
                       asset:
                         nationalCurrencyCode: "USD"
                       transferMethod: "Iban"
@@ -483,7 +502,7 @@ components:
         to:
           $ref: "#/x-schemas/FiatCapability"
         recipient:
-          $ref: "#/x-schemas/FiatDepositDestination"
+          $ref: "#/x-schemas/FiatAddress"
 
     BridgeProperties:
       type: object
@@ -550,9 +569,14 @@ components:
             - deliveryInstructions
           properties:
             deliveryInstructions:
-              $ref: "#/x-schemas/FiatDepositDestination"
+              allOf:
+                - $ref: "#/x-schemas/FiatAddress"
+                - type: object
+                  properties:
+                    referenceId:
+                      type: string
             delivery:
-              $ref: "#/x-schemas/FiatTransfer"
+              $ref: "#/components/schemas/RampFiatTransfer"
             receipt:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
 
@@ -569,7 +593,7 @@ components:
             delivery:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
             receipt:
-              $ref: "#/x-schemas/FiatTransfer"
+              $ref: "#/components/schemas/RampFiatTransfer"
 
     BridgeTransfer:
       allOf:
@@ -591,3 +615,12 @@ components:
         - $ref: "#/components/schemas/OnRampTransfer"
         - $ref: "#/components/schemas/OffRampTransfer"
         - $ref: "#/components/schemas/BridgeTransfer"
+
+    RampFiatTransfer:
+      oneOf:
+        - $ref: '#/x-schemas/IbanTransfer'
+        - $ref: '#/x-schemas/SwiftTransfer'
+        - $ref: '#/x-schemas/AchTransfer'
+        - $ref: '#/x-schemas/WireTransfer'
+        - $ref: '#/x-schemas/SpeiTransfer'
+

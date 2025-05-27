@@ -496,7 +496,6 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
-
   /accounts/{accountId}/transfers/withdrawals/subaccount:
     get:
       operationId: getSubAccountWithdrawals
@@ -874,6 +873,156 @@ components:
             referenceId:
               type: string
 
+    AchCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          enum: [ Ach ]
+
+    AchAddress:
+      allOf:
+        - $ref: '#/components/schemas/AchCapability'
+        - type: object
+          required:
+            - accountHolder
+            - routingNumber
+            - bankAccountNumber
+            - accountType
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            bankName:
+              type: string
+            bankAccountNumber:
+              $ref: '#/components/schemas/BankAccountNumber'
+            routingNumber:
+              $ref: '#/components/schemas/RoutingNumber'
+            accountType:
+              type: string
+              enum: [ Checking, Savings ]
+
+    AchTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/AchAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+
+    AchTransfer:
+        allOf:
+        - $ref: '#/components/schemas/AchTransferDestination'
+        - type: object
+          properties:
+              referenceId:
+                type: string
+
+    WireCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          enum: [ Wire ]
+
+    WireAddress:
+      allOf:
+        - $ref: '#/components/schemas/WireCapability'
+        - type: object
+          required:
+            - accountHolder
+            - routingNumber
+            - bankAccountNumber
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            bankName:
+              type: string
+            bankAccountNumber:
+              $ref: '#/components/schemas/BankAccountNumber'
+            routingNumber:
+                $ref: '#/components/schemas/RoutingNumber'
+            bankAddress:
+              $ref: '#/components/schemas/PostalAddress'
+
+    WireTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/WireAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+
+    WireTransfer:
+        allOf:
+        - $ref: '#/components/schemas/WireTransferDestination'
+        - type: object
+          properties:
+              referenceId:
+                type: string
+
+    SpeiCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          enum: [ Spei ]
+
+    SpeiAddress:
+      allOf:
+        - $ref: '#/components/schemas/SpeiCapability'
+        - type: object
+          required:
+            - accountHolder
+            - bankAccountNumber
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            bankName:
+              type: string
+            bankAccountNumber:
+              $ref: '#/components/schemas/Clabe'
+
+    BankAccountNumber:
+      type: string
+      pattern: '^\d{4,17}$'
+
+    RoutingNumber:
+      type: string
+      pattern: '^\d{9}$'
+
+    Clabe:
+      type: string
+      pattern: '^\d{18}$'
+
+    SpeiTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/SpeiAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+
+    SpeiTransfer:
+        allOf:
+        - $ref: '#/components/schemas/SpeiTransferDestination'
+        - type: object
+          properties:
+              referenceId:
+                type: string
+
     OtherFiatTransfer:
       type: object
       description: >-
@@ -898,6 +1047,9 @@ components:
       oneOf:
         - $ref: '#/components/schemas/IbanCapability'
         - $ref: '#/components/schemas/SwiftCapability'
+        - $ref: '#/components/schemas/AchCapability'
+        - $ref: '#/components/schemas/WireCapability'
+        - $ref: '#/components/schemas/SpeiCapability'
 
     PublicBlockchainTransactionDestination:
       type: object
@@ -1049,15 +1201,13 @@ components:
         - $ref: '#/components/schemas/PeerAccountTransferAddress'
         - $ref: '#/components/schemas/InternalTransferAddress'
 
-    FiatDepositDestination:
-      allOf:
-        - type: object
-          properties:
-            referenceId:
-              type: string
-        - oneOf:
-            - $ref: '#/components/schemas/IbanAddress'
-            - $ref: '#/components/schemas/SwiftAddress'
+    FiatAddress:
+      oneOf:
+        - $ref: '#/components/schemas/IbanAddress'
+        - $ref: '#/components/schemas/SwiftAddress'
+        - $ref: '#/components/schemas/AchAddress'
+        - $ref: '#/components/schemas/WireAddress'
+        - $ref: '#/components/schemas/SpeiAddress'
 
     DepositAddressStatus:
       enum:
@@ -1086,7 +1236,6 @@ components:
             - $ref: '#/x-schemas/PublicBlockchainCapability'
             - $ref: '#/components/schemas/IbanCapability'
             - $ref: '#/components/schemas/SwiftCapability'
-
 
     DepositCapability:
       type: object

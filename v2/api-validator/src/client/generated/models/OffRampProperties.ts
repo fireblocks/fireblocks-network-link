@@ -3,15 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { FiatAddress } from './FiatAddress';
 import type { FiatCapability } from './FiatCapability';
-import type { FiatDepositDestination } from './FiatDepositDestination';
 import type { PublicBlockchainCapability } from './PublicBlockchainCapability';
 
 export type OffRampProperties = {
     type: OffRampProperties.type;
     from: PublicBlockchainCapability;
     to: FiatCapability;
-    recipient: FiatDepositDestination;
+    recipient: FiatAddress;
 };
 
 export namespace OffRampProperties {
