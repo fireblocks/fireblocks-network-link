@@ -1,9 +1,7 @@
 import { getCapableAccountId, hasCapability } from '../../utils/capable-accounts';
 import {
-  SettlementDepositInstruction,
   SettlementInstructions,
   SettlementState,
-  SettlementWithdrawInstruction,
   NativeCryptocurrency,
   OtherAssetReference,
   NationalCurrency,
@@ -37,10 +35,6 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Sett
   });
 
   describe('Check full settlement flow', () => {
-    let settlementVersion: string;
-    let depositInstructions: SettlementDepositInstruction[];
-    let withdrawInstructions: SettlementWithdrawInstruction[];
-
     it('Get current settlement should return with a valid response', async () => {
       const collateralSettlement: SettlementInstructions =
         await client.collateral.getCurrentSettlementInstructions({
@@ -48,14 +42,21 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Sett
           collateralId,
         });
 
-      expect(!!collateralSettlement).toBe(true);
-
-      settlementVersion = collateralSettlement.settlementVersion;
-      depositInstructions = collateralSettlement.depositInstructions;
-      withdrawInstructions = collateralSettlement.withdrawInstructions;
+      expect(collateralSettlement).toBeDefined();
+      expect(collateralSettlement.settlementVersion).toBeDefined();
+      expect(collateralSettlement.depositInstructions).toBeDefined();
+      expect(collateralSettlement.withdrawInstructions).toBeDefined();
     });
 
     it('Get by settlementVersion request should return with a valid response', async () => {
+      const collateralSettlement: SettlementInstructions =
+        await client.collateral.getCurrentSettlementInstructions({
+          accountId,
+          collateralId,
+        });
+      const settlementVersion = collateralSettlement.settlementVersion;
+      const depositInstructions = collateralSettlement.depositInstructions;
+      const withdrawInstructions = collateralSettlement.withdrawInstructions;
       const collateralSettlementDetails: SettlementState =
         await client.collateral.getSettlementDetails({
           accountId,
@@ -87,6 +88,15 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Sett
     });
 
     it('Initiate request should return valid response', async () => {
+      const collateralSettlement: SettlementInstructions =
+        await client.collateral.getCurrentSettlementInstructions({
+          accountId,
+          collateralId,
+        });
+      const settlementVersion = collateralSettlement.settlementVersion;
+      const depositInstructions = collateralSettlement.depositInstructions;
+      const withdrawInstructions = collateralSettlement.withdrawInstructions;
+
       const depositCapability = await client.capabilities.getDepositMethods({ accountId });
       for (const depositInstruction of depositInstructions) {
         const destinationAddress = depositInstruction.destinationAddress;
@@ -128,19 +138,20 @@ describe.skipIf(noCollateralCapability || noTransferCapability)('Collateral Sett
         expect(withdrawAsset).toBeDefined();
       }
 
-      const collateralSettlement: SettlementInstructions =
-        await client.collateral.initiateSettlement({
+      const initiateSettlement: SettlementInstructions = await client.collateral.initiateSettlement(
+        {
           accountId,
           collateralId,
           requestBody: {
             settlementId: uuid(),
             settlementVersion: settlementVersion,
           },
-        });
+        }
+      );
 
-      expect(collateralSettlement.settlementVersion).toBe(settlementVersion);
-      expect(collateralSettlement.depositInstructions).toEqual(depositInstructions);
-      expect(collateralSettlement.withdrawInstructions).toEqual(withdrawInstructions);
+      expect(initiateSettlement.settlementVersion).toBe(settlementVersion);
+      expect(initiateSettlement.depositInstructions).toEqual(depositInstructions);
+      expect(initiateSettlement.withdrawInstructions).toEqual(withdrawInstructions);
     });
   });
 });
