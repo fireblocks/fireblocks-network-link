@@ -79,6 +79,27 @@ export class CollateralController {
         'SettlementInstructions'
       ) as SettlementInstructionsIdentifier;
       settlementInstructions.id = settlementInstructions.settlementVersion;
+
+      settlementInstructions.depositInstructions.forEach((instruction) => {
+        if (instruction.destinationAddress && instruction.destinationAddress.asset) {
+          instruction.destinationAddress.asset = {
+            blockchain: config.get('collateral.asset.blockchain'),
+            cryptocurrencySymbol: config.get('collateral.asset.symbol'),
+            testAsset: config.get('collateral.asset.testAsset'),
+          };
+        }
+      });
+
+      settlementInstructions.withdrawInstructions.forEach((instruction) => {
+        if (instruction.sourceAddress && instruction.sourceAddress.asset) {
+          instruction.sourceAddress.asset = {
+            blockchain: config.get('collateral.asset.blockchain'),
+            cryptocurrencySymbol: config.get('collateral.asset.symbol'),
+            testAsset: config.get('collateral.asset.testAsset'),
+          };
+        }
+      });
+
       this.settlementRepository.create(settlementInstructions);
 
       const setllementState = fakeSchemaObject('SettlementState') as SettlementStateIdentifier;
@@ -324,26 +345,6 @@ export class CollateralController {
 
   public getCurrentSettlementInstructions(): SettlementInstructions {
     const currentSettlement = this.settlementRepository.list();
-
-    currentSettlement[0].depositInstructions.forEach((instruction) => {
-      if (instruction.destinationAddress && instruction.destinationAddress.asset) {
-        instruction.destinationAddress.asset = {
-          blockchain: config.get('collateral.asset.blockchain'),
-          cryptocurrencySymbol: config.get('collateral.asset.symbol'),
-          testAsset: config.get('collateral.asset.testAsset'),
-        };
-      }
-    });
-
-    currentSettlement[0].withdrawInstructions.forEach((instruction) => {
-      if (instruction.sourceAddress && instruction.sourceAddress.asset) {
-        instruction.sourceAddress.asset = {
-          blockchain: config.get('collateral.asset.blockchain'),
-          cryptocurrencySymbol: config.get('collateral.asset.symbol'),
-          testAsset: config.get('collateral.asset.testAsset'),
-        };
-      }
-    });
 
     return currentSettlement[0];
   }
