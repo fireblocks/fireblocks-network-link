@@ -14,7 +14,8 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: Placeholder for automatic documentation injection from README.md
+  description: 
+    $ref: README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -2707,6 +2708,9 @@ components:
                       transferMethod: PublicBlockchain
                       address: '0x1234567890abcdef1234567890abcdef12345678'
                       tag: 1234567890abcdef
+                    fees:
+                      subAccount: 100
+                      provider: 200
                   - id: 69fa4f38-c1fd-4215-a310-82272225c4ef
                     createdAt: '2021-09-01T12:00:00Z'
                     updatedAt: '2021-09-01T12:00:00Z'
@@ -2750,6 +2754,8 @@ components:
                         address: 123 Main St, New York, NY 10001
                       iban: US1234567890
                       amount: '1231.45'
+                    fees:
+                      subAccount: 100
                   - id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
                     createdAt: '2021-09-01T12:00:00Z'
                     updatedAt: '2021-09-01T12:00:00Z'
@@ -2789,6 +2795,8 @@ components:
                       asset:
                         assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
                       transferMethod: PublicBlockchain
+                    fees:
+                      subAccount: 100
   schemas:
     GeneralError:
       description: Should be returned only if there in no more specific object.
@@ -5389,6 +5397,20 @@ components:
             - $ref: '#/components/schemas/OnRampProperties'
             - $ref: '#/components/schemas/OffRampProperties'
             - $ref: '#/components/schemas/BridgeProperties'
+    RampFees:
+      type: object
+      description: Fees associated with the ramp transfer.
+      properties:
+        subAccount:
+          type: integer
+          description: Fees charged by the sub-account in basis points by definition of the customer.
+          maximum: 10000
+          minimum: 0
+        provider:
+          type: integer
+          description: Fees charged by the provider for the ramp service in basis points.
+          maximum: 10000
+          minimum: 0
     CommonRamp:
       type: object
       required:
@@ -5397,6 +5419,7 @@ components:
         - createdAt
         - updatedAt
         - amount
+        - fees
       properties:
         id:
           type: string
@@ -5410,6 +5433,8 @@ components:
           $ref: '#/components/schemas/RampStatus'
         amount:
           $ref: '#/components/schemas/PositiveAmount'
+        fees:
+          $ref: '#/components/schemas/RampFees'
     OnRampTransfer:
       allOf:
         - $ref: '#/components/schemas/CommonRamp'

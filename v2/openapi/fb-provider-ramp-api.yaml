@@ -13,7 +13,7 @@ tags:
   - name: ramps
     description: |-
       Beta Feature – Limited Access.
-      
+
       On-ramp, off-ramp and bridging operations.
 
 x-path-params:
@@ -66,29 +66,19 @@ x-schemas:
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatCapability",
     }
   FiatAddress:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatAddress"
-    }
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatAddress" }
   IbanTransfer:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanTransfer"
-    }
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanTransfer" }
   SwiftTransfer:
     {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SwiftTransfer"
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SwiftTransfer",
     }
   AchTransfer:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AchTransfer"
-    }
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AchTransfer" }
   WireTransfer:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/WireTransfer"
-    }
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/WireTransfer" }
   SpeiTransfer:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiTransfer"
-    }
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiTransfer" }
   PublicBlockchainTransaction:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
@@ -330,6 +320,9 @@ components:
                       transferMethod: "PublicBlockchain"
                       address: "0x1234567890abcdef1234567890abcdef12345678"
                       tag: "1234567890abcdef"
+                    fees:
+                      subAccount: 100
+                      provider: 200
                   - id: "69fa4f38-c1fd-4215-a310-82272225c4ef"
                     createdAt: "2021-09-01T12:00:00Z"
                     updatedAt: "2021-09-01T12:00:00Z"
@@ -373,6 +366,8 @@ components:
                         address: "123 Main St, New York, NY 10001"
                       iban: "US1234567890"
                       amount: "1231.45"
+                    fees:
+                      subAccount: 100
                   - id: "afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea"
                     createdAt: "2021-09-01T12:00:00Z"
                     updatedAt: "2021-09-01T12:00:00Z"
@@ -412,6 +407,8 @@ components:
                       asset:
                         assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" # USDC on Polygon
                       transferMethod: "PublicBlockchain"
+                    fees:
+                      subAccount: 100
 
   schemas:
     RampStatus:
@@ -543,9 +540,24 @@ components:
             - $ref: "#/components/schemas/OffRampProperties"
             - $ref: "#/components/schemas/BridgeProperties"
 
+    RampFees:
+      type: object
+      description: Fees associated with the ramp transfer.
+      properties:
+        subAccount:
+          type: integer
+          description: Fees charged by the sub-account in basis points by definition of the customer.
+          maximum: 10000
+          minimum: 0
+        provider:
+          type: integer
+          description: Fees charged by the provider for the ramp service in basis points.
+          maximum: 10000
+          minimum: 0
+
     CommonRamp:
       type: object
-      required: [id, status, createdAt, updatedAt, amount]
+      required: [id, status, createdAt, updatedAt, amount, fees]
       properties:
         id:
           type: string
@@ -559,6 +571,8 @@ components:
           $ref: "#/components/schemas/RampStatus"
         amount:
           $ref: "#/x-schemas/PositiveAmount"
+        fees:
+          $ref: "#/components/schemas/RampFees"
 
     OnRampTransfer:
       allOf:
@@ -618,9 +632,8 @@ components:
 
     RampFiatTransfer:
       oneOf:
-        - $ref: '#/x-schemas/IbanTransfer'
-        - $ref: '#/x-schemas/SwiftTransfer'
-        - $ref: '#/x-schemas/AchTransfer'
-        - $ref: '#/x-schemas/WireTransfer'
-        - $ref: '#/x-schemas/SpeiTransfer'
-
+        - $ref: "#/x-schemas/IbanTransfer"
+        - $ref: "#/x-schemas/SwiftTransfer"
+        - $ref: "#/x-schemas/AchTransfer"
+        - $ref: "#/x-schemas/WireTransfer"
+        - $ref: "#/x-schemas/SpeiTransfer"
