@@ -2,7 +2,12 @@ import convict from 'convict';
 import path from 'path';
 import fs from 'fs';
 import { config as dotenvConfig } from 'dotenv';
-import { InternalTransferDestinationPolicy, PublicBlockchainAddress } from '../client/generated';
+import {
+  CryptocurrencySymbol,
+  Blockchain,
+  InternalTransferDestinationPolicy,
+  PublicBlockchainCapability,
+} from '../client/generated';
 
 dotenvConfig();
 
@@ -60,37 +65,44 @@ const config = convict({
       },
     },
     withdrawal: {
-      addresses: {
-        format: Array<PublicBlockchainAddress>,
-        default: `[
-          {
-            "address": "J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ",
-            "addressTag": "5494396EB65E6615D307",
-            "asset": {
-              "blockchain": "Algorand",
-              "cryptocurrencySymbol": "ALGO",
-              "testAsset": false
-            },
-            "transferMethod": "PublicBlockchain"
-          },
-          {
-            "address": "18csoDRstrn2YqpxQMgnTh1BqgA1m9T9xQ",
-            "asset": {
-              "blockchain": "Bitcoin",
-              "cryptocurrencySymbol": "BTC",
-              "testAsset": false
-            },
-            "transferMethod": "PublicBlockchain"
-          },
-          {
-            "address": "0x1Dd0386E43C0F66981e46C6e6A57E9d8919b6125",
-            "asset": {
-              "assetId": "ac7d9d17-1f88-41f7-9cda-c074f800ba05"
-            },
-            "transferMethod": "PublicBlockchain"
-          }
-        ]`,
-        env: 'COLLATERAL_WIHTDRAWAL_ADDRESSES',
+      address: {
+        format: String,
+        default: 'J4NOFD4VBNJ35F2MEII4HRAADNPJ7QFYAKESYKSEWWGJUXG64IATUVZRMQ',
+        env: 'COLLATERAL_WITHDRAWAL_ADDRESS',
+      },
+      addressTag: {
+        format: String,
+        default: '5494396EB65E6615D307',
+        env: 'COLLATERAL_WITHDRAWAL_ADDRESS_TAG',
+      },
+      transferMethod: {
+        blockchain: {
+          format: Object.values(PublicBlockchainCapability.transferMethod),
+          default: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          env: 'COLLATERAL_TRANSFER_METHOD_BLOCKCHAIN',
+        },
+      },
+    },
+    asset: {
+      symbol: {
+        format: Object.values(CryptocurrencySymbol),
+        default: CryptocurrencySymbol.KAVA,
+        env: 'COLLATERAL_DEPOSIT_ASSET_SYMBOL',
+      },
+      assetId: {
+        format: String,
+        default: '',
+        env: 'COLLATERAL_DEPOSIT_ASSET_ID',
+      },
+      blockchain: {
+        format: Object.values(Blockchain),
+        default: Blockchain.FLARE,
+        env: 'COLLATERAL_DEPOSIT_ASSET_BLOCKCHAIN',
+      },
+      testAsset: {
+        format: Boolean,
+        default: true,
+        env: 'COLLATERAL_DEPOSIT_ASSET_TEST',
       },
     },
   },

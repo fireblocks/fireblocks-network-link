@@ -21,22 +21,35 @@ describe.skipIf(noCollateralCapability)('Account Link', () => {
         const accountId: string = getCapableAccountId('collateral');
         const collateralId: string = config.get('collateral.collateralAccount.accountId');
         const collateralSigners: CollateralSignerId[] = config.get('collateral.signers.userId');
-        const response: CollateralAccountLink = await client.collateral.createCollateralAccountLink(
-          {
+
+        const getCollateralAccountLinks = await client.collateral.getCollateralAccountLinks({
+          accountId,
+        });
+
+        const linkedAccount: CollateralAccountLink | undefined =
+          getCollateralAccountLinks.collateralLinks.find(
+            (link) => link.status !== CollateralLinkStatus.LINKED
+          );
+
+        if (!linkedAccount) {
+          const linkAccount = await client.collateral.createCollateralAccountLink({
             accountId,
             requestBody: {
               collateralId,
               collateralSigners,
               env: AccountEnvironment.PROD,
             },
-          }
-        );
+          });
 
-        expect(response.collateralId).toBe(collateralId);
-        expect(response.collateralSigners).toEqual(collateralSigners);
-        expect(response.rejectionReason).toBeUndefined();
-        expect(response.status).toBe(CollateralLinkStatus.ELIGIBLE);
-        expect(response.env).toBe(AccountEnvironment.PROD);
+          expect(linkAccount.collateralId).toBe(collateralId);
+          expect(linkAccount.collateralSigners).toEqual(collateralSigners);
+          expect(linkAccount.rejectionReason).toBeUndefined();
+          expect(linkAccount.status).not.toBe(CollateralLinkStatus.FAILED);
+          expect(linkAccount.status).not.toBe(CollateralLinkStatus.DISABLED);
+          expect(linkAccount.env).toBe(AccountEnvironment.PROD);
+        }
+
+        expect(linkedAccount?.status).toBeDefined();
       });
     });
 

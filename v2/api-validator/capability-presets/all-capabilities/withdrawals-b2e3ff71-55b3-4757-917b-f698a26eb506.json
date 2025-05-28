@@ -1,5 +1,20 @@
 [
   {
+    "id": "381ec88e-5e7d-4eb2-9189-b67d262dd8b5",
+    "withdrawal": {
+      "asset": {
+        "blockchain": "Flare",
+        "cryptocurrencySymbol": "KAVA",
+        "testAsset": true
+      },
+      "transferMethod": "PublicBlockchain"
+    },
+    "balanceAsset": {
+      "assetId": "076e2789-8c85-4c66-95f0-fe8947d03b00"
+    },
+    "minWithdrawalAmount": "12780365"
+  },
+  {
     "id": "6286c3ad-dd49-4037-956d-9729dbf7c15e",
     "withdrawal": {
       "asset": {
@@ -91,10 +106,11 @@
     "id": "9d4808a8-69e4-405d-a79d-5fff28c22feb",
     "withdrawal": {
       "asset": {
-        "nationalCurrencyCode": "PAB",
+        "cryptocurrencySymbol": "BTC",
+        "blockchain": "Bitcoin",
         "testAsset": true
       },
-      "transferMethod": "Iban"
+      "transferMethod": "PublicBlockchain"
     },
     "balanceAsset": {
       "assetId": "d9790799-5539-4c54-803b-d7d998cf38f6"
@@ -267,21 +283,6 @@
       "testAsset": true
     },
     "minWithdrawalAmount": "642"
-  },
-  {
-    "id": "a73aba47-a456-45d9-86b5-4c57a4ddba35",
-    "withdrawal": {
-      "asset": {
-        "blockchain": "ZCash",
-        "cryptocurrencySymbol": "OPT",
-        "testAsset": false
-      },
-      "transferMethod": "PublicBlockchain"
-    },
-    "balanceAsset": {
-      "assetId": "076e2789-8c85-4c66-95f0-fe8947d03b00"
-    },
-    "minWithdrawalAmount": "12780365"
   },
   {
     "id": "b7f7c231-187f-4bd7-9e38-6a98399ebbce",

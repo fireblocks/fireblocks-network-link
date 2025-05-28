@@ -44,9 +44,6 @@ variables. Make a copy of `env.example`, rename it to `.env` and edit the values
 `src/config/index.ts` contains all the environment variable definitions and the possible
 values.
 
-For off-exchange `.env` **COLLATERAL_WIHTDRAWAL_ADDRESSES** structure should be of type PublicBlockchainAddress[].
-
-
 ## Design
 
 - `src/config` contains the tool configuration.

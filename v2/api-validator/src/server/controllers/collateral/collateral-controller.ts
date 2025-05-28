@@ -22,6 +22,7 @@ import {
   SettlementState,
   CryptocurrencyReference,
 } from '../../../client/generated';
+import config from '../../../config';
 import { v4 as uuid } from 'uuid';
 import { XComError } from '../../../error';
 import { fakeSchemaObject } from '../../../schemas';
@@ -78,6 +79,27 @@ export class CollateralController {
         'SettlementInstructions'
       ) as SettlementInstructionsIdentifier;
       settlementInstructions.id = settlementInstructions.settlementVersion;
+
+      settlementInstructions.depositInstructions.forEach((instruction) => {
+        if (instruction.destinationAddress && instruction.destinationAddress.asset) {
+          instruction.destinationAddress.asset = {
+            blockchain: config.get('collateral.asset.blockchain'),
+            cryptocurrencySymbol: config.get('collateral.asset.symbol'),
+            testAsset: config.get('collateral.asset.testAsset'),
+          };
+        }
+      });
+
+      settlementInstructions.withdrawInstructions.forEach((instruction) => {
+        if (instruction.sourceAddress && instruction.sourceAddress.asset) {
+          instruction.sourceAddress.asset = {
+            blockchain: config.get('collateral.asset.blockchain'),
+            cryptocurrencySymbol: config.get('collateral.asset.symbol'),
+            testAsset: config.get('collateral.asset.testAsset'),
+          };
+        }
+      });
+
       this.settlementRepository.create(settlementInstructions);
 
       const setllementState = fakeSchemaObject('SettlementState') as SettlementStateIdentifier;
