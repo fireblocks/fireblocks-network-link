@@ -8,7 +8,7 @@
  */
 export type RampFees = {
     /**
-     * Fees charged by the sub-account in basis points by definition of the customer.
+     * Fees charged from the sub-account in basis points.
      */
     subAccount?: number;
     /**
