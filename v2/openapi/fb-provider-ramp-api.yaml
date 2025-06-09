@@ -553,7 +553,7 @@ components:
 
     CommonRamp:
       type: object
-      required: [id, status, createdAt, updatedAt, amount, fees]
+      required: [id, status, createdAt, updatedAt, amount]
       properties:
         id:
           type: string

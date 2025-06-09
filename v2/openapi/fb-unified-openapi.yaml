@@ -5415,7 +5415,6 @@ components:
         - createdAt
         - updatedAt
         - amount
-        - fees
       properties:
         id:
           type: string
