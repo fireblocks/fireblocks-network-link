@@ -137,7 +137,8 @@ export class RampsController {
       deliveryInstructions,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      status: RampStatus.PENDING_DELIVERY,
+      status: RampStatus.PENDING,
+      fees: {},
     };
     this.rampsRepository.create(newRamp);
     return newRamp;

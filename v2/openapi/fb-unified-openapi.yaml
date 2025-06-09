@@ -2683,7 +2683,7 @@ components:
                   - id: 16b8b2c3-bd61-4745-9c48-3d30c2bc6907
                     createdAt: '2021-09-01T12:00:00Z'
                     updatedAt: '2021-09-01T12:00:00Z'
-                    status: PendingDelivery
+                    status: Pending
                     amount: '1231.45'
                     type: OnRamp
                     from:
@@ -2759,7 +2759,7 @@ components:
                   - id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
                     createdAt: '2021-09-01T12:00:00Z'
                     updatedAt: '2021-09-01T12:00:00Z'
-                    status: DeliveryReceived
+                    status: Processing
                     amount: '1231.45'
                     type: Bridge
                     from:
@@ -5273,11 +5273,12 @@ components:
             A unique identifier of the settlement state version. This field is optional and can be used to indicate the version of the settlement state the client is referring to.
     RampStatus:
       enum:
-        - PendingDelivery
-        - DeliveryReceived
-        - ReceiptSubmitted
+        - Pending
+        - Processing
+        - Canceled
         - Completed
         - Failed
+        - Refunded
     OnRampCapability:
       type: object
       title: Fiat to Crypto

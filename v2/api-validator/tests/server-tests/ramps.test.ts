@@ -284,8 +284,8 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         expect(createdRamp.deliveryInstructions.asset).toEqual(capability.from.asset);
       });
 
-      it('should receive initial status PENDING_DELIVERY', async () => {
-        expect(createdRamp.status).toBe(RampStatus.PENDING_DELIVERY);
+      it('should receive initial status PENDING', async () => {
+        expect(createdRamp.status).toBe(RampStatus.PENDING);
       });
 
       it('should find ramp in details endpoint', async () => {
