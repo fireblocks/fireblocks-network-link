@@ -13,6 +13,6 @@ export type CommonRamp = {
     updatedAt: string;
     status: RampStatus;
     amount: PositiveAmount;
-    fees: RampFees;
+    fees?: RampFees;
 };
 
