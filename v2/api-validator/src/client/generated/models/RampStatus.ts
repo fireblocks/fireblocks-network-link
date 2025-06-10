@@ -4,9 +4,10 @@
 /* eslint-disable */
 
 export enum RampStatus {
-    PENDING_DELIVERY = 'PendingDelivery',
-    DELIVERY_RECEIVED = 'DeliveryReceived',
-    RECEIPT_SUBMITTED = 'ReceiptSubmitted',
+    PENDING = 'Pending',
+    PROCESSING = 'Processing',
+    CANCELED = 'Canceled',
     COMPLETED = 'Completed',
     FAILED = 'Failed',
+    REFUNDED = 'Refunded',
 }
