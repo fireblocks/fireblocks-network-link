@@ -9,8 +9,8 @@ import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction';
 
 export type BridgeTransfer = (CommonRamp & BridgeProperties & {
-    deliveryInstructions: PublicBlockchainAddress;
-    delivery?: PublicBlockchainTransaction;
+    paymentInstructions: PublicBlockchainAddress;
+    payment?: PublicBlockchainTransaction;
     receipt?: PublicBlockchainTransaction;
 });
 

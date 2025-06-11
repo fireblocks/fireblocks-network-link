@@ -10,10 +10,10 @@ import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction'
 import type { RampFiatTransfer } from './RampFiatTransfer';
 
 export type OnRampTransfer = (CommonRamp & OnRampProperties & {
-    deliveryInstructions: (FiatAddress & {
+    paymentInstructions: (FiatAddress & {
         referenceId?: string;
     });
-    delivery?: RampFiatTransfer;
+    payment?: RampFiatTransfer;
     receipt?: PublicBlockchainTransaction;
 });
 
