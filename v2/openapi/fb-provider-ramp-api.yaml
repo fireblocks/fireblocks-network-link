@@ -151,7 +151,7 @@ paths:
       operationId: createRamp
       summary: Initiates a new ramp
       description:
-        Creates the delivery instructions for the new ramp and return it in
+        Creates the payment instructions for the new ramp and return it in
         the response.
       tags: [ramps]
       parameters:
@@ -306,7 +306,7 @@ components:
                       asset:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
-                    deliveryInstructions:
+                    paymentInstructions:
                       asset:
                         nationalCurrencyCode: "USD"
                       transferMethod: "Iban"
@@ -337,7 +337,7 @@ components:
                       asset:
                         nationalCurrencyCode: "USD"
                       transferMethod: "Iban"
-                    deliveryInstructions:
+                    paymentInstructions:
                       asset:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
@@ -350,7 +350,7 @@ components:
                         name: "John Doe"
                         address: "123 Main St, New York, NY 10001"
                       iban: "US1234567890"
-                    delivery:
+                    payment:
                       blockchainTxId: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
                       amount: "1231.45"
                       address: "0x1234567890abcdef1234567890abcdef12345678"
@@ -382,7 +382,7 @@ components:
                       asset:
                         assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" # USDC on Polygon
                       transferMethod: "PublicBlockchain"
-                    deliveryInstructions:
+                    paymentInstructions:
                       asset:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
@@ -393,7 +393,7 @@ components:
                       transferMethod: "PublicBlockchain"
                       address: "0x1234567890abcdef1234567890abcdef12345678"
                       tag: "1234567890abcdef"
-                    delivery:
+                    payment:
                       blockchainTxId: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
                       amount: "1231.45"
                       address: "0x1234567890abcdef1234567890abcdef12355678"
@@ -577,16 +577,16 @@ components:
         - $ref: "#/components/schemas/OnRampProperties"
         - type: object
           required:
-            - deliveryInstructions
+            - paymentInstructions
           properties:
-            deliveryInstructions:
+            paymentInstructions:
               allOf:
                 - $ref: "#/x-schemas/FiatAddress"
                 - type: object
                   properties:
                     referenceId:
                       type: string
-            delivery:
+            payment:
               $ref: "#/components/schemas/RampFiatTransfer"
             receipt:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
@@ -597,11 +597,11 @@ components:
         - $ref: "#/components/schemas/OffRampProperties"
         - type: object
           required:
-            - deliveryInstructions
+            - paymentInstructions
           properties:
-            deliveryInstructions:
+            paymentInstructions:
               $ref: "#/x-schemas/PublicBlockchainAddress"
-            delivery:
+            payment:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
             receipt:
               $ref: "#/components/schemas/RampFiatTransfer"
@@ -612,11 +612,11 @@ components:
         - $ref: "#/components/schemas/BridgeProperties"
         - type: object
           required:
-            - deliveryInstructions
+            - paymentInstructions
           properties:
-            deliveryInstructions:
+            paymentInstructions:
               $ref: "#/x-schemas/PublicBlockchainAddress"
-            delivery:
+            payment:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
             receipt:
               $ref: "#/x-schemas/PublicBlockchainTransaction"

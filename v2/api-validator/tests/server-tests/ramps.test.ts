@@ -278,10 +278,10 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
       });
 
       it('should receive delivery instructions matching the from asset and rail', async () => {
-        expect(createdRamp.deliveryInstructions.transferMethod).toEqual(
+        expect(createdRamp.paymentInstructions.transferMethod).toEqual(
           capability.from.transferMethod
         );
-        expect(createdRamp.deliveryInstructions.asset).toEqual(capability.from.asset);
+        expect(createdRamp.paymentInstructions.asset).toEqual(capability.from.asset);
       });
 
       it('should receive initial status PENDING', async () => {

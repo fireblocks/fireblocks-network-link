@@ -111,17 +111,17 @@ export class RampsController {
     this.validateRampRequest(ramp);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { idempotencyKey, ...rampProps } = ramp;
-    let deliveryInstructions;
+    let paymentInstructions;
     if (
       ramp.type === OffRampProperties.type.OFF_RAMP ||
       ramp.type === BridgeProperties.type.BRIDGE
     ) {
-      deliveryInstructions = {
+      paymentInstructions = {
         ...(fakeSchemaObject('PublicBlockchainAddress') as PublicBlockchainAddress),
         asset: ramp.from.asset,
       };
     } else if (ramp.type === OnRampProperties.type.ON_RAMP) {
-      deliveryInstructions = {
+      paymentInstructions = {
         ...(ramp.from.transferMethod === IbanCapability.transferMethod.IBAN
           ? (fakeSchemaObject('IbanAddress') as IbanAddress)
           : (fakeSchemaObject('SwiftAddress') as SwiftAddress)),
@@ -134,7 +134,7 @@ export class RampsController {
     const newRamp: Ramp = {
       ...rampProps,
       id: randomUUID(),
-      deliveryInstructions,
+      paymentInstructions,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       status: RampStatus.PENDING,
