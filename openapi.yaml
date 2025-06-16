@@ -1176,6 +1176,12 @@ components:
       - Aurora.dev
       - Sonic
       - Kaia
+      - GUNZ
+      - HyperEVM
+      - Peaq
+      - THORChain Rune
+      - Astar
+      - Berachain
       example:
         Ethereum
     Testnet_Networks:
@@ -1224,6 +1230,11 @@ components:
         - Ripple
         - Tezos
         - Zcash
+        - GUNZ
+        - HyperEVM
+        - THORChain Rune
+        - Astar
+        - Berachain
       example:
         Westend
     Coin_Class:
