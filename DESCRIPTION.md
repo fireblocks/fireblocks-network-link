@@ -1,3 +1,6 @@
+# Important
+This document outlines the specifications for Network Link v1. For the latest version, please see the [Network Link v2 specification](https://fireblocks.github.io/fireblocks-network-link/v2/docs.html).
+
 # Overview
 [Fireblocks](https://fireblocks.com) connects businesses across the crypto world as the digital asset infrastructure for over 1,600 of the leading trading desks, hedge funds, brokerages, custodians, 3rd parties, and banks. To meet the demand of third-party services that want to access the liquidity of institutional investors and traders, Fireblocks is opening our platform for third-party solutions to quickly integrate into the Fireblocks platform. [Reach out to us for a partnership agreement](https://www.fireblocks.com/partners/#form-anchor) and add a Connector to have your product integrated.
 
