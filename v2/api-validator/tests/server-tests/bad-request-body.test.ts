@@ -21,7 +21,9 @@ describe('Test request bodies missing one required property', () => {
 
   let accountId: string;
   if (postEndpoints.length === 0){
-    describe.skip('POST Body tests skipped because no POST Requests)', () => {})
+    describe.skip('POST Body tests skipped because no POST Requests)', () => {
+      test('no tests to run', () => {});
+    })
   } else {
     describe.each(postEndpoints)('$method $url', ({ operationId, url, schema }: EndpointSchema) => {
       const [component] = schema.tags;
