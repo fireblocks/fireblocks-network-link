@@ -228,13 +228,22 @@ signing method will be used for all the requests.
 
 These are the supported algorithms:
 
-Pre- and post-encoding:
+Pre-encoding:
 
 - URL encoded
 - Base64
 - HexStr
 - Base58
 - Base32
+
+Post-encoding:
+
+- Base64
+- HexStr
+- Base58
+- Base32
+
+Notice that URL encoding is not supported for post-encoding.
 
 Signing algorithms and possible hash functions:
 
