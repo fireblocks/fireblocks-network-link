@@ -21,8 +21,9 @@ describe('Test request bodies missing one required property', () => {
 
   let accountId: string;
 
-  if (postEndpoints.length > 0) {
-    describe.each(postEndpoints)('$method $url', ({ operationId, url, schema }: EndpointSchema) => {
+  describe.skipIf(postEndpoints.length === 0).each(postEndpoints)(
+    '$method $url',
+    ({ operationId, url, schema }: EndpointSchema) => {
       const [component] = schema.tags;
       accountId = getCapableAccountId(component as keyof ApiComponents);
 
@@ -73,8 +74,8 @@ describe('Test request bodies missing one required property', () => {
           });
         }
       });
-    });
-  }
+    }
+  );
 });
 
 // When missing a properties appearing in oneOf, the server might report as if
