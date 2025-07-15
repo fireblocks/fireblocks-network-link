@@ -65,6 +65,8 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatCapability",
     }
+  NationalCurrency:
+    { $ref: "./fb-provider-api.yaml#/components/schemas/NationalCurrency" }
   FiatAddress:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatAddress" }
   IbanTransfer:
@@ -420,6 +422,16 @@ components:
         - Failed
         - Refunded
 
+    PrefundedOnRampCapability:
+      type: object
+      title: Prefunded Fiat to Crypto
+      required: [from, to]
+      properties:
+        from:
+          $ref: "#/components/schemas/PrefundedCapability"
+        to:
+          $ref: "#/x-schemas/PublicBlockchainCapability"
+
     OnRampCapability:
       type: object
       title: Fiat to Crypto
@@ -459,8 +471,42 @@ components:
               type: string
         - oneOf:
             - $ref: "#/components/schemas/OnRampCapability"
+            - $ref: "#/components/schemas/PrefundedOnRampCapability"
             - $ref: "#/components/schemas/OffRampCapability"
             - $ref: "#/components/schemas/BridgeCapability"
+
+    PrefundedCapability:
+      type: object
+      required:
+        - asset
+        - type
+      properties:
+        asset:
+          $ref: "#/x-schemas/NationalCurrency"
+        type:
+          type: string
+          enum:
+            - Prefunded
+
+    PrefundedOnRampProperties:
+      type: object
+      title: Prefunded On Ramp
+      required:
+        - type
+        - from
+        - to
+        - recipient
+      properties:
+        type:
+          type: string
+          enum:
+            - OnRamp
+        from:
+          $ref: "#/components/schemas/PrefundedCapability"
+        to:
+          $ref: "#/x-schemas/PublicBlockchainCapability"
+        recipient:
+          $ref: "#/x-schemas/PublicBlockchainAddress"
 
     OnRampProperties:
       type: object
@@ -538,6 +584,7 @@ components:
         - $ref: "#/components/schemas/CommonRampRequestProperties"
         - oneOf:
             - $ref: "#/components/schemas/OnRampProperties"
+            - $ref: "#/components/schemas/PrefundedOnRampProperties"
             - $ref: "#/components/schemas/OffRampProperties"
             - $ref: "#/components/schemas/BridgeProperties"
 
@@ -574,18 +621,23 @@ components:
     OnRampTransfer:
       allOf:
         - $ref: "#/components/schemas/CommonRamp"
-        - $ref: "#/components/schemas/OnRampProperties"
-        - type: object
-          required:
-            - paymentInstructions
-          properties:
-            paymentInstructions:
-              allOf:
-                - $ref: "#/x-schemas/FiatAddress"
+        - oneOf:
+            - allOf:
+                - $ref: "#/components/schemas/OnRampProperties"
                 - type: object
+                  required:
+                    - paymentInstructions
                   properties:
-                    referenceId:
-                      type: string
+                    paymentInstructions:
+                      allOf:
+                        - $ref: "#/x-schemas/FiatAddress"
+                        - type: object
+                          properties:
+                            referenceId:
+                              type: string
+            - $ref: "#/components/schemas/PrefundedOnRampProperties"
+        - type: object
+          properties:
             payment:
               $ref: "#/components/schemas/RampFiatTransfer"
             receipt:
