@@ -1182,6 +1182,7 @@ components:
       - THORChain Rune
       - Astar
       - Berachain
+      - Sui
       example:
         Ethereum
     Testnet_Networks:
@@ -1235,6 +1236,7 @@ components:
         - THORChain Rune
         - Astar
         - Berachain
+        - Sui
       example:
         Westend
     Coin_Class:
