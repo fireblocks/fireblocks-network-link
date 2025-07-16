@@ -67,6 +67,10 @@ x-schemas:
     }
   NationalCurrency:
     { $ref: "./fb-provider-api.yaml#/components/schemas/NationalCurrency" }
+  CryptocurrencyReference:
+    {
+      $ref: "./fb-provider-api.yaml#/components/schemas/CryptocurrencyReference",
+    }
   FiatAddress:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatAddress" }
   IbanTransfer:
@@ -442,6 +446,16 @@ components:
         to:
           $ref: "#/x-schemas/PublicBlockchainCapability"
 
+    PrefundedOffRampCapability:
+      type: object
+      title: Prefunded Crypto to Fiat
+      required: [from, to]
+      properties:
+        from:
+          $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        to:
+          $ref: "#/x-schemas/FiatCapability"
+
     OffRampCapability:
       type: object
       title: Crypto to Fiat
@@ -451,6 +465,16 @@ components:
           $ref: "#/x-schemas/PublicBlockchainCapability"
         to:
           $ref: "#/x-schemas/FiatCapability"
+
+    PrefundedBridgeCapability:
+      type: object
+      title: Prefunded Crypto to Crypto
+      required: [from, to]
+      properties:
+        from:
+          $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        to:
+          $ref: "#/x-schemas/PublicBlockchainCapability"
 
     BridgeCapability:
       type: object
@@ -473,7 +497,9 @@ components:
             - $ref: "#/components/schemas/OnRampCapability"
             - $ref: "#/components/schemas/PrefundedOnRampCapability"
             - $ref: "#/components/schemas/OffRampCapability"
+            - $ref: "#/components/schemas/PrefundedOffRampCapability"
             - $ref: "#/components/schemas/BridgeCapability"
+            - $ref: "#/components/schemas/PrefundedBridgeCapability"
 
     PrefundedFiatCapability:
       type: object
@@ -483,6 +509,19 @@ components:
       properties:
         asset:
           $ref: "#/x-schemas/NationalCurrency"
+        type:
+          type: string
+          enum:
+            - Prefunded
+
+    PrefundedBlockchainCapability:
+      type: object
+      required:
+        - asset
+        - type
+      properties:
+        asset:
+          $ref: "#/x-schemas/CryptocurrencyReference"
         type:
           type: string
           enum:
@@ -528,6 +567,26 @@ components:
         recipient:
           $ref: "#/x-schemas/PublicBlockchainAddress"
 
+    PrefundedOffRampProperties:
+      type: object
+      title: Prefunded Off Ramp Properties
+      required:
+        - type
+        - from
+        - to
+        - recipient
+      properties:
+        type:
+          type: string
+          enum:
+            - OffRamp
+        from:
+          $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        to:
+          $ref: "#/x-schemas/FiatCapability"
+        recipient:
+          $ref: "#/x-schemas/FiatAddress"
+
     OffRampProperties:
       type: object
       title: Off Ramp
@@ -547,6 +606,26 @@ components:
           $ref: "#/x-schemas/FiatCapability"
         recipient:
           $ref: "#/x-schemas/FiatAddress"
+
+    PrefundedBridgeProperties:
+      type: object
+      title: Prefunded Bridge Properties
+      required:
+        - type
+        - from
+        - to
+        - recipient
+      properties:
+        type:
+          type: string
+          enum:
+            - Bridge
+        from:
+          $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        to:
+          $ref: "#/x-schemas/PublicBlockchainCapability"
+        recipient:
+          $ref: "#/x-schemas/PublicBlockchainAddress"
 
     BridgeProperties:
       type: object
@@ -586,6 +665,7 @@ components:
             - $ref: "#/components/schemas/OnRampProperties"
             - $ref: "#/components/schemas/PrefundedOnRampProperties"
             - $ref: "#/components/schemas/OffRampProperties"
+            - $ref: "#/components/schemas/PrefundedOffRampProperties"
             - $ref: "#/components/schemas/BridgeProperties"
 
     RampFees:
@@ -635,7 +715,31 @@ components:
                       type: string
         - $ref: "#/components/schemas/OnRampProperties"
 
-    OnRampTransfer:
+    OffRampPropertiesWithPaymentInstructions:
+      type: object
+      title: Off Ramp Properties
+      allOf:
+        - type: object
+          required:
+            - paymentInstructions
+          properties:
+            paymentInstructions:
+              $ref: "#/x-schemas/PublicBlockchainAddress"
+        - $ref: "#/components/schemas/OffRampProperties"
+
+    BridgePropertiesWithPaymentInstructions:
+      type: object
+      title: Bridge Properties
+      allOf:
+        - type: object
+          required:
+            - paymentInstructions
+          properties:
+            paymentInstructions:
+              $ref: "#/x-schemas/PublicBlockchainAddress"
+        - $ref: "#/components/schemas/BridgeProperties"
+
+    OnRamp:
       title: On Ramp
       allOf:
         - $ref: "#/components/schemas/CommonRamp"
@@ -649,31 +753,27 @@ components:
             receipt:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
 
-    OffRampTransfer:
+    OffRamp:
       allOf:
         - $ref: "#/components/schemas/CommonRamp"
-        - $ref: "#/components/schemas/OffRampProperties"
+        - oneOf:
+            - $ref: "#/components/schemas/OffRampPropertiesWithPaymentInstructions"
+            - $ref: "#/components/schemas/PrefundedOffRampProperties"
         - type: object
-          required:
-            - paymentInstructions
           properties:
-            paymentInstructions:
-              $ref: "#/x-schemas/PublicBlockchainAddress"
             payment:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
             receipt:
               $ref: "#/components/schemas/RampFiatTransfer"
 
-    BridgeTransfer:
+    Bridge:
       allOf:
         - $ref: "#/components/schemas/CommonRamp"
-        - $ref: "#/components/schemas/BridgeProperties"
+        - oneOf:
+            - $ref: "#/components/schemas/BridgePropertiesWithPaymentInstructions"
+            - $ref: "#/components/schemas/PrefundedBridgeProperties"
         - type: object
-          required:
-            - paymentInstructions
           properties:
-            paymentInstructions:
-              $ref: "#/x-schemas/PublicBlockchainAddress"
             payment:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
             receipt:
@@ -681,9 +781,9 @@ components:
 
     Ramp:
       oneOf:
-        - $ref: "#/components/schemas/OnRampTransfer"
-        - $ref: "#/components/schemas/OffRampTransfer"
-        - $ref: "#/components/schemas/BridgeTransfer"
+        - $ref: "#/components/schemas/OnRamp"
+        - $ref: "#/components/schemas/OffRamp"
+        - $ref: "#/components/schemas/Bridge"
 
     RampFiatTransfer:
       oneOf:
