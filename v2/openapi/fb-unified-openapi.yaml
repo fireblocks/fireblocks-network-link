@@ -2693,6 +2693,8 @@ components:
                       asset:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                      tag: 1234567890abcdef
                     paymentInstructions:
                       asset:
                         nationalCurrencyCode: USD
@@ -2701,12 +2703,6 @@ components:
                         name: John Doe
                         address: 123 Main St, New York, NY 10001
                       iban: US1234567890
-                    recipient:
-                      asset:
-                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
-                      transferMethod: PublicBlockchain
-                      address: '0x1234567890abcdef1234567890abcdef12345678'
-                      tag: 1234567890abcdef
                     fees:
                       subAccount: 100
                       provider: 200
@@ -2724,19 +2720,15 @@ components:
                       asset:
                         nationalCurrencyCode: USD
                       transferMethod: Iban
+                      accountHolder:
+                        name: John Doe
+                        address: 123 Main St, New York, NY 10001
+                      iban: US1234567890
                     paymentInstructions:
                       asset:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
                       address: '0x1234567890abcdef1234567890abcdef12345678'
-                    recipient:
-                      asset:
-                        nationalCurrencyCode: USD
-                      transferMethod: Iban
-                      accountHolder:
-                        name: John Doe
-                        address: 123 Main St, New York, NY 10001
-                      iban: US1234567890
                     payment:
                       blockchainTxId: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
                       amount: '1231.45'
@@ -2769,17 +2761,13 @@ components:
                       asset:
                         assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
                       transferMethod: PublicBlockchain
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                      tag: 1234567890abcdef
                     paymentInstructions:
                       asset:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
                       address: '0x1234567890abcdef1234567890abcdef12355678'
-                    recipient:
-                      asset:
-                        assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
-                      transferMethod: PublicBlockchain
-                      address: '0x1234567890abcdef1234567890abcdef12345678'
-                      tag: 1234567890abcdef
                     payment:
                       blockchainTxId: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
                       amount: '1231.45'
@@ -5359,6 +5347,14 @@ components:
             - $ref: '#/components/schemas/PrefundedOffRampCapability'
             - $ref: '#/components/schemas/BridgeCapability'
             - $ref: '#/components/schemas/PrefundedBridgeCapability'
+    BlockchainCapabilityWithOptionalAddress:
+      title: Blockchain Capability With Address
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainCapability'
+        - type: object
+          properties:
+            address:
+              type: string
     PrefundedFiatCapability:
       type: object
       required:
@@ -5399,8 +5395,6 @@ components:
         from:
           $ref: '#/components/schemas/PrefundedFiatCapability'
         to:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
-        recipient:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     OnRampProperties:
       type: object
@@ -5418,8 +5412,6 @@ components:
         from:
           $ref: '#/components/schemas/FiatCapability'
         to:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
-        recipient:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     PrefundedOffRampProperties:
       type: object
@@ -5437,8 +5429,6 @@ components:
         from:
           $ref: '#/components/schemas/PrefundedBlockchainCapability'
         to:
-          $ref: '#/components/schemas/FiatCapability'
-        recipient:
           $ref: '#/components/schemas/FiatAddress'
     OffRampProperties:
       type: object
@@ -5454,10 +5444,8 @@ components:
           enum:
             - OffRamp
         from:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
+          $ref: '#/components/schemas/BlockchainCapabilityWithOptionalAddress'
         to:
-          $ref: '#/components/schemas/FiatCapability'
-        recipient:
           $ref: '#/components/schemas/FiatAddress'
     PrefundedBridgeProperties:
       type: object
@@ -5475,8 +5463,6 @@ components:
         from:
           $ref: '#/components/schemas/PrefundedBlockchainCapability'
         to:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
-        recipient:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     BridgeProperties:
       type: object
@@ -5492,10 +5478,8 @@ components:
           enum:
             - Bridge
         from:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
+          $ref: '#/components/schemas/BlockchainCapabilityWithOptionalAddress'
         to:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
-        recipient:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     CommonRampRequestProperties:
       type: object
@@ -5516,6 +5500,7 @@ components:
             - $ref: '#/components/schemas/OffRampProperties'
             - $ref: '#/components/schemas/PrefundedOffRampProperties'
             - $ref: '#/components/schemas/BridgeProperties'
+            - $ref: '#/components/schemas/PrefundedBridgeProperties'
     RampFees:
       type: object
       description: Fees associated with the ramp transfer.
