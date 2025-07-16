@@ -3,16 +3,16 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { FiatCapability } from './FiatCapability';
+import type { PrefundedFiatCapability } from './PrefundedFiatCapability';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
-export type OnRampProperties = {
-    type: OnRampProperties.type;
-    from: FiatCapability;
+export type PrefundedOnRampProperties = {
+    type: PrefundedOnRampProperties.type;
+    from: PrefundedFiatCapability;
     to: PublicBlockchainAddress;
 };
 
-export namespace OnRampProperties {
+export namespace PrefundedOnRampProperties {
 
     export enum type {
         ON_RAMP = 'OnRamp',

@@ -3,16 +3,16 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { BlockchainCapabilityWithOptionalAddress } from './BlockchainCapabilityWithOptionalAddress';
 import type { FiatAddress } from './FiatAddress';
+import type { PrefundedBlockchainCapability } from './PrefundedBlockchainCapability';
 
-export type OffRampProperties = {
-    type: OffRampProperties.type;
-    from: BlockchainCapabilityWithOptionalAddress;
+export type PrefundedOffRampProperties = {
+    type: PrefundedOffRampProperties.type;
+    from: PrefundedBlockchainCapability;
     to: FiatAddress;
 };
 
-export namespace OffRampProperties {
+export namespace PrefundedOffRampProperties {
 
     export enum type {
         OFF_RAMP = 'OffRamp',
