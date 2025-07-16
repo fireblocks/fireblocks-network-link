@@ -667,6 +667,7 @@ components:
             - $ref: "#/components/schemas/OffRampProperties"
             - $ref: "#/components/schemas/PrefundedOffRampProperties"
             - $ref: "#/components/schemas/BridgeProperties"
+            - $ref: "#/components/schemas/PrefundedBridgeProperties"
 
     RampFees:
       type: object
