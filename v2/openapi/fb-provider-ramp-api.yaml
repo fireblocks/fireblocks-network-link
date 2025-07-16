@@ -428,7 +428,7 @@ components:
       required: [from, to]
       properties:
         from:
-          $ref: "#/components/schemas/PrefundedCapability"
+          $ref: "#/components/schemas/PrefundedFiatCapability"
         to:
           $ref: "#/x-schemas/PublicBlockchainCapability"
 
@@ -475,7 +475,7 @@ components:
             - $ref: "#/components/schemas/OffRampCapability"
             - $ref: "#/components/schemas/BridgeCapability"
 
-    PrefundedCapability:
+    PrefundedFiatCapability:
       type: object
       required:
         - asset
@@ -490,7 +490,7 @@ components:
 
     PrefundedOnRampProperties:
       type: object
-      title: Prefunded On Ramp
+      title: Prefunded On Ramp Properties
       required:
         - type
         - from
@@ -502,7 +502,7 @@ components:
           enum:
             - OnRamp
         from:
-          $ref: "#/components/schemas/PrefundedCapability"
+          $ref: "#/components/schemas/PrefundedFiatCapability"
         to:
           $ref: "#/x-schemas/PublicBlockchainCapability"
         recipient:
@@ -510,7 +510,7 @@ components:
 
     OnRampProperties:
       type: object
-      title: On Ramp
+      title: On Ramp Properties
       required:
         - type
         - from
@@ -618,23 +618,29 @@ components:
         fees:
           $ref: "#/components/schemas/RampFees"
 
+    OnRampPropertiesWithPaymentInstructions:
+      type: object
+      title: On Ramp Properties
+      allOf:
+        - type: object
+          required:
+            - paymentInstructions
+          properties:
+            paymentInstructions:
+              allOf:
+                - $ref: "#/x-schemas/FiatAddress"
+                - type: object
+                  properties:
+                    referenceId:
+                      type: string
+        - $ref: "#/components/schemas/OnRampProperties"
+
     OnRampTransfer:
+      title: On Ramp
       allOf:
         - $ref: "#/components/schemas/CommonRamp"
         - oneOf:
-            - allOf:
-                - $ref: "#/components/schemas/OnRampProperties"
-                - type: object
-                  required:
-                    - paymentInstructions
-                  properties:
-                    paymentInstructions:
-                      allOf:
-                        - $ref: "#/x-schemas/FiatAddress"
-                        - type: object
-                          properties:
-                            referenceId:
-                              type: string
+            - $ref: "#/components/schemas/OnRampPropertiesWithPaymentInstructions"
             - $ref: "#/components/schemas/PrefundedOnRampProperties"
         - type: object
           properties:
