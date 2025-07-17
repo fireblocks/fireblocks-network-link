@@ -531,7 +531,6 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
@@ -549,7 +548,6 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
@@ -567,7 +565,6 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
@@ -585,7 +582,6 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
@@ -603,7 +599,6 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
@@ -621,7 +616,6 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
