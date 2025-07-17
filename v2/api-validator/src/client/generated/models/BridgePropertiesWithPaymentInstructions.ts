@@ -4,13 +4,9 @@
 /* eslint-disable */
 
 import type { BridgeProperties } from './BridgeProperties';
-import type { CommonRamp } from './CommonRamp';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
-import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction';
 
-export type BridgeTransfer = (CommonRamp & BridgeProperties & {
+export type BridgePropertiesWithPaymentInstructions = ({
     paymentInstructions: PublicBlockchainAddress;
-    payment?: PublicBlockchainTransaction;
-    receipt?: PublicBlockchainTransaction;
-});
+} & BridgeProperties);
 
