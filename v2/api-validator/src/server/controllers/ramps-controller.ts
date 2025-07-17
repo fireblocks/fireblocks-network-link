@@ -1,8 +1,6 @@
+import { randomUUID } from 'crypto';
 import { JSONSchemaFaker } from 'json-schema-faker';
 import _ from 'lodash';
-import { fakeSchemaObject } from '../../schemas';
-import { AssetsController } from './assets-controller';
-import { Repository } from './repository';
 import {
   BridgeProperties,
   IbanAddress,
@@ -16,12 +14,14 @@ import {
   RampStatus,
   SwiftAddress,
 } from '../../client/generated';
-import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
+import { fakeSchemaObject } from '../../schemas';
+import { AssetsController } from './assets-controller';
+import { Repository } from './repository';
 import { UnknownAssetError } from './withdrawal-controller';
 
 const RAMPS_COUNT = 10;
-const RAMP_CAPABILITIES_COUNT = 5;
+const RAMP_CAPABILITIES_COUNT = 10;
 type Order = 'asc' | 'desc';
 
 export class RampNotFoundError extends XComError {
@@ -76,16 +76,34 @@ export class RampsController {
   private validateRampRequest(ramp: RampRequest) {
     if (
       !AssetsController.isKnownAsset(ramp.from.asset) ||
-      !AssetsController.isKnownAsset(ramp.to.asset) ||
-      !AssetsController.isKnownAsset(ramp.recipient.asset)
+      !AssetsController.isKnownAsset(ramp.to.asset)
     ) {
       throw new UnknownAssetError();
     }
 
-    const capability = this.rampMethodRepository.findBy(
-      (c) => _.isEqual(c.from, ramp.from) && _.isEqual(c.to, ramp.to)
-    );
+    const capability = this.rampMethodRepository.findBy((c) => {
+      const rampFrom: any = {
+        asset: ramp.from.asset,
+      };
+
+      if ('transferMethod' in ramp.from) {
+        rampFrom.transferMethod = ramp.from.transferMethod;
+      }
+
+      if ('type' in ramp.from) {
+        rampFrom.type = ramp.from.type;
+      }
+
+      const rampTo: any = {
+        asset: ramp.to.asset,
+        transferMethod: ramp.to.transferMethod,
+      };
+
+      return _.isEqual(c.from, rampFrom) && _.isEqual(c.to, rampTo);
+    });
     if (!capability) {
+      console.log('existing capabilities', JSON.stringify(this.rampMethodRepository.list()));
+      console.log('Unsupported ramp method', ramp);
       throw new UnsupportedRampMethod();
     }
   }
@@ -112,6 +130,7 @@ export class RampsController {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { idempotencyKey, ...rampProps } = ramp;
     let paymentInstructions;
+
     if (
       ramp.type === OffRampProperties.type.OFF_RAMP ||
       ramp.type === BridgeProperties.type.BRIDGE
@@ -120,9 +139,11 @@ export class RampsController {
         ...(fakeSchemaObject('PublicBlockchainAddress') as PublicBlockchainAddress),
         asset: ramp.from.asset,
       };
+    } else if ('type' in ramp.from && ramp.from.type === 'Prefunded') {
+      paymentInstructions = undefined;
     } else if (ramp.type === OnRampProperties.type.ON_RAMP) {
       paymentInstructions = {
-        ...(ramp.from.transferMethod === IbanCapability.transferMethod.IBAN
+        ...((ramp.from as IbanCapability)?.transferMethod === IbanCapability.transferMethod.IBAN
           ? (fakeSchemaObject('IbanAddress') as IbanAddress)
           : (fakeSchemaObject('SwiftAddress') as SwiftAddress)),
         asset: ramp.from.asset,
@@ -134,7 +155,7 @@ export class RampsController {
     const newRamp: Ramp = {
       ...rampProps,
       id: randomUUID(),
-      paymentInstructions,
+      ...(paymentInstructions && { paymentInstructions }), // Only include paymentInstructions if it exists
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       status: RampStatus.PENDING,

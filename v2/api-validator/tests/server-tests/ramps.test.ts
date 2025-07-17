@@ -20,6 +20,11 @@ import {
   AchCapability,
   WireCapability,
   SpeiCapability,
+  PrefundedBlockchainCapability,
+  PrefundedFiatCapability,
+  PrefundedOnRampProperties,
+  PrefundedBridgeProperties,
+  PrefundedOffRampProperties,
 } from '../../src/client/generated';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 import { randomUUID } from 'crypto';
@@ -36,21 +41,58 @@ const wireDestinationConfig = config.get('withdrawal.wire');
 const speiDestinationConfig = config.get('withdrawal.spei');
 
 function isBlockchainMethod(
-  capability: FiatCapability | PublicBlockchainCapability
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
 ): capability is PublicBlockchainCapability {
-  return capability.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN;
+  return (
+    'transferMethod' in capability &&
+    capability.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+  );
 }
 
 function isFiatMethod(
-  capability: FiatCapability | PublicBlockchainCapability
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
 ): capability is FiatCapability {
   return (
-    capability.transferMethod === IbanCapability.transferMethod.IBAN ||
-    capability.transferMethod === SwiftCapability.transferMethod.SWIFT ||
-    capability.transferMethod === AchCapability.transferMethod.ACH ||
-    capability.transferMethod === WireCapability.transferMethod.WIRE ||
-    capability.transferMethod === SpeiCapability.transferMethod.SPEI
+    'transferMethod' in capability &&
+    (capability.transferMethod === IbanCapability.transferMethod.IBAN ||
+      capability.transferMethod === SwiftCapability.transferMethod.SWIFT ||
+      capability.transferMethod === AchCapability.transferMethod.ACH ||
+      capability.transferMethod === WireCapability.transferMethod.WIRE ||
+      capability.transferMethod === SpeiCapability.transferMethod.SPEI)
   );
+}
+
+function isPrefundedFiatMethod(
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
+): capability is PrefundedFiatCapability {
+  return (
+    'type' in capability &&
+    capability.type === 'Prefunded' &&
+    'asset' in capability &&
+    'nationalCurrencyCode' in capability.asset
+  );
+}
+
+function isPrefundedBlockchainMethod(
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
+): capability is PrefundedBlockchainCapability {
+  return 'type' in capability && capability.type === 'Prefunded' && 'asset' in capability;
 }
 
 function getFiatDestinationConfig(transferMethod: string) {
@@ -76,13 +118,11 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       idempotencyKey: randomUUID(),
       type: BridgeProperties.type.BRIDGE,
       from: method.from,
-      to: method.to,
-      amount: '0.1',
-      recipient: {
-        asset: method.to.asset,
-        transferMethod: method.to.transferMethod,
+      to: {
+        ...method.to,
         ...blockchainDestinationConfig,
       },
+      amount: '0.1',
     };
   }
 
@@ -91,13 +131,11 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       idempotencyKey: randomUUID(),
       type: OnRampProperties.type.ON_RAMP,
       from: method.from,
-      to: method.to,
-      amount: '0.1',
-      recipient: {
-        asset: method.to.asset,
-        transferMethod: method.to.transferMethod,
+      to: {
+        ...method.to,
         ...blockchainDestinationConfig,
       },
+      amount: '0.1',
     };
   }
 
@@ -106,16 +144,56 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       idempotencyKey: randomUUID(),
       type: OffRampProperties.type.OFF_RAMP,
       from: method.from,
-      to: method.to,
-      amount: '0.1',
-      recipient: {
-        asset: method.to.asset,
+      to: {
+        ...method.to,
         ...getFiatDestinationConfig(method.to.transferMethod),
       },
+      amount: '0.1',
+    };
+  }
+  // Prefunded fiat to blockchain on-ramp
+  if (isPrefundedFiatMethod(method.from) && isBlockchainMethod(method.to)) {
+    return {
+      idempotencyKey: randomUUID(),
+      type: PrefundedOnRampProperties.type.ON_RAMP,
+      from: method.from,
+      to: {
+        ...method.to,
+        ...blockchainDestinationConfig,
+      },
+      amount: '0.1',
     };
   }
 
-  throw new Error('Unsupported method combination');
+  // Prefunded blockchain to fiat off-ramp
+  if (isPrefundedBlockchainMethod(method.from) && isFiatMethod(method.to)) {
+    return {
+      idempotencyKey: randomUUID(),
+      type: PrefundedOffRampProperties.type.OFF_RAMP,
+      from: method.from,
+      to: {
+        ...method.to,
+        ...getFiatDestinationConfig(method.to.transferMethod),
+      },
+      amount: '0.1',
+    };
+  }
+
+  // Prefunded blockchain to blockchain bridge
+  if (isPrefundedBlockchainMethod(method.from) && isBlockchainMethod(method.to)) {
+    return {
+      idempotencyKey: randomUUID(),
+      type: PrefundedBridgeProperties.type.BRIDGE,
+      from: method.from,
+      to: {
+        ...method.to,
+        ...blockchainDestinationConfig,
+      },
+      amount: '0.1',
+    };
+  }
+
+  throw new Error('Unsupported method combination' + JSON.stringify(method));
 }
 
 describe.skipIf(noRampsCapability)('Ramps', () => {
@@ -262,6 +340,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
 
       beforeAll(async () => {
         try {
+          console.log('capability', JSON.stringify(capability));
           createdRamp = await client.ramps.createRamp({
             accountId,
             requestBody: rampRequestFromMethod(capability),
@@ -274,14 +353,20 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
 
       it('should have matching from and to assets and rails', async () => {
         expect(createdRamp.from).toEqual(capability.from);
-        expect(createdRamp.to).toEqual(capability.to);
+        expect(createdRamp.to.asset).toEqual(capability.to.asset);
+        expect(createdRamp.to.transferMethod).toEqual(capability.to.transferMethod);
       });
 
-      it('should receive delivery instructions matching the from asset and rail', async () => {
-        expect(createdRamp.paymentInstructions.transferMethod).toEqual(
-          capability.from.transferMethod
-        );
-        expect(createdRamp.paymentInstructions.asset).toEqual(capability.from.asset);
+      it('should receive delivery instructions matching the from asset and rail for non-prefunded ramps', async () => {
+        if ('type' in capability.from && capability.from.type === 'Prefunded') {
+          return;
+        }
+        expect(
+          'paymentInstructions' in createdRamp && createdRamp.paymentInstructions.transferMethod
+        ).toEqual(capability.from.transferMethod);
+        expect(
+          'paymentInstructions' in createdRamp && createdRamp.paymentInstructions.asset
+        ).toEqual(capability.from.asset);
       });
 
       it('should receive initial status PENDING', async () => {
