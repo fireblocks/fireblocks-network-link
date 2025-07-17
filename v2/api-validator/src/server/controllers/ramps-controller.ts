@@ -153,7 +153,7 @@ export class RampsController {
     const newRamp: Ramp = {
       ...rampProps,
       id: randomUUID(),
-      ...(paymentInstructions && { paymentInstructions }), // Only include paymentInstructions if it exists
+      ...(paymentInstructions && { paymentInstructions }),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       status: RampStatus.PENDING,
