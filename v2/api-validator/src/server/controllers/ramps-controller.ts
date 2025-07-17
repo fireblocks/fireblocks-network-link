@@ -102,8 +102,6 @@ export class RampsController {
       return _.isEqual(c.from, rampFrom) && _.isEqual(c.to, rampTo);
     });
     if (!capability) {
-      console.log('existing capabilities', JSON.stringify(this.rampMethodRepository.list()));
-      console.log('Unsupported ramp method', ramp);
       throw new UnsupportedRampMethod();
     }
   }

@@ -1,34 +1,34 @@
+import { randomUUID } from 'crypto';
 import Client from '../../src/client';
-import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
-import { AssetsDirectory } from '../utils/assets-directory';
 import {
-  Ramp,
+  AchCapability,
+  ApiError,
   AssetReference,
+  BadRequestError,
   BridgeProperties,
   FiatCapability,
+  IbanCapability,
   OffRampProperties,
   OnRampProperties,
+  PrefundedBlockchainCapability,
+  PrefundedBridgeProperties,
+  PrefundedFiatCapability,
+  PrefundedOffRampProperties,
+  PrefundedOnRampProperties,
   PublicBlockchainCapability,
+  Ramp,
   RampMethod,
   RampRequest,
-  ApiError,
-  BadRequestError,
-  RequestPart,
-  IbanCapability,
-  SwiftCapability,
   RampStatus,
-  AchCapability,
-  WireCapability,
+  RequestPart,
   SpeiCapability,
-  PrefundedBlockchainCapability,
-  PrefundedFiatCapability,
-  PrefundedOnRampProperties,
-  PrefundedBridgeProperties,
-  PrefundedOffRampProperties,
+  SwiftCapability,
+  WireCapability,
 } from '../../src/client/generated';
-import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
-import { randomUUID } from 'crypto';
 import config from '../../src/config';
+import { AssetsDirectory } from '../utils/assets-directory';
+import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
+import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 
 const noRampsCapability = !hasCapability('ramps');
 const accountIds = getAllCapableAccountIds('ramps');
@@ -340,7 +340,6 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
 
       beforeAll(async () => {
         try {
-          console.log('capability', JSON.stringify(capability));
           createdRamp = await client.ramps.createRamp({
             accountId,
             requestBody: rampRequestFromMethod(capability),
