@@ -8,8 +8,10 @@ for over 1,800 leading trading desks, hedge funds, brokerages, custodians, 3rd p
 and banks. To meet the demand for third-party services that want to access the liquidity
 of institutional investors and traders, Fireblocks is opening its platform for fast
 third-party integration.
-As part of an initiative to make sure that the end user still has complete control over their own assets, the provider can offer an Off Exchange solution.
-This way, the end user can enjoy the various benefits of the exchange while avoiding the risk of a centralized malfunction, all through the Fireblocks platform.
+As part of an initiative to make sure that the end user still has complete control over
+their own assets, the provider can offer an Off Exchange solution.
+This way, the end user can enjoy the various benefits of the exchange while avoiding the
+risk of a centralized malfunction, all through the Fireblocks platform.
 Reach out to us for a partnership agreement and add a Connector
 to have your product integrated.
 
@@ -591,3 +593,70 @@ Afterwards, the pairing token can be added as a new Collateral Signer user to th
 #### In-depth - Forcing a settlement
 
 ![FlowInvoked](doc-assets/flow_invoked_enforcement.png)
+
+
+# Operational Considerations
+## IP whitelisting
+
+All API calls from Fireblocks to the provider service are sent from a fixed set of
+IP addresses, grouped by geographical region. The provider should whitelist these
+addresses to allow Fireblocks to access the provider servers.
+
+Following are the IP addresses grouped by region:
+
+### Singapore
+
+- `18.99.36.0`
+- `18.99.36.1`
+- `18.99.36.2`
+- `18.99.36.3`
+- `18.99.36.4`
+- `18.99.36.5`
+- `18.99.36.6`
+- `18.99.36.7`
+- `18.99.36.8`
+- `18.99.36.9`
+- `52.76.208.129`
+
+### Europe
+
+- `18.98.161.0`
+- `18.98.161.1`
+- `18.98.161.2`
+- `18.98.161.3`
+- `18.98.161.4`
+- `18.98.161.5`
+- `18.98.161.6`
+- `18.98.161.7`
+- `18.98.161.8`
+- `18.98.161.9`
+- `18.98.161.10`
+- `18.98.161.11`
+- `18.98.161.12`
+- `18.98.161.13`
+- `18.98.161.14`
+- `18.98.161.15`
+- `18.98.161.16`
+- `18.98.161.17`
+- `18.98.161.18`
+- `18.98.161.19`
+- `18.133.153.74`
+- `3.10.68.107`
+- `3.64.123.47`
+- `18.158.242.74`
+- `3.10.103.242`
+- `3.67.233.15`
+
+### USA
+
+- `18.97.132.0`
+- `18.97.132.1`
+- `18.97.132.2`
+- `18.97.132.3`
+- `18.97.132.4`
+- `18.97.132.5`
+- `18.97.132.6`
+- `18.97.132.7`
+- `18.97.132.8`
+- `18.97.132.9`
+- `40.117.39.160`
