@@ -21,58 +21,61 @@ describe('Test request bodies missing one required property', () => {
 
   let accountId: string;
 
-  describe.each(postEndpoints)('$method $url', ({ operationId, url, schema }: EndpointSchema) => {
-    const [component] = schema.tags;
-    accountId = getCapableAccountId(component as keyof ApiComponents);
+  describe.skipIf(postEndpoints.length === 0).each(postEndpoints)(
+    '$method $url',
+    ({ operationId, url, schema }: EndpointSchema) => {
+      const [component] = schema.tags;
+      accountId = getCapableAccountId(component as keyof ApiComponents);
 
-    // Test multiple times due to the randomness of the generated payloads
-    describe.each([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])('Attempt %d', () => {
-      const goodBody = JSONSchemaFaker.generate(schema.body as Schema);
-      if (!goodBody || typeof goodBody !== 'object') throw new Error('Unexpected body type');
+      // Test multiple times due to the randomness of the generated payloads
+      describe.each([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])('Attempt %d', () => {
+        const goodBody = JSONSchemaFaker.generate(schema.body as Schema);
+        if (!goodBody || typeof goodBody !== 'object') throw new Error('Unexpected body type');
 
-      const sendRequest = async (requestBody: JsonValue) => {
-        const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
+        const sendRequest = async (requestBody: JsonValue) => {
+          const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
 
-        try {
-          await operationFunction({ requestBody, accountId });
-        } catch (err) {
-          if (err instanceof ApiError) {
-            return err;
-          }
-          throw err;
-        }
-        throw new Error('Expected to throw');
-      };
-
-      for (const propertyPath of getPropertyPaths(goodBody)) {
-        describe(`Body without ${propertyPath.join('.')}`, () => {
-          let apiError: ApiError;
-
-          beforeAll(async () => {
-            const badBody = _.cloneDeep(goodBody);
-            deleteDeepProperty(badBody, propertyPath);
-
-            if (Object.hasOwn(badBody, 'idempotencyKey')) {
-              badBody['idempotencyKey'] = randomUUID();
+          try {
+            await operationFunction({ requestBody, accountId });
+          } catch (err) {
+            if (err instanceof ApiError) {
+              return err;
             }
+            throw err;
+          }
+          throw new Error('Expected to throw');
+        };
 
-            apiError = await sendRequest(badBody);
-          });
+        for (const propertyPath of getPropertyPaths(goodBody)) {
+          describe(`Body without ${propertyPath.join('.')}`, () => {
+            let apiError: ApiError;
 
-          it('should respond with HTTP response code 400 (Bad Request)', () => {
-            expect(apiError.status).toEqual(400);
+            beforeAll(async () => {
+              const badBody = _.cloneDeep(goodBody);
+              deleteDeepProperty(badBody, propertyPath);
+
+              if (Object.hasOwn(badBody, 'idempotencyKey')) {
+                badBody['idempotencyKey'] = randomUUID();
+              }
+
+              apiError = await sendRequest(badBody);
+            });
+
+            it('should respond with HTTP response code 400 (Bad Request)', () => {
+              expect(apiError.status).toEqual(400);
+            });
+            it('should properly describe the error in the response body', () => {
+              expect(apiError.body.requestPart).toEqual(RequestPart.BODY);
+              expect(getExpectedVariants(url, propertyPath)).toContain(apiError.body.propertyName);
+              expect(apiError.body.errorType).toEqual(
+                BadRequestError.errorType.SCHEMA_PROPERTY_ERROR
+              );
+            });
           });
-          it('should properly describe the error in the response body', () => {
-            expect(apiError.body.requestPart).toEqual(RequestPart.BODY);
-            expect(getExpectedVariants(url, propertyPath)).toContain(apiError.body.propertyName);
-            expect(apiError.body.errorType).toEqual(
-              BadRequestError.errorType.SCHEMA_PROPERTY_ERROR
-            );
-          });
-        });
-      }
-    });
-  });
+        }
+      });
+    }
+  );
 });
 
 // When missing a properties appearing in oneOf, the server might report as if
