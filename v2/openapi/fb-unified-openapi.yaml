@@ -3082,12 +3082,64 @@ components:
               type: string
             stellarCurrencyCode:
               type: string
+    ContractBasedToken:
+      allOf:
+        - $ref: '#/components/schemas/AssetCommonProperties'
+        - type: object
+          required:
+            - type
+            - blockchain
+            - contractAddress
+          properties:
+            type:
+              enum:
+                - Jetton
+            blockchain:
+              $ref: '#/components/schemas/Blockchain'
+            contractAddress:
+              type: string
+      example:
+        id: 7df38516-a9bd-42cd-9ac3-284f665ca6e8
+        type: Jetton
+        blockchain: TON
+        name: Tether USD
+        symbol: USDT
+        decimalPlaces: 6
+        testAsset: true
+        contractAddress: EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs
+    SolanaToken:
+      allOf:
+        - $ref: '#/components/schemas/AssetCommonProperties'
+        - type: object
+          required:
+            - type
+            - blockchain
+            - mintAddress
+          properties:
+            type:
+              enum:
+                - SplToken
+            blockchain:
+              $ref: '#/components/schemas/Blockchain'
+            mintAddress:
+              type: string
+      example:
+        id: 8d156559-8ecf-4170-acb8-a2cfa76bc3f4
+        type: SplToken
+        blockchain: Solana
+        name: USD Coin
+        symbol: USDC
+        description: The world's largest regulated1 stablecoin powering global finance
+        decimalPlaces: 6
+        mintAddress: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
     AssetDefinition:
       anyOf:
         - $ref: '#/components/schemas/BucketAsset'
         - $ref: '#/components/schemas/Erc20Token'
         - $ref: '#/components/schemas/Bep20Token'
         - $ref: '#/components/schemas/StellarToken'
+        - $ref: '#/components/schemas/ContractBasedToken'
+        - $ref: '#/components/schemas/SolanaToken'
     NationalCurrency:
       type: object
       required:

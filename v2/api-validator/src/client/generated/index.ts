@@ -70,6 +70,7 @@ export type { CollateralWithdrawalTransactions } from './models/CollateralWithdr
 export { CollateralWithdrawalTransactionStatus } from './models/CollateralWithdrawalTransactionStatus';
 export type { CommonRamp } from './models/CommonRamp';
 export type { CommonRampRequestProperties } from './models/CommonRampRequestProperties';
+export { ContractBasedToken } from './models/ContractBasedToken';
 export { CountryAlpha2Code } from './models/CountryAlpha2Code';
 export type { CryptocurrencyReference } from './models/CryptocurrencyReference';
 export { CryptocurrencySymbol } from './models/CryptocurrencySymbol';
@@ -172,6 +173,7 @@ export { SettlementTransactionStatus } from './models/SettlementTransactionStatu
 export type { SettlementVersionPathParam } from './models/SettlementVersionPathParam';
 export type { SettlementWithdrawInstruction } from './models/SettlementWithdrawInstruction';
 export type { SettlementWithdrawTransaction } from './models/SettlementWithdrawTransaction';
+export { SolanaToken } from './models/SolanaToken';
 export type { SpeiAddress } from './models/SpeiAddress';
 export { SpeiCapability } from './models/SpeiCapability';
 export type { SpeiTransfer } from './models/SpeiTransfer';
