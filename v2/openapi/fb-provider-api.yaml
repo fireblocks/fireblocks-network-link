@@ -994,6 +994,7 @@ components:
         - Avalanche
         - Axelar
         - Base
+        - Berachain
         - Bitcoin
         - Bitcoin Cash
         - Bitcoin Cash ABC
@@ -1044,6 +1045,7 @@ components:
         - Terra 2.0
         - Terra Classic
         - Tezos
+        - TON
         - TokenEX
         - TRON
         - Velas
