@@ -1183,6 +1183,7 @@ components:
       - Astar
       - Berachain
       - Sui
+      - Babylon
       example:
         Ethereum
     Testnet_Networks:
