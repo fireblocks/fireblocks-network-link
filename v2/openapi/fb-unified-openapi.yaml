@@ -5381,7 +5381,7 @@ components:
             - Prefunded
     PrefundedOnRampProperties:
       type: object
-      title: Prefunded On Ramp Properties
+      title: On Ramp - Prefunded
       required:
         - type
         - from
@@ -5397,7 +5397,7 @@ components:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     OnRampProperties:
       type: object
-      title: On Ramp Properties
+      title: On Ramp
       required:
         - type
         - from
@@ -5413,7 +5413,7 @@ components:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     PrefundedOffRampProperties:
       type: object
-      title: Prefunded Off Ramp Properties
+      title: Off Ramp - Prefunded
       required:
         - type
         - from
@@ -5445,7 +5445,7 @@ components:
           $ref: '#/components/schemas/FiatAddress'
     PrefundedBridgeProperties:
       type: object
-      title: Prefunded Bridge Properties
+      title: Bridge - Prefunded
       required:
         - type
         - from
@@ -5530,7 +5530,7 @@ components:
           $ref: '#/components/schemas/RampFees'
     OnRampPropertiesWithPaymentInstructions:
       type: object
-      title: On Ramp Properties
+      title: On Ramp
       allOf:
         - type: object
           required:
@@ -5546,7 +5546,7 @@ components:
         - $ref: '#/components/schemas/OnRampProperties'
     OffRampPropertiesWithPaymentInstructions:
       type: object
-      title: Off Ramp Properties
+      title: Off Ramp
       allOf:
         - type: object
           required:
@@ -5557,7 +5557,7 @@ components:
         - $ref: '#/components/schemas/OffRampProperties'
     BridgePropertiesWithPaymentInstructions:
       type: object
-      title: Bridge Properties
+      title: Bridge
       allOf:
         - type: object
           required:

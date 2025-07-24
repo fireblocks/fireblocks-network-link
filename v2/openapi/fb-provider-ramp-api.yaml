@@ -526,7 +526,7 @@ components:
 
     PrefundedOnRampProperties:
       type: object
-      title: Prefunded On Ramp Properties
+      title: On Ramp - Prefunded
       required:
         - type
         - from
@@ -543,7 +543,7 @@ components:
 
     OnRampProperties:
       type: object
-      title: On Ramp Properties
+      title: On Ramp
       required:
         - type
         - from
@@ -560,7 +560,7 @@ components:
 
     PrefundedOffRampProperties:
       type: object
-      title: Prefunded Off Ramp Properties
+      title: Off Ramp - Prefunded
       required:
         - type
         - from
@@ -594,7 +594,7 @@ components:
 
     PrefundedBridgeProperties:
       type: object
-      title: Prefunded Bridge Properties
+      title: Bridge - Prefunded
       required:
         - type
         - from
@@ -680,7 +680,7 @@ components:
 
     OnRampPropertiesWithPaymentInstructions:
       type: object
-      title: On Ramp Properties
+      title: On Ramp
       allOf:
         - type: object
           required:
@@ -697,7 +697,7 @@ components:
 
     OffRampPropertiesWithPaymentInstructions:
       type: object
-      title: Off Ramp Properties
+      title: Off Ramp
       allOf:
         - type: object
           required:
@@ -709,7 +709,7 @@ components:
 
     BridgePropertiesWithPaymentInstructions:
       type: object
-      title: Bridge Properties
+      title: Bridge
       allOf:
         - type: object
           required:
