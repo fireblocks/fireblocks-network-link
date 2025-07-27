@@ -3,16 +3,16 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { BlockchainCapabilityWithOptionalAddress } from './BlockchainCapabilityWithOptionalAddress';
+import type { PrefundedBlockchainCapability } from './PrefundedBlockchainCapability';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
-export type BridgeProperties = {
-    type: BridgeProperties.type;
-    from: BlockchainCapabilityWithOptionalAddress;
+export type PrefundedBridgeProperties = {
+    type: PrefundedBridgeProperties.type;
+    from: PrefundedBlockchainCapability;
     to: PublicBlockchainAddress;
 };
 
-export namespace BridgeProperties {
+export namespace PrefundedBridgeProperties {
 
     export enum type {
         BRIDGE = 'Bridge',
