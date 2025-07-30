@@ -6,10 +6,15 @@ import {
   AssetReference,
   BadRequestError,
   BridgeProperties,
+  CountryAlpha2Code,
   FiatCapability,
+  FullName,
   IbanCapability,
+  PostalAddress,
   OffRampProperties,
   OnRampProperties,
+  ParticipantRelationshipType,
+  PersonaIdentificationInfo,
   PrefundedBlockchainCapability,
   PrefundedBridgeProperties,
   PrefundedFiatCapability,
@@ -122,7 +127,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
 
@@ -135,7 +140,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
 
@@ -148,7 +153,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...getFiatDestinationConfig(method.to.transferMethod),
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
   // Prefunded fiat to blockchain on-ramp
@@ -161,7 +166,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
 
@@ -175,7 +180,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...getFiatDestinationConfig(method.to.transferMethod),
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
 
@@ -189,7 +194,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
 
@@ -378,6 +383,70 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
           id: createdRamp.id,
         });
         expect(response).toEqual(createdRamp);
+      });
+
+      it('should accept ramp request with quote', async () => {
+        const requestWithQuote: RampRequest = {
+          ...rampRequestFromMethod(capability),
+          idempotencyKey: randomUUID(),
+          quote: {
+            quoteId: 'test-quote-' + randomUUID(),
+            reQuote: false,
+            slippage: 0.01,
+          },
+        };
+
+        const response = await client.ramps.createRamp({
+          accountId,
+          requestBody: requestWithQuote,
+        });
+
+        expect(response.quote).toBeDefined();
+        expect(response.quote?.quoteId).toBe(requestWithQuote.quote?.quoteId);
+      });
+
+      it('should accept ramp request with participant identification', async () => {
+        const fullName: FullName = { firstName: 'John', lastName: 'Doe' };
+
+        const postalAddress: PostalAddress = {
+          streetName: 'Main St',
+          buildingNumber: '101',
+          postalCode: '54321',
+          city: 'Los Angeles',
+          subdivision: 'CA',
+          district: 'La La Land',
+          country: CountryAlpha2Code.US,
+        };
+
+        const requestWithKYC: RampRequest = {
+          ...rampRequestFromMethod(capability),
+          idempotencyKey: randomUUID(),
+          participantsIdentification: {
+            originator: {
+              externalReferenceId: 'externalReferenceId',
+              participantRelationshipType: ParticipantRelationshipType.FIRST_PARTY,
+              entityType: PersonaIdentificationInfo.entityType.INDIVIDUAL,
+              fullName,
+              dateOfBirth: '1985-05-10',
+              postalAddress,
+            },
+            beneficiary: {
+              externalReferenceId: 'externalReferenceId',
+              participantRelationshipType: ParticipantRelationshipType.FIRST_PARTY,
+              entityType: PersonaIdentificationInfo.entityType.INDIVIDUAL,
+              fullName,
+              dateOfBirth: '1985-05-10',
+              postalAddress,
+            },
+          },
+        };
+
+        const response = await client.ramps.createRamp({
+          accountId,
+          requestBody: requestWithKYC,
+        });
+
+        expect(response.participantsIdentification).toBeDefined();
       });
     });
 
