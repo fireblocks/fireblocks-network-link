@@ -9,7 +9,6 @@ import type { PrefundedBridgeProperties } from './PrefundedBridgeProperties';
 import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction';
 
 export type Bridge = (CommonRamp & (BridgePropertiesWithPaymentInstructions | PrefundedBridgeProperties) & {
-    payment?: PublicBlockchainTransaction;
     receipt?: PublicBlockchainTransaction;
 });
 

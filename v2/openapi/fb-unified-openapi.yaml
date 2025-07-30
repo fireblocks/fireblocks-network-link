@@ -5496,6 +5496,14 @@ components:
             - $ref: '#/components/schemas/PrefundedOffRampProperties'
             - $ref: '#/components/schemas/BridgeProperties'
             - $ref: '#/components/schemas/PrefundedBridgeProperties'
+        - type: object
+          properties:
+            quote:
+              $ref: '#/components/schemas/OrderQuote'
+        - type: object
+          properties:
+            participantsIdentification:
+              $ref: '#/components/schemas/ParticipantsIdentification'
     RampFees:
       type: object
       description: Fees associated with the ramp transfer.
@@ -5529,6 +5537,10 @@ components:
           $ref: '#/components/schemas/PositiveAmount'
         fees:
           $ref: '#/components/schemas/RampFees'
+        participantsIdentification:
+          $ref: '#/components/schemas/ParticipantsIdentification'
+        quote:
+          $ref: '#/components/schemas/OrderQuote'
     OnRampPropertiesWithPaymentInstructions:
       type: object
       title: On Ramp
@@ -5576,8 +5588,6 @@ components:
             - $ref: '#/components/schemas/PrefundedOnRampProperties'
         - type: object
           properties:
-            payment:
-              $ref: '#/components/schemas/RampFiatTransfer'
             receipt:
               $ref: '#/components/schemas/PublicBlockchainTransaction'
     OffRamp:
@@ -5588,8 +5598,6 @@ components:
             - $ref: '#/components/schemas/PrefundedOffRampProperties'
         - type: object
           properties:
-            payment:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
             receipt:
               $ref: '#/components/schemas/RampFiatTransfer'
     Bridge:
@@ -5600,8 +5608,6 @@ components:
             - $ref: '#/components/schemas/PrefundedBridgeProperties'
         - type: object
           properties:
-            payment:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
             receipt:
               $ref: '#/components/schemas/PublicBlockchainTransaction'
     Ramp:
@@ -5616,4 +5622,19 @@ components:
         - $ref: '#/components/schemas/AchTransfer'
         - $ref: '#/components/schemas/WireTransfer'
         - $ref: '#/components/schemas/SpeiTransfer'
+    OrderQuote:
+      type: object
+      required:
+        - quoteId
+      properties:
+        quoteId:
+          type: string
+        reQuote:
+          type: boolean
+          description: If quote is expired, re-generate a new quote.
+          default: false
+        slippage:
+          type: number
+          description: The slippage tolerance for the order.
+          default: 0.01
   securitySchemes: {}

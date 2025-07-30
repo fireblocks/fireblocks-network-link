@@ -89,6 +89,10 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
     }
+  ParticipantsIdentification:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ParticipantsIdentification",
+    }
 
 x-responses:
   BadRequestResponse:
@@ -647,6 +651,14 @@ components:
             - $ref: "#/components/schemas/PrefundedOffRampProperties"
             - $ref: "#/components/schemas/BridgeProperties"
             - $ref: "#/components/schemas/PrefundedBridgeProperties"
+        - type: object
+          properties:
+            quote:
+              $ref: "#/components/schemas/OrderQuote"
+        - type: object
+          properties:
+            participantsIdentification:
+              $ref: "#/x-schemas/ParticipantsIdentification"
 
     RampFees:
       type: object
@@ -677,6 +689,10 @@ components:
           $ref: "#/x-schemas/PositiveAmount"
         fees:
           $ref: "#/components/schemas/RampFees"
+        participantsIdentification:
+          $ref: "#/x-schemas/ParticipantsIdentification"
+        quote:
+          $ref: "#/components/schemas/OrderQuote"
 
     OnRampPropertiesWithPaymentInstructions:
       type: object
@@ -728,8 +744,6 @@ components:
             - $ref: "#/components/schemas/PrefundedOnRampProperties"
         - type: object
           properties:
-            payment:
-              $ref: "#/components/schemas/RampFiatTransfer"
             receipt:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
 
@@ -741,8 +755,6 @@ components:
             - $ref: "#/components/schemas/PrefundedOffRampProperties"
         - type: object
           properties:
-            payment:
-              $ref: "#/x-schemas/PublicBlockchainTransaction"
             receipt:
               $ref: "#/components/schemas/RampFiatTransfer"
 
@@ -754,8 +766,6 @@ components:
             - $ref: "#/components/schemas/PrefundedBridgeProperties"
         - type: object
           properties:
-            payment:
-              $ref: "#/x-schemas/PublicBlockchainTransaction"
             receipt:
               $ref: "#/x-schemas/PublicBlockchainTransaction"
 
@@ -772,3 +782,19 @@ components:
         - $ref: "#/x-schemas/AchTransfer"
         - $ref: "#/x-schemas/WireTransfer"
         - $ref: "#/x-schemas/SpeiTransfer"
+
+    OrderQuote:
+      type: object
+      required:
+        - quoteId
+      properties:
+        quoteId:
+          type: string
+        reQuote:
+          type: boolean
+          description: If quote is expired, re-generate a new quote.
+          default: false
+        slippage:
+          type: number
+          description: The slippage tolerance for the order.
+          default: 0.01
