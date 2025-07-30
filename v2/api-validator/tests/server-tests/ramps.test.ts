@@ -122,7 +122,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
 
@@ -135,7 +135,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
 
@@ -148,7 +148,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...getFiatDestinationConfig(method.to.transferMethod),
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
   // Prefunded fiat to blockchain on-ramp
@@ -161,7 +161,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
 
@@ -175,7 +175,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...getFiatDestinationConfig(method.to.transferMethod),
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
 
@@ -189,11 +189,11 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '0.1',
+      amount: '1000',
     };
   }
 
-  throw new Error('Unsupported method combination' + JSON.stringify(method));
+  throw new Error('Unsupported method combination');
 }
 
 describe.skipIf(noRampsCapability)('Ramps', () => {
