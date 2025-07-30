@@ -2655,6 +2655,127 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Ramp'
+          examples:
+            onRamp:
+              summary: OnRamp
+              description: A standard fiat to crypto on-ramp without additional features.
+              value:
+                id: 16b8b2c3-bd61-4745-9c48-3d30c2bc6907
+                createdAt: '2021-09-01T12:00:00Z'
+                updatedAt: '2021-09-01T12:00:00Z'
+                status: Pending
+                amount: '1000.00'
+                type: OnRamp
+                from:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                to:
+                  asset:
+                    assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                  transferMethod: PublicBlockchain
+                  address: '0x1234567890abcdef1234567890abcdef12345678'
+                paymentInstructions:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                  accountHolder:
+                    name: John Doe
+                    address: 123 Main St, New York, NY 10001
+                  iban: US1234567890
+                fees:
+                  subAccount: 100
+                  provider: 200
+            onRampWithQuote:
+              summary: OnRamp with Quote
+              description: An on-ramp that includes quote information for price execution.
+              value:
+                id: 69fa4f38-c1fd-4215-a310-82272225c4ef
+                createdAt: '2021-09-01T12:00:00Z'
+                updatedAt: '2021-09-01T12:00:00Z'
+                status: Pending
+                amount: '500.00'
+                type: OnRamp
+                from:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                to:
+                  asset:
+                    assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                  transferMethod: PublicBlockchain
+                  address: '0xabcdef1234567890abcdef1234567890abcdef12'
+                paymentInstructions:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                  accountHolder:
+                    name: Jane Smith
+                    address: 456 Oak Street, London, UK
+                  iban: US1234567890
+                quote:
+                  quoteId: quote-123456789
+                  reQuote: false
+                  slippage: 0.02
+                fees:
+                  subAccount: 75
+                  provider: 150
+            onRampWithPersonalIdentification:
+              summary: OnRamp with Personal Identification
+              description: An on-ramp that includes participant identification for compliance.
+              value:
+                id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
+                createdAt: '2021-09-01T12:00:00Z'
+                updatedAt: '2021-09-01T12:00:00Z'
+                status: Pending
+                amount: '2000.00'
+                type: OnRamp
+                from:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                to:
+                  asset:
+                    assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                  transferMethod: PublicBlockchain
+                  address: '0x1234567890abcdef1234567890abcdef12345678'
+                  tag: 1234567890abcdef
+                paymentInstructions:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                  accountHolder:
+                    name: John Doe
+                    address: 123 Main St, New York, NY 10001
+                  iban: US1234567890
+                participantsIdentification:
+                  originator:
+                    externalReferenceId: '1234567890'
+                    entityType: Business
+                    businessName: Business Name
+                    registrationNumber: '333333333'
+                    postalAddress:
+                      streetName: 123 Main St
+                      buildingNumber: '123'
+                      postalCode: '12345'
+                      city: New York
+                      country: US
+                  beneficiary:
+                    externalReferenceId: '12343444890'
+                    entityType: Individual
+                    fullName:
+                      firstName: John
+                      lastName: Doe
+                    dateOfBirth: '1985-03-15'
+                    postalAddress:
+                      streetName: Digital Address
+                      buildingNumber: '123'
+                      postalCode: '12345'
+                      city: London
+                      country: GB
+                fees:
+                  subAccount: 200
+                  provider: 300
     GetRampDetailsResponse:
       description: Ramp details.
       content:
