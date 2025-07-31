@@ -93,6 +93,9 @@ paths:
     get:
       operationId: getCollateralAccountLinks
       summary: Get list of collateral account links
+      description: >
+        Retrieves all collateral account links associated with the specified account.
+        Returns details about link status, eligible assets, and collateral configuration.
       tags: [ collateral ]
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -193,6 +196,9 @@ paths:
     get:
       operationId: getCollateralDepositAddresses
       summary: Get list of collateral account deposit addresses
+      description: >
+        Retrieves all registered deposit addresses for the specified collateral account.
+        Can be filtered by asset ID or cryptocurrency symbol to get addresses for specific assets.
       tags: [ collateral ]
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -229,6 +235,9 @@ paths:
     get:
       operationId: getCollateralDepositAddressesDetails
       summary: Get details of a specific deposit address in a collateral account.
+      description: >
+        Retrieves detailed information about a specific deposit address within a collateral account,
+        including the address details and recovery account configuration.
       tags: [ collateral ]
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -346,6 +355,9 @@ paths:
     get:
       operationId: getCollateralDepositTransactions
       summary: Get list of collateral account deposit transactions sorted by creation time
+      description: >
+        Retrieves a paginated list of all deposit transactions for the specified collateral account.
+        Transactions are sorted by creation time and include status information and approval details.
       tags: [ collateral ]
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -380,6 +392,9 @@ paths:
     get:
       operationId: getCollateralDepositTransactionDetails
       summary: Get a collateral account deposit transaction details
+      description: >
+        Retrieves detailed information about a specific collateral deposit transaction,
+        including transaction status, approval details, and processing information.
       tags: [ collateral ]
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -500,6 +515,9 @@ paths:
     get:
       operationId: getCollateralWithdrawalTransactions
       summary: Get list of collateral withdrawal transactions sorted by creation time
+      description: >
+        Retrieves a paginated list of all withdrawal transactions for the specified collateral account.
+        Transactions are sorted by creation time and include status, approval details, and settlement information.
       tags: [ collateral ]
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -534,6 +552,9 @@ paths:
     get:
       operationId: getCollateralWithdrawalTransactionDetails
       summary: Get a collateral withdrawal transaction details
+      description: >
+        Retrieves detailed information about a specific collateral withdrawal transaction,
+        including transaction status, approval details, settlement information, and rejection reasons if applicable.
       tags: [ collateral ]
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
@@ -640,6 +661,9 @@ paths:
     get:
       operationId: getSettlementDetails
       summary: Get a settlement details
+      description: >
+        Retrieves detailed information about a specific settlement state for a collateral account,
+        including withdrawal and deposit transaction details, settlement status, and completion information.
       tags: [ collateral ]
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'

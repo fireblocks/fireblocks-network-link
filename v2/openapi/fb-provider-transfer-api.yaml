@@ -57,6 +57,9 @@ paths:
     get:
       operationId: getWithdrawalMethods
       summary: Get list of supported withdrawal methods
+      description: >
+        Retrieves the list of supported withdrawal methods available for the specified account.
+        Shows which withdrawal types, networks, and destinations are supported for fund transfers.
       tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -142,6 +145,9 @@ paths:
     get:
       operationId: getDepositMethods
       summary: Get list of supported deposit methods
+      description: >
+        Retrieves the list of supported deposit methods available for the specified account.
+        Shows which deposit types, networks, and sources are supported for fund transfers.
       tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -234,6 +240,9 @@ paths:
     get:
       operationId: getWithdrawals
       summary: Get list of withdrawals sorted by creation time
+      description: >
+        Retrieves a paginated list of all withdrawal transactions for the specified account.
+        Withdrawals are sorted by creation time and include all types of withdrawal operations.
       tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -261,6 +270,9 @@ paths:
     get:
       operationId: getWithdrawalDetails
       summary: Get withdrawal details
+      description: >
+        Retrieves detailed information about a specific withdrawal transaction,
+        including status, amounts, fees, destination details, and processing information.
       tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -289,6 +301,9 @@ paths:
     get:
       operationId: getBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
+      description: >
+        Retrieves a paginated list of withdrawal transactions sent over public blockchains.
+        Includes cryptocurrency transfers to external blockchain addresses, sorted by creation time.
       tags: [ transfersBlockchain ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -359,6 +374,9 @@ paths:
     get:
       operationId: getFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
+      description: >
+        Retrieves a paginated list of fiat currency withdrawal transactions.
+        Includes traditional banking transfers and wire transfers, sorted by creation time.
       tags: [ transfersFiat ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -429,6 +447,9 @@ paths:
     get:
       operationId: getPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
+      description: >
+        Retrieves a paginated list of withdrawal transactions sent to peer accounts.
+        Includes transfers to other accounts within the same provider ecosystem, sorted by creation time.
       tags: [ transfersPeerAccounts ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -500,6 +521,9 @@ paths:
     get:
       operationId: getSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
+      description: >
+        Retrieves a paginated list of internal withdrawal transactions between sub-accounts.
+        Includes transfers within the same organization or account structure, sorted by creation time.
       tags: [ transfersInternal ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -572,6 +596,9 @@ paths:
     get:
       operationId: getDeposits
       summary: Get list of deposits sorted by creation time in a descending order
+      description: >
+        Retrieves a paginated list of all deposit transactions for the specified account.
+        Deposits are sorted by creation time in descending order and include all types of deposit operations.
       tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -608,6 +635,9 @@ paths:
     get:
       operationId: getDepositDetails
       summary: Get deposit details
+      description: >
+        Retrieves detailed information about a specific deposit transaction,
+        including status, amounts, source details, confirmation information, and processing details.
       tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -636,6 +666,9 @@ paths:
     post:
       operationId: createDepositAddress
       summary: Create new deposit address
+      description: >
+        Creates a new deposit address for the specified account and asset.
+        The generated address can be used to receive deposits for the specified cryptocurrency or token.
       tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -668,6 +701,9 @@ paths:
     get:
       operationId: getDepositAddresses
       summary: Get list of existing deposit addresses
+      description: >
+        Retrieves a paginated list of all deposit addresses associated with the specified account.
+        Shows addresses for different cryptocurrencies and networks that can receive deposits.
       tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -704,6 +740,9 @@ paths:
     get:
       operationId: getDepositAddressDetails
       summary: Get details of a deposit address
+      description: >
+        Retrieves detailed information about a specific deposit address,
+        including the address string, associated network, asset type, and usage metadata.
       tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -731,6 +770,9 @@ paths:
     delete:
       operationId: disableDepositAddress
       summary: Disable a deposit address
+      description: >
+        Disables a specific deposit address, preventing it from receiving new deposits.
+        Existing funds sent to the address may still be processed depending on timing and confirmation status.
       tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'

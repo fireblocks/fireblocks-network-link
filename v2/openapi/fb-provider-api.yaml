@@ -222,6 +222,9 @@ paths:
     get:
       operationId: getAccounts
       summary: Get list of sub-accounts
+      description: >
+        Retrieves a paginated list of all sub-accounts available to the provider.
+        Can optionally include balance information for each account if requested.
       tags: [ accounts ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
@@ -258,6 +261,9 @@ paths:
     get:
       operationId: getAccountDetails
       summary: Get sub-account details
+      description: >
+        Retrieves detailed information about a specific sub-account, including
+        account metadata and optionally balance information if requested.
       tags: [ accounts ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
@@ -286,6 +292,9 @@ paths:
     get:
       operationId: getBalances
       summary: Get current balances
+      description: >
+        Retrieves current balance information for the specified account.
+        Can be filtered by asset ID, national currency code, or cryptocurrency symbol.
       tags: [ balances ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
@@ -370,6 +379,9 @@ paths:
     get:
       operationId: getHistoricBalances
       summary: Get balances at specific time in the past
+      description: >
+        Retrieves historical balance information for the specified account at a specific point in time.
+        Useful for reconciliation and auditing purposes to see account states at historical moments.
       tags: [ historicBalances ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
