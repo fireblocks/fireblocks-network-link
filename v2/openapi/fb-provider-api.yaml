@@ -72,6 +72,7 @@ paths:
                       liquidity: "*"
                       collateral: "*"
                       ramps: "*"
+                      rates: "*"
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:
@@ -289,7 +290,7 @@ paths:
         Returns the rate of the account for the given base and quote assets.
         The rate is the amount of quote asset that is required to buy 1 unit of the base asset.
         The rate is expressed in the quote asset decimal places.
-      tags: [accounts]
+      tags: [rates]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -298,6 +299,7 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/BaseAssetQueryParam'
         - $ref: '#/components/parameters/QuoteAssetQueryParam'
+        - $ref: '#/components/parameters/IsTestnetQueryParam'
 
       responses:
         '200':
@@ -630,6 +632,14 @@ components:
       schema:
         $ref: '#/components/schemas/AssetCode'
 
+    IsTestnetQueryParam:
+      name: isTest
+      in: query
+      description: >-
+        Flag to include the testnet assets in the response.
+      schema:
+        type: boolean
+
     AccountBalancesQueryParam:
       name: balances
       in: query
@@ -796,6 +806,8 @@ components:
         collateral:
           $ref: '#/components/schemas/AccountsSet'
         ramps:
+          $ref: '#/components/schemas/AccountsSet'
+        rates:
           $ref: '#/components/schemas/AccountsSet'
 
     AccountsSet:
@@ -1030,6 +1042,11 @@ components:
           $ref: '#/components/schemas/AssetReference'
         quoteAsset:
           $ref: '#/components/schemas/AssetReference'
+        timestamp:
+          type: number
+          format: UNIX-timestamp-epoch
+          description: "In Milliseconds. The timestamp on the creation of the rate."
+          example: 1546658861000
 
     AssetReference:
       oneOf:

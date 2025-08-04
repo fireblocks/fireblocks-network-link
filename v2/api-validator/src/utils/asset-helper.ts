@@ -24,15 +24,14 @@ function isCryptocurrencySymbol(assetCode: AssetCode): assetCode is Cryptocurren
  * @param assetCode - The asset code to convert
  * @returns AssetReference object with the appropriate type
  */
-export function createAssetReference(assetCode: AssetCode): AssetReference {
+export function createAssetReference(assetCode: AssetCode, testAsset: boolean): AssetReference {
   if (isNationalCurrencyCode(assetCode)) {
-    return { nationalCurrencyCode: assetCode };
+    return { nationalCurrencyCode: assetCode, testAsset };
   }
 
   if (isCryptocurrencySymbol(assetCode)) {
-    return { cryptocurrencySymbol: assetCode };
+    return { cryptocurrencySymbol: assetCode, testAsset };
   }
 
-  // Otherwise treat as custom asset ID
-  return { assetId: assetCode };
+  return { assetId: assetCode, testAsset: testAsset };
 }

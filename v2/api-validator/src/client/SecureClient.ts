@@ -21,6 +21,7 @@ import {
   OpenAPI,
   OpenAPIConfig,
   RampsService,
+  RatesService,
   TradingService,
   TransfersBlockchainService,
   TransfersFiatService,
@@ -105,6 +106,7 @@ export class SecureClient {
   public readonly transfersInternal: SecureService<TransfersInternalService>;
   public readonly collateral: SecureService<CollateralService>;
   public readonly ramps: SecureService<RampsService>;
+  public readonly rates: SecureService<RatesService>;
   private readonly request: BaseHttpRequest;
 
   private static cachedApiComponents?: ApiComponents;
@@ -116,6 +118,7 @@ export class SecureClient {
       BASE: config.get('client').serverBaseUrl,
     });
 
+    this.rates = stripSecurityHeaderArgs(new RatesService(this.request));
     this.accounts = stripSecurityHeaderArgs(new AccountsService(this.request));
     this.balances = stripSecurityHeaderArgs(new BalancesService(this.request));
     this.capabilities = stripSecurityHeaderArgs(new CapabilitiesService(this.request));

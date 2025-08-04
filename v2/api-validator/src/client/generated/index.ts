@@ -111,6 +111,7 @@ export { InternalTransferDestinationPolicy } from './models/InternalTransferDest
 export { InternalTransferMethod } from './models/InternalTransferMethod';
 export type { InternalWithdrawal } from './models/InternalWithdrawal';
 export type { InternalWithdrawalRequest } from './models/InternalWithdrawalRequest';
+export type { IsTestnetQueryParam } from './models/IsTestnetQueryParam';
 export { LimitOrderData } from './models/LimitOrderData';
 export { ListOrderQueryParam } from './models/ListOrderQueryParam';
 export type { MarketEntry } from './models/MarketEntry';
@@ -225,6 +226,7 @@ export { CollateralService } from './services/CollateralService';
 export { HistoricBalancesService } from './services/HistoricBalancesService';
 export { LiquidityService } from './services/LiquidityService';
 export { RampsService } from './services/RampsService';
+export { RatesService } from './services/RatesService';
 export { TradingService } from './services/TradingService';
 export { TransfersService } from './services/TransfersService';
 export { TransfersBlockchainService } from './services/TransfersBlockchainService';

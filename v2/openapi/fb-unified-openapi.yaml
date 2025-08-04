@@ -86,6 +86,7 @@ paths:
                       liquidity: '*'
                       collateral: '*'
                       ramps: '*'
+                      rates: '*'
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:
@@ -291,7 +292,7 @@ paths:
       summary: Get account rate
       description: Returns the rate of the account for the given base and quote assets. The rate is the amount of quote asset that is required to buy 1 unit of the base asset. The rate is expressed in the quote asset decimal places.
       tags:
-        - accounts
+        - rates
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -300,6 +301,7 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/BaseAssetQueryParam'
         - $ref: '#/components/parameters/QuoteAssetQueryParam'
+        - $ref: '#/components/parameters/IsTestnetQueryParam'
       responses:
         '200':
           description: Account rate.
@@ -2605,6 +2607,12 @@ components:
       description: Limits the response to one asset with the provided QuoteAsset Cannot be used in conjunction with nationalCurrencyCode or assetId
       schema:
         $ref: '#/components/schemas/AssetCode'
+    IsTestnetQueryParam:
+      name: isTest
+      in: query
+      description: Flag to include the testnet assets in the response.
+      schema:
+        type: boolean
     AccountBalancesQueryParam:
       name: balances
       in: query
@@ -2976,6 +2984,8 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         ramps:
           $ref: '#/components/schemas/AccountsSet'
+        rates:
+          $ref: '#/components/schemas/AccountsSet'
     AccountsSet:
       description: Indicates to which sub-accounts an operation applies. The value could be either a list of sub-account IDs or "*". The value "*" indicates all the sub-accounts.
       oneOf:
@@ -3217,6 +3227,11 @@ components:
           $ref: '#/components/schemas/AssetReference'
         quoteAsset:
           $ref: '#/components/schemas/AssetReference'
+        timestamp:
+          type: number
+          format: UNIX-timestamp-epoch
+          description: In Milliseconds. The timestamp on the creation of the rate.
+          example: 1546658861000
     AssetReference:
       oneOf:
         - $ref: '#/components/schemas/NationalCurrency'

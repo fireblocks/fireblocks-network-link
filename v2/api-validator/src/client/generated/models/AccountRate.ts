@@ -10,5 +10,9 @@ export type AccountRate = {
     rate: PositiveAmount;
     baseAsset: AssetReference;
     quoteAsset: AssetReference;
+    /**
+     * In Milliseconds. The timestamp on the creation of the rate.
+     */
+    timestamp?: number;
 };
 

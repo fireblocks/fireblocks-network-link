@@ -23,7 +23,8 @@ describe('AccountsController', () => {
       const accountRate = AccountsController.getAccountRate(
         validAccountId,
         NationalCurrencyCode.USD,
-        NationalCurrencyCode.EUR
+        NationalCurrencyCode.EUR,
+        false
       );
 
       expect(accountRate).toBeDefined();
@@ -31,15 +32,22 @@ describe('AccountsController', () => {
       expect(accountRate.baseAsset).toBeDefined();
       expect(accountRate.quoteAsset).toBeDefined();
       expect(parseFloat(accountRate.rate)).toBeGreaterThan(0);
-      expect(accountRate.baseAsset).toEqual({ nationalCurrencyCode: NationalCurrencyCode.USD });
-      expect(accountRate.quoteAsset).toEqual({ nationalCurrencyCode: NationalCurrencyCode.EUR });
+      expect(accountRate.baseAsset).toEqual({
+        nationalCurrencyCode: NationalCurrencyCode.USD,
+        testAsset: false,
+      });
+      expect(accountRate.quoteAsset).toEqual({
+        nationalCurrencyCode: NationalCurrencyCode.EUR,
+        testAsset: false,
+      });
     });
 
     it('should return account rate for valid account with cryptocurrency and national currency', () => {
       const accountRate = AccountsController.getAccountRate(
         validAccountId,
         CryptocurrencySymbol.BTC,
-        NationalCurrencyCode.USD
+        NationalCurrencyCode.USD,
+        true
       );
 
       expect(accountRate).toBeDefined();
@@ -47,8 +55,14 @@ describe('AccountsController', () => {
       expect(accountRate.baseAsset).toBeDefined();
       expect(accountRate.quoteAsset).toBeDefined();
       expect(parseFloat(accountRate.rate)).toBeGreaterThan(0);
-      expect(accountRate.baseAsset).toEqual({ cryptocurrencySymbol: CryptocurrencySymbol.BTC });
-      expect(accountRate.quoteAsset).toEqual({ nationalCurrencyCode: NationalCurrencyCode.USD });
+      expect(accountRate.baseAsset).toEqual({
+        cryptocurrencySymbol: CryptocurrencySymbol.BTC,
+        testAsset: true,
+      });
+      expect(accountRate.quoteAsset).toEqual({
+        nationalCurrencyCode: NationalCurrencyCode.USD,
+        testAsset: true,
+      });
     });
 
     it('should return account rate for valid account with custom asset codes', () => {
@@ -58,7 +72,8 @@ describe('AccountsController', () => {
       const accountRate = AccountsController.getAccountRate(
         validAccountId,
         customBaseAsset,
-        customQuoteAsset
+        customQuoteAsset,
+        false
       );
 
       expect(accountRate).toBeDefined();
@@ -66,8 +81,8 @@ describe('AccountsController', () => {
       expect(accountRate.baseAsset).toBeDefined();
       expect(accountRate.quoteAsset).toBeDefined();
       expect(parseFloat(accountRate.rate)).toBeGreaterThan(0);
-      expect(accountRate.baseAsset).toEqual({ assetId: customBaseAsset });
-      expect(accountRate.quoteAsset).toEqual({ assetId: customQuoteAsset });
+      expect(accountRate.baseAsset).toEqual({ assetId: customBaseAsset, testAsset: false });
+      expect(accountRate.quoteAsset).toEqual({ assetId: customQuoteAsset, testAsset: false });
     });
 
     it('should throw AccountNotExistError for non-existent account', () => {
@@ -77,7 +92,8 @@ describe('AccountsController', () => {
         AccountsController.getAccountRate(
           nonExistentAccountId,
           NationalCurrencyCode.USD,
-          NationalCurrencyCode.EUR
+          NationalCurrencyCode.EUR,
+          false
         );
       }).toThrow(AccountNotExistError);
     });

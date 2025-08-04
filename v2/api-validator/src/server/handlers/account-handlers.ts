@@ -3,7 +3,14 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { AccountsController, AccountNotExistError } from '../controllers/accounts-controller';
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { AccountIdPathParam, PaginationQuerystring } from './request-types';
-import { Account, AccountBalancesQueryParam, AccountRate, AssetCode } from '../../client/generated';
+import {
+  Account,
+  AccountBalancesQueryParam,
+  AccountRate,
+  BaseAssetQueryParam,
+  QuoteAssetQueryParam,
+  IsTestnetQueryParam,
+} from '../../client/generated';
 
 type AccountsResponse = { accounts: Account[] };
 type IncludeBalancesQuerystring = {
@@ -14,8 +21,9 @@ type IncludeBalancesQuerystring = {
 
 type AccountRateQuerystring = {
   Querystring: {
-    baseAsset: AssetCode;
-    quoteAsset: AssetCode;
+    baseAsset: BaseAssetQueryParam;
+    quoteAsset: QuoteAssetQueryParam;
+    isTest?: IsTestnetQueryParam;
   };
 };
 
@@ -72,10 +80,10 @@ export async function getAccountRate(
   reply: FastifyReply
 ): Promise<AccountRate> {
   const { accountId } = request.params;
-  const { baseAsset, quoteAsset } = request.query;
+  const { baseAsset, quoteAsset, isTest = false } = request.query;
 
   try {
-    const accountRate = AccountsController.getAccountRate(accountId, baseAsset, quoteAsset);
+    const accountRate = AccountsController.getAccountRate(accountId, baseAsset, quoteAsset, isTest);
     return accountRate;
   } catch (error) {
     if (error instanceof AccountNotExistError) {
