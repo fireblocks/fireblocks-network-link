@@ -5,6 +5,8 @@ import {
   Balances,
   CryptocurrencySymbol,
   NationalCurrencyCode,
+  AccountRate,
+  AssetCode,
 } from '../../client/generated';
 import { fakeSchemaObject } from '../../schemas';
 import { Repository } from './repository';
@@ -12,6 +14,7 @@ import { AssetsController } from './assets-controller';
 import { XComError } from '../../error';
 import { JSONSchemaFaker } from 'json-schema-faker';
 import { isParentAccount } from '../../utils/account-helper';
+import { createAssetReference } from '../../utils/asset-helper';
 import { loadCapabilitiesJson } from './capabilities-loader';
 import { hasCapability } from '../../../tests/utils/capable-accounts';
 
@@ -92,6 +95,26 @@ export class AccountsController {
       throw new AccountNotExistError();
     }
     return result;
+  }
+
+  public static getAccountRate(
+    accountId: string,
+    baseAsset: AssetCode,
+    quoteAsset: AssetCode
+  ): AccountRate {
+    // Check if account exists
+    const account = AccountsController.getSubAccount(accountId);
+    if (!account) {
+      throw new AccountNotExistError();
+    }
+
+    const accountRate = fakeSchemaObject('AccountRate') as AccountRate;
+
+    // Use the helper function to create asset references
+    accountRate.baseAsset = createAssetReference(baseAsset);
+    accountRate.quoteAsset = createAssetReference(quoteAsset);
+
+    return accountRate;
   }
 }
 

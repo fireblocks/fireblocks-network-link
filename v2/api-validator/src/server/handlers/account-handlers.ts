@@ -1,14 +1,21 @@
 import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { AccountsController } from '../controllers/accounts-controller';
+import { AccountsController, AccountNotExistError } from '../controllers/accounts-controller';
 import { getPaginationResult } from '../controllers/pagination-controller';
 import { AccountIdPathParam, PaginationQuerystring } from './request-types';
-import { Account, AccountBalancesQueryParam } from '../../client/generated';
+import { Account, AccountBalancesQueryParam, AccountRate, AssetCode } from '../../client/generated';
 
 type AccountsResponse = { accounts: Account[] };
 type IncludeBalancesQuerystring = {
   Querystring: {
     balances?: AccountBalancesQueryParam;
+  };
+};
+
+type AccountRateQuerystring = {
+  Querystring: {
+    baseAsset: AssetCode;
+    quoteAsset: AssetCode;
   };
 };
 
@@ -58,4 +65,22 @@ export async function getAccountDetails(
   }
 
   return account;
+}
+
+export async function getAccountRate(
+  request: FastifyRequest<AccountRateQuerystring & AccountIdPathParam>,
+  reply: FastifyReply
+): Promise<AccountRate> {
+  const { accountId } = request.params;
+  const { baseAsset, quoteAsset } = request.query;
+
+  try {
+    const accountRate = AccountsController.getAccountRate(accountId, baseAsset, quoteAsset);
+    return accountRate;
+  } catch (error) {
+    if (error instanceof AccountNotExistError) {
+      return ErrorFactory.notFound(reply);
+    }
+    throw error;
+  }
 }

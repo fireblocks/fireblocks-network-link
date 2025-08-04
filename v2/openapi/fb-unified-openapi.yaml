@@ -285,6 +285,61 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/rate:
+    get:
+      operationId: getAccountRate
+      summary: Get account rate
+      description: Returns the rate of the account for the given base and quote assets. The rate is the amount of quote asset that is required to buy 1 unit of the base asset. The rate is expressed in the quote asset decimal places.
+      tags:
+        - accounts
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/BaseAssetQueryParam'
+        - $ref: '#/components/parameters/QuoteAssetQueryParam'
+      responses:
+        '200':
+          description: Account rate.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountRate'
+              examples:
+                usdToEur:
+                  summary: USD to EUR rate
+                  value:
+                    rate: '0.9'
+                    baseAsset:
+                      nationalCurrencyCode: USD
+                    quoteAsset:
+                      nationalCurrencyCode: EUR
+                btcToUsd:
+                  summary: BTC to USD rate
+                  value:
+                    rate: '10000'
+                    baseAsset:
+                      cryptocurrencySymbol: BTC
+                    quoteAsset:
+                      nationalCurrencyCode: USD
+                usdcToUsd:
+                  summary: USDC to USD rate
+                  value:
+                    rate: '1'
+                    baseAsset:
+                      assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                    quoteAsset:
+                      nationalCurrencyCode: USD
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/balances:
     get:
       operationId: getBalances
@@ -2536,6 +2591,20 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/CryptocurrencySymbol'
+    BaseAssetQueryParam:
+      name: baseAsset
+      in: query
+      required: true
+      description: Limits the response to one asset with the provided BaseAsset Cannot be used in conjunction with nationalCurrencyCode or assetId
+      schema:
+        $ref: '#/components/schemas/AssetCode'
+    QuoteAssetQueryParam:
+      name: quoteAsset
+      in: query
+      required: true
+      description: Limits the response to one asset with the provided QuoteAsset Cannot be used in conjunction with nationalCurrencyCode or assetId
+      schema:
+        $ref: '#/components/schemas/AssetCode'
     AccountBalancesQueryParam:
       name: balances
       in: query
@@ -3130,6 +3199,24 @@ components:
               type: string
             addressTag:
               type: string
+    AssetCode:
+      anyOf:
+        - $ref: '#/components/schemas/CryptocurrencySymbol'
+        - $ref: '#/components/schemas/NationalCurrencyCode'
+        - type: string
+    AccountRate:
+      type: object
+      required:
+        - baseAsset
+        - quoteAsset
+        - rate
+      properties:
+        rate:
+          $ref: '#/components/schemas/PositiveAmount'
+        baseAsset:
+          $ref: '#/components/schemas/AssetReference'
+        quoteAsset:
+          $ref: '#/components/schemas/AssetReference'
     AssetReference:
       oneOf:
         - $ref: '#/components/schemas/NationalCurrency'
