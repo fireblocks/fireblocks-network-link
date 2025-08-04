@@ -3,10 +3,21 @@ import {
   AssetCode,
   CryptocurrencySymbol,
   NationalCurrencyCode,
-  NationalCurrency,
-  NativeCryptocurrency,
-  OtherAssetReference,
 } from '../client/generated';
+
+/**
+ * Type guard to check if an AssetCode is a NationalCurrencyCode
+ */
+function isNationalCurrencyCode(assetCode: AssetCode): assetCode is NationalCurrencyCode {
+  return Object.values(NationalCurrencyCode).includes(assetCode as NationalCurrencyCode);
+}
+
+/**
+ * Type guard to check if an AssetCode is a CryptocurrencySymbol
+ */
+function isCryptocurrencySymbol(assetCode: AssetCode): assetCode is CryptocurrencySymbol {
+  return Object.values(CryptocurrencySymbol).includes(assetCode as CryptocurrencySymbol);
+}
 
 /**
  * Creates an AssetReference from an AssetCode value
@@ -14,16 +25,14 @@ import {
  * @returns AssetReference object with the appropriate type
  */
 export function createAssetReference(assetCode: AssetCode): AssetReference {
-  // Check if it's a NationalCurrencyCode
-  if (Object.values(NationalCurrencyCode).includes(assetCode as NationalCurrencyCode)) {
-    return { nationalCurrencyCode: assetCode as NationalCurrencyCode } as NationalCurrency;
+  if (isNationalCurrencyCode(assetCode)) {
+    return { nationalCurrencyCode: assetCode };
   }
 
-  // Check if it's a CryptocurrencySymbol
-  if (Object.values(CryptocurrencySymbol).includes(assetCode as CryptocurrencySymbol)) {
-    return { cryptocurrencySymbol: assetCode as CryptocurrencySymbol } as NativeCryptocurrency;
+  if (isCryptocurrencySymbol(assetCode)) {
+    return { cryptocurrencySymbol: assetCode };
   }
 
   // Otherwise treat as custom asset ID
-  return { assetId: assetCode as string } as OtherAssetReference;
+  return { assetId: assetCode };
 }
