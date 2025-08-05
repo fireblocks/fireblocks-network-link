@@ -31,7 +31,7 @@ describe('Rates', () => {
               accountId,
               baseAsset: base,
               quoteAsset: quote,
-              isTest: false,
+              testAsset: false,
             });
 
             // Validate response structure
@@ -71,7 +71,7 @@ describe('Rates', () => {
             accountId: 'invalid-account-id',
             baseAsset: 'USD',
             quoteAsset: 'EUR',
-            isTest: false,
+            testAsset: false,
           });
           throw new Error('Expected to throw');
         } catch (error) {

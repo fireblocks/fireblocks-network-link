@@ -26,7 +26,7 @@ export class RatesService {
         accountId,
         baseAsset,
         quoteAsset,
-        isTest,
+        testAsset,
     }: {
         /**
          * API authentication key.
@@ -60,7 +60,7 @@ export class RatesService {
         /**
          * Flag to include the testnet assets in the response.
          */
-        isTest?: boolean,
+        testAsset?: boolean,
     }): CancelablePromise<AccountRate> {
         return this.httpRequest.request({
             method: 'GET',
@@ -77,7 +77,7 @@ export class RatesService {
             query: {
                 'baseAsset': baseAsset,
                 'quoteAsset': quoteAsset,
-                'isTest': isTest,
+                'testAsset': testAsset,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,

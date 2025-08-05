@@ -301,7 +301,7 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/BaseAssetQueryParam'
         - $ref: '#/components/parameters/QuoteAssetQueryParam'
-        - $ref: '#/components/parameters/IsTestnetQueryParam'
+        - $ref: '#/components/parameters/TestAssetQueryParam'
       responses:
         '200':
           description: Account rate.
@@ -2607,8 +2607,8 @@ components:
       description: Limits the response to one asset with the provided QuoteAsset Cannot be used in conjunction with nationalCurrencyCode or assetId
       schema:
         $ref: '#/components/schemas/AssetCode'
-    IsTestnetQueryParam:
-      name: isTest
+    TestAssetQueryParam:
+      name: testAsset
       in: query
       description: Flag to include the testnet assets in the response.
       schema:

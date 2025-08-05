@@ -6,4 +6,4 @@
 /**
  * Flag to include the testnet assets in the response.
  */
-export type IsTestnetQueryParam = boolean;
+export type TestAssetQueryParam = boolean;

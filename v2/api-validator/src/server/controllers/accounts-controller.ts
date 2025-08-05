@@ -101,7 +101,7 @@ export class AccountsController {
     accountId: string,
     baseAsset: AssetCode,
     quoteAsset: AssetCode,
-    isTest: boolean
+    testAsset: boolean
   ): AccountRate {
     // Check if account exists
     const account = AccountsController.getSubAccount(accountId);
@@ -112,8 +112,8 @@ export class AccountsController {
     const accountRate = fakeSchemaObject('AccountRate') as AccountRate;
 
     // Use the helper function to create asset references
-    accountRate.baseAsset = createAssetReference(baseAsset, isTest);
-    accountRate.quoteAsset = createAssetReference(quoteAsset, isTest);
+    accountRate.baseAsset = createAssetReference(baseAsset, testAsset);
+    accountRate.quoteAsset = createAssetReference(quoteAsset, testAsset);
     return accountRate;
   }
 }

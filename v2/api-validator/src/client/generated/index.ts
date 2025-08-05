@@ -111,7 +111,6 @@ export { InternalTransferDestinationPolicy } from './models/InternalTransferDest
 export { InternalTransferMethod } from './models/InternalTransferMethod';
 export type { InternalWithdrawal } from './models/InternalWithdrawal';
 export type { InternalWithdrawalRequest } from './models/InternalWithdrawalRequest';
-export type { IsTestnetQueryParam } from './models/IsTestnetQueryParam';
 export { LimitOrderData } from './models/LimitOrderData';
 export { ListOrderQueryParam } from './models/ListOrderQueryParam';
 export type { MarketEntry } from './models/MarketEntry';
@@ -200,6 +199,7 @@ export { SwiftCapability } from './models/SwiftCapability';
 export type { SwiftCode } from './models/SwiftCode';
 export type { SwiftTransfer } from './models/SwiftTransfer';
 export type { SwiftTransferDestination } from './models/SwiftTransferDestination';
+export type { TestAssetQueryParam } from './models/TestAssetQueryParam';
 export type { Transfer } from './models/Transfer';
 export type { TransferCapability } from './models/TransferCapability';
 export { UnauthorizedError } from './models/UnauthorizedError';

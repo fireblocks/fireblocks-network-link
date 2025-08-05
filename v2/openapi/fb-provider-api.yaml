@@ -299,7 +299,7 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/BaseAssetQueryParam'
         - $ref: '#/components/parameters/QuoteAssetQueryParam'
-        - $ref: '#/components/parameters/IsTestnetQueryParam'
+        - $ref: '#/components/parameters/TestAssetQueryParam'
 
       responses:
         '200':
@@ -632,8 +632,8 @@ components:
       schema:
         $ref: '#/components/schemas/AssetCode'
 
-    IsTestnetQueryParam:
-      name: isTest
+    TestAssetQueryParam:
+      name: testAsset
       in: query
       description: >-
         Flag to include the testnet assets in the response.

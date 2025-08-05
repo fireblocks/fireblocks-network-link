@@ -9,7 +9,7 @@ import {
   AccountRate,
   BaseAssetQueryParam,
   QuoteAssetQueryParam,
-  IsTestnetQueryParam,
+  TestAssetQueryParam,
 } from '../../client/generated';
 
 type AccountsResponse = { accounts: Account[] };
@@ -23,7 +23,7 @@ type AccountRateQuerystring = {
   Querystring: {
     baseAsset: BaseAssetQueryParam;
     quoteAsset: QuoteAssetQueryParam;
-    isTest?: IsTestnetQueryParam;
+    testAsset?: TestAssetQueryParam;
   };
 };
 
@@ -80,10 +80,15 @@ export async function getAccountRate(
   reply: FastifyReply
 ): Promise<AccountRate> {
   const { accountId } = request.params;
-  const { baseAsset, quoteAsset, isTest = false } = request.query;
+  const { baseAsset, quoteAsset, testAsset = false } = request.query;
 
   try {
-    const accountRate = AccountsController.getAccountRate(accountId, baseAsset, quoteAsset, isTest);
+    const accountRate = AccountsController.getAccountRate(
+      accountId,
+      baseAsset,
+      quoteAsset,
+      testAsset
+    );
     return accountRate;
   } catch (error) {
     if (error instanceof AccountNotExistError) {
