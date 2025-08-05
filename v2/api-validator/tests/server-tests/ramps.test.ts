@@ -13,6 +13,7 @@ import {
   PostalAddress,
   OffRampProperties,
   OnRampProperties,
+  OrderQuote,
   ParticipantRelationshipType,
   PersonaIdentificationInfo,
   PrefundedBlockchainCapability,
@@ -389,9 +390,9 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         const requestWithQuote: RampRequest = {
           ...rampRequestFromMethod(capability),
           idempotencyKey: randomUUID(),
-          quote: {
+          executionDetails: {
+            type: OrderQuote.type.QUOTE,
             quoteId: 'test-quote-' + randomUUID(),
-            reQuote: false,
             slippage: 0.01,
           },
         };
@@ -401,8 +402,14 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
           requestBody: requestWithQuote,
         });
 
-        expect(response.quote).toBeDefined();
-        expect(response.quote?.quoteId).toBe(requestWithQuote.quote?.quoteId);
+        expect(response.executionDetails).toBeDefined();
+        if (response.executionDetails?.type === OrderQuote.type.QUOTE) {
+          expect(response.executionDetails.quoteId).toBe(
+            (requestWithQuote.executionDetails as OrderQuote)?.quoteId
+          );
+        } else {
+          fail('executionDetails should be of type Quote');
+        }
       });
 
       it('should accept ramp request with participant identification', async () => {

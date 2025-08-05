@@ -17,6 +17,6 @@ export type CommonRamp = {
     amount: PositiveAmount;
     fees?: RampFees;
     participantsIdentification?: ParticipantsIdentification;
-    quote?: OrderQuote;
+    executionDetails?: OrderQuote;
 };
 

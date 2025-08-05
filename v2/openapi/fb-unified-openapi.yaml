@@ -2713,9 +2713,10 @@ components:
                     name: Jane Smith
                     address: 456 Oak Street, London, UK
                   iban: US1234567890
-                quote:
+                executionDetails:
+                  type: Quote
                   quoteId: quote-123456789
-                  reQuote: false
+                  reQuote: Retry
                   slippage: 0.02
                 fees:
                   subAccount: 75
@@ -5619,8 +5620,9 @@ components:
             - $ref: '#/components/schemas/PrefundedBridgeProperties'
         - type: object
           properties:
-            quote:
-              $ref: '#/components/schemas/OrderQuote'
+            executionDetails:
+              oneOf:
+                - $ref: '#/components/schemas/OrderQuote'
         - type: object
           properties:
             participantsIdentification:
@@ -5660,8 +5662,9 @@ components:
           $ref: '#/components/schemas/RampFees'
         participantsIdentification:
           $ref: '#/components/schemas/ParticipantsIdentification'
-        quote:
-          $ref: '#/components/schemas/OrderQuote'
+        executionDetails:
+          oneOf:
+            - $ref: '#/components/schemas/OrderQuote'
     OnRampPropertiesWithPaymentInstructions:
       type: object
       title: On Ramp
@@ -5746,14 +5749,21 @@ components:
     OrderQuote:
       type: object
       required:
+        - type
         - quoteId
       properties:
+        type:
+          type: string
+          enum:
+            - Quote
         quoteId:
           type: string
         reQuote:
-          type: boolean
+          type: string
+          enum:
+            - Retry
+            - Market
           description: If quote is expired, re-generate a new quote.
-          default: false
         slippage:
           type: number
           description: The slippage tolerance for the order.

@@ -14,7 +14,7 @@ import type { PrefundedOffRampProperties } from './PrefundedOffRampProperties';
 import type { PrefundedOnRampProperties } from './PrefundedOnRampProperties';
 
 export type RampRequest = (CommonRampRequestProperties & (OnRampProperties | PrefundedOnRampProperties | OffRampProperties | PrefundedOffRampProperties | BridgeProperties | PrefundedBridgeProperties) & {
-    quote?: OrderQuote;
+    executionDetails?: OrderQuote;
 } & {
     participantsIdentification?: ParticipantsIdentification;
 });
