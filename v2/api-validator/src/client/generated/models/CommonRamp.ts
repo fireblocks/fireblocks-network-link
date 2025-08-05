@@ -3,6 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { OrderQuote } from './OrderQuote';
+import type { ParticipantsIdentification } from './ParticipantsIdentification';
 import type { PositiveAmount } from './PositiveAmount';
 import type { RampFees } from './RampFees';
 import type { RampStatus } from './RampStatus';
@@ -14,5 +16,7 @@ export type CommonRamp = {
     status: RampStatus;
     amount: PositiveAmount;
     fees?: RampFees;
+    participantsIdentification?: ParticipantsIdentification;
+    executionDetails?: OrderQuote;
 };
 
