@@ -928,4 +928,3 @@ components:
         slippage:
           type: number
           description: The slippage tolerance for the order.
-          default: 0.01
