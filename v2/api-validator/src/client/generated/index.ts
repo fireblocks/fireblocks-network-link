@@ -131,6 +131,7 @@ export type { OrderBook } from './models/OrderBook';
 export type { OrderBookPairIdQueryParam } from './models/OrderBookPairIdQueryParam';
 export type { OrderCommonProperties } from './models/OrderCommonProperties';
 export type { OrderData } from './models/OrderData';
+export { OrderQuote } from './models/OrderQuote';
 export type { OrderRequest } from './models/OrderRequest';
 export { OrderSide } from './models/OrderSide';
 export { OrderStatus } from './models/OrderStatus';
