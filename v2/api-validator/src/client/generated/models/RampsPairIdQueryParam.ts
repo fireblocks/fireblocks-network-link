@@ -4,6 +4,6 @@
 /* eslint-disable */
 
 /**
- * Flag to include the testnet assets in the response.
+ * Ramps pair to get the rate for.
  */
-export type TestAssetQueryParam = boolean;
+export type RampsPairIdQueryParam = string;

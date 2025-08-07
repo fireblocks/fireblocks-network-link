@@ -1,84 +1,91 @@
+import { randomUUID } from 'crypto';
 import Client from '../../src/client';
-import { Account, ApiError } from '../../src/client/generated';
+import { ApiError, BadRequestError } from '../../src/client/generated';
+import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
 
-describe('Rates', () => {
+const noRatesCapability = !hasCapability('rates');
+const accountIds = getAllCapableAccountIds('rates');
+
+describe.skipIf(noRatesCapability)('Rates', () => {
   let client: Client;
-  let accountsResponse: { accounts: Account[] };
 
   beforeAll(async () => {
     client = new Client();
-    accountsResponse = await client.accounts.getAccounts({});
   });
-  describe('/accounts/:accountId/rate', () => {
-    let accountId: string;
 
-    beforeAll(() => {
-      accountId = accountsResponse.accounts?.[0]?.id;
-    });
+  describe('Get rate by account and assets', () => {
+    const accountId = accountIds[0];
 
-    describe('Valid requests', () => {
-      const validAssetCombinations = [
-        { base: 'USD', quote: 'EUR', description: 'fiat to fiat' },
-        { base: 'BTC', quote: 'ETH', description: 'cryptocurrency to cryptocurrency' },
-        { base: 'USD', quote: 'BTC', description: 'fiat to cryptocurrency' },
-        { base: 'USD', quote: 'USD', description: 'same asset' },
-      ];
+    if (!accountId) {
+      it('should have at least one account with rates capability', () => {
+        expect.fail('No accounts with rates capability found');
+      });
+      return;
+    }
 
-      describe.each(validAssetCombinations)('$description ($base to $quote)', ({ base, quote }) => {
-        it('should return valid exchange rate', async () => {
-          try {
-            const rateResponse = await client.rates.getAccountRate({
-              accountId,
-              baseAsset: base,
-              quoteAsset: quote,
-              testAsset: false,
-            });
-
-            // Validate response structure
-            expect(rateResponse.rate).toBeDefined();
-            expect(typeof rateResponse.rate).toBe('string');
-
-            expect(rateResponse.baseAsset).toBeDefined();
-            expect(typeof rateResponse.baseAsset).toBe('object');
-
-            expect(rateResponse.quoteAsset).toBeDefined();
-            expect(typeof rateResponse.quoteAsset).toBe('object');
-
-            // Validate asset references match requested assets
-            if ('assetId' in rateResponse.baseAsset) {
-              expect(rateResponse.baseAsset.assetId).toBe(base);
-            } else if ('nationalCurrencyCode' in rateResponse.baseAsset) {
-              expect(rateResponse.baseAsset.nationalCurrencyCode).toBe(base);
-            }
-
-            if ('assetId' in rateResponse.quoteAsset) {
-              expect(rateResponse.quoteAsset.assetId).toBe(quote);
-            } else if ('nationalCurrencyCode' in rateResponse.quoteAsset) {
-              expect(rateResponse.quoteAsset.nationalCurrencyCode).toBe(quote);
-            }
-          } catch (error) {
-            console.error(`Rate validation error for ${base} to ${quote}:`, error);
-            throw error;
-          }
+    describe('Successful rate retrieval', () => {
+      it('should return rate for conversion pair ID', async () => {
+        const conversionPairId = randomUUID();
+        const response = await client.rates.getRateByAccountAndAssets({
+          accountId,
+          conversionPairId,
+          rampsPairId: '',
+          orderBookPairId: '',
         });
+
+        expect(response).toHaveProperty('rate');
+        expect(response).toHaveProperty('timestamp');
+        expect(typeof response.rate).toBe('string');
+        expect(typeof response.timestamp).toBe('number');
+      });
+
+      it('should return rate for ramps pair ID', async () => {
+        const rampsPairId = randomUUID();
+        const response = await client.rates.getRateByAccountAndAssets({
+          accountId,
+          conversionPairId: '',
+          rampsPairId,
+          orderBookPairId: '',
+        });
+
+        expect(response).toHaveProperty('rate');
+        expect(response).toHaveProperty('timestamp');
+        expect(typeof response.rate).toBe('string');
+        expect(typeof response.timestamp).toBe('number');
+      });
+
+      it('should return rate for order book pair ID', async () => {
+        const orderBookPairId = randomUUID();
+        const response = await client.rates.getRateByAccountAndAssets({
+          accountId,
+          conversionPairId: '',
+          rampsPairId: '',
+          orderBookPairId,
+        });
+
+        expect(response).toHaveProperty('rate');
+        expect(response).toHaveProperty('timestamp');
+        expect(typeof response.rate).toBe('string');
+        expect(typeof response.timestamp).toBe('number');
       });
     });
 
-    describe('Error cases', () => {
-      it('should return 404 error for invalid account ID', async () => {
+    describe('Error handling', () => {
+      it('should fail when no pair ID is provided', async () => {
         try {
-          await client.rates.getAccountRate({
-            accountId: 'invalid-account-id',
-            baseAsset: 'USD',
-            quoteAsset: 'EUR',
-            testAsset: false,
+          await client.rates.getRateByAccountAndAssets({
+            accountId,
+            conversionPairId: '',
+            rampsPairId: '',
+            orderBookPairId: '',
           });
-          throw new Error('Expected to throw');
-        } catch (error) {
-          if (error instanceof ApiError) {
-            expect(error.status).toBe(404);
+          expect.fail('Expected to throw');
+        } catch (err) {
+          if (err instanceof ApiError) {
+            expect(err.status).toBe(400);
+            expect(err.body.errorType).toBe(BadRequestError.errorType.BAD_REQUEST);
           } else {
-            throw error;
+            throw err;
           }
         }
       });

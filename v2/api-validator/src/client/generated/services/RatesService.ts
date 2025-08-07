@@ -2,8 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AccountRate } from '../models/AccountRate';
-import type { AssetCode } from '../models/AssetCode';
+import type { Rate } from '../models/Rate';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
@@ -13,20 +12,19 @@ export class RatesService {
     constructor(public readonly httpRequest: BaseHttpRequest) {}
 
     /**
-     * Get account rate
-     * Returns the rate of the account for the given base and quote assets. The rate is the amount of quote asset that is required to buy 1 unit of the base asset. The rate is expressed in the quote asset decimal places.
-     * @returns AccountRate Account rate.
+     * Get rate by account and assets
+     * @returns Rate Rate by pair id.
      * @throws ApiError
      */
-    public getAccountRate({
+    public getRateByAccountAndAssets({
         xFbapiKey,
         xFbapiNonce,
         xFbapiTimestamp,
         xFbapiSignature,
         accountId,
-        baseAsset,
-        quoteAsset,
-        testAsset,
+        conversionPairId,
+        rampsPairId,
+        orderBookPairId,
     }: {
         /**
          * API authentication key.
@@ -50,18 +48,18 @@ export class RatesService {
          */
         accountId: string,
         /**
-         * Limits the response to one asset with the provided BaseAsset Cannot be used in conjunction with nationalCurrencyCode or assetId
+         * Conversion pair to get the rate for.
          */
-        baseAsset: AssetCode,
+        conversionPairId?: string,
         /**
-         * Limits the response to one asset with the provided QuoteAsset Cannot be used in conjunction with nationalCurrencyCode or assetId
+         * Ramps pair to get the rate for.
          */
-        quoteAsset: AssetCode,
+        rampsPairId?: string,
         /**
-         * Flag to include the testnet assets in the response.
+         * Order book pair to get the rate for.
          */
-        testAsset?: boolean,
-    }): CancelablePromise<AccountRate> {
+        orderBookPairId?: string,
+    }): CancelablePromise<Rate> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/rate',
@@ -75,9 +73,9 @@ export class RatesService {
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
             },
             query: {
-                'baseAsset': baseAsset,
-                'quoteAsset': quoteAsset,
-                'testAsset': testAsset,
+                'conversionPairId': conversionPairId,
+                'rampsPairId': rampsPairId,
+                'orderBookPairId': orderBookPairId,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,

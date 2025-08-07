@@ -5,8 +5,7 @@ import {
   Balances,
   CryptocurrencySymbol,
   NationalCurrencyCode,
-  AccountRate,
-  AssetCode,
+  Rate,
 } from '../../client/generated';
 import { fakeSchemaObject } from '../../schemas';
 import { Repository } from './repository';
@@ -14,7 +13,7 @@ import { AssetsController } from './assets-controller';
 import { XComError } from '../../error';
 import { JSONSchemaFaker } from 'json-schema-faker';
 import { isParentAccount } from '../../utils/account-helper';
-import { createAssetReference } from '../../utils/asset-helper';
+
 import { loadCapabilitiesJson } from './capabilities-loader';
 import { hasCapability } from '../../../tests/utils/capable-accounts';
 
@@ -23,6 +22,12 @@ const SUB_ACCOUNT_COUNT = 10;
 export class AccountNotExistError extends XComError {
   constructor() {
     super('Account does not exist');
+  }
+}
+
+export class RateBadRequestError extends XComError {
+  constructor() {
+    super('Rate pair id is required');
   }
 }
 
@@ -97,24 +102,43 @@ export class AccountsController {
     return result;
   }
 
-  public static getAccountRate(
+  public static getRateByPairId(
     accountId: string,
-    baseAsset: AssetCode,
-    quoteAsset: AssetCode,
-    testAsset: boolean
-  ): AccountRate {
-    // Check if account exists
+    pairId: string,
+    pairType: 'conversion' | 'ramps' | 'orderBook'
+  ): Rate {
+    // Check if account exists first
     const account = AccountsController.getSubAccount(accountId);
     if (!account) {
       throw new AccountNotExistError();
     }
+    if (!pairId) {
+      throw new RateBadRequestError();
+    }
 
-    const accountRate = fakeSchemaObject('AccountRate') as AccountRate;
+    // Generate different rates based on the pair type
+    let rateValue: string;
 
-    // Use the helper function to create asset references
-    accountRate.baseAsset = createAssetReference(baseAsset, testAsset);
-    accountRate.quoteAsset = createAssetReference(quoteAsset, testAsset);
-    return accountRate;
+    switch (pairType) {
+      case 'conversion':
+        rateValue = '1.25';
+        break;
+      case 'ramps':
+        rateValue = '45000.00';
+        break;
+      case 'orderBook':
+        rateValue = '0.85';
+        break;
+      default:
+        rateValue = '1.0';
+    }
+
+    const rate: Rate = {
+      rate: rateValue,
+      timestamp: Date.now(),
+    };
+
+    return rate;
   }
 }
 

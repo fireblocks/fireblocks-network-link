@@ -1,8 +1,8 @@
 import {
   AccountsController,
   AccountNotExistError,
+  RateBadRequestError,
 } from '../../src/server/controllers/accounts-controller';
-import { CryptocurrencySymbol, NationalCurrencyCode } from '../../src/client/generated';
 
 describe('AccountsController', () => {
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('AccountsController', () => {
     AccountsController.loadAccounts();
   });
 
-  describe('getAccountRate', () => {
+  describe('getRateByPairId', () => {
     let validAccountId: string;
 
     beforeEach(() => {
@@ -19,83 +19,76 @@ describe('AccountsController', () => {
       validAccountId = accounts[0]?.id;
     });
 
-    it('should return account rate for valid account with national currencies', () => {
-      const accountRate = AccountsController.getAccountRate(
-        validAccountId,
-        NationalCurrencyCode.USD,
-        NationalCurrencyCode.EUR,
-        false
-      );
+    it('should return rate for valid account with valid pair ID', () => {
+      const pairId = 'USD-EUR';
+      const rate = AccountsController.getRateByPairId(validAccountId, pairId, 'conversion');
 
-      expect(accountRate).toBeDefined();
-      expect(accountRate.rate).toBeDefined();
-      expect(accountRate.baseAsset).toBeDefined();
-      expect(accountRate.quoteAsset).toBeDefined();
-      expect(parseFloat(accountRate.rate)).toBeGreaterThan(0);
-      expect(accountRate.baseAsset).toEqual({
-        nationalCurrencyCode: NationalCurrencyCode.USD,
-        testAsset: false,
-      });
-      expect(accountRate.quoteAsset).toEqual({
-        nationalCurrencyCode: NationalCurrencyCode.EUR,
-        testAsset: false,
-      });
+      expect(rate).toBeDefined();
+      expect(rate.rate).toBeDefined();
+      expect(rate.timestamp).toBeDefined();
+      expect(parseFloat(rate.rate)).toBeGreaterThan(0);
+      expect(typeof rate.timestamp).toBe('number');
     });
 
-    it('should return account rate for valid account with cryptocurrency and national currency', () => {
-      const accountRate = AccountsController.getAccountRate(
-        validAccountId,
-        CryptocurrencySymbol.BTC,
-        NationalCurrencyCode.USD,
-        true
-      );
+    it('should return rate for valid account with cryptocurrency pair ID', () => {
+      const pairId = 'BTC-USD';
+      const rate = AccountsController.getRateByPairId(validAccountId, pairId, 'conversion');
 
-      expect(accountRate).toBeDefined();
-      expect(accountRate.rate).toBeDefined();
-      expect(accountRate.baseAsset).toBeDefined();
-      expect(accountRate.quoteAsset).toBeDefined();
-      expect(parseFloat(accountRate.rate)).toBeGreaterThan(0);
-      expect(accountRate.baseAsset).toEqual({
-        cryptocurrencySymbol: CryptocurrencySymbol.BTC,
-        testAsset: true,
-      });
-      expect(accountRate.quoteAsset).toEqual({
-        nationalCurrencyCode: NationalCurrencyCode.USD,
-        testAsset: true,
-      });
+      expect(rate).toBeDefined();
+      expect(rate.rate).toBeDefined();
+      expect(rate.timestamp).toBeDefined();
+      expect(parseFloat(rate.rate)).toBeGreaterThan(0);
+      expect(typeof rate.timestamp).toBe('number');
     });
 
-    it('should return account rate for valid account with custom asset codes', () => {
-      const customBaseAsset = 'CUSTOM_BASE';
-      const customQuoteAsset = 'CUSTOM_QUOTE';
+    it('should return rate for valid account with custom pair ID', () => {
+      const pairId = 'CUSTOM_BASE-CUSTOM_QUOTE';
+      const rate = AccountsController.getRateByPairId(validAccountId, pairId, 'conversion');
 
-      const accountRate = AccountsController.getAccountRate(
+      expect(rate).toBeDefined();
+      expect(rate.rate).toBeDefined();
+      expect(rate.timestamp).toBeDefined();
+      expect(parseFloat(rate.rate)).toBeGreaterThan(0);
+      expect(typeof rate.timestamp).toBe('number');
+    });
+
+    it('should return different rates for different pair types', () => {
+      const pairId = 'USD-EUR';
+
+      const conversionRate = AccountsController.getRateByPairId(
         validAccountId,
-        customBaseAsset,
-        customQuoteAsset,
-        false
+        pairId,
+        'conversion'
       );
+      const rampsRate = AccountsController.getRateByPairId(validAccountId, pairId, 'ramps');
+      const orderBookRate = AccountsController.getRateByPairId(validAccountId, pairId, 'orderBook');
 
-      expect(accountRate).toBeDefined();
-      expect(accountRate.rate).toBeDefined();
-      expect(accountRate.baseAsset).toBeDefined();
-      expect(accountRate.quoteAsset).toBeDefined();
-      expect(parseFloat(accountRate.rate)).toBeGreaterThan(0);
-      expect(accountRate.baseAsset).toEqual({ assetId: customBaseAsset, testAsset: false });
-      expect(accountRate.quoteAsset).toEqual({ assetId: customQuoteAsset, testAsset: false });
+      expect(conversionRate.rate).toBe('1.25');
+      expect(rampsRate.rate).toBe('45000.00');
+      expect(orderBookRate.rate).toBe('0.85');
     });
 
     it('should throw AccountNotExistError for non-existent account', () => {
       const nonExistentAccountId = 'non-existent-account-id';
+      const pairId = 'USD-EUR';
 
       expect(() => {
-        AccountsController.getAccountRate(
-          nonExistentAccountId,
-          NationalCurrencyCode.USD,
-          NationalCurrencyCode.EUR,
-          false
-        );
+        AccountsController.getRateByPairId(nonExistentAccountId, pairId, 'conversion');
       }).toThrow(AccountNotExistError);
+    });
+
+    it('should throw RateBadRequestError for empty pair ID', () => {
+      const emptyPairId = '';
+
+      expect(() => {
+        AccountsController.getRateByPairId(validAccountId, emptyPairId, 'conversion');
+      }).toThrow(RateBadRequestError);
+    });
+
+    it('should throw RateBadRequestError for undefined pair ID', () => {
+      expect(() => {
+        AccountsController.getRateByPairId(validAccountId, undefined as any, 'conversion');
+      }).toThrow(RateBadRequestError);
     });
   });
 });
