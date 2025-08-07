@@ -101,15 +101,12 @@ export async function getRateByAccountAndPairId(
     if (conversionPairId && conversionPairId.trim() !== '') {
       pairId = conversionPairId;
       type = 'conversion';
-      console.log('conversionPairId', conversionPairId);
     } else if (rampsPairId && rampsPairId.trim() !== '') {
       pairId = rampsPairId;
       type = 'ramps';
-      console.log('rampsPairId', rampsPairId);
     } else if (orderBookPairId && orderBookPairId.trim() !== '') {
       pairId = orderBookPairId;
       type = 'orderBook';
-      console.log('orderBookPairId', orderBookPairId);
     } else {
       const errorData: BadRequestError = {
         message: 'One of conversionPairId, rampsPairId, or orderBookPairId must be provided',

@@ -10,6 +10,6 @@
     "transfersPeerAccounts": "*",
     "trading": "*",
     "liquidity": "*",
-    "rates": ["*"]
+    "rates": "*"
   }
 }
