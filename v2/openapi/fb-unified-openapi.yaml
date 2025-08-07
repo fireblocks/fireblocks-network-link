@@ -25,6 +25,8 @@ tags:
     description: Balances management operations.
   - name: historicBalances
     description: Historic balances operations.
+  - name: rates
+    description: Rates operations.
   - name: liquidity
     description: Liquidity operations
   - name: trading

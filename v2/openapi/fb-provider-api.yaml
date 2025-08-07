@@ -29,7 +29,8 @@ tags:
     description: Balances management operations.
   - name: historicBalances
     description: Historic balances operations.
-
+  - name: rates
+    description: Rates operations.
 paths:
   /capabilities:
     get:
