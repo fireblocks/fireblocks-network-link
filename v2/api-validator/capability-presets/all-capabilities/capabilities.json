@@ -9,6 +9,7 @@
     "transfersFiat": "*",
     "transfersPeerAccounts": "*",
     "trading": "*",
-    "liquidity": "*"
+    "liquidity": "*",
+    "rates": "*"
   }
 }
