@@ -16,7 +16,7 @@ export class RatesService {
      * @returns Rate Rate by pair id.
      * @throws ApiError
      */
-    public getRateByAccountAndAssets({
+    public getRateByAccountAndPairId({
         xFbapiKey,
         xFbapiNonce,
         xFbapiTimestamp,

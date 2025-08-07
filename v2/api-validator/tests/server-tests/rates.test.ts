@@ -26,7 +26,7 @@ describe.skipIf(noRatesCapability)('Rates', () => {
     describe('Successful rate retrieval', () => {
       it('should return rate for conversion pair ID', async () => {
         const conversionPairId = randomUUID();
-        const response = await client.rates.getRateByAccountAndAssets({
+        const response = await client.rates.getRateByAccountAndPairId({
           accountId,
           conversionPairId,
           rampsPairId: '',
@@ -41,7 +41,7 @@ describe.skipIf(noRatesCapability)('Rates', () => {
 
       it('should return rate for ramps pair ID', async () => {
         const rampsPairId = randomUUID();
-        const response = await client.rates.getRateByAccountAndAssets({
+        const response = await client.rates.getRateByAccountAndPairId({
           accountId,
           conversionPairId: '',
           rampsPairId,
@@ -56,7 +56,7 @@ describe.skipIf(noRatesCapability)('Rates', () => {
 
       it('should return rate for order book pair ID', async () => {
         const orderBookPairId = randomUUID();
-        const response = await client.rates.getRateByAccountAndAssets({
+        const response = await client.rates.getRateByAccountAndPairId({
           accountId,
           conversionPairId: '',
           rampsPairId: '',
@@ -73,7 +73,7 @@ describe.skipIf(noRatesCapability)('Rates', () => {
     describe('Error handling', () => {
       it('should fail when no pair ID is provided', async () => {
         try {
-          await client.rates.getRateByAccountAndAssets({
+          await client.rates.getRateByAccountAndPairId({
             accountId,
             conversionPairId: '',
             rampsPairId: '',

@@ -80,7 +80,7 @@ export async function getAccountDetails(
   return account;
 }
 
-export async function getRateByAccountAndAssets(
+export async function getRateByAccountAndPairId(
   request: FastifyRequest<AccountRateQuerystring & AccountIdPathParam>,
   reply: FastifyReply
 ): Promise<Rate> {

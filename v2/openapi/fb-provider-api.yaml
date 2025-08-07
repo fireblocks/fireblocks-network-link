@@ -286,7 +286,7 @@ paths:
   
   /accounts/{accountId}/rate:
     get:
-      operationId: getRateByAccountAndAssets
+      operationId: getRateByAccountAndPairId
       summary: Get rate by account and assets
       tags: [ rates ]
       parameters:
