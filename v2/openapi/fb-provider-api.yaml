@@ -282,37 +282,34 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         '5XX':
           $ref: '#/components/responses/ErrorResponse'
+  
   /accounts/{accountId}/rate:
     get:
-      operationId: getAccountRate
-      summary: Get account rate
-      description: >-
-        Returns the rate of the account for the given base and quote assets.
-        The rate is the amount of quote asset that is required to buy 1 unit of the base asset.
-        The rate is expressed in the quote asset decimal places.
-      tags: [rates]
+      operationId: getRateByAccountAndAssets
+      summary: Get rate by account and assets
+      tags: [ rates ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
-        - $ref: '#/components/parameters/BaseAssetQueryParam'
-        - $ref: '#/components/parameters/QuoteAssetQueryParam'
-        - $ref: '#/components/parameters/TestAssetQueryParam'
-
+        - $ref: '#/components/parameters/ConversionPairIdQueryParam'
+        - $ref: '#/components/parameters/RampsPairIdQueryParam'
+        - $ref: '#/components/parameters/OrderBookPairIdQueryParam'
       responses:
         '200':
-          description: Account rate.
+          description: Rate by pair id.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AccountRate'
+                $ref: '#/components/schemas/Rate'
               examples:
                 usdToEur:
                   summary: USD to EUR rate
                   value:
                     rate: "0.9"
+                    timestamp: 1546658861000
                     baseAsset: {
                       nationalCurrencyCode: "USD" 
                     }
@@ -323,6 +320,7 @@ paths:
                   summary: BTC to USD rate    
                   value:
                     rate: "10000"
+                    timestamp: 1546658861000
                     baseAsset: {
                       cryptocurrencySymbol: "BTC"
                     }
@@ -333,6 +331,7 @@ paths:
                   summary: USDC to USD rate
                   value:
                     rate: "1" 
+                    timestamp: 1546658861000
                     baseAsset: {
                       assetId: "360de0ad-9ba1-45d5-8074-22453f193d65"
                     }
@@ -347,6 +346,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         '5XX':
           $ref: '#/components/responses/ErrorResponse'
+
   /accounts/{accountId}/balances:
     get:
       operationId: getBalances
@@ -612,33 +612,30 @@ components:
       schema:
         $ref: '#/components/schemas/CryptocurrencySymbol'
 
-    BaseAssetQueryParam:
-      name: baseAsset
+    ConversionPairIdQueryParam:
+      name: conversionPairId
       in: query
-      required: true
       description: >-
-        Limits the response to one asset with the provided BaseAsset
-        Cannot be used in conjunction with nationalCurrencyCode or assetId
+        Conversion pair to get the rate for.
       schema:
-        $ref: '#/components/schemas/AssetCode'
+        type: string
 
-    QuoteAssetQueryParam:
-      name: quoteAsset
+    RampsPairIdQueryParam:
+      name: rampsPairId
       in: query
-      required: true
       description: >-
-        Limits the response to one asset with the provided QuoteAsset
-        Cannot be used in conjunction with nationalCurrencyCode or assetId
+        Ramps pair to get the rate for.
       schema:
-        $ref: '#/components/schemas/AssetCode'
+        type: string
 
-    TestAssetQueryParam:
-      name: testAsset
+    OrderBookPairIdQueryParam:
+      name: orderBookPairId
       in: query
       description: >-
-        Flag to include the testnet assets in the response.
+        Order book pair to get the rate for.
       schema:
-        type: boolean
+        type: string
+
 
     AccountBalancesQueryParam:
       name: balances
@@ -1026,22 +1023,12 @@ components:
             addressTag:
               type: string
 
-    AssetCode:
-      anyOf:
-        - $ref: '#/components/schemas/CryptocurrencySymbol'
-        - $ref: '#/components/schemas/NationalCurrencyCode'
-        - type: string
-
-    AccountRate:
+    Rate:
       type: object
-      required: [ baseAsset, quoteAsset, rate]
+      required: [ rate, timestamp ]
       properties:
         rate:
-          $ref: '#/components/schemas/PositiveAmount'
-        baseAsset:
-          $ref: '#/components/schemas/AssetReference'
-        quoteAsset:
-          $ref: '#/components/schemas/AssetReference'
+          type: string
         timestamp:
           type: number
           format: UNIX-timestamp-epoch
