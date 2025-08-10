@@ -29,7 +29,8 @@ tags:
     description: Balances management operations.
   - name: historicBalances
     description: Historic balances operations.
-
+  - name: rates
+    description: Rates operations.
 paths:
   /capabilities:
     get:
@@ -72,6 +73,7 @@ paths:
                       liquidity: "*"
                       collateral: "*"
                       ramps: "*"
+                      rates: "*"
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:
@@ -281,6 +283,70 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         '5XX':
           $ref: '#/components/responses/ErrorResponse'
+  
+  /accounts/{accountId}/rate:
+    get:
+      operationId: getRateByAccountAndPairId
+      summary: Get rate by account and assets
+      tags: [ rates ]
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/ConversionPairIdQueryParam'
+        - $ref: '#/components/parameters/RampsPairIdQueryParam'
+        - $ref: '#/components/parameters/OrderBookPairIdQueryParam'
+      responses:
+        '200':
+          description: Rate by pair id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rate'
+              examples:
+                usdToEur:
+                  summary: USD to EUR rate
+                  value:
+                    rate: "0.9"
+                    timestamp: 1546658861000
+                    baseAsset: {
+                      nationalCurrencyCode: "USD" 
+                    }
+                    quoteAsset: {
+                      nationalCurrencyCode: "EUR"
+                    }
+                btcToUsd:
+                  summary: BTC to USD rate    
+                  value:
+                    rate: "10000"
+                    timestamp: 1546658861000
+                    baseAsset: {
+                      cryptocurrencySymbol: "BTC"
+                    }
+                    quoteAsset: {   
+                      nationalCurrencyCode: "USD"
+                    }
+                usdcToUsd:
+                  summary: USDC to USD rate
+                  value:
+                    rate: "1" 
+                    timestamp: 1546658861000
+                    baseAsset: {
+                      assetId: "360de0ad-9ba1-45d5-8074-22453f193d65"
+                    }
+                    quoteAsset: {
+                      nationalCurrencyCode: "USD"
+                    }
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/components/responses/ErrorResponse'
+        '5XX':
+          $ref: '#/components/responses/ErrorResponse'
 
   /accounts/{accountId}/balances:
     get:
@@ -467,7 +533,6 @@ components:
       description: Entity unique identifier.
       schema:
         type: string
-
     SubAccountIdPathParam:
       name: accountId
       in: path
@@ -547,6 +612,31 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/CryptocurrencySymbol'
+
+    ConversionPairIdQueryParam:
+      name: conversionPairId
+      in: query
+      description: >-
+        Conversion pair to get the rate for.
+      schema:
+        type: string
+
+    RampsPairIdQueryParam:
+      name: rampsPairId
+      in: query
+      description: >-
+        Ramps pair to get the rate for.
+      schema:
+        type: string
+
+    OrderBookPairIdQueryParam:
+      name: orderBookPairId
+      in: query
+      description: >-
+        Order book pair to get the rate for.
+      schema:
+        type: string
+
 
     AccountBalancesQueryParam:
       name: balances
@@ -714,6 +804,8 @@ components:
         collateral:
           $ref: '#/components/schemas/AccountsSet'
         ramps:
+          $ref: '#/components/schemas/AccountsSet'
+        rates:
           $ref: '#/components/schemas/AccountsSet'
 
     AccountsSet:
@@ -931,6 +1023,18 @@ components:
               type: string
             addressTag:
               type: string
+
+    Rate:
+      type: object
+      required: [ rate, timestamp ]
+      properties:
+        rate:
+          type: string
+        timestamp:
+          type: number
+          format: UNIX-timestamp-epoch
+          description: "In Milliseconds. The timestamp on the creation of the rate."
+          example: 1546658861000
 
     AssetReference:
       oneOf:
