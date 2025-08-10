@@ -4,7 +4,7 @@ import {
   RateBadRequestError,
 } from '../../src/server/controllers/accounts-controller';
 
-describe('AccountsController', () => {
+describe('accounts-controller.ts: get rate', () => {
   beforeEach(() => {
     // Load accounts before each test
     AccountsController.loadAccounts();
@@ -20,7 +20,7 @@ describe('AccountsController', () => {
     });
 
     it('should return rate for valid account with valid pair ID', () => {
-      const pairId = 'USD-EUR';
+      const pairId = '550e8400-e29b-41d4-a716-446655440000';
       const rate = AccountsController.getRateByPairId(validAccountId, pairId, 'conversion');
 
       expect(rate).toBeDefined();
@@ -31,7 +31,7 @@ describe('AccountsController', () => {
     });
 
     it('should return rate for valid account with cryptocurrency pair ID', () => {
-      const pairId = 'BTC-USD';
+      const pairId = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
       const rate = AccountsController.getRateByPairId(validAccountId, pairId, 'conversion');
 
       expect(rate).toBeDefined();
@@ -42,7 +42,7 @@ describe('AccountsController', () => {
     });
 
     it('should return rate for valid account with custom pair ID', () => {
-      const pairId = 'CUSTOM_BASE-CUSTOM_QUOTE';
+      const pairId = '7c9e6679-7425-40de-944b-e07fc1f90ae7';
       const rate = AccountsController.getRateByPairId(validAccountId, pairId, 'conversion');
 
       expect(rate).toBeDefined();
@@ -53,7 +53,7 @@ describe('AccountsController', () => {
     });
 
     it('should return different rates for different pair types', () => {
-      const pairId = 'USD-EUR';
+      const pairId = '550e8400-e29b-41d4-a716-446655440000';
 
       const conversionRate = AccountsController.getRateByPairId(
         validAccountId,
@@ -70,7 +70,7 @@ describe('AccountsController', () => {
 
     it('should throw AccountNotExistError for non-existent account', () => {
       const nonExistentAccountId = 'non-existent-account-id';
-      const pairId = 'USD-EUR';
+      const pairId = '550e8400-e29b-41d4-a716-446655440000';
 
       expect(() => {
         AccountsController.getRateByPairId(nonExistentAccountId, pairId, 'conversion');
@@ -88,6 +88,22 @@ describe('AccountsController', () => {
     it('should throw RateBadRequestError for undefined pair ID', () => {
       expect(() => {
         AccountsController.getRateByPairId(validAccountId, undefined as any, 'conversion');
+      }).toThrow(RateBadRequestError);
+    });
+
+    it('should throw RateBadRequestError for invalid pair type', () => {
+      const pairId = '550e8400-e29b-41d4-a716-446655440000';
+
+      expect(() => {
+        AccountsController.getRateByPairId(validAccountId, pairId, 'invalid' as any);
+      }).toThrow(RateBadRequestError);
+    });
+
+    it('should throw RateBadRequestError for undefined pair type', () => {
+      const pairId = '550e8400-e29b-41d4-a716-446655440000';
+
+      expect(() => {
+        AccountsController.getRateByPairId(validAccountId, pairId, undefined as any);
       }).toThrow(RateBadRequestError);
     });
   });

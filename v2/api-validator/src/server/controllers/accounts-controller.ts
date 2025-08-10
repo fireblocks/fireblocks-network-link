@@ -130,7 +130,7 @@ export class AccountsController {
         rateValue = '0.85';
         break;
       default:
-        rateValue = '1.0';
+        throw new RateBadRequestError();
     }
 
     const rate: Rate = {
