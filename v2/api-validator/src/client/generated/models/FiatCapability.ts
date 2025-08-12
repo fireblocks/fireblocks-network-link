@@ -5,14 +5,14 @@
 
 import type { AbaCapability } from './AbaCapability';
 import type { AchCapability } from './AchCapability';
+import type { EuropeanSEPACapability } from './EuropeanSEPACapability';
 import type { IbanCapability } from './IbanCapability';
 import type { LocalBankTransferCapability } from './LocalBankTransferCapability';
 import type { MobileMoneyCapability } from './MobileMoneyCapability';
 import type { PixCapability } from './PixCapability';
-import type { SepaCapability } from './SepaCapability';
 import type { SpeiCapability } from './SpeiCapability';
 import type { SwiftCapability } from './SwiftCapability';
 import type { WireCapability } from './WireCapability';
 
-export type FiatCapability = (IbanCapability | SwiftCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | SepaCapability | LocalBankTransferCapability | MobileMoneyCapability | AbaCapability);
+export type FiatCapability = (IbanCapability | SwiftCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | EuropeanSEPACapability | LocalBankTransferCapability | MobileMoneyCapability | AbaCapability);
 

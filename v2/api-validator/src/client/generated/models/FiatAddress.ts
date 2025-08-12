@@ -5,14 +5,14 @@
 
 import type { AbaAddress } from './AbaAddress';
 import type { AchAddress } from './AchAddress';
+import type { EuropeanSEPAAddress } from './EuropeanSEPAAddress';
 import type { IbanAddress } from './IbanAddress';
 import type { LocalBankTransferAddress } from './LocalBankTransferAddress';
 import type { MobileMoneyAddress } from './MobileMoneyAddress';
 import type { PixAddress } from './PixAddress';
-import type { SepaAddress } from './SepaAddress';
 import type { SpeiAddress } from './SpeiAddress';
 import type { SwiftAddress } from './SwiftAddress';
 import type { WireAddress } from './WireAddress';
 
-export type FiatAddress = (IbanAddress | SwiftAddress | AchAddress | WireAddress | SpeiAddress | PixAddress | SepaAddress | LocalBankTransferAddress | MobileMoneyAddress | AbaAddress);
+export type FiatAddress = (IbanAddress | SwiftAddress | AchAddress | WireAddress | SpeiAddress | PixAddress | EuropeanSEPAAddress | LocalBankTransferAddress | MobileMoneyAddress | AbaAddress);
 

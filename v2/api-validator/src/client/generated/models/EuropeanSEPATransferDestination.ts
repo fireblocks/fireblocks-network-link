@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { EuropeanSEPAAddress } from './EuropeanSEPAAddress';
 import type { PositiveAmount } from './PositiveAmount';
-import type { SepaAddress } from './SepaAddress';
 
-export type SepaTransferDestination = (SepaAddress & {
+export type EuropeanSEPATransferDestination = (EuropeanSEPAAddress & {
     amount: PositiveAmount;
 });
 

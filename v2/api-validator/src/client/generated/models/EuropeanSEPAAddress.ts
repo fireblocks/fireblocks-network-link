@@ -4,10 +4,10 @@
 /* eslint-disable */
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
+import type { EuropeanSEPACapability } from './EuropeanSEPACapability';
 import type { Iban } from './Iban';
-import type { SepaCapability } from './SepaCapability';
 
-export type SepaAddress = (SepaCapability & {
+export type EuropeanSEPAAddress = (EuropeanSEPACapability & {
     accountHolder: AccountHolderDetails;
     iban: Iban;
     /**

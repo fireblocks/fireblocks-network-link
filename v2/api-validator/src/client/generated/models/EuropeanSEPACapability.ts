@@ -5,15 +5,15 @@
 
 import type { NationalCurrency } from './NationalCurrency';
 
-export type SepaCapability = {
+export type EuropeanSEPACapability = {
     asset: NationalCurrency;
-    transferMethod: SepaCapability.transferMethod;
+    transferMethod: EuropeanSEPACapability.transferMethod;
 };
 
-export namespace SepaCapability {
+export namespace EuropeanSEPACapability {
 
     export enum transferMethod {
-        SEPA = 'Sepa',
+        IBAN = 'iban',
     }
 
 

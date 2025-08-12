@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { SepaTransferDestination } from './SepaTransferDestination';
+import type { EuropeanSEPATransferDestination } from './EuropeanSEPATransferDestination';
 
-export type SepaTransfer = (SepaTransferDestination & {
+export type EuropeanSEPATransfer = (EuropeanSEPATransferDestination & {
     referenceId?: string;
 });
 

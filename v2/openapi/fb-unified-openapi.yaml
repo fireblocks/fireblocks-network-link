@@ -4327,7 +4327,7 @@ components:
           properties:
             referenceId:
               type: string
-    SepaCapability:
+    EuropeanSEPACapability:
       type: object
       required:
         - asset
@@ -4338,10 +4338,10 @@ components:
         transferMethod:
           type: string
           enum:
-            - Sepa
-    SepaAddress:
+            - iban
+    EuropeanSEPAAddress:
       allOf:
-        - $ref: '#/components/schemas/SepaCapability'
+        - $ref: '#/components/schemas/EuropeanSEPACapability'
         - type: object
           required:
             - accountHolder
@@ -4366,18 +4366,18 @@ components:
             taxId:
               type: string
               description: Beneficiary tax identification number
-    SepaTransferDestination:
+    EuropeanSEPATransferDestination:
       allOf:
-        - $ref: '#/components/schemas/SepaAddress'
+        - $ref: '#/components/schemas/EuropeanSEPAAddress'
         - type: object
           required:
             - amount
           properties:
             amount:
               $ref: '#/components/schemas/PositiveAmount'
-    SepaTransfer:
+    EuropeanSEPATransfer:
       allOf:
-        - $ref: '#/components/schemas/SepaTransferDestination'
+        - $ref: '#/components/schemas/EuropeanSEPATransferDestination'
         - type: object
           properties:
             referenceId:
@@ -4576,7 +4576,7 @@ components:
         - $ref: '#/components/schemas/WireCapability'
         - $ref: '#/components/schemas/SpeiCapability'
         - $ref: '#/components/schemas/PixCapability'
-        - $ref: '#/components/schemas/SepaCapability'
+        - $ref: '#/components/schemas/EuropeanSEPACapability'
         - $ref: '#/components/schemas/LocalBankTransferCapability'
         - $ref: '#/components/schemas/MobileMoneyCapability'
         - $ref: '#/components/schemas/AbaCapability'
@@ -4729,7 +4729,7 @@ components:
         - $ref: '#/components/schemas/WireAddress'
         - $ref: '#/components/schemas/SpeiAddress'
         - $ref: '#/components/schemas/PixAddress'
-        - $ref: '#/components/schemas/SepaAddress'
+        - $ref: '#/components/schemas/EuropeanSEPAAddress'
         - $ref: '#/components/schemas/LocalBankTransferAddress'
         - $ref: '#/components/schemas/MobileMoneyAddress'
         - $ref: '#/components/schemas/AbaAddress'
@@ -6123,7 +6123,7 @@ components:
         - $ref: '#/components/schemas/WireTransfer'
         - $ref: '#/components/schemas/SpeiTransfer'
         - $ref: '#/components/schemas/PixTransfer'
-        - $ref: '#/components/schemas/SepaTransfer'
+        - $ref: '#/components/schemas/EuropeanSEPATransfer'
         - $ref: '#/components/schemas/LocalBankTransfer'
         - $ref: '#/components/schemas/MobileMoneyTransfer'
         - $ref: '#/components/schemas/AbaTransfer'

@@ -87,8 +87,8 @@ x-schemas:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiTransfer" }
   PixTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PixTransfer" }
-  SepaTransfer:
-    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SepaTransfer" }
+  EuropeanSEPATransfer:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/EuropeanSEPATransfer" }
   MobileMoneyTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyTransfer" }
   LocalBankTransfer:
@@ -917,7 +917,7 @@ components:
         - $ref: "#/x-schemas/WireTransfer"
         - $ref: "#/x-schemas/SpeiTransfer"
         - $ref: "#/x-schemas/PixTransfer"
-        - $ref: "#/x-schemas/SepaTransfer"
+        - $ref: "#/x-schemas/EuropeanSEPATransfer"
         - $ref: "#/x-schemas/LocalBankTransfer"
         - $ref: "#/x-schemas/MobileMoneyTransfer"
         - $ref: "#/x-schemas/AbaTransfer"
