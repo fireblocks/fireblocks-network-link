@@ -1023,6 +1023,61 @@ components:
               referenceId:
                 type: string
 
+    PixCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Pix
+   
+    PixAddress:
+      allOf:
+        - $ref: '#/components/schemas/PixCapability'
+        - type: object
+          required:
+            - accountHolder
+            - pixKey
+            - keyType
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            pixKey:
+              type: string
+            keyType:
+              type: string
+              enum:
+                - cpf
+                - cnpj
+                - email
+                - phone
+                - random
+            bankName:
+              type: string
+            bankCode:
+              type: string
+    
+    PixTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/PixAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    
+    PixTransfer:
+      allOf:
+        - $ref: '#/components/schemas/PixTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+
     OtherFiatTransfer:
       type: object
       description: >-
@@ -1050,6 +1105,7 @@ components:
         - $ref: '#/components/schemas/AchCapability'
         - $ref: '#/components/schemas/WireCapability'
         - $ref: '#/components/schemas/SpeiCapability'
+        - $ref: '#/components/schemas/PixCapability'
 
     PublicBlockchainTransactionDestination:
       type: object
@@ -1208,6 +1264,7 @@ components:
         - $ref: '#/components/schemas/AchAddress'
         - $ref: '#/components/schemas/WireAddress'
         - $ref: '#/components/schemas/SpeiAddress'
+        - $ref: '#/components/schemas/PixAddress'
 
     DepositAddressStatus:
       enum:
