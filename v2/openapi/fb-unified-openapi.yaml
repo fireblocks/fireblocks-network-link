@@ -227,6 +227,8 @@ paths:
     get:
       operationId: getAccounts
       summary: Get list of sub-accounts
+      description: |
+        Retrieves a paginated list of all sub-accounts available to the provider. Can optionally include balance information for each account if requested.
       tags:
         - accounts
       parameters:
@@ -264,6 +266,8 @@ paths:
     get:
       operationId: getAccountDetails
       summary: Get sub-account details
+      description: |
+        Retrieves detailed information about a specific sub-account, including account metadata and optionally balance information if requested.
       tags:
         - accounts
       parameters:
@@ -350,6 +354,8 @@ paths:
     get:
       operationId: getBalances
       summary: Get current balances
+      description: |
+        Retrieves current balance information for the specified account. Can be filtered by asset ID, national currency code, or cryptocurrency symbol.
       tags:
         - balances
       parameters:
@@ -417,6 +423,8 @@ paths:
     get:
       operationId: getHistoricBalances
       summary: Get balances at specific time in the past
+      description: |
+        Retrieves historical balance information for the specified account at a specific point in time. Useful for reconciliation and auditing purposes to see account states at historical moments.
       tags:
         - historicBalances
       parameters:
@@ -462,6 +470,8 @@ paths:
     get:
       operationId: getQuoteCapabilities
       summary: List possible asset conversions
+      description: |
+        Retrieves the list of supported asset conversion pairs that can be quoted. Shows which assets can be converted to other assets through the liquidity service.
       tags:
         - capabilities
       parameters:
@@ -524,6 +534,8 @@ paths:
     get:
       operationId: getQuotes
       summary: Get list of quotes sorted by creation time
+      description: |
+        Retrieves a paginated list of all quotes for the specified account. Quotes are sorted by creation time and can be ordered ascending or descending.
       tags:
         - liquidity
       parameters:
@@ -562,6 +574,8 @@ paths:
     get:
       operationId: getQuoteDetails
       summary: Get quote details
+      description: |
+        Retrieves detailed information about a specific quote, including conversion rates, amounts, expiration time, and current status.
       tags:
         - liquidity
       parameters:
@@ -590,6 +604,8 @@ paths:
     post:
       operationId: executeQuote
       summary: Execute quote
+      description: |
+        Executes a previously created quote, performing the actual asset conversion. The quote must be valid and not expired for execution to succeed.
       tags:
         - liquidity
       parameters:
@@ -618,6 +634,8 @@ paths:
     get:
       operationId: getBooks
       summary: List order books
+      description: |
+        Retrieves a list of all available trading order books supported by the provider. Each book represents a trading pair where users can place buy and sell orders.
       tags:
         - capabilities
       parameters:
@@ -668,6 +686,8 @@ paths:
     get:
       operationId: getBookDetails
       summary: Get details of an order book
+      description: |
+        Retrieves detailed information about a specific trading order book, including book metadata, trading pair details, and current status.
       tags:
         - trading
       parameters:
@@ -1008,6 +1028,8 @@ paths:
     get:
       operationId: getOrderDetails
       summary: Get trading order details
+      description: |
+        Retrieves detailed information about a specific trading order, including order status, filled amounts, prices, and execution history.
       tags:
         - trading
       parameters:
@@ -1035,6 +1057,8 @@ paths:
     delete:
       operationId: cancelOrder
       summary: Cancel an active trading order
+      description: |
+        Cancels an active trading order, removing it from the order book. Only orders in pending or partially filled status can be cancelled.
       tags:
         - trading
       parameters:
@@ -1059,6 +1083,8 @@ paths:
     get:
       operationId: getWithdrawalMethods
       summary: Get list of supported withdrawal methods
+      description: |
+        Retrieves the list of supported withdrawal methods available for the specified account. Shows which withdrawal types, networks, and destinations are supported for fund transfers.
       tags:
         - capabilities
       parameters:
@@ -1146,6 +1172,8 @@ paths:
     get:
       operationId: getDepositMethods
       summary: Get list of supported deposit methods
+      description: |
+        Retrieves the list of supported deposit methods available for the specified account. Shows which deposit types, networks, and sources are supported for fund transfers.
       tags:
         - capabilities
       parameters:
@@ -1239,6 +1267,8 @@ paths:
     get:
       operationId: getWithdrawals
       summary: Get list of withdrawals sorted by creation time
+      description: |
+        Retrieves a paginated list of all withdrawal transactions for the specified account. Withdrawals are sorted by creation time and include all types of withdrawal operations.
       tags:
         - transfers
       parameters:
@@ -1266,6 +1296,8 @@ paths:
     get:
       operationId: getWithdrawalDetails
       summary: Get withdrawal details
+      description: |
+        Retrieves detailed information about a specific withdrawal transaction, including status, amounts, fees, destination details, and processing information.
       tags:
         - transfers
       parameters:
@@ -1294,6 +1326,8 @@ paths:
     get:
       operationId: getBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
+      description: |
+        Retrieves a paginated list of withdrawal transactions sent over public blockchains. Includes cryptocurrency transfers to external blockchain addresses, sorted by creation time.
       tags:
         - transfersBlockchain
       parameters:
@@ -1366,6 +1400,8 @@ paths:
     get:
       operationId: getFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
+      description: |
+        Retrieves a paginated list of fiat currency withdrawal transactions. Includes traditional banking transfers and wire transfers, sorted by creation time.
       tags:
         - transfersFiat
       parameters:
@@ -1438,6 +1474,8 @@ paths:
     get:
       operationId: getPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
+      description: |
+        Retrieves a paginated list of withdrawal transactions sent to peer accounts. Includes transfers to other accounts within the same provider ecosystem, sorted by creation time.
       tags:
         - transfersPeerAccounts
       parameters:
@@ -1510,6 +1548,8 @@ paths:
     get:
       operationId: getSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
+      description: |
+        Retrieves a paginated list of internal withdrawal transactions between sub-accounts. Includes transfers within the same organization or account structure, sorted by creation time.
       tags:
         - transfersInternal
       parameters:
@@ -1582,6 +1622,8 @@ paths:
     get:
       operationId: getDeposits
       summary: Get list of deposits sorted by creation time in a descending order
+      description: |
+        Retrieves a paginated list of all deposit transactions for the specified account. Deposits are sorted by creation time in descending order and include all types of deposit operations.
       tags:
         - transfers
       parameters:
@@ -1619,6 +1661,8 @@ paths:
     get:
       operationId: getDepositDetails
       summary: Get deposit details
+      description: |
+        Retrieves detailed information about a specific deposit transaction, including status, amounts, source details, confirmation information, and processing details.
       tags:
         - transfers
       parameters:
@@ -1647,6 +1691,8 @@ paths:
     post:
       operationId: createDepositAddress
       summary: Create new deposit address
+      description: |
+        Creates a new deposit address for the specified account and asset. The generated address can be used to receive deposits for the specified cryptocurrency or token.
       tags:
         - transfers
       parameters:
@@ -1680,6 +1726,8 @@ paths:
     get:
       operationId: getDepositAddresses
       summary: Get list of existing deposit addresses
+      description: |
+        Retrieves a paginated list of all deposit addresses associated with the specified account. Shows addresses for different cryptocurrencies and networks that can receive deposits.
       tags:
         - transfers
       parameters:
@@ -1717,6 +1765,8 @@ paths:
     get:
       operationId: getDepositAddressDetails
       summary: Get details of a deposit address
+      description: |
+        Retrieves detailed information about a specific deposit address, including the address string, associated network, asset type, and usage metadata.
       tags:
         - transfers
       parameters:
@@ -1744,6 +1794,8 @@ paths:
     delete:
       operationId: disableDepositAddress
       summary: Disable a deposit address
+      description: |
+        Disables a specific deposit address, preventing it from receiving new deposits. Existing funds sent to the address may still be processed depending on timing and confirmation status.
       tags:
         - transfers
       parameters:
@@ -1807,6 +1859,8 @@ paths:
     get:
       operationId: getCollateralAccountLinks
       summary: Get list of collateral account links
+      description: |
+        Retrieves all collateral account links associated with the specified account. Returns details about link status, eligible assets, and collateral configuration.
       tags:
         - collateral
       parameters:
@@ -1907,6 +1961,8 @@ paths:
     get:
       operationId: getCollateralDepositAddresses
       summary: Get list of collateral account deposit addresses
+      description: |
+        Retrieves all registered deposit addresses for the specified collateral account. Can be filtered by asset ID or cryptocurrency symbol to get addresses for specific assets.
       tags:
         - collateral
       parameters:
@@ -1944,6 +2000,8 @@ paths:
     get:
       operationId: getCollateralDepositAddressesDetails
       summary: Get details of a specific deposit address in a collateral account.
+      description: |
+        Retrieves detailed information about a specific deposit address within a collateral account, including the address details and recovery account configuration.
       tags:
         - collateral
       parameters:
@@ -2062,6 +2120,8 @@ paths:
     get:
       operationId: getCollateralDepositTransactions
       summary: Get list of collateral account deposit transactions sorted by creation time
+      description: |
+        Retrieves a paginated list of all deposit transactions for the specified collateral account. Transactions are sorted by creation time and include status information and approval details.
       tags:
         - collateral
       parameters:
@@ -2097,6 +2157,8 @@ paths:
     get:
       operationId: getCollateralDepositTransactionDetails
       summary: Get a collateral account deposit transaction details
+      description: |
+        Retrieves detailed information about a specific collateral deposit transaction, including transaction status, approval details, and processing information.
       tags:
         - collateral
       parameters:
@@ -2215,6 +2277,8 @@ paths:
     get:
       operationId: getCollateralWithdrawalTransactions
       summary: Get list of collateral withdrawal transactions sorted by creation time
+      description: |
+        Retrieves a paginated list of all withdrawal transactions for the specified collateral account. Transactions are sorted by creation time and include status, approval details, and settlement information.
       tags:
         - collateral
       parameters:
@@ -2250,6 +2314,8 @@ paths:
     get:
       operationId: getCollateralWithdrawalTransactionDetails
       summary: Get a collateral withdrawal transaction details
+      description: |
+        Retrieves detailed information about a specific collateral withdrawal transaction, including transaction status, approval details, settlement information, and rejection reasons if applicable.
       tags:
         - collateral
       parameters:
@@ -2358,6 +2424,8 @@ paths:
     get:
       operationId: getSettlementDetails
       summary: Get a settlement details
+      description: |
+        Retrieves detailed information about a specific settlement state for a collateral account, including withdrawal and deposit transaction details, settlement status, and completion information.
       tags:
         - collateral
       parameters:
@@ -2391,6 +2459,8 @@ paths:
     get:
       operationId: getRampMethods
       summary: Get list of supported ramp methods
+      description: |
+        Retrieves the list of supported on-ramp and off-ramp methods available for the specified account. Shows which payment methods and currencies are supported for fiat-to-crypto and crypto-to-fiat conversions.
       tags:
         - capabilities
       parameters:
@@ -2417,6 +2487,8 @@ paths:
     get:
       operationId: getRamps
       summary: Get list of ramps sorted by creation time
+      description: |
+        Retrieves a paginated list of all ramp transactions for the specified account. Ramps are sorted by creation time and include both on-ramp and off-ramp operations.
       tags:
         - ramps
       parameters:
@@ -2474,6 +2546,8 @@ paths:
     get:
       operationId: getRampDetails
       summary: Get details of a specific ramp
+      description: |
+        Retrieves detailed information about a specific ramp transaction, including payment instructions, status, amounts, and processing details.
       tags:
         - ramps
       parameters:
