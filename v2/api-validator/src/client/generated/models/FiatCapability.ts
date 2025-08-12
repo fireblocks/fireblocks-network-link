@@ -5,6 +5,7 @@
 
 import type { AbaCapability } from './AbaCapability';
 import type { AchCapability } from './AchCapability';
+import type { ClabeCapability } from './ClabeCapability';
 import type { EuropeanSEPACapability } from './EuropeanSEPACapability';
 import type { IbanCapability } from './IbanCapability';
 import type { LocalBankTransferCapability } from './LocalBankTransferCapability';
@@ -14,5 +15,5 @@ import type { SpeiCapability } from './SpeiCapability';
 import type { SwiftCapability } from './SwiftCapability';
 import type { WireCapability } from './WireCapability';
 
-export type FiatCapability = (IbanCapability | SwiftCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | EuropeanSEPACapability | LocalBankTransferCapability | MobileMoneyCapability | AbaCapability);
+export type FiatCapability = (IbanCapability | SwiftCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | EuropeanSEPACapability | LocalBankTransferCapability | MobileMoneyCapability | AbaCapability | ClabeCapability);
 

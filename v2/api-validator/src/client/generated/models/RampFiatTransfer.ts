@@ -5,6 +5,7 @@
 
 import type { AbaTransfer } from './AbaTransfer';
 import type { AchTransfer } from './AchTransfer';
+import type { ClabeTransfer } from './ClabeTransfer';
 import type { EuropeanSEPATransfer } from './EuropeanSEPATransfer';
 import type { IbanTransfer } from './IbanTransfer';
 import type { LocalBankTransfer } from './LocalBankTransfer';
@@ -14,5 +15,5 @@ import type { SpeiTransfer } from './SpeiTransfer';
 import type { SwiftTransfer } from './SwiftTransfer';
 import type { WireTransfer } from './WireTransfer';
 
-export type RampFiatTransfer = (IbanTransfer | SwiftTransfer | AchTransfer | WireTransfer | SpeiTransfer | PixTransfer | EuropeanSEPATransfer | LocalBankTransfer | MobileMoneyTransfer | AbaTransfer);
+export type RampFiatTransfer = (IbanTransfer | SwiftTransfer | AchTransfer | WireTransfer | SpeiTransfer | PixTransfer | EuropeanSEPATransfer | LocalBankTransfer | MobileMoneyTransfer | AbaTransfer | ClabeTransfer);
 

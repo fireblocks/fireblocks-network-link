@@ -95,6 +95,8 @@ x-schemas:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransfer" }
   AbaTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AbaTransfer" }
+  ClabeTransfer:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ClabeTransfer" }
   PublicBlockchainTransaction:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
@@ -921,6 +923,7 @@ components:
         - $ref: "#/x-schemas/LocalBankTransfer"
         - $ref: "#/x-schemas/MobileMoneyTransfer"
         - $ref: "#/x-schemas/AbaTransfer"
+        - $ref: "#/x-schemas/ClabeTransfer"
 
     OrderQuote:
       type: object

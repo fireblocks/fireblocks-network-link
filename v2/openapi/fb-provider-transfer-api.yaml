@@ -1306,6 +1306,55 @@ components:
             referenceId:
               type: string
 
+    ClabeCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Clabe
+   
+    ClabeAddress:
+      allOf:
+        - $ref: '#/components/schemas/ClabeCapability'
+        - type: object
+          required:
+            - accountHolder
+            - clabe
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            clabe:
+              $ref: '#/components/schemas/Clabe'
+            bankName:
+              type: string
+              description: Name of the bank
+            beneficiaryRfc:
+              type: string
+              description: Beneficiary RFC for compliance purposes
+    
+    ClabeTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/ClabeAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    
+    ClabeTransfer:
+      description: Mexican SPEI Transfer
+      allOf:
+        - $ref: '#/components/schemas/ClabeTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+
     OtherFiatTransfer:
       type: object
       description: >-
@@ -1338,6 +1387,7 @@ components:
         - $ref: '#/components/schemas/LocalBankTransferCapability'
         - $ref: '#/components/schemas/MobileMoneyCapability'
         - $ref: '#/components/schemas/AbaCapability'
+        - $ref: '#/components/schemas/ClabeCapability'
 
     PublicBlockchainTransactionDestination:
       type: object
@@ -1501,6 +1551,7 @@ components:
         - $ref: '#/components/schemas/LocalBankTransferAddress'
         - $ref: '#/components/schemas/MobileMoneyAddress'
         - $ref: '#/components/schemas/AbaAddress'
+        - $ref: '#/components/schemas/ClabeAddress'
 
     DepositAddressStatus:
       enum:
