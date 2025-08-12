@@ -1135,6 +1135,69 @@ components:
             referenceId:
               type: string
 
+    MomoCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Momo
+    
+    MobilePhoneNumber:
+      type: string
+      pattern: '^\+[1-9]\d{1,14}$'
+      description: Mobile phone number in E.164 format
+   
+    MomoAddress:
+      allOf:
+        - $ref: '#/components/schemas/MomoCapability'
+        - type: object
+          required:
+            - accountHolder
+            - mobilePhoneNumber
+            - provider
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            mobilePhoneNumber:
+              $ref: '#/components/schemas/MobilePhoneNumber'
+            provider:
+              type: string
+              enum:
+                - m-pesa
+                - airtel
+                - mtn
+                - tigo
+                - orange
+              description: Mobile money provider
+            beneficiaryDocumentId:
+              type: string
+              description: Beneficiary document identification (may be required)
+            beneficiaryRelationship:
+              type: string
+              description: Relationship to beneficiary for AML purposes
+    
+    MomoTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/MomoAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    
+    MomoTransfer:
+      allOf:
+        - $ref: '#/components/schemas/MomoTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+
     OtherFiatTransfer:
       type: object
       description: >-
@@ -1164,6 +1227,7 @@ components:
         - $ref: '#/components/schemas/SpeiCapability'
         - $ref: '#/components/schemas/PixCapability'
         - $ref: '#/components/schemas/SepaCapability'
+        - $ref: '#/components/schemas/MomoCapability'
 
     PublicBlockchainTransactionDestination:
       type: object
@@ -1324,6 +1388,7 @@ components:
         - $ref: '#/components/schemas/SpeiAddress'
         - $ref: '#/components/schemas/PixAddress'
         - $ref: '#/components/schemas/SepaAddress'
+        - $ref: '#/components/schemas/MomoAddress'
 
     DepositAddressStatus:
       enum:
