@@ -4442,6 +4442,55 @@ components:
           properties:
             referenceId:
               type: string
+    LocalBankTransferCapability:
+      description: Local Bank Transfer Capability
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Lbt
+    LocalBankTransferAddress:
+      allOf:
+        - $ref: '#/components/schemas/LocalBankTransferCapability'
+        - type: object
+          required:
+            - accountHolder
+            - accountNumber
+            - bankName
+            - bankCode
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            accountNumber:
+              $ref: '#/components/schemas/BankAccountNumber'
+            bankName:
+              type: string
+              description: Name of the bank
+            bankCode:
+              type: string
+              description: Internal bank identifier
+    LocalBankTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/LocalBankTransferAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    LocalBankTransfer:
+      allOf:
+        - $ref: '#/components/schemas/LocalBankTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
     OtherFiatTransfer:
       type: object
       description: Used for historic fiat transfers that do not fit a more specific transfer method.  It is impossible to create new deposits or withdrawal of this type using this API.
@@ -4473,6 +4522,7 @@ components:
         - $ref: '#/components/schemas/SpeiCapability'
         - $ref: '#/components/schemas/PixCapability'
         - $ref: '#/components/schemas/SepaCapability'
+        - $ref: '#/components/schemas/LocalBankTransferCapability'
         - $ref: '#/components/schemas/MomoCapability'
     PublicBlockchainTransactionDestination:
       type: object
@@ -4624,6 +4674,7 @@ components:
         - $ref: '#/components/schemas/SpeiAddress'
         - $ref: '#/components/schemas/PixAddress'
         - $ref: '#/components/schemas/SepaAddress'
+        - $ref: '#/components/schemas/LocalBankTransferAddress'
         - $ref: '#/components/schemas/MomoAddress'
     DepositAddressStatus:
       enum:
@@ -6016,6 +6067,7 @@ components:
         - $ref: '#/components/schemas/SpeiTransfer'
         - $ref: '#/components/schemas/PixTransfer'
         - $ref: '#/components/schemas/SepaTransfer'
+        - $ref: '#/components/schemas/LocalBankTransfer'
         - $ref: '#/components/schemas/MomoTransfer'
     OrderQuote:
       type: object
