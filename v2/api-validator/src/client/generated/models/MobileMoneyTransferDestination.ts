@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { MomoAddress } from './MomoAddress';
+import type { MobileMoneyAddress } from './MobileMoneyAddress';
 import type { PositiveAmount } from './PositiveAmount';
 
-export type MomoTransferDestination = (MomoAddress & {
+export type MobileMoneyTransferDestination = (MobileMoneyAddress & {
     amount: PositiveAmount;
 });
 

@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { MomoTransferDestination } from './MomoTransferDestination';
+import type { MobileMoneyTransferDestination } from './MobileMoneyTransferDestination';
 
-export type MomoTransfer = (MomoTransferDestination & {
+export type MobileMoneyTransfer = (MobileMoneyTransferDestination & {
     referenceId?: string;
 });
 

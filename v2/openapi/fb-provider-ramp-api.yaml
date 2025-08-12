@@ -89,8 +89,8 @@ x-schemas:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PixTransfer" }
   SepaTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SepaTransfer" }
-  MomoTransfer:
-    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MomoTransfer" }
+  MobileMoneyTransfer:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyTransfer" }
   LocalBankTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransfer" }
   PublicBlockchainTransaction:
@@ -917,7 +917,7 @@ components:
         - $ref: "#/x-schemas/PixTransfer"
         - $ref: "#/x-schemas/SepaTransfer"
         - $ref: "#/x-schemas/LocalBankTransfer"
-        - $ref: "#/x-schemas/MomoTransfer"
+        - $ref: "#/x-schemas/MobileMoneyTransfer"
 
     OrderQuote:
       type: object

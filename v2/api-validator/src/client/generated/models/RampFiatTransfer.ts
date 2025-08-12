@@ -6,12 +6,12 @@
 import type { AchTransfer } from './AchTransfer';
 import type { IbanTransfer } from './IbanTransfer';
 import type { LocalBankTransfer } from './LocalBankTransfer';
-import type { MomoTransfer } from './MomoTransfer';
+import type { MobileMoneyTransfer } from './MobileMoneyTransfer';
 import type { PixTransfer } from './PixTransfer';
 import type { SepaTransfer } from './SepaTransfer';
 import type { SpeiTransfer } from './SpeiTransfer';
 import type { SwiftTransfer } from './SwiftTransfer';
 import type { WireTransfer } from './WireTransfer';
 
-export type RampFiatTransfer = (IbanTransfer | SwiftTransfer | AchTransfer | WireTransfer | SpeiTransfer | PixTransfer | SepaTransfer | LocalBankTransfer | MomoTransfer);
+export type RampFiatTransfer = (IbanTransfer | SwiftTransfer | AchTransfer | WireTransfer | SpeiTransfer | PixTransfer | SepaTransfer | LocalBankTransfer | MobileMoneyTransfer);
 

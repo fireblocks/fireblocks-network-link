@@ -4,16 +4,16 @@
 /* eslint-disable */
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
+import type { MobileMoneyCapability } from './MobileMoneyCapability';
 import type { MobilePhoneNumber } from './MobilePhoneNumber';
-import type { MomoCapability } from './MomoCapability';
 
-export type MomoAddress = (MomoCapability & {
+export type MobileMoneyAddress = (MobileMoneyCapability & {
     accountHolder: AccountHolderDetails;
     mobilePhoneNumber: MobilePhoneNumber;
     /**
      * Mobile money provider
      */
-    provider: MomoAddress.provider;
+    provider: MobileMoneyAddress.provider;
     /**
      * Beneficiary document identification (may be required)
      */
@@ -24,7 +24,7 @@ export type MomoAddress = (MomoCapability & {
     beneficiaryRelationship?: string;
 });
 
-export namespace MomoAddress {
+export namespace MobileMoneyAddress {
 
     /**
      * Mobile money provider

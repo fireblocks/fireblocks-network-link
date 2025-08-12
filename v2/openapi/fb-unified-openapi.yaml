@@ -4382,7 +4382,7 @@ components:
           properties:
             referenceId:
               type: string
-    MomoCapability:
+    MobileMoneyCapability:
       type: object
       required:
         - asset
@@ -4398,9 +4398,9 @@ components:
       type: string
       pattern: ^\+[1-9]\d{1,14}$
       description: Mobile phone number in E.164 format
-    MomoAddress:
+    MobileMoneyAddress:
       allOf:
-        - $ref: '#/components/schemas/MomoCapability'
+        - $ref: '#/components/schemas/MobileMoneyCapability'
         - type: object
           required:
             - accountHolder
@@ -4426,18 +4426,18 @@ components:
             beneficiaryRelationship:
               type: string
               description: Relationship to beneficiary for AML purposes
-    MomoTransferDestination:
+    MobileMoneyTransferDestination:
       allOf:
-        - $ref: '#/components/schemas/MomoAddress'
+        - $ref: '#/components/schemas/MobileMoneyAddress'
         - type: object
           required:
             - amount
           properties:
             amount:
               $ref: '#/components/schemas/PositiveAmount'
-    MomoTransfer:
+    MobileMoneyTransfer:
       allOf:
-        - $ref: '#/components/schemas/MomoTransferDestination'
+        - $ref: '#/components/schemas/MobileMoneyTransferDestination'
         - type: object
           properties:
             referenceId:
@@ -4523,7 +4523,7 @@ components:
         - $ref: '#/components/schemas/PixCapability'
         - $ref: '#/components/schemas/SepaCapability'
         - $ref: '#/components/schemas/LocalBankTransferCapability'
-        - $ref: '#/components/schemas/MomoCapability'
+        - $ref: '#/components/schemas/MobileMoneyCapability'
     PublicBlockchainTransactionDestination:
       type: object
       allOf:
@@ -4675,7 +4675,7 @@ components:
         - $ref: '#/components/schemas/PixAddress'
         - $ref: '#/components/schemas/SepaAddress'
         - $ref: '#/components/schemas/LocalBankTransferAddress'
-        - $ref: '#/components/schemas/MomoAddress'
+        - $ref: '#/components/schemas/MobileMoneyAddress'
     DepositAddressStatus:
       enum:
         - enabled
@@ -6068,7 +6068,7 @@ components:
         - $ref: '#/components/schemas/PixTransfer'
         - $ref: '#/components/schemas/SepaTransfer'
         - $ref: '#/components/schemas/LocalBankTransfer'
-        - $ref: '#/components/schemas/MomoTransfer'
+        - $ref: '#/components/schemas/MobileMoneyTransfer'
     OrderQuote:
       type: object
       required:

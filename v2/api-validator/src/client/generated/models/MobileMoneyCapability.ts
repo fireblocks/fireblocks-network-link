@@ -5,12 +5,12 @@
 
 import type { NationalCurrency } from './NationalCurrency';
 
-export type MomoCapability = {
+export type MobileMoneyCapability = {
     asset: NationalCurrency;
-    transferMethod: MomoCapability.transferMethod;
+    transferMethod: MobileMoneyCapability.transferMethod;
 };
 
-export namespace MomoCapability {
+export namespace MobileMoneyCapability {
 
     export enum transferMethod {
         MOMO = 'Momo',

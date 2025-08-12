@@ -118,11 +118,11 @@ export type { LocalBankTransferDestination } from './models/LocalBankTransferDes
 export type { MarketEntry } from './models/MarketEntry';
 export { MarketOrderData } from './models/MarketOrderData';
 export type { MarketTrade } from './models/MarketTrade';
+export { MobileMoneyAddress } from './models/MobileMoneyAddress';
+export { MobileMoneyCapability } from './models/MobileMoneyCapability';
+export type { MobileMoneyTransfer } from './models/MobileMoneyTransfer';
+export type { MobileMoneyTransferDestination } from './models/MobileMoneyTransferDestination';
 export type { MobilePhoneNumber } from './models/MobilePhoneNumber';
-export { MomoAddress } from './models/MomoAddress';
-export { MomoCapability } from './models/MomoCapability';
-export type { MomoTransfer } from './models/MomoTransfer';
-export type { MomoTransferDestination } from './models/MomoTransferDestination';
 export type { NationalCurrency } from './models/NationalCurrency';
 export { NationalCurrencyCode } from './models/NationalCurrencyCode';
 export type { NationalCurrencyCodeQueryParam } from './models/NationalCurrencyCodeQueryParam';

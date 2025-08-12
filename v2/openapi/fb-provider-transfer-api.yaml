@@ -1135,7 +1135,7 @@ components:
             referenceId:
               type: string
 
-    MomoCapability:
+    MobileMoneyCapability:
       type: object
       required: [ asset, transferMethod ]
       properties:
@@ -1151,9 +1151,9 @@ components:
       pattern: '^\+[1-9]\d{1,14}$'
       description: Mobile phone number in E.164 format
    
-    MomoAddress:
+    MobileMoneyAddress:
       allOf:
-        - $ref: '#/components/schemas/MomoCapability'
+        - $ref: '#/components/schemas/MobileMoneyCapability'
         - type: object
           required:
             - accountHolder
@@ -1180,9 +1180,9 @@ components:
               type: string
               description: Relationship to beneficiary for AML purposes
     
-    MomoTransferDestination:
+    MobileMoneyTransferDestination:
       allOf:
-        - $ref: '#/components/schemas/MomoAddress'
+        - $ref: '#/components/schemas/MobileMoneyAddress'
         - type: object
           required:
             - amount
@@ -1190,9 +1190,9 @@ components:
             amount:
               $ref: '#/components/schemas/PositiveAmount'
     
-    MomoTransfer:
+    MobileMoneyTransfer:
       allOf:
-        - $ref: '#/components/schemas/MomoTransferDestination'
+        - $ref: '#/components/schemas/MobileMoneyTransferDestination'
         - type: object
           properties:
             referenceId:
@@ -1279,7 +1279,7 @@ components:
         - $ref: '#/components/schemas/PixCapability'
         - $ref: '#/components/schemas/SepaCapability'
         - $ref: '#/components/schemas/LocalBankTransferCapability'
-        - $ref: '#/components/schemas/MomoCapability'
+        - $ref: '#/components/schemas/MobileMoneyCapability'
 
     PublicBlockchainTransactionDestination:
       type: object
@@ -1441,7 +1441,7 @@ components:
         - $ref: '#/components/schemas/PixAddress'
         - $ref: '#/components/schemas/SepaAddress'
         - $ref: '#/components/schemas/LocalBankTransferAddress'
-        - $ref: '#/components/schemas/MomoAddress'
+        - $ref: '#/components/schemas/MobileMoneyAddress'
 
     DepositAddressStatus:
       enum:
