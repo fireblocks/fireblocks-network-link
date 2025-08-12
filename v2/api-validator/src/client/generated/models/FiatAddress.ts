@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { AbaAddress } from './AbaAddress';
 import type { AchAddress } from './AchAddress';
 import type { IbanAddress } from './IbanAddress';
 import type { LocalBankTransferAddress } from './LocalBankTransferAddress';
@@ -13,5 +14,5 @@ import type { SpeiAddress } from './SpeiAddress';
 import type { SwiftAddress } from './SwiftAddress';
 import type { WireAddress } from './WireAddress';
 
-export type FiatAddress = (IbanAddress | SwiftAddress | AchAddress | WireAddress | SpeiAddress | PixAddress | SepaAddress | LocalBankTransferAddress | MobileMoneyAddress);
+export type FiatAddress = (IbanAddress | SwiftAddress | AchAddress | WireAddress | SpeiAddress | PixAddress | SepaAddress | LocalBankTransferAddress | MobileMoneyAddress | AbaAddress);
 

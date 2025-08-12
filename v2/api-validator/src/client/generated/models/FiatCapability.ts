@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { AbaCapability } from './AbaCapability';
 import type { AchCapability } from './AchCapability';
 import type { IbanCapability } from './IbanCapability';
 import type { LocalBankTransferCapability } from './LocalBankTransferCapability';
@@ -13,5 +14,5 @@ import type { SpeiCapability } from './SpeiCapability';
 import type { SwiftCapability } from './SwiftCapability';
 import type { WireCapability } from './WireCapability';
 
-export type FiatCapability = (IbanCapability | SwiftCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | SepaCapability | LocalBankTransferCapability | MobileMoneyCapability);
+export type FiatCapability = (IbanCapability | SwiftCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | SepaCapability | LocalBankTransferCapability | MobileMoneyCapability | AbaCapability);
 

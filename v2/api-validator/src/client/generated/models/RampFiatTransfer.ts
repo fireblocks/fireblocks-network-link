@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { AbaTransfer } from './AbaTransfer';
 import type { AchTransfer } from './AchTransfer';
 import type { IbanTransfer } from './IbanTransfer';
 import type { LocalBankTransfer } from './LocalBankTransfer';
@@ -13,5 +14,5 @@ import type { SpeiTransfer } from './SpeiTransfer';
 import type { SwiftTransfer } from './SwiftTransfer';
 import type { WireTransfer } from './WireTransfer';
 
-export type RampFiatTransfer = (IbanTransfer | SwiftTransfer | AchTransfer | WireTransfer | SpeiTransfer | PixTransfer | SepaTransfer | LocalBankTransfer | MobileMoneyTransfer);
+export type RampFiatTransfer = (IbanTransfer | SwiftTransfer | AchTransfer | WireTransfer | SpeiTransfer | PixTransfer | SepaTransfer | LocalBankTransfer | MobileMoneyTransfer | AbaTransfer);
 

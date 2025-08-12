@@ -10,6 +10,10 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
+export type { AbaAddress } from './models/AbaAddress';
+export { AbaCapability } from './models/AbaCapability';
+export type { AbaTransfer } from './models/AbaTransfer';
+export type { AbaTransferDestination } from './models/AbaTransferDestination';
 export type { Account } from './models/Account';
 export type { AccountBalancesQueryParam } from './models/AccountBalancesQueryParam';
 export type { AccountData } from './models/AccountData';
