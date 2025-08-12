@@ -3,31 +3,19 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { Market } from './Market';
+import type { Retry } from './Retry';
+
 export type OrderQuote = {
-    type: OrderQuote.type;
+    type?: OrderQuote.type;
     quoteId: string;
-    /**
-     * If quote is expired, re-generate a new quote.
-     */
-    reQuote?: OrderQuote.reQuote;
-    /**
-     * The slippage tolerance for the order.
-     */
-    slippage?: number;
+    reQuote: (Retry | Market);
 };
 
 export namespace OrderQuote {
 
     export enum type {
         QUOTE = 'Quote',
-    }
-
-    /**
-     * If quote is expired, re-generate a new quote.
-     */
-    export enum reQuote {
-        RETRY = 'Retry',
-        MARKET = 'Market',
     }
 
 
