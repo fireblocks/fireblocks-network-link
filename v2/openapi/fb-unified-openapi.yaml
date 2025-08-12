@@ -4327,6 +4327,61 @@ components:
           properties:
             referenceId:
               type: string
+    SepaCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Sepa
+    SepaAddress:
+      allOf:
+        - $ref: '#/components/schemas/SepaCapability'
+        - type: object
+          required:
+            - accountHolder
+            - iban
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            iban:
+              $ref: '#/components/schemas/Iban'
+            bic:
+              type: string
+              description: Bank Identifier Code (SWIFT/BIC)
+            bankName:
+              type: string
+            bankBranch:
+              type: string
+            bankAddress:
+              type: string
+            purposeCode:
+              type: string
+              description: ISO purpose code for the transfer
+            taxId:
+              type: string
+              description: Beneficiary tax identification number
+    SepaTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/SepaAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    SepaTransfer:
+      allOf:
+        - $ref: '#/components/schemas/SepaTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
     OtherFiatTransfer:
       type: object
       description: Used for historic fiat transfers that do not fit a more specific transfer method.  It is impossible to create new deposits or withdrawal of this type using this API.
@@ -4357,6 +4412,7 @@ components:
         - $ref: '#/components/schemas/WireCapability'
         - $ref: '#/components/schemas/SpeiCapability'
         - $ref: '#/components/schemas/PixCapability'
+        - $ref: '#/components/schemas/SepaCapability'
     PublicBlockchainTransactionDestination:
       type: object
       allOf:
@@ -4506,6 +4562,7 @@ components:
         - $ref: '#/components/schemas/WireAddress'
         - $ref: '#/components/schemas/SpeiAddress'
         - $ref: '#/components/schemas/PixAddress'
+        - $ref: '#/components/schemas/SepaAddress'
     DepositAddressStatus:
       enum:
         - enabled
@@ -5896,6 +5953,7 @@ components:
         - $ref: '#/components/schemas/WireTransfer'
         - $ref: '#/components/schemas/SpeiTransfer'
         - $ref: '#/components/schemas/PixTransfer'
+        - $ref: '#/components/schemas/SepaTransfer'
     OrderQuote:
       type: object
       required:

@@ -87,6 +87,8 @@ x-schemas:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiTransfer" }
   PixTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PixTransfer" }
+  SepaTransfer:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SepaTransfer" }
   PublicBlockchainTransaction:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
@@ -909,6 +911,7 @@ components:
         - $ref: "#/x-schemas/WireTransfer"
         - $ref: "#/x-schemas/SpeiTransfer"
         - $ref: "#/x-schemas/PixTransfer"
+        - $ref: "#/x-schemas/SepaTransfer"
 
     OrderQuote:
       type: object
