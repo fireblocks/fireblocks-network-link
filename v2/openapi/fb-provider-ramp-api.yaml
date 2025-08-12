@@ -121,6 +121,9 @@ paths:
     get:
       operationId: getRampMethods
       summary: Get list of supported ramp methods
+      description: >
+        Retrieves the list of supported on-ramp and off-ramp methods available for the specified account.
+        Shows which payment methods and currencies are supported for fiat-to-crypto and crypto-to-fiat conversions.
       tags: [capabilities]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
@@ -147,6 +150,9 @@ paths:
     get:
       operationId: getRamps
       summary: Get list of ramps sorted by creation time
+      description: >
+        Retrieves a paginated list of all ramp transactions for the specified account.
+        Ramps are sorted by creation time and include both on-ramp and off-ramp operations.
       tags: [ramps]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
@@ -205,6 +211,9 @@ paths:
     get:
       operationId: getRampDetails
       summary: Get details of a specific ramp
+      description: >
+        Retrieves detailed information about a specific ramp transaction, including
+        payment instructions, status, amounts, and processing details.
       tags: [ramps]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
