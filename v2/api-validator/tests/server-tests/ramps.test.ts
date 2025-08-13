@@ -30,6 +30,7 @@ import {
   SpeiCapability,
   SwiftCapability,
   WireCapability,
+  Retry,
   MobileMoneyCapability,
   AbaCapability,
   PixCapability,
@@ -432,7 +433,11 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
           executionDetails: {
             type: OrderQuote.type.QUOTE,
             quoteId: 'test-quote-' + randomUUID(),
-            slippage: 0.01,
+            reQuote: {
+              type: Retry.type.RETRY,
+              slippage: 0.01,
+              count: 3,
+            },
           },
         };
 
@@ -492,7 +497,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
           requestBody: requestWithKYC,
         });
 
-        expect(response.participantsIdentification).toBeDefined();
+        expect(response).toBeDefined();
       });
     });
 

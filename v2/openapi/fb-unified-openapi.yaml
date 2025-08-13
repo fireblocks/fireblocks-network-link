@@ -2869,67 +2869,13 @@ components:
                 executionDetails:
                   type: Quote
                   quoteId: quote-123456789
-                  reQuote: Retry
-                  slippage: 0.02
+                  reQuote:
+                    type: Retry
+                    slippage: 0.02
+                    count: 3
                 fees:
                   subAccount: 75
                   provider: 150
-            onRampWithPersonalIdentification:
-              summary: OnRamp with Personal Identification
-              description: An on-ramp that includes participant identification for compliance.
-              value:
-                id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
-                createdAt: '2021-09-01T12:00:00Z'
-                updatedAt: '2021-09-01T12:00:00Z'
-                status: Pending
-                amount: '2000.00'
-                type: OnRamp
-                from:
-                  asset:
-                    nationalCurrencyCode: USD
-                  transferMethod: Iban
-                to:
-                  asset:
-                    assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
-                  transferMethod: PublicBlockchain
-                  address: '0x1234567890abcdef1234567890abcdef12345678'
-                  tag: 1234567890abcdef
-                paymentInstructions:
-                  asset:
-                    nationalCurrencyCode: USD
-                  transferMethod: Iban
-                  accountHolder:
-                    name: John Doe
-                    address: 123 Main St, New York, NY 10001
-                  iban: US1234567890
-                participantsIdentification:
-                  originator:
-                    externalReferenceId: '1234567890'
-                    entityType: Business
-                    businessName: Business Name
-                    registrationNumber: '333333333'
-                    postalAddress:
-                      streetName: 123 Main St
-                      buildingNumber: '123'
-                      postalCode: '12345'
-                      city: New York
-                      country: US
-                  beneficiary:
-                    externalReferenceId: '12343444890'
-                    entityType: Individual
-                    fullName:
-                      firstName: John
-                      lastName: Doe
-                    dateOfBirth: '1985-03-15'
-                    postalAddress:
-                      streetName: Digital Address
-                      buildingNumber: '123'
-                      postalCode: '12345'
-                      city: London
-                      country: GB
-                fees:
-                  subAccount: 200
-                  provider: 300
     GetRampDetailsResponse:
       description: Ramp details.
       content:
@@ -6159,8 +6105,6 @@ components:
           $ref: '#/components/schemas/PositiveAmount'
         fees:
           $ref: '#/components/schemas/RampFees'
-        participantsIdentification:
-          $ref: '#/components/schemas/ParticipantsIdentification'
         executionDetails:
           oneOf:
             - $ref: '#/components/schemas/OrderQuote'
@@ -6254,7 +6198,7 @@ components:
     OrderQuote:
       type: object
       required:
-        - type
+        - reQuote
         - quoteId
       properties:
         type:
@@ -6264,12 +6208,32 @@ components:
         quoteId:
           type: string
         reQuote:
+          oneOf:
+            - $ref: '#/components/schemas/Retry'
+            - $ref: '#/components/schemas/Market'
+    Retry:
+      type: object
+      required:
+        - type
+        - slippage
+      properties:
+        type:
           type: string
           enum:
             - Retry
-            - Market
-          description: If quote is expired, re-generate a new quote.
         slippage:
           type: number
-          description: The slippage tolerance for the order.
+          description: Slippage tolerance in basis points (bps) for quote orders - 1 is 0.01% and 10000 is 100%
+        count:
+          type: number
+          description: If quote is expired, how many times to re-generate new quotes to try having the order executed as in the original quote.
+    Market:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - Market
   securitySchemes: {}
