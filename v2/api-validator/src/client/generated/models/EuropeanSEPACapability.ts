@@ -13,7 +13,7 @@ export type EuropeanSEPACapability = {
 export namespace EuropeanSEPACapability {
 
     export enum transferMethod {
-        IBAN = 'iban',
+        EUROPEAN_SEPA = 'EuropeanSEPA',
     }
 
 

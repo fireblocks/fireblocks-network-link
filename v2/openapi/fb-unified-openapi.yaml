@@ -4412,7 +4412,7 @@ components:
         transferMethod:
           type: string
           enum:
-            - iban
+            - EuropeanSEPA
     EuropeanSEPAAddress:
       allOf:
         - $ref: '#/components/schemas/EuropeanSEPACapability'

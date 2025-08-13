@@ -87,7 +87,7 @@ function isFiatMethod(
       capability.transferMethod === SpeiCapability.transferMethod.SPEI ||
       capability.transferMethod === ClabeCapability.transferMethod.CLABE ||
       capability.transferMethod === PixCapability.transferMethod.PIX ||
-      capability.transferMethod === EuropeanSEPACapability.transferMethod.IBAN ||
+      capability.transferMethod === EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA ||
       capability.transferMethod === AbaCapability.transferMethod.ABA ||
       capability.transferMethod === MobileMoneyCapability.transferMethod.MOMO ||
       capability.transferMethod === LocalBankTransferCapability.transferMethod.LBT)
@@ -135,10 +135,10 @@ function getFiatDestinationConfig(transferMethod: string) {
       return { ...clabeDestinationConfig, transferMethod: ClabeCapability.transferMethod.CLABE };
     case PixCapability.transferMethod.PIX:
       return { ...pixDestinationConfig, transferMethod: PixCapability.transferMethod.PIX };
-    case EuropeanSEPACapability.transferMethod.IBAN:
+    case EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA:
       return {
         ...europeanSepaDestinationConfig,
-        transferMethod: EuropeanSEPACapability.transferMethod.IBAN,
+        transferMethod: EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA,
       };
     case AbaCapability.transferMethod.ABA:
       return { ...abaDestinationConfig, transferMethod: AbaCapability.transferMethod.ABA };
