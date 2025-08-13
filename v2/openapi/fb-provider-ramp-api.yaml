@@ -85,6 +85,18 @@ x-schemas:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/WireTransfer" }
   SpeiTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiTransfer" }
+  PixTransfer:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PixTransfer" }
+  EuropeanSEPATransfer:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/EuropeanSEPATransfer" }
+  MobileMoneyTransfer:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyTransfer" }
+  LocalBankTransfer:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransfer" }
+  AbaTransfer:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AbaTransfer" }
+  ClabeTransfer:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ClabeTransfer" }
   PublicBlockchainTransaction:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
@@ -859,6 +871,12 @@ components:
         - $ref: "#/x-schemas/AchTransfer"
         - $ref: "#/x-schemas/WireTransfer"
         - $ref: "#/x-schemas/SpeiTransfer"
+        - $ref: "#/x-schemas/PixTransfer"
+        - $ref: "#/x-schemas/EuropeanSEPATransfer"
+        - $ref: "#/x-schemas/LocalBankTransfer"
+        - $ref: "#/x-schemas/MobileMoneyTransfer"
+        - $ref: "#/x-schemas/AbaTransfer"
+        - $ref: "#/x-schemas/ClabeTransfer"
 
     OrderQuote:
       type: object
