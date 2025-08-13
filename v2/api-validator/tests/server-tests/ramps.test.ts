@@ -30,6 +30,12 @@ import {
   SpeiCapability,
   SwiftCapability,
   WireCapability,
+  MobileMoneyCapability,
+  AbaCapability,
+  PixCapability,
+  ClabeCapability,
+  EuropeanSEPACapability,
+  LocalBankTransferCapability,
 } from '../../src/client/generated';
 import config from '../../src/config';
 import { AssetsDirectory } from '../utils/assets-directory';
@@ -45,6 +51,12 @@ const ibanDestinationConfig = config.get('withdrawal.iban');
 const achDestinationConfig = config.get('withdrawal.ach');
 const wireDestinationConfig = config.get('withdrawal.wire');
 const speiDestinationConfig = config.get('withdrawal.spei');
+const clabeDestinationConfig = config.get('withdrawal.clabe');
+const pixDestinationConfig = config.get('withdrawal.pix');
+const europeanSepaDestinationConfig = config.get('withdrawal.europeanSepa');
+const abaDestinationConfig = config.get('withdrawal.aba');
+const mobileMoneyDestinationConfig = config.get('withdrawal.mobileMoney');
+const lbtDestinationConfig = config.get('withdrawal.localBankTransfer');
 
 function isBlockchainMethod(
   capability:
@@ -72,7 +84,13 @@ function isFiatMethod(
       capability.transferMethod === SwiftCapability.transferMethod.SWIFT ||
       capability.transferMethod === AchCapability.transferMethod.ACH ||
       capability.transferMethod === WireCapability.transferMethod.WIRE ||
-      capability.transferMethod === SpeiCapability.transferMethod.SPEI)
+      capability.transferMethod === SpeiCapability.transferMethod.SPEI ||
+      capability.transferMethod === ClabeCapability.transferMethod.CLABE ||
+      capability.transferMethod === PixCapability.transferMethod.PIX ||
+      capability.transferMethod === EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA ||
+      capability.transferMethod === AbaCapability.transferMethod.ABA ||
+      capability.transferMethod === MobileMoneyCapability.transferMethod.MOMO ||
+      capability.transferMethod === LocalBankTransferCapability.transferMethod.LBT)
   );
 }
 
@@ -113,6 +131,27 @@ function getFiatDestinationConfig(transferMethod: string) {
       return { ...wireDestinationConfig, transferMethod: WireCapability.transferMethod.WIRE };
     case SpeiCapability.transferMethod.SPEI:
       return { ...speiDestinationConfig, transferMethod: SpeiCapability.transferMethod.SPEI };
+    case ClabeCapability.transferMethod.CLABE:
+      return { ...clabeDestinationConfig, transferMethod: ClabeCapability.transferMethod.CLABE };
+    case PixCapability.transferMethod.PIX:
+      return { ...pixDestinationConfig, transferMethod: PixCapability.transferMethod.PIX };
+    case EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA:
+      return {
+        ...europeanSepaDestinationConfig,
+        transferMethod: EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA,
+      };
+    case AbaCapability.transferMethod.ABA:
+      return { ...abaDestinationConfig, transferMethod: AbaCapability.transferMethod.ABA };
+    case MobileMoneyCapability.transferMethod.MOMO:
+      return {
+        ...mobileMoneyDestinationConfig,
+        transferMethod: MobileMoneyCapability.transferMethod.MOMO,
+      };
+    case LocalBankTransferCapability.transferMethod.LBT:
+      return {
+        ...lbtDestinationConfig,
+        transferMethod: LocalBankTransferCapability.transferMethod.LBT,
+      };
     default:
       throw new Error('Unsupported transfer method');
   }
