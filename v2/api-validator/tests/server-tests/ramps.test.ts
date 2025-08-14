@@ -499,6 +499,14 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
 
         expect(response).toBeDefined();
       });
+
+      it('should send expiresAt in response', async () => {
+        const response = await client.ramps.getRampDetails({
+          accountId,
+          id: createdRamp.id,
+        });
+        expect(response.expiresAt).toBeDefined();
+      });
     });
 
     describe('Invalid Creation', () => {

@@ -75,6 +75,8 @@ export class LiquidityService {
 
     /**
      * Get list of quotes sorted by creation time
+     * Retrieves a paginated list of all quotes for the specified account. Quotes are sorted by creation time and can be ordered ascending or descending.
+     *
      * @returns any Quotes details.
      * @throws ApiError
      */
@@ -156,6 +158,8 @@ export class LiquidityService {
 
     /**
      * Get quote details
+     * Retrieves detailed information about a specific quote, including conversion rates, amounts, expiration time, and current status.
+     *
      * @returns Quote Quote details.
      * @throws ApiError
      */
@@ -215,6 +219,8 @@ export class LiquidityService {
 
     /**
      * Execute quote
+     * Executes a previously created quote, performing the actual asset conversion. The quote must be valid and not expired for execution to succeed.
+     *
      * @returns Quote Quote details.
      * @throws ApiError
      */

@@ -307,6 +307,7 @@ components:
                 status: "Pending"
                 amount: "1000.00"
                 type: "OnRamp"
+                expiresAt: "2021-09-01T12:00:00Z"
                 from:
                   asset:
                     nationalCurrencyCode: "USD"
@@ -337,6 +338,7 @@ components:
                 status: "Pending"
                 amount: "500.00"
                 type: "OnRamp"
+                expiresAt: "2021-09-01T12:00:00Z"
                 from:
                   asset:
                     nationalCurrencyCode: "USD"
@@ -418,6 +420,7 @@ components:
                     fees:
                       subAccount: 100
                       provider: 200
+                    expiresAt: "2021-09-01T12:00:00Z"
                   - id: "69fa4f38-c1fd-4215-a310-82272225c4ef"
                     createdAt: "2021-09-01T12:00:00Z"
                     updatedAt: "2021-09-01T12:00:00Z"
@@ -459,6 +462,7 @@ components:
                       amount: "1231.45"
                     fees:
                       subAccount: 100
+                    expiresAt: "2021-09-01T12:00:00Z"
                   - id: "afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea"
                     createdAt: "2021-09-01T12:00:00Z"
                     updatedAt: "2021-09-01T12:00:00Z"
@@ -496,7 +500,7 @@ components:
                       transferMethod: "PublicBlockchain"
                     fees:
                       subAccount: 100
-
+                    expiresAt: "2021-09-01T12:00:00Z"
   schemas:
     RampStatus:
       enum:
@@ -763,7 +767,7 @@ components:
 
     CommonRamp:
       type: object
-      required: [id, status, createdAt, updatedAt, amount]
+      required: [id, status, createdAt, updatedAt, amount, expiresAt]
       properties:
         id:
           type: string
@@ -782,6 +786,10 @@ components:
         executionDetails:
           oneOf:
             - $ref: "#/components/schemas/OrderQuote"
+        expiresAt:
+          description: Ramp expiration time.
+          type: string
+          format: date-time
 
     OnRampPropertiesWithPaymentInstructions:
       type: object

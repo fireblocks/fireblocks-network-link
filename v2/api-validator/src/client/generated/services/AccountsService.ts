@@ -13,6 +13,8 @@ export class AccountsService {
 
     /**
      * Get list of sub-accounts
+     * Retrieves a paginated list of all sub-accounts available to the provider. Can optionally include balance information for each account if requested.
+     *
      * @returns any List of sub-accounts.
      * @throws ApiError
      */
@@ -86,6 +88,8 @@ export class AccountsService {
 
     /**
      * Get sub-account details
+     * Retrieves detailed information about a specific sub-account, including account metadata and optionally balance information if requested.
+     *
      * @returns Account List of sub-accounts.
      * @throws ApiError
      */

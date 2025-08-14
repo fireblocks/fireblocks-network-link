@@ -16,5 +16,9 @@ export type CommonRamp = {
     amount: PositiveAmount;
     fees?: RampFees;
     executionDetails?: OrderQuote;
+    /**
+     * Ramp expiration time.
+     */
+    expiresAt: string;
 };
 
