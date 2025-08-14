@@ -14,6 +14,8 @@ export class TransfersBlockchainService {
 
     /**
      * Get list of withdrawals over public blockchains sorted by creation time
+     * Retrieves a paginated list of withdrawal transactions sent over public blockchains. Includes cryptocurrency transfers to external blockchain addresses, sorted by creation time.
+     *
      * @returns any List of withdrawals.
      * @throws ApiError
      */

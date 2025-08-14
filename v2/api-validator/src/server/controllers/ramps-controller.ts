@@ -2,17 +2,38 @@ import { randomUUID } from 'crypto';
 import { JSONSchemaFaker } from 'json-schema-faker';
 import _ from 'lodash';
 import {
+  AbaAddress,
+  AbaCapability,
+  AchAddress,
+  AchCapability,
   BridgeProperties,
+  ClabeAddress,
+  ClabeCapability,
+  EuropeanSEPAAddress,
+  EuropeanSEPACapability,
+  FiatAddress,
+  FiatCapability,
   IbanAddress,
   IbanCapability,
+  LocalBankTransferAddress,
+  LocalBankTransferCapability,
+  MobileMoneyAddress,
+  MobileMoneyCapability,
   OffRampProperties,
   OnRampProperties,
+  PixAddress,
+  PixCapability,
   PublicBlockchainAddress,
   Ramp,
   RampMethod,
   RampRequest,
   RampStatus,
+  SpeiAddress,
+  SpeiCapability,
   SwiftAddress,
+  SwiftCapability,
+  WireAddress,
+  WireCapability,
 } from '../../client/generated';
 import { XComError } from '../../error';
 import { fakeSchemaObject } from '../../schemas';
@@ -140,10 +161,9 @@ export class RampsController {
     } else if ('type' in ramp.from && ramp.from.type === 'Prefunded') {
       paymentInstructions = undefined;
     } else if (ramp.type === OnRampProperties.type.ON_RAMP) {
+      const transferMethod = getTransferMethod((ramp.from as FiatCapability)?.transferMethod);
       paymentInstructions = {
-        ...((ramp.from as IbanCapability)?.transferMethod === IbanCapability.transferMethod.IBAN
-          ? (fakeSchemaObject('IbanAddress') as IbanAddress)
-          : (fakeSchemaObject('SwiftAddress') as SwiftAddress)),
+        ...transferMethod,
         asset: ramp.from.asset,
       };
     } else {
@@ -158,9 +178,39 @@ export class RampsController {
       updatedAt: new Date().toISOString(),
       status: RampStatus.PENDING,
       fees: {},
+      expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
     };
     this.rampsRepository.create(newRamp);
     return newRamp;
+  }
+}
+
+function getTransferMethod(transferMethod: FiatCapability['transferMethod']): FiatAddress {
+  switch (transferMethod) {
+    case IbanCapability.transferMethod.IBAN:
+      return fakeSchemaObject('IbanAddress') as IbanAddress;
+    case SwiftCapability.transferMethod.SWIFT:
+      return fakeSchemaObject('SwiftAddress') as SwiftAddress;
+    case AchCapability.transferMethod.ACH:
+      return fakeSchemaObject('AchAddress') as AchAddress;
+    case WireCapability.transferMethod.WIRE:
+      return fakeSchemaObject('WireAddress') as WireAddress;
+    case SpeiCapability.transferMethod.SPEI:
+      return fakeSchemaObject('SpeiAddress') as SpeiAddress;
+    case PixCapability.transferMethod.PIX:
+      return fakeSchemaObject('PixAddress') as PixAddress;
+    case EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA:
+      return fakeSchemaObject('EuropeanSEPAAddress') as EuropeanSEPAAddress;
+    case LocalBankTransferCapability.transferMethod.LBT:
+      return fakeSchemaObject('LocalBankTransferAddress') as LocalBankTransferAddress;
+    case MobileMoneyCapability.transferMethod.MOMO:
+      return fakeSchemaObject('MobileMoneyAddress') as MobileMoneyAddress;
+    case AbaCapability.transferMethod.ABA:
+      return fakeSchemaObject('AbaAddress') as AbaAddress;
+    case ClabeCapability.transferMethod.CLABE:
+      return fakeSchemaObject('ClabeAddress') as ClabeAddress;
+    default:
+      throw new XComError('Invalid transfer method', { transferMethod });
   }
 }
 

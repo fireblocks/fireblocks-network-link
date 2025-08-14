@@ -14,6 +14,8 @@ export class RampsService {
 
     /**
      * Get list of ramps sorted by creation time
+     * Retrieves a paginated list of all ramp transactions for the specified account. Ramps are sorted by creation time and include both on-ramp and off-ramp operations.
+     *
      * @returns any List of ramps for account.
      * @throws ApiError
      */
@@ -156,6 +158,8 @@ export class RampsService {
 
     /**
      * Get details of a specific ramp
+     * Retrieves detailed information about a specific ramp transaction, including payment instructions, status, amounts, and processing details.
+     *
      * @returns Ramp Ramp details.
      * @throws ApiError
      */

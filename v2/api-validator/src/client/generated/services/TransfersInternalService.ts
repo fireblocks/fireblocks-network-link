@@ -14,6 +14,8 @@ export class TransfersInternalService {
 
     /**
      * Get list of withdrawals to sub-accounts, sorted by creation time
+     * Retrieves a paginated list of internal withdrawal transactions between sub-accounts. Includes transfers within the same organization or account structure, sorted by creation time.
+     *
      * @returns any List of withdrawals.
      * @throws ApiError
      */

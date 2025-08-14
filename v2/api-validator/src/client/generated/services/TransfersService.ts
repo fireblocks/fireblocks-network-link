@@ -16,6 +16,8 @@ export class TransfersService {
 
     /**
      * Get list of withdrawals sorted by creation time
+     * Retrieves a paginated list of all withdrawal transactions for the specified account. Withdrawals are sorted by creation time and include all types of withdrawal operations.
+     *
      * @returns any List of withdrawals.
      * @throws ApiError
      */
@@ -97,6 +99,8 @@ export class TransfersService {
 
     /**
      * Get withdrawal details
+     * Retrieves detailed information about a specific withdrawal transaction, including status, amounts, fees, destination details, and processing information.
+     *
      * @returns Withdrawal Withdrawals details.
      * @throws ApiError
      */
@@ -156,6 +160,8 @@ export class TransfersService {
 
     /**
      * Get list of deposits sorted by creation time in a descending order
+     * Retrieves a paginated list of all deposit transactions for the specified account. Deposits are sorted by creation time in descending order and include all types of deposit operations.
+     *
      * @returns any Deposits details.
      * @throws ApiError
      */
@@ -231,6 +237,8 @@ export class TransfersService {
 
     /**
      * Get deposit details
+     * Retrieves detailed information about a specific deposit transaction, including status, amounts, source details, confirmation information, and processing details.
+     *
      * @returns Deposit List of deposits.
      * @throws ApiError
      */
@@ -290,6 +298,8 @@ export class TransfersService {
 
     /**
      * Create new deposit address
+     * Creates a new deposit address for the specified account and asset. The generated address can be used to receive deposits for the specified cryptocurrency or token.
+     *
      * @returns DepositAddress New deposit address created.
      * @throws ApiError
      */
@@ -350,6 +360,8 @@ export class TransfersService {
 
     /**
      * Get list of existing deposit addresses
+     * Retrieves a paginated list of all deposit addresses associated with the specified account. Shows addresses for different cryptocurrencies and networks that can receive deposits.
+     *
      * @returns any List of existing deposit addresses.
      * @throws ApiError
      */
@@ -425,6 +437,8 @@ export class TransfersService {
 
     /**
      * Get details of a deposit address
+     * Retrieves detailed information about a specific deposit address, including the address string, associated network, asset type, and usage metadata.
+     *
      * @returns DepositAddress New deposit address created.
      * @throws ApiError
      */
@@ -484,6 +498,8 @@ export class TransfersService {
 
     /**
      * Disable a deposit address
+     * Disables a specific deposit address, preventing it from receiving new deposits. Existing funds sent to the address may still be processed depending on timing and confirmation status.
+     *
      * @returns any Deposit address disabled.
      * @throws ApiError
      */

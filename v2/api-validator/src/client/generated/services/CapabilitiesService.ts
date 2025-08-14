@@ -189,6 +189,8 @@ export class CapabilitiesService {
 
     /**
      * List possible asset conversions
+     * Retrieves the list of supported asset conversion pairs that can be quoted. Shows which assets can be converted to other assets through the liquidity service.
+     *
      * @returns QuoteCapabilities List of possible asset conversions.
      * @throws ApiError
      */
@@ -254,6 +256,8 @@ export class CapabilitiesService {
 
     /**
      * List order books
+     * Retrieves a list of all available trading order books supported by the provider. Each book represents a trading pair where users can place buy and sell orders.
+     *
      * @returns any List of order books
      * @throws ApiError
      */
@@ -321,6 +325,8 @@ export class CapabilitiesService {
 
     /**
      * Get list of supported withdrawal methods
+     * Retrieves the list of supported withdrawal methods available for the specified account. Shows which withdrawal types, networks, and destinations are supported for fund transfers.
+     *
      * @returns any List of withdrawal methods for account.
      * @throws ApiError
      */
@@ -396,6 +402,8 @@ export class CapabilitiesService {
 
     /**
      * Get list of supported deposit methods
+     * Retrieves the list of supported deposit methods available for the specified account. Shows which deposit types, networks, and sources are supported for fund transfers.
+     *
      * @returns any List of deposit methods for account.
      * @throws ApiError
      */
@@ -471,6 +479,8 @@ export class CapabilitiesService {
 
     /**
      * Get list of supported ramp methods
+     * Retrieves the list of supported on-ramp and off-ramp methods available for the specified account. Shows which payment methods and currencies are supported for fiat-to-crypto and crypto-to-fiat conversions.
+     *
      * @returns any List of ramp methods for account.
      * @throws ApiError
      */

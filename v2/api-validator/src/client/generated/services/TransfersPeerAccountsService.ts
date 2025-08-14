@@ -14,6 +14,8 @@ export class TransfersPeerAccountsService {
 
     /**
      * Get list of withdrawals to peer accounts, sorted by creation time
+     * Retrieves a paginated list of withdrawal transactions sent to peer accounts. Includes transfers to other accounts within the same provider ecosystem, sorted by creation time.
+     *
      * @returns any List of withdrawals.
      * @throws ApiError
      */
