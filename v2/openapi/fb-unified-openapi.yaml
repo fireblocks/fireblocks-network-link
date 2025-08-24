@@ -6203,8 +6203,6 @@ components:
         - $ref: '#/components/schemas/EuropeanSEPATransfer'
         - $ref: '#/components/schemas/LocalBankTransfer'
         - $ref: '#/components/schemas/MobileMoneyTransfer'
-        - $ref: '#/components/schemas/AbaTransfer'
-        - $ref: '#/components/schemas/ClabeTransfer'
     OrderQuote:
       type: object
       required:
