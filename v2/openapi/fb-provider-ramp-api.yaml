@@ -883,7 +883,7 @@ components:
     OrderQuote:
       type: object
       required:
-        - reQuote
+        - type
         - quoteId
       properties:
         type:

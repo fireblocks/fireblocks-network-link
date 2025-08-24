@@ -7,9 +7,9 @@ import type { Market } from './Market';
 import type { Retry } from './Retry';
 
 export type OrderQuote = {
-    type?: OrderQuote.type;
+    type: OrderQuote.type;
     quoteId: string;
-    reQuote: (Retry | Market);
+    reQuote?: (Retry | Market);
 };
 
 export namespace OrderQuote {

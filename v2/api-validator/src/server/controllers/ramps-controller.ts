@@ -2,13 +2,9 @@ import { randomUUID } from 'crypto';
 import { JSONSchemaFaker } from 'json-schema-faker';
 import _ from 'lodash';
 import {
-  AbaAddress,
-  AbaCapability,
   AchAddress,
   AchCapability,
   BridgeProperties,
-  ClabeAddress,
-  ClabeCapability,
   EuropeanSEPAAddress,
   EuropeanSEPACapability,
   FiatAddress,
@@ -205,10 +201,6 @@ function getTransferMethod(transferMethod: FiatCapability['transferMethod']): Fi
       return fakeSchemaObject('LocalBankTransferAddress') as LocalBankTransferAddress;
     case MobileMoneyCapability.transferMethod.MOMO:
       return fakeSchemaObject('MobileMoneyAddress') as MobileMoneyAddress;
-    case AbaCapability.transferMethod.ABA:
-      return fakeSchemaObject('AbaAddress') as AbaAddress;
-    case ClabeCapability.transferMethod.CLABE:
-      return fakeSchemaObject('ClabeAddress') as ClabeAddress;
     default:
       throw new XComError('Invalid transfer method', { transferMethod });
   }
