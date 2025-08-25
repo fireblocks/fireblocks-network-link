@@ -186,7 +186,6 @@ const ambiguousProperties = {
       '/to/accountNumber',
       '/to/bankName',
       '/to/bankCode',
-      '/to/clabe',
       '/from/transferMethod',
       '/from/asset',
       '/from/asset/cryptocurrencySymbol',

@@ -4516,108 +4516,6 @@ components:
           properties:
             referenceId:
               type: string
-    AbaCapability:
-      type: object
-      required:
-        - asset
-        - transferMethod
-      properties:
-        asset:
-          $ref: '#/components/schemas/NationalCurrency'
-        transferMethod:
-          type: string
-          enum:
-            - Aba
-    AbaAddress:
-      allOf:
-        - $ref: '#/components/schemas/AbaCapability'
-        - type: object
-          required:
-            - accountHolder
-            - accountNumber
-            - swiftCode
-          properties:
-            accountHolder:
-              $ref: '#/components/schemas/AccountHolderDetails'
-            accountNumber:
-              $ref: '#/components/schemas/BankAccountNumber'
-            routingNumber:
-              $ref: '#/components/schemas/RoutingNumber'
-            swiftCode:
-              type: string
-              description: SWIFT/BIC code (mandatory for international wires)
-            bankName:
-              type: string
-              description: Name of the bank
-            bankAddress:
-              $ref: '#/components/schemas/PostalAddress'
-            branchNumber:
-              type: string
-              description: Bank branch number
-    AbaTransferDestination:
-      allOf:
-        - $ref: '#/components/schemas/AbaAddress'
-        - type: object
-          required:
-            - amount
-          properties:
-            amount:
-              $ref: '#/components/schemas/PositiveAmount'
-    AbaTransfer:
-      description: US Wire Transfer
-      allOf:
-        - $ref: '#/components/schemas/AbaTransferDestination'
-        - type: object
-          properties:
-            referenceId:
-              type: string
-    ClabeCapability:
-      type: object
-      required:
-        - asset
-        - transferMethod
-      properties:
-        asset:
-          $ref: '#/components/schemas/NationalCurrency'
-        transferMethod:
-          type: string
-          enum:
-            - Clabe
-    ClabeAddress:
-      allOf:
-        - $ref: '#/components/schemas/ClabeCapability'
-        - type: object
-          required:
-            - accountHolder
-            - clabe
-          properties:
-            accountHolder:
-              $ref: '#/components/schemas/AccountHolderDetails'
-            clabe:
-              $ref: '#/components/schemas/Clabe'
-            bankName:
-              type: string
-              description: Name of the bank
-            beneficiaryRfc:
-              type: string
-              description: Beneficiary RFC for compliance purposes
-    ClabeTransferDestination:
-      allOf:
-        - $ref: '#/components/schemas/ClabeAddress'
-        - type: object
-          required:
-            - amount
-          properties:
-            amount:
-              $ref: '#/components/schemas/PositiveAmount'
-    ClabeTransfer:
-      description: Mexican SPEI Transfer
-      allOf:
-        - $ref: '#/components/schemas/ClabeTransferDestination'
-        - type: object
-          properties:
-            referenceId:
-              type: string
     OtherFiatTransfer:
       type: object
       description: Used for historic fiat transfers that do not fit a more specific transfer method.  It is impossible to create new deposits or withdrawal of this type using this API.
@@ -4651,8 +4549,6 @@ components:
         - $ref: '#/components/schemas/EuropeanSEPACapability'
         - $ref: '#/components/schemas/LocalBankTransferCapability'
         - $ref: '#/components/schemas/MobileMoneyCapability'
-        - $ref: '#/components/schemas/AbaCapability'
-        - $ref: '#/components/schemas/ClabeCapability'
     PublicBlockchainTransactionDestination:
       type: object
       allOf:
@@ -4805,8 +4701,6 @@ components:
         - $ref: '#/components/schemas/EuropeanSEPAAddress'
         - $ref: '#/components/schemas/LocalBankTransferAddress'
         - $ref: '#/components/schemas/MobileMoneyAddress'
-        - $ref: '#/components/schemas/AbaAddress'
-        - $ref: '#/components/schemas/ClabeAddress'
     DepositAddressStatus:
       enum:
         - enabled
@@ -6203,12 +6097,10 @@ components:
         - $ref: '#/components/schemas/EuropeanSEPATransfer'
         - $ref: '#/components/schemas/LocalBankTransfer'
         - $ref: '#/components/schemas/MobileMoneyTransfer'
-        - $ref: '#/components/schemas/AbaTransfer'
-        - $ref: '#/components/schemas/ClabeTransfer'
     OrderQuote:
       type: object
       required:
-        - reQuote
+        - type
         - quoteId
       properties:
         type:
