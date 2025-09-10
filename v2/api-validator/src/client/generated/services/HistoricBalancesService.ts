@@ -15,6 +15,8 @@ export class HistoricBalancesService {
 
     /**
      * Get balances at specific time in the past
+     * Retrieves historical balance information for the specified account at a specific point in time. Useful for reconciliation and auditing purposes to see account states at historical moments.
+     *
      * @returns any List of asset balances.
      * @throws ApiError
      */

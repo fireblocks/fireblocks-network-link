@@ -14,6 +14,8 @@ export class TransfersFiatService {
 
     /**
      * Get list of fiat withdrawals sorted by creation time
+     * Retrieves a paginated list of fiat currency withdrawal transactions. Includes traditional banking transfers and wire transfers, sorted by creation time.
+     *
      * @returns any List of withdrawals.
      * @throws ApiError
      */

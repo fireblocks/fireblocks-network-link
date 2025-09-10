@@ -18,6 +18,8 @@ export class TradingService {
 
     /**
      * Get details of an order book
+     * Retrieves detailed information about a specific trading order book, including book metadata, trading pair details, and current status.
+     *
      * @returns OrderBook The specified trading book if it exists
      * @throws ApiError
      */
@@ -436,6 +438,8 @@ export class TradingService {
 
     /**
      * Get trading order details
+     * Retrieves detailed information about a specific trading order, including order status, filled amounts, prices, and execution history.
+     *
      * @returns OrderWithTrades Book order details
      * @throws ApiError
      */
@@ -495,6 +499,8 @@ export class TradingService {
 
     /**
      * Cancel an active trading order
+     * Cancels an active trading order, removing it from the order book. Only orders in pending or partially filled status can be cancelled.
+     *
      * @returns any Order canceled.
      * @throws ApiError
      */

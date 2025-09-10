@@ -15,6 +15,8 @@ export class BalancesService {
 
     /**
      * Get current balances
+     * Retrieves current balance information for the specified account. Can be filtered by asset ID, national currency code, or cryptocurrency symbol.
+     *
      * @returns any List of asset balances.
      * @throws ApiError
      */

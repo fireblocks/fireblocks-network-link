@@ -25,6 +25,8 @@ tags:
     description: Balances management operations.
   - name: historicBalances
     description: Historic balances operations.
+  - name: rates
+    description: Rates operations.
   - name: liquidity
     description: Liquidity operations
   - name: trading
@@ -86,6 +88,7 @@ paths:
                       liquidity: '*'
                       collateral: '*'
                       ramps: '*'
+                      rates: '*'
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:
@@ -224,6 +227,8 @@ paths:
     get:
       operationId: getAccounts
       summary: Get list of sub-accounts
+      description: |
+        Retrieves a paginated list of all sub-accounts available to the provider. Can optionally include balance information for each account if requested.
       tags:
         - accounts
       parameters:
@@ -261,6 +266,8 @@ paths:
     get:
       operationId: getAccountDetails
       summary: Get sub-account details
+      description: |
+        Retrieves detailed information about a specific sub-account, including account metadata and optionally balance information if requested.
       tags:
         - accounts
       parameters:
@@ -285,10 +292,70 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/rate:
+    get:
+      operationId: getRateByAccountAndPairId
+      summary: Get rate by account and assets
+      tags:
+        - rates
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/ConversionPairIdQueryParam'
+        - $ref: '#/components/parameters/RampsPairIdQueryParam'
+        - $ref: '#/components/parameters/OrderBookPairIdQueryParam'
+      responses:
+        '200':
+          description: Rate by pair id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rate'
+              examples:
+                usdToEur:
+                  summary: USD to EUR rate
+                  value:
+                    rate: '0.9'
+                    timestamp: 1546658861000
+                    baseAsset:
+                      nationalCurrencyCode: USD
+                    quoteAsset:
+                      nationalCurrencyCode: EUR
+                btcToUsd:
+                  summary: BTC to USD rate
+                  value:
+                    rate: '10000'
+                    timestamp: 1546658861000
+                    baseAsset:
+                      cryptocurrencySymbol: BTC
+                    quoteAsset:
+                      nationalCurrencyCode: USD
+                usdcToUsd:
+                  summary: USDC to USD rate
+                  value:
+                    rate: '1'
+                    timestamp: 1546658861000
+                    baseAsset:
+                      assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                    quoteAsset:
+                      nationalCurrencyCode: USD
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/balances:
     get:
       operationId: getBalances
       summary: Get current balances
+      description: |
+        Retrieves current balance information for the specified account. Can be filtered by asset ID, national currency code, or cryptocurrency symbol.
       tags:
         - balances
       parameters:
@@ -356,6 +423,8 @@ paths:
     get:
       operationId: getHistoricBalances
       summary: Get balances at specific time in the past
+      description: |
+        Retrieves historical balance information for the specified account at a specific point in time. Useful for reconciliation and auditing purposes to see account states at historical moments.
       tags:
         - historicBalances
       parameters:
@@ -401,6 +470,8 @@ paths:
     get:
       operationId: getQuoteCapabilities
       summary: List possible asset conversions
+      description: |
+        Retrieves the list of supported asset conversion pairs that can be quoted. Shows which assets can be converted to other assets through the liquidity service.
       tags:
         - capabilities
       parameters:
@@ -463,6 +534,8 @@ paths:
     get:
       operationId: getQuotes
       summary: Get list of quotes sorted by creation time
+      description: |
+        Retrieves a paginated list of all quotes for the specified account. Quotes are sorted by creation time and can be ordered ascending or descending.
       tags:
         - liquidity
       parameters:
@@ -501,6 +574,8 @@ paths:
     get:
       operationId: getQuoteDetails
       summary: Get quote details
+      description: |
+        Retrieves detailed information about a specific quote, including conversion rates, amounts, expiration time, and current status.
       tags:
         - liquidity
       parameters:
@@ -529,6 +604,8 @@ paths:
     post:
       operationId: executeQuote
       summary: Execute quote
+      description: |
+        Executes a previously created quote, performing the actual asset conversion. The quote must be valid and not expired for execution to succeed.
       tags:
         - liquidity
       parameters:
@@ -557,6 +634,8 @@ paths:
     get:
       operationId: getBooks
       summary: List order books
+      description: |
+        Retrieves a list of all available trading order books supported by the provider. Each book represents a trading pair where users can place buy and sell orders.
       tags:
         - capabilities
       parameters:
@@ -607,6 +686,8 @@ paths:
     get:
       operationId: getBookDetails
       summary: Get details of an order book
+      description: |
+        Retrieves detailed information about a specific trading order book, including book metadata, trading pair details, and current status.
       tags:
         - trading
       parameters:
@@ -947,6 +1028,8 @@ paths:
     get:
       operationId: getOrderDetails
       summary: Get trading order details
+      description: |
+        Retrieves detailed information about a specific trading order, including order status, filled amounts, prices, and execution history.
       tags:
         - trading
       parameters:
@@ -974,6 +1057,8 @@ paths:
     delete:
       operationId: cancelOrder
       summary: Cancel an active trading order
+      description: |
+        Cancels an active trading order, removing it from the order book. Only orders in pending or partially filled status can be cancelled.
       tags:
         - trading
       parameters:
@@ -998,6 +1083,8 @@ paths:
     get:
       operationId: getWithdrawalMethods
       summary: Get list of supported withdrawal methods
+      description: |
+        Retrieves the list of supported withdrawal methods available for the specified account. Shows which withdrawal types, networks, and destinations are supported for fund transfers.
       tags:
         - capabilities
       parameters:
@@ -1085,6 +1172,8 @@ paths:
     get:
       operationId: getDepositMethods
       summary: Get list of supported deposit methods
+      description: |
+        Retrieves the list of supported deposit methods available for the specified account. Shows which deposit types, networks, and sources are supported for fund transfers.
       tags:
         - capabilities
       parameters:
@@ -1178,6 +1267,8 @@ paths:
     get:
       operationId: getWithdrawals
       summary: Get list of withdrawals sorted by creation time
+      description: |
+        Retrieves a paginated list of all withdrawal transactions for the specified account. Withdrawals are sorted by creation time and include all types of withdrawal operations.
       tags:
         - transfers
       parameters:
@@ -1205,6 +1296,8 @@ paths:
     get:
       operationId: getWithdrawalDetails
       summary: Get withdrawal details
+      description: |
+        Retrieves detailed information about a specific withdrawal transaction, including status, amounts, fees, destination details, and processing information.
       tags:
         - transfers
       parameters:
@@ -1233,6 +1326,8 @@ paths:
     get:
       operationId: getBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
+      description: |
+        Retrieves a paginated list of withdrawal transactions sent over public blockchains. Includes cryptocurrency transfers to external blockchain addresses, sorted by creation time.
       tags:
         - transfersBlockchain
       parameters:
@@ -1305,6 +1400,8 @@ paths:
     get:
       operationId: getFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
+      description: |
+        Retrieves a paginated list of fiat currency withdrawal transactions. Includes traditional banking transfers and wire transfers, sorted by creation time.
       tags:
         - transfersFiat
       parameters:
@@ -1377,6 +1474,8 @@ paths:
     get:
       operationId: getPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
+      description: |
+        Retrieves a paginated list of withdrawal transactions sent to peer accounts. Includes transfers to other accounts within the same provider ecosystem, sorted by creation time.
       tags:
         - transfersPeerAccounts
       parameters:
@@ -1449,6 +1548,8 @@ paths:
     get:
       operationId: getSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
+      description: |
+        Retrieves a paginated list of internal withdrawal transactions between sub-accounts. Includes transfers within the same organization or account structure, sorted by creation time.
       tags:
         - transfersInternal
       parameters:
@@ -1521,6 +1622,8 @@ paths:
     get:
       operationId: getDeposits
       summary: Get list of deposits sorted by creation time in a descending order
+      description: |
+        Retrieves a paginated list of all deposit transactions for the specified account. Deposits are sorted by creation time in descending order and include all types of deposit operations.
       tags:
         - transfers
       parameters:
@@ -1558,6 +1661,8 @@ paths:
     get:
       operationId: getDepositDetails
       summary: Get deposit details
+      description: |
+        Retrieves detailed information about a specific deposit transaction, including status, amounts, source details, confirmation information, and processing details.
       tags:
         - transfers
       parameters:
@@ -1586,6 +1691,8 @@ paths:
     post:
       operationId: createDepositAddress
       summary: Create new deposit address
+      description: |
+        Creates a new deposit address for the specified account and asset. The generated address can be used to receive deposits for the specified cryptocurrency or token.
       tags:
         - transfers
       parameters:
@@ -1619,6 +1726,8 @@ paths:
     get:
       operationId: getDepositAddresses
       summary: Get list of existing deposit addresses
+      description: |
+        Retrieves a paginated list of all deposit addresses associated with the specified account. Shows addresses for different cryptocurrencies and networks that can receive deposits.
       tags:
         - transfers
       parameters:
@@ -1656,6 +1765,8 @@ paths:
     get:
       operationId: getDepositAddressDetails
       summary: Get details of a deposit address
+      description: |
+        Retrieves detailed information about a specific deposit address, including the address string, associated network, asset type, and usage metadata.
       tags:
         - transfers
       parameters:
@@ -1683,6 +1794,8 @@ paths:
     delete:
       operationId: disableDepositAddress
       summary: Disable a deposit address
+      description: |
+        Disables a specific deposit address, preventing it from receiving new deposits. Existing funds sent to the address may still be processed depending on timing and confirmation status.
       tags:
         - transfers
       parameters:
@@ -1746,6 +1859,8 @@ paths:
     get:
       operationId: getCollateralAccountLinks
       summary: Get list of collateral account links
+      description: |
+        Retrieves all collateral account links associated with the specified account. Returns details about link status, eligible assets, and collateral configuration.
       tags:
         - collateral
       parameters:
@@ -1846,6 +1961,8 @@ paths:
     get:
       operationId: getCollateralDepositAddresses
       summary: Get list of collateral account deposit addresses
+      description: |
+        Retrieves all registered deposit addresses for the specified collateral account. Can be filtered by asset ID or cryptocurrency symbol to get addresses for specific assets.
       tags:
         - collateral
       parameters:
@@ -1883,6 +2000,8 @@ paths:
     get:
       operationId: getCollateralDepositAddressesDetails
       summary: Get details of a specific deposit address in a collateral account.
+      description: |
+        Retrieves detailed information about a specific deposit address within a collateral account, including the address details and recovery account configuration.
       tags:
         - collateral
       parameters:
@@ -2001,6 +2120,8 @@ paths:
     get:
       operationId: getCollateralDepositTransactions
       summary: Get list of collateral account deposit transactions sorted by creation time
+      description: |
+        Retrieves a paginated list of all deposit transactions for the specified collateral account. Transactions are sorted by creation time and include status information and approval details.
       tags:
         - collateral
       parameters:
@@ -2036,6 +2157,8 @@ paths:
     get:
       operationId: getCollateralDepositTransactionDetails
       summary: Get a collateral account deposit transaction details
+      description: |
+        Retrieves detailed information about a specific collateral deposit transaction, including transaction status, approval details, and processing information.
       tags:
         - collateral
       parameters:
@@ -2154,6 +2277,8 @@ paths:
     get:
       operationId: getCollateralWithdrawalTransactions
       summary: Get list of collateral withdrawal transactions sorted by creation time
+      description: |
+        Retrieves a paginated list of all withdrawal transactions for the specified collateral account. Transactions are sorted by creation time and include status, approval details, and settlement information.
       tags:
         - collateral
       parameters:
@@ -2189,6 +2314,8 @@ paths:
     get:
       operationId: getCollateralWithdrawalTransactionDetails
       summary: Get a collateral withdrawal transaction details
+      description: |
+        Retrieves detailed information about a specific collateral withdrawal transaction, including transaction status, approval details, settlement information, and rejection reasons if applicable.
       tags:
         - collateral
       parameters:
@@ -2297,6 +2424,8 @@ paths:
     get:
       operationId: getSettlementDetails
       summary: Get a settlement details
+      description: |
+        Retrieves detailed information about a specific settlement state for a collateral account, including withdrawal and deposit transaction details, settlement status, and completion information.
       tags:
         - collateral
       parameters:
@@ -2330,6 +2459,8 @@ paths:
     get:
       operationId: getRampMethods
       summary: Get list of supported ramp methods
+      description: |
+        Retrieves the list of supported on-ramp and off-ramp methods available for the specified account. Shows which payment methods and currencies are supported for fiat-to-crypto and crypto-to-fiat conversions.
       tags:
         - capabilities
       parameters:
@@ -2356,6 +2487,8 @@ paths:
     get:
       operationId: getRamps
       summary: Get list of ramps sorted by creation time
+      description: |
+        Retrieves a paginated list of all ramp transactions for the specified account. Ramps are sorted by creation time and include both on-ramp and off-ramp operations.
       tags:
         - ramps
       parameters:
@@ -2413,6 +2546,8 @@ paths:
     get:
       operationId: getRampDetails
       summary: Get details of a specific ramp
+      description: |
+        Retrieves detailed information about a specific ramp transaction, including payment instructions, status, amounts, and processing details.
       tags:
         - ramps
       parameters:
@@ -2536,6 +2671,24 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/CryptocurrencySymbol'
+    ConversionPairIdQueryParam:
+      name: conversionPairId
+      in: query
+      description: Conversion pair to get the rate for.
+      schema:
+        type: string
+    RampsPairIdQueryParam:
+      name: rampsPairId
+      in: query
+      description: Ramps pair to get the rate for.
+      schema:
+        type: string
+    OrderBookPairIdQueryParam:
+      name: orderBookPairId
+      in: query
+      description: Order book pair to get the rate for.
+      schema:
+        type: string
     AccountBalancesQueryParam:
       name: balances
       in: query
@@ -2655,6 +2808,76 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Ramp'
+          examples:
+            onRamp:
+              summary: OnRamp
+              description: A standard fiat to crypto on-ramp without additional features.
+              value:
+                id: 16b8b2c3-bd61-4745-9c48-3d30c2bc6907
+                createdAt: '2021-09-01T12:00:00Z'
+                updatedAt: '2021-09-01T12:00:00Z'
+                status: Pending
+                amount: '1000.00'
+                type: OnRamp
+                expiresAt: '2021-09-01T12:00:00Z'
+                from:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                to:
+                  asset:
+                    assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                  transferMethod: PublicBlockchain
+                  address: '0x1234567890abcdef1234567890abcdef12345678'
+                paymentInstructions:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                  accountHolder:
+                    name: John Doe
+                    address: 123 Main St, New York, NY 10001
+                  iban: US1234567890
+                fees:
+                  subAccount: 100
+                  provider: 200
+            onRampWithQuote:
+              summary: OnRamp with Quote
+              description: An on-ramp that includes quote information for price execution.
+              value:
+                id: 69fa4f38-c1fd-4215-a310-82272225c4ef
+                createdAt: '2021-09-01T12:00:00Z'
+                updatedAt: '2021-09-01T12:00:00Z'
+                status: Pending
+                amount: '500.00'
+                type: OnRamp
+                expiresAt: '2021-09-01T12:00:00Z'
+                from:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                to:
+                  asset:
+                    assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                  transferMethod: PublicBlockchain
+                  address: '0xabcdef1234567890abcdef1234567890abcdef12'
+                paymentInstructions:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                  accountHolder:
+                    name: Jane Smith
+                    address: 456 Oak Street, London, UK
+                  iban: US1234567890
+                executionDetails:
+                  type: Quote
+                  quoteId: quote-123456789
+                  reQuote:
+                    type: Retry
+                    slippage: 0.02
+                    count: 3
+                fees:
+                  subAccount: 75
+                  provider: 150
     GetRampDetailsResponse:
       description: Ramp details.
       content:
@@ -2694,6 +2917,8 @@ components:
                       asset:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                      tag: 1234567890abcdef
                     paymentInstructions:
                       asset:
                         nationalCurrencyCode: USD
@@ -2702,15 +2927,10 @@ components:
                         name: John Doe
                         address: 123 Main St, New York, NY 10001
                       iban: US1234567890
-                    recipient:
-                      asset:
-                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
-                      transferMethod: PublicBlockchain
-                      address: '0x1234567890abcdef1234567890abcdef12345678'
-                      tag: 1234567890abcdef
                     fees:
                       subAccount: 100
                       provider: 200
+                    expiresAt: '2021-09-01T12:00:00Z'
                   - id: 69fa4f38-c1fd-4215-a310-82272225c4ef
                     createdAt: '2021-09-01T12:00:00Z'
                     updatedAt: '2021-09-01T12:00:00Z'
@@ -2725,19 +2945,15 @@ components:
                       asset:
                         nationalCurrencyCode: USD
                       transferMethod: Iban
+                      accountHolder:
+                        name: John Doe
+                        address: 123 Main St, New York, NY 10001
+                      iban: US1234567890
                     paymentInstructions:
                       asset:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
                       address: '0x1234567890abcdef1234567890abcdef12345678'
-                    recipient:
-                      asset:
-                        nationalCurrencyCode: USD
-                      transferMethod: Iban
-                      accountHolder:
-                        name: John Doe
-                        address: 123 Main St, New York, NY 10001
-                      iban: US1234567890
                     payment:
                       blockchainTxId: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
                       amount: '1231.45'
@@ -2756,6 +2972,7 @@ components:
                       amount: '1231.45'
                     fees:
                       subAccount: 100
+                    expiresAt: '2021-09-01T12:00:00Z'
                   - id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
                     createdAt: '2021-09-01T12:00:00Z'
                     updatedAt: '2021-09-01T12:00:00Z'
@@ -2770,17 +2987,13 @@ components:
                       asset:
                         assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
                       transferMethod: PublicBlockchain
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                      tag: 1234567890abcdef
                     paymentInstructions:
                       asset:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
                       address: '0x1234567890abcdef1234567890abcdef12355678'
-                    recipient:
-                      asset:
-                        assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
-                      transferMethod: PublicBlockchain
-                      address: '0x1234567890abcdef1234567890abcdef12345678'
-                      tag: 1234567890abcdef
                     payment:
                       blockchainTxId: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
                       amount: '1231.45'
@@ -2797,6 +3010,7 @@ components:
                       transferMethod: PublicBlockchain
                     fees:
                       subAccount: 100
+                    expiresAt: '2021-09-01T12:00:00Z'
   schemas:
     GeneralError:
       description: Should be returned only if there in no more specific object.
@@ -2918,6 +3132,8 @@ components:
         collateral:
           $ref: '#/components/schemas/AccountsSet'
         ramps:
+          $ref: '#/components/schemas/AccountsSet'
+        rates:
           $ref: '#/components/schemas/AccountsSet'
     AccountsSet:
       description: Indicates to which sub-accounts an operation applies. The value could be either a list of sub-account IDs or "*". The value "*" indicates all the sub-accounts.
@@ -3194,6 +3410,19 @@ components:
               type: string
             addressTag:
               type: string
+    Rate:
+      type: object
+      required:
+        - rate
+        - timestamp
+      properties:
+        rate:
+          type: string
+        timestamp:
+          type: number
+          format: UNIX-timestamp-epoch
+          description: In Milliseconds. The timestamp on the creation of the rate.
+          example: 1546658861000
     AssetReference:
       oneOf:
         - $ref: '#/components/schemas/NationalCurrency'
@@ -4124,6 +4353,223 @@ components:
           properties:
             referenceId:
               type: string
+    PixCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Pix
+    PixAddress:
+      allOf:
+        - $ref: '#/components/schemas/PixCapability'
+        - type: object
+          required:
+            - accountHolder
+            - pixKey
+            - keyType
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            pixKey:
+              type: string
+            keyType:
+              type: string
+              enum:
+                - cpf
+                - cnpj
+                - email
+                - phone
+                - random
+            bankName:
+              type: string
+            bankCode:
+              type: string
+    PixTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/PixAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    PixTransfer:
+      allOf:
+        - $ref: '#/components/schemas/PixTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    EuropeanSEPACapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - EuropeanSEPA
+    EuropeanSEPAAddress:
+      allOf:
+        - $ref: '#/components/schemas/EuropeanSEPACapability'
+        - type: object
+          required:
+            - accountHolder
+            - iban
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            iban:
+              $ref: '#/components/schemas/Iban'
+            bic:
+              type: string
+              description: Bank Identifier Code (SWIFT/BIC)
+            bankName:
+              type: string
+            bankBranch:
+              type: string
+            bankAddress:
+              type: string
+            purposeCode:
+              type: string
+              description: ISO purpose code for the transfer
+            taxId:
+              type: string
+              description: Beneficiary tax identification number
+    EuropeanSEPATransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/EuropeanSEPAAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    EuropeanSEPATransfer:
+      allOf:
+        - $ref: '#/components/schemas/EuropeanSEPATransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    MobileMoneyCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Momo
+    MobilePhoneNumber:
+      type: string
+      pattern: ^\+[1-9]\d{1,14}$
+      description: Mobile phone number in E.164 format
+    MobileMoneyAddress:
+      allOf:
+        - $ref: '#/components/schemas/MobileMoneyCapability'
+        - type: object
+          required:
+            - accountHolder
+            - mobilePhoneNumber
+            - provider
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            mobilePhoneNumber:
+              $ref: '#/components/schemas/MobilePhoneNumber'
+            provider:
+              type: string
+              enum:
+                - m-pesa
+                - airtel
+                - mtn
+                - tigo
+                - orange
+              description: Mobile money provider
+            beneficiaryDocumentId:
+              type: string
+              description: Beneficiary document identification (may be required)
+            beneficiaryRelationship:
+              type: string
+              description: Relationship to beneficiary for AML purposes
+    MobileMoneyTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/MobileMoneyAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    MobileMoneyTransfer:
+      allOf:
+        - $ref: '#/components/schemas/MobileMoneyTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    LocalBankTransferCapability:
+      description: Local Bank Transfer Capability
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Lbt
+    LocalBankTransferAddress:
+      allOf:
+        - $ref: '#/components/schemas/LocalBankTransferCapability'
+        - type: object
+          required:
+            - accountHolder
+            - accountNumber
+            - bankName
+            - bankCode
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            accountNumber:
+              $ref: '#/components/schemas/BankAccountNumber'
+            bankName:
+              type: string
+              description: Name of the bank
+            bankCode:
+              type: string
+              description: Internal bank identifier
+    LocalBankTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/LocalBankTransferAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    LocalBankTransfer:
+      allOf:
+        - $ref: '#/components/schemas/LocalBankTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
     OtherFiatTransfer:
       type: object
       description: Used for historic fiat transfers that do not fit a more specific transfer method.  It is impossible to create new deposits or withdrawal of this type using this API.
@@ -4153,6 +4599,10 @@ components:
         - $ref: '#/components/schemas/AchCapability'
         - $ref: '#/components/schemas/WireCapability'
         - $ref: '#/components/schemas/SpeiCapability'
+        - $ref: '#/components/schemas/PixCapability'
+        - $ref: '#/components/schemas/EuropeanSEPACapability'
+        - $ref: '#/components/schemas/LocalBankTransferCapability'
+        - $ref: '#/components/schemas/MobileMoneyCapability'
     PublicBlockchainTransactionDestination:
       type: object
       allOf:
@@ -4301,6 +4751,10 @@ components:
         - $ref: '#/components/schemas/AchAddress'
         - $ref: '#/components/schemas/WireAddress'
         - $ref: '#/components/schemas/SpeiAddress'
+        - $ref: '#/components/schemas/PixAddress'
+        - $ref: '#/components/schemas/EuropeanSEPAAddress'
+        - $ref: '#/components/schemas/LocalBankTransferAddress'
+        - $ref: '#/components/schemas/MobileMoneyAddress'
     DepositAddressStatus:
       enum:
         - enabled
@@ -5333,6 +5787,17 @@ components:
         - Completed
         - Failed
         - Refunded
+    PrefundedOnRampCapability:
+      type: object
+      title: Prefunded Fiat to Crypto
+      required:
+        - from
+        - to
+      properties:
+        from:
+          $ref: '#/components/schemas/PrefundedFiatCapability'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
     OnRampCapability:
       type: object
       title: Fiat to Crypto
@@ -5344,6 +5809,17 @@ components:
           $ref: '#/components/schemas/FiatCapability'
         to:
           $ref: '#/components/schemas/PublicBlockchainCapability'
+    PrefundedOffRampCapability:
+      type: object
+      title: Prefunded Crypto to Fiat
+      required:
+        - from
+        - to
+      properties:
+        from:
+          $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        to:
+          $ref: '#/components/schemas/FiatCapability'
     OffRampCapability:
       type: object
       title: Crypto to Fiat
@@ -5355,6 +5831,17 @@ components:
           $ref: '#/components/schemas/PublicBlockchainCapability'
         to:
           $ref: '#/components/schemas/FiatCapability'
+    PrefundedBridgeCapability:
+      type: object
+      title: Prefunded Crypto to Crypto
+      required:
+        - from
+        - to
+      properties:
+        from:
+          $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
     BridgeCapability:
       type: object
       title: Crypto to Crypto
@@ -5376,8 +5863,59 @@ components:
               type: string
         - oneOf:
             - $ref: '#/components/schemas/OnRampCapability'
+            - $ref: '#/components/schemas/PrefundedOnRampCapability'
             - $ref: '#/components/schemas/OffRampCapability'
+            - $ref: '#/components/schemas/PrefundedOffRampCapability'
             - $ref: '#/components/schemas/BridgeCapability'
+            - $ref: '#/components/schemas/PrefundedBridgeCapability'
+    BlockchainCapabilityWithOptionalAddress:
+      title: Blockchain Capability With Address
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainCapability'
+        - type: object
+          properties:
+            address:
+              type: string
+    PrefundedFiatCapability:
+      type: object
+      required:
+        - asset
+        - type
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        type:
+          type: string
+          enum:
+            - Prefunded
+    PrefundedBlockchainCapability:
+      type: object
+      required:
+        - asset
+        - type
+      properties:
+        asset:
+          $ref: '#/components/schemas/CryptocurrencyReference'
+        type:
+          type: string
+          enum:
+            - Prefunded
+    PrefundedOnRampProperties:
+      type: object
+      title: On Ramp - Prefunded
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - OnRamp
+        from:
+          $ref: '#/components/schemas/PrefundedFiatCapability'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainAddress'
     OnRampProperties:
       type: object
       title: On Ramp
@@ -5385,7 +5923,6 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
@@ -5394,9 +5931,23 @@ components:
         from:
           $ref: '#/components/schemas/FiatCapability'
         to:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
-        recipient:
           $ref: '#/components/schemas/PublicBlockchainAddress'
+    PrefundedOffRampProperties:
+      type: object
+      title: Off Ramp - Prefunded
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - OffRamp
+        from:
+          $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        to:
+          $ref: '#/components/schemas/FiatAddress'
     OffRampProperties:
       type: object
       title: Off Ramp
@@ -5404,18 +5955,31 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
           enum:
             - OffRamp
         from:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
+          $ref: '#/components/schemas/BlockchainCapabilityWithOptionalAddress'
         to:
-          $ref: '#/components/schemas/FiatCapability'
-        recipient:
           $ref: '#/components/schemas/FiatAddress'
+    PrefundedBridgeProperties:
+      type: object
+      title: Bridge - Prefunded
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - Bridge
+        from:
+          $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainAddress'
     BridgeProperties:
       type: object
       title: Bridge
@@ -5423,17 +5987,14 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
           enum:
             - Bridge
         from:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
+          $ref: '#/components/schemas/BlockchainCapabilityWithOptionalAddress'
         to:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
-        recipient:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     CommonRampRequestProperties:
       type: object
@@ -5450,8 +6011,20 @@ components:
         - $ref: '#/components/schemas/CommonRampRequestProperties'
         - oneOf:
             - $ref: '#/components/schemas/OnRampProperties'
+            - $ref: '#/components/schemas/PrefundedOnRampProperties'
             - $ref: '#/components/schemas/OffRampProperties'
+            - $ref: '#/components/schemas/PrefundedOffRampProperties'
             - $ref: '#/components/schemas/BridgeProperties'
+            - $ref: '#/components/schemas/PrefundedBridgeProperties'
+        - type: object
+          properties:
+            executionDetails:
+              oneOf:
+                - $ref: '#/components/schemas/OrderQuote'
+        - type: object
+          properties:
+            participantsIdentification:
+              $ref: '#/components/schemas/ParticipantsIdentification'
     RampFees:
       type: object
       description: Fees associated with the ramp transfer.
@@ -5470,6 +6043,7 @@ components:
         - createdAt
         - updatedAt
         - amount
+        - expiresAt
       properties:
         id:
           type: string
@@ -5485,10 +6059,17 @@ components:
           $ref: '#/components/schemas/PositiveAmount'
         fees:
           $ref: '#/components/schemas/RampFees'
-    OnRampTransfer:
+        executionDetails:
+          oneOf:
+            - $ref: '#/components/schemas/OrderQuote'
+        expiresAt:
+          description: Ramp expiration time.
+          type: string
+          format: date-time
+    OnRampPropertiesWithPaymentInstructions:
+      type: object
+      title: On Ramp
       allOf:
-        - $ref: '#/components/schemas/CommonRamp'
-        - $ref: '#/components/schemas/OnRampProperties'
         - type: object
           required:
             - paymentInstructions
@@ -5500,43 +6081,65 @@ components:
                   properties:
                     referenceId:
                       type: string
-            payment:
-              $ref: '#/components/schemas/RampFiatTransfer'
-            receipt:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
-    OffRampTransfer:
+        - $ref: '#/components/schemas/OnRampProperties'
+    OffRampPropertiesWithPaymentInstructions:
+      type: object
+      title: Off Ramp
       allOf:
-        - $ref: '#/components/schemas/CommonRamp'
+        - type: object
+          required:
+            - paymentInstructions
+          properties:
+            paymentInstructions:
+              $ref: '#/components/schemas/PublicBlockchainAddress'
         - $ref: '#/components/schemas/OffRampProperties'
+    BridgePropertiesWithPaymentInstructions:
+      type: object
+      title: Bridge
+      allOf:
         - type: object
           required:
             - paymentInstructions
           properties:
             paymentInstructions:
               $ref: '#/components/schemas/PublicBlockchainAddress'
-            payment:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
-            receipt:
-              $ref: '#/components/schemas/RampFiatTransfer'
-    BridgeTransfer:
+        - $ref: '#/components/schemas/BridgeProperties'
+    OnRamp:
+      title: On Ramp
       allOf:
         - $ref: '#/components/schemas/CommonRamp'
-        - $ref: '#/components/schemas/BridgeProperties'
+        - oneOf:
+            - $ref: '#/components/schemas/OnRampPropertiesWithPaymentInstructions'
+            - $ref: '#/components/schemas/PrefundedOnRampProperties'
         - type: object
-          required:
-            - paymentInstructions
           properties:
-            paymentInstructions:
-              $ref: '#/components/schemas/PublicBlockchainAddress'
-            payment:
+            receipt:
               $ref: '#/components/schemas/PublicBlockchainTransaction'
+    OffRamp:
+      allOf:
+        - $ref: '#/components/schemas/CommonRamp'
+        - oneOf:
+            - $ref: '#/components/schemas/OffRampPropertiesWithPaymentInstructions'
+            - $ref: '#/components/schemas/PrefundedOffRampProperties'
+        - type: object
+          properties:
+            receipt:
+              $ref: '#/components/schemas/RampFiatTransfer'
+    Bridge:
+      allOf:
+        - $ref: '#/components/schemas/CommonRamp'
+        - oneOf:
+            - $ref: '#/components/schemas/BridgePropertiesWithPaymentInstructions'
+            - $ref: '#/components/schemas/PrefundedBridgeProperties'
+        - type: object
+          properties:
             receipt:
               $ref: '#/components/schemas/PublicBlockchainTransaction'
     Ramp:
       oneOf:
-        - $ref: '#/components/schemas/OnRampTransfer'
-        - $ref: '#/components/schemas/OffRampTransfer'
-        - $ref: '#/components/schemas/BridgeTransfer'
+        - $ref: '#/components/schemas/OnRamp'
+        - $ref: '#/components/schemas/OffRamp'
+        - $ref: '#/components/schemas/Bridge'
     RampFiatTransfer:
       oneOf:
         - $ref: '#/components/schemas/IbanTransfer'
@@ -5544,4 +6147,49 @@ components:
         - $ref: '#/components/schemas/AchTransfer'
         - $ref: '#/components/schemas/WireTransfer'
         - $ref: '#/components/schemas/SpeiTransfer'
+        - $ref: '#/components/schemas/PixTransfer'
+        - $ref: '#/components/schemas/EuropeanSEPATransfer'
+        - $ref: '#/components/schemas/LocalBankTransfer'
+        - $ref: '#/components/schemas/MobileMoneyTransfer'
+    OrderQuote:
+      type: object
+      required:
+        - type
+        - quoteId
+      properties:
+        type:
+          type: string
+          enum:
+            - Quote
+        quoteId:
+          type: string
+        reQuote:
+          oneOf:
+            - $ref: '#/components/schemas/Retry'
+            - $ref: '#/components/schemas/Market'
+    Retry:
+      type: object
+      required:
+        - type
+        - slippage
+      properties:
+        type:
+          type: string
+          enum:
+            - Retry
+        slippage:
+          type: number
+          description: Slippage tolerance in basis points (bps) for quote orders - 1 is 0.01% and 10000 is 100%
+        count:
+          type: number
+          description: If quote is expired, how many times to re-generate new quotes to try having the order executed as in the original quote.
+    Market:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - Market
   securitySchemes: {}

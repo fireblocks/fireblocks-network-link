@@ -1,27 +1,44 @@
+import { randomUUID } from 'crypto';
 import { JSONSchemaFaker } from 'json-schema-faker';
 import _ from 'lodash';
-import { fakeSchemaObject } from '../../schemas';
-import { AssetsController } from './assets-controller';
-import { Repository } from './repository';
 import {
+  AchAddress,
+  AchCapability,
   BridgeProperties,
+  EuropeanSEPAAddress,
+  EuropeanSEPACapability,
+  FiatAddress,
+  FiatCapability,
   IbanAddress,
   IbanCapability,
+  LocalBankTransferAddress,
+  LocalBankTransferCapability,
+  MobileMoneyAddress,
+  MobileMoneyCapability,
   OffRampProperties,
   OnRampProperties,
+  PixAddress,
+  PixCapability,
   PublicBlockchainAddress,
   Ramp,
   RampMethod,
   RampRequest,
   RampStatus,
+  SpeiAddress,
+  SpeiCapability,
   SwiftAddress,
+  SwiftCapability,
+  WireAddress,
+  WireCapability,
 } from '../../client/generated';
-import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
+import { fakeSchemaObject } from '../../schemas';
+import { AssetsController } from './assets-controller';
+import { Repository } from './repository';
 import { UnknownAssetError } from './withdrawal-controller';
 
 const RAMPS_COUNT = 10;
-const RAMP_CAPABILITIES_COUNT = 5;
+const RAMP_CAPABILITIES_COUNT = 10;
 type Order = 'asc' | 'desc';
 
 export class RampNotFoundError extends XComError {
@@ -76,15 +93,31 @@ export class RampsController {
   private validateRampRequest(ramp: RampRequest) {
     if (
       !AssetsController.isKnownAsset(ramp.from.asset) ||
-      !AssetsController.isKnownAsset(ramp.to.asset) ||
-      !AssetsController.isKnownAsset(ramp.recipient.asset)
+      !AssetsController.isKnownAsset(ramp.to.asset)
     ) {
       throw new UnknownAssetError();
     }
 
-    const capability = this.rampMethodRepository.findBy(
-      (c) => _.isEqual(c.from, ramp.from) && _.isEqual(c.to, ramp.to)
-    );
+    const capability = this.rampMethodRepository.findBy((c) => {
+      const rampFrom: any = {
+        asset: ramp.from.asset,
+      };
+
+      if ('transferMethod' in ramp.from) {
+        rampFrom.transferMethod = ramp.from.transferMethod;
+      }
+
+      if ('type' in ramp.from) {
+        rampFrom.type = ramp.from.type;
+      }
+
+      const rampTo: any = {
+        asset: ramp.to.asset,
+        transferMethod: ramp.to.transferMethod,
+      };
+
+      return _.isEqual(c.from, rampFrom) && _.isEqual(c.to, rampTo);
+    });
     if (!capability) {
       throw new UnsupportedRampMethod();
     }
@@ -112,6 +145,7 @@ export class RampsController {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { idempotencyKey, ...rampProps } = ramp;
     let paymentInstructions;
+
     if (
       ramp.type === OffRampProperties.type.OFF_RAMP ||
       ramp.type === BridgeProperties.type.BRIDGE
@@ -120,11 +154,12 @@ export class RampsController {
         ...(fakeSchemaObject('PublicBlockchainAddress') as PublicBlockchainAddress),
         asset: ramp.from.asset,
       };
+    } else if ('type' in ramp.from && ramp.from.type === 'Prefunded') {
+      paymentInstructions = undefined;
     } else if (ramp.type === OnRampProperties.type.ON_RAMP) {
+      const transferMethod = getTransferMethod((ramp.from as FiatCapability)?.transferMethod);
       paymentInstructions = {
-        ...(ramp.from.transferMethod === IbanCapability.transferMethod.IBAN
-          ? (fakeSchemaObject('IbanAddress') as IbanAddress)
-          : (fakeSchemaObject('SwiftAddress') as SwiftAddress)),
+        ...transferMethod,
         asset: ramp.from.asset,
       };
     } else {
@@ -134,14 +169,40 @@ export class RampsController {
     const newRamp: Ramp = {
       ...rampProps,
       id: randomUUID(),
-      paymentInstructions,
+      ...(paymentInstructions && { paymentInstructions }),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       status: RampStatus.PENDING,
       fees: {},
+      expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
     };
     this.rampsRepository.create(newRamp);
     return newRamp;
+  }
+}
+
+function getTransferMethod(transferMethod: FiatCapability['transferMethod']): FiatAddress {
+  switch (transferMethod) {
+    case IbanCapability.transferMethod.IBAN:
+      return fakeSchemaObject('IbanAddress') as IbanAddress;
+    case SwiftCapability.transferMethod.SWIFT:
+      return fakeSchemaObject('SwiftAddress') as SwiftAddress;
+    case AchCapability.transferMethod.ACH:
+      return fakeSchemaObject('AchAddress') as AchAddress;
+    case WireCapability.transferMethod.WIRE:
+      return fakeSchemaObject('WireAddress') as WireAddress;
+    case SpeiCapability.transferMethod.SPEI:
+      return fakeSchemaObject('SpeiAddress') as SpeiAddress;
+    case PixCapability.transferMethod.PIX:
+      return fakeSchemaObject('PixAddress') as PixAddress;
+    case EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA:
+      return fakeSchemaObject('EuropeanSEPAAddress') as EuropeanSEPAAddress;
+    case LocalBankTransferCapability.transferMethod.LBT:
+      return fakeSchemaObject('LocalBankTransferAddress') as LocalBankTransferAddress;
+    case MobileMoneyCapability.transferMethod.MOMO:
+      return fakeSchemaObject('MobileMoneyAddress') as MobileMoneyAddress;
+    default:
+      throw new XComError('Invalid transfer method', { transferMethod });
   }
 }
 

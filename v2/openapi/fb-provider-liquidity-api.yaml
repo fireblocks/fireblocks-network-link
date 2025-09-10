@@ -44,6 +44,9 @@ paths:
     get:
       operationId: getQuoteCapabilities
       summary: List possible asset conversions
+      description: >
+        Retrieves the list of supported asset conversion pairs that can be quoted.
+        Shows which assets can be converted to other assets through the liquidity service.
       tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -108,6 +111,9 @@ paths:
     get:
       operationId: getQuotes
       summary: Get list of quotes sorted by creation time
+      description: >
+        Retrieves a paginated list of all quotes for the specified account.
+        Quotes are sorted by creation time and can be ordered ascending or descending.
       tags: [ liquidity ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -145,6 +151,9 @@ paths:
     get:
       operationId: getQuoteDetails
       summary: Get quote details
+      description: >
+        Retrieves detailed information about a specific quote, including
+        conversion rates, amounts, expiration time, and current status.
       tags: [ liquidity ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -173,6 +182,9 @@ paths:
     post:
       operationId: executeQuote
       summary: Execute quote
+      description: >
+        Executes a previously created quote, performing the actual asset conversion.
+        The quote must be valid and not expired for execution to succeed.
       tags: [ liquidity ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'

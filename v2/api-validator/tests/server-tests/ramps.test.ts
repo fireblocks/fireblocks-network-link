@@ -1,29 +1,45 @@
+import { randomUUID } from 'crypto';
 import Client from '../../src/client';
-import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
-import { AssetsDirectory } from '../utils/assets-directory';
 import {
-  Ramp,
+  AchCapability,
+  ApiError,
   AssetReference,
+  BadRequestError,
   BridgeProperties,
+  CountryAlpha2Code,
   FiatCapability,
+  FullName,
+  IbanCapability,
+  PostalAddress,
   OffRampProperties,
   OnRampProperties,
+  OrderQuote,
+  ParticipantRelationshipType,
+  PersonaIdentificationInfo,
+  PrefundedBlockchainCapability,
+  PrefundedBridgeProperties,
+  PrefundedFiatCapability,
+  PrefundedOffRampProperties,
+  PrefundedOnRampProperties,
   PublicBlockchainCapability,
+  Ramp,
   RampMethod,
   RampRequest,
-  ApiError,
-  BadRequestError,
-  RequestPart,
-  IbanCapability,
-  SwiftCapability,
   RampStatus,
-  AchCapability,
-  WireCapability,
+  RequestPart,
   SpeiCapability,
+  SwiftCapability,
+  WireCapability,
+  Retry,
+  MobileMoneyCapability,
+  PixCapability,
+  EuropeanSEPACapability,
+  LocalBankTransferCapability,
 } from '../../src/client/generated';
-import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
-import { randomUUID } from 'crypto';
 import config from '../../src/config';
+import { AssetsDirectory } from '../utils/assets-directory';
+import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
+import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 
 const noRampsCapability = !hasCapability('ramps');
 const accountIds = getAllCapableAccountIds('ramps');
@@ -34,23 +50,68 @@ const ibanDestinationConfig = config.get('withdrawal.iban');
 const achDestinationConfig = config.get('withdrawal.ach');
 const wireDestinationConfig = config.get('withdrawal.wire');
 const speiDestinationConfig = config.get('withdrawal.spei');
+const pixDestinationConfig = config.get('withdrawal.pix');
+const europeanSepaDestinationConfig = config.get('withdrawal.europeanSepa');
+const mobileMoneyDestinationConfig = config.get('withdrawal.mobileMoney');
+const lbtDestinationConfig = config.get('withdrawal.localBankTransfer');
 
 function isBlockchainMethod(
-  capability: FiatCapability | PublicBlockchainCapability
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
 ): capability is PublicBlockchainCapability {
-  return capability.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN;
+  return (
+    'transferMethod' in capability &&
+    capability.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+  );
 }
 
 function isFiatMethod(
-  capability: FiatCapability | PublicBlockchainCapability
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
 ): capability is FiatCapability {
   return (
-    capability.transferMethod === IbanCapability.transferMethod.IBAN ||
-    capability.transferMethod === SwiftCapability.transferMethod.SWIFT ||
-    capability.transferMethod === AchCapability.transferMethod.ACH ||
-    capability.transferMethod === WireCapability.transferMethod.WIRE ||
-    capability.transferMethod === SpeiCapability.transferMethod.SPEI
+    'transferMethod' in capability &&
+    (capability.transferMethod === IbanCapability.transferMethod.IBAN ||
+      capability.transferMethod === SwiftCapability.transferMethod.SWIFT ||
+      capability.transferMethod === AchCapability.transferMethod.ACH ||
+      capability.transferMethod === WireCapability.transferMethod.WIRE ||
+      capability.transferMethod === SpeiCapability.transferMethod.SPEI ||
+      capability.transferMethod === PixCapability.transferMethod.PIX ||
+      capability.transferMethod === EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA ||
+      capability.transferMethod === MobileMoneyCapability.transferMethod.MOMO ||
+      capability.transferMethod === LocalBankTransferCapability.transferMethod.LBT)
   );
+}
+
+function isPrefundedFiatMethod(
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
+): capability is PrefundedFiatCapability {
+  return (
+    'type' in capability &&
+    capability.type === 'Prefunded' &&
+    'asset' in capability &&
+    'nationalCurrencyCode' in capability.asset
+  );
+}
+
+function isPrefundedBlockchainMethod(
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
+): capability is PrefundedBlockchainCapability {
+  return 'type' in capability && capability.type === 'Prefunded' && 'asset' in capability;
 }
 
 function getFiatDestinationConfig(transferMethod: string) {
@@ -65,6 +126,23 @@ function getFiatDestinationConfig(transferMethod: string) {
       return { ...wireDestinationConfig, transferMethod: WireCapability.transferMethod.WIRE };
     case SpeiCapability.transferMethod.SPEI:
       return { ...speiDestinationConfig, transferMethod: SpeiCapability.transferMethod.SPEI };
+    case PixCapability.transferMethod.PIX:
+      return { ...pixDestinationConfig, transferMethod: PixCapability.transferMethod.PIX };
+    case EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA:
+      return {
+        ...europeanSepaDestinationConfig,
+        transferMethod: EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA,
+      };
+    case MobileMoneyCapability.transferMethod.MOMO:
+      return {
+        ...mobileMoneyDestinationConfig,
+        transferMethod: MobileMoneyCapability.transferMethod.MOMO,
+      };
+    case LocalBankTransferCapability.transferMethod.LBT:
+      return {
+        ...lbtDestinationConfig,
+        transferMethod: LocalBankTransferCapability.transferMethod.LBT,
+      };
     default:
       throw new Error('Unsupported transfer method');
   }
@@ -76,13 +154,11 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       idempotencyKey: randomUUID(),
       type: BridgeProperties.type.BRIDGE,
       from: method.from,
-      to: method.to,
-      amount: '0.1',
-      recipient: {
-        asset: method.to.asset,
-        transferMethod: method.to.transferMethod,
+      to: {
+        ...method.to,
         ...blockchainDestinationConfig,
       },
+      amount: '1000',
     };
   }
 
@@ -91,13 +167,11 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       idempotencyKey: randomUUID(),
       type: OnRampProperties.type.ON_RAMP,
       from: method.from,
-      to: method.to,
-      amount: '0.1',
-      recipient: {
-        asset: method.to.asset,
-        transferMethod: method.to.transferMethod,
+      to: {
+        ...method.to,
         ...blockchainDestinationConfig,
       },
+      amount: '1000',
     };
   }
 
@@ -106,16 +180,56 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       idempotencyKey: randomUUID(),
       type: OffRampProperties.type.OFF_RAMP,
       from: method.from,
-      to: method.to,
-      amount: '0.1',
-      recipient: {
-        asset: method.to.asset,
+      to: {
+        ...method.to,
         ...getFiatDestinationConfig(method.to.transferMethod),
       },
+      amount: '1000',
+    };
+  }
+  // Prefunded fiat to blockchain on-ramp
+  if (isPrefundedFiatMethod(method.from) && isBlockchainMethod(method.to)) {
+    return {
+      idempotencyKey: randomUUID(),
+      type: PrefundedOnRampProperties.type.ON_RAMP,
+      from: method.from,
+      to: {
+        ...method.to,
+        ...blockchainDestinationConfig,
+      },
+      amount: '1000',
     };
   }
 
-  throw new Error('Unsupported method combination');
+  // Prefunded blockchain to fiat off-ramp
+  if (isPrefundedBlockchainMethod(method.from) && isFiatMethod(method.to)) {
+    return {
+      idempotencyKey: randomUUID(),
+      type: PrefundedOffRampProperties.type.OFF_RAMP,
+      from: method.from,
+      to: {
+        ...method.to,
+        ...getFiatDestinationConfig(method.to.transferMethod),
+      },
+      amount: '1000',
+    };
+  }
+
+  // Prefunded blockchain to blockchain bridge
+  if (isPrefundedBlockchainMethod(method.from) && isBlockchainMethod(method.to)) {
+    return {
+      idempotencyKey: randomUUID(),
+      type: PrefundedBridgeProperties.type.BRIDGE,
+      from: method.from,
+      to: {
+        ...method.to,
+        ...blockchainDestinationConfig,
+      },
+      amount: '1000',
+    };
+  }
+
+  throw new Error('Unsupported method combination' + JSON.stringify(method));
 }
 
 describe.skipIf(noRampsCapability)('Ramps', () => {
@@ -274,14 +388,20 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
 
       it('should have matching from and to assets and rails', async () => {
         expect(createdRamp.from).toEqual(capability.from);
-        expect(createdRamp.to).toEqual(capability.to);
+        expect(createdRamp.to.asset).toEqual(capability.to.asset);
+        expect(createdRamp.to.transferMethod).toEqual(capability.to.transferMethod);
       });
 
-      it('should receive delivery instructions matching the from asset and rail', async () => {
-        expect(createdRamp.paymentInstructions.transferMethod).toEqual(
-          capability.from.transferMethod
-        );
-        expect(createdRamp.paymentInstructions.asset).toEqual(capability.from.asset);
+      it('should receive delivery instructions matching the from asset and rail for non-prefunded ramps', async () => {
+        if ('type' in capability.from && capability.from.type === 'Prefunded') {
+          return;
+        }
+        expect(
+          'paymentInstructions' in createdRamp && createdRamp.paymentInstructions.transferMethod
+        ).toEqual(capability.from.transferMethod);
+        expect(
+          'paymentInstructions' in createdRamp && createdRamp.paymentInstructions.asset
+        ).toEqual(capability.from.asset);
       });
 
       it('should receive initial status PENDING', async () => {
@@ -294,6 +414,88 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
           id: createdRamp.id,
         });
         expect(response).toEqual(createdRamp);
+      });
+
+      it('should accept ramp request with quote', async () => {
+        const requestWithQuote: RampRequest = {
+          ...rampRequestFromMethod(capability),
+          idempotencyKey: randomUUID(),
+          executionDetails: {
+            type: OrderQuote.type.QUOTE,
+            quoteId: 'test-quote-' + randomUUID(),
+            reQuote: {
+              type: Retry.type.RETRY,
+              slippage: 0.01,
+              count: 3,
+            },
+          },
+        };
+
+        const response = await client.ramps.createRamp({
+          accountId,
+          requestBody: requestWithQuote,
+        });
+
+        expect(response.executionDetails).toBeDefined();
+        if (response.executionDetails?.type === OrderQuote.type.QUOTE) {
+          expect(response.executionDetails.quoteId).toBe(
+            (requestWithQuote.executionDetails as OrderQuote)?.quoteId
+          );
+        } else {
+          fail('executionDetails should be of type Quote');
+        }
+      });
+
+      it('should accept ramp request with participant identification', async () => {
+        const fullName: FullName = { firstName: 'John', lastName: 'Doe' };
+
+        const postalAddress: PostalAddress = {
+          streetName: 'Main St',
+          buildingNumber: '101',
+          postalCode: '54321',
+          city: 'Los Angeles',
+          subdivision: 'CA',
+          district: 'La La Land',
+          country: CountryAlpha2Code.US,
+        };
+
+        const requestWithKYC: RampRequest = {
+          ...rampRequestFromMethod(capability),
+          idempotencyKey: randomUUID(),
+          participantsIdentification: {
+            originator: {
+              externalReferenceId: 'externalReferenceId',
+              participantRelationshipType: ParticipantRelationshipType.FIRST_PARTY,
+              entityType: PersonaIdentificationInfo.entityType.INDIVIDUAL,
+              fullName,
+              dateOfBirth: '1985-05-10',
+              postalAddress,
+            },
+            beneficiary: {
+              externalReferenceId: 'externalReferenceId',
+              participantRelationshipType: ParticipantRelationshipType.FIRST_PARTY,
+              entityType: PersonaIdentificationInfo.entityType.INDIVIDUAL,
+              fullName,
+              dateOfBirth: '1985-05-10',
+              postalAddress,
+            },
+          },
+        };
+
+        const response = await client.ramps.createRamp({
+          accountId,
+          requestBody: requestWithKYC,
+        });
+
+        expect(response).toBeDefined();
+      });
+
+      it('should send expiresAt in response', async () => {
+        const response = await client.ramps.getRampDetails({
+          accountId,
+          id: createdRamp.id,
+        });
+        expect(response.expiresAt).toBeDefined();
       });
     });
 

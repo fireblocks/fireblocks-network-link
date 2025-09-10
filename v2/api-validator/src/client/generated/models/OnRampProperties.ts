@@ -5,13 +5,11 @@
 
 import type { FiatCapability } from './FiatCapability';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
-import type { PublicBlockchainCapability } from './PublicBlockchainCapability';
 
 export type OnRampProperties = {
     type: OnRampProperties.type;
     from: FiatCapability;
-    to: PublicBlockchainCapability;
-    recipient: PublicBlockchainAddress;
+    to: PublicBlockchainAddress;
 };
 
 export namespace OnRampProperties {

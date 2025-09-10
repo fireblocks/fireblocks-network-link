@@ -43,6 +43,9 @@ paths:
     get:
       operationId: getBooks
       summary: List order books
+      description: >
+        Retrieves a list of all available trading order books supported by the provider.
+        Each book represents a trading pair where users can place buy and sell orders.
       tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -101,6 +104,9 @@ paths:
     get:
       operationId: getBookDetails
       summary: Get details of an order book
+      description: >
+        Retrieves detailed information about a specific trading order book,
+        including book metadata, trading pair details, and current status.
       tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -475,6 +481,9 @@ paths:
     get:
       operationId: getOrderDetails
       summary: Get trading order details
+      description: >
+        Retrieves detailed information about a specific trading order,
+        including order status, filled amounts, prices, and execution history.
       tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -501,6 +510,9 @@ paths:
     delete:
       operationId: cancelOrder
       summary: Cancel an active trading order
+      description: >
+        Cancels an active trading order, removing it from the order book.
+        Only orders in pending or partially filled status can be cancelled.
       tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'

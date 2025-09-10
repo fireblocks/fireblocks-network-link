@@ -3,14 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { BlockchainCapabilityWithOptionalAddress } from './BlockchainCapabilityWithOptionalAddress';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
-import type { PublicBlockchainCapability } from './PublicBlockchainCapability';
 
 export type BridgeProperties = {
     type: BridgeProperties.type;
-    from: PublicBlockchainCapability;
-    to: PublicBlockchainCapability;
-    recipient: PublicBlockchainAddress;
+    from: BlockchainCapabilityWithOptionalAddress;
+    to: PublicBlockchainAddress;
 };
 
 export namespace BridgeProperties {
