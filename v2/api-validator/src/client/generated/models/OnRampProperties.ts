@@ -3,12 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { FiatCapability } from './FiatCapability';
+import type { OnRampFrom } from './OnRampFrom';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
 export type OnRampProperties = {
     type: OnRampProperties.type;
-    from: FiatCapability;
+    from: OnRampFrom;
     to: PublicBlockchainAddress;
 };
 

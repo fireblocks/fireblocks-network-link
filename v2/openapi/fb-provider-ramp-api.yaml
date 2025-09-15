@@ -88,11 +88,17 @@ x-schemas:
   PixTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PixTransfer" }
   EuropeanSEPATransfer:
-    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/EuropeanSEPATransfer" }
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/EuropeanSEPATransfer",
+    }
   MobileMoneyTransfer:
-    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyTransfer" }
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyTransfer",
+    }
   LocalBankTransfer:
-    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransfer" }
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransfer",
+    }
   PublicBlockchainTransaction:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
@@ -100,6 +106,46 @@ x-schemas:
   ParticipantsIdentification:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ParticipantsIdentification",
+    }
+  IbanCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanCapability",
+    }
+  SwiftCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SwiftCapability",
+    }
+  AchCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AchCapability",
+    }
+  WireCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/WireCapability",
+    }
+  SpeiCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiCapability",
+    }
+  PixCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PixCapability",
+    }
+  EuropeanSEPACapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/EuropeanSEPACapability",
+    }
+  LocalBankTransferCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransferCapability",
+    }
+  MobileMoneyAddressWithBeneficiaryInfo:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyAddressWithBeneficiaryInfo",
+    }
+  MobileMoneyAddress:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyAddress",
     }
 
 x-responses:
@@ -355,14 +401,14 @@ components:
                 executionDetails:
                   type: "Quote"
                   quoteId: "quote-123456789"
-                  reQuote: 
+                  reQuote:
                     type: "Retry"
                     slippage: 0.02
                     count: 3
                 fees:
                   subAccount: 75
                   provider: 150
-  
+
     GetRampDetailsResponse:
       description: Ramp details.
       content:
@@ -517,6 +563,18 @@ components:
         to:
           $ref: "#/x-schemas/PublicBlockchainCapability"
 
+    OnRampFrom:
+      oneOf:
+        - $ref: "#/x-schemas/IbanCapability"
+        - $ref: "#/x-schemas/SwiftCapability"
+        - $ref: "#/x-schemas/AchCapability"
+        - $ref: "#/x-schemas/WireCapability"
+        - $ref: "#/x-schemas/SpeiCapability"
+        - $ref: "#/x-schemas/PixCapability"
+        - $ref: "#/x-schemas/EuropeanSEPACapability"
+        - $ref: "#/x-schemas/LocalBankTransferCapability"
+        - $ref: "#/x-schemas/MobileMoneyAddress"
+
     OnRampCapability:
       type: object
       title: Fiat to Crypto
@@ -647,7 +705,7 @@ components:
           enum:
             - OnRamp
         from:
-          $ref: "#/x-schemas/FiatCapability"
+          $ref: "#/components/schemas/OnRampFrom"
         to:
           $ref: "#/x-schemas/PublicBlockchainAddress"
 
