@@ -35,6 +35,7 @@ import {
   PixCapability,
   EuropeanSEPACapability,
   LocalBankTransferCapability,
+  CryptocurrencySymbol,
 } from '../../src/client/generated';
 import config from '../../src/config';
 import { AssetsDirectory } from '../utils/assets-directory';
@@ -163,10 +164,17 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
   }
 
   if (isFiatMethod(method.from) && isBlockchainMethod(method.to)) {
+    const from =
+      method.from.transferMethod === MobileMoneyCapability.transferMethod.MOMO
+        ? {
+            ...method.from,
+            ...getFiatDestinationConfig(method.from.transferMethod),
+          }
+        : method.from;
     return {
       idempotencyKey: randomUUID(),
       type: OnRampProperties.type.ON_RAMP,
-      from: method.from,
+      from,
       to: {
         ...method.to,
         ...blockchainDestinationConfig,
@@ -522,12 +530,15 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
       });
 
       it('should fail when invalid transfer method is used', async () => {
-        const blockchainMethod: PublicBlockchainCapability = isBlockchainMethod(capability.from)
-          ? capability.from
-          : (capability.to as PublicBlockchainCapability);
         const requestBody = rampRequestFromMethod({
-          from: blockchainMethod,
-          to: blockchainMethod,
+          from: {
+            asset: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
+          to: {
+            asset: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
           id: randomUUID(),
         });
 
