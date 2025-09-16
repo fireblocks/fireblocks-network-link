@@ -563,7 +563,7 @@ components:
         to:
           $ref: "#/x-schemas/PublicBlockchainCapability"
 
-    OnRampFrom:
+    OnRampRequestFrom:
       oneOf:
         - $ref: "#/x-schemas/IbanCapability"
         - $ref: "#/x-schemas/SwiftCapability"
@@ -705,7 +705,24 @@ components:
           enum:
             - OnRamp
         from:
-          $ref: "#/components/schemas/OnRampFrom"
+          $ref: "#/x-schemas/FiatCapability"
+        to:
+          $ref: "#/x-schemas/PublicBlockchainAddress"
+
+    OnRampRequestProperties:
+      type: object
+      title: On Ramp
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - OnRamp
+        from:
+          $ref: "#/components/schemas/OnRampRequestFrom"
         to:
           $ref: "#/x-schemas/PublicBlockchainAddress"
 
@@ -792,7 +809,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/CommonRampRequestProperties"
         - oneOf:
-            - $ref: "#/components/schemas/OnRampProperties"
+            - $ref: "#/components/schemas/OnRampRequestProperties"
             - $ref: "#/components/schemas/PrefundedOnRampProperties"
             - $ref: "#/components/schemas/OffRampProperties"
             - $ref: "#/components/schemas/PrefundedOffRampProperties"

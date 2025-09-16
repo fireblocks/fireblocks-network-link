@@ -13,5 +13,5 @@ import type { SpeiCapability } from './SpeiCapability';
 import type { SwiftCapability } from './SwiftCapability';
 import type { WireCapability } from './WireCapability';
 
-export type OnRampFrom = (IbanCapability | SwiftCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | EuropeanSEPACapability | LocalBankTransferCapability | MobileMoneyAddress);
+export type OnRampRequestFrom = (IbanCapability | SwiftCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | EuropeanSEPACapability | LocalBankTransferCapability | MobileMoneyAddress);
 

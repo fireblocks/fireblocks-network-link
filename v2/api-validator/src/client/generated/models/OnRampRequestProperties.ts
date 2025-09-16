@@ -3,16 +3,16 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { FiatCapability } from './FiatCapability';
+import type { OnRampRequestFrom } from './OnRampRequestFrom';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
-export type OnRampProperties = {
-    type: OnRampProperties.type;
-    from: FiatCapability;
+export type OnRampRequestProperties = {
+    type: OnRampRequestProperties.type;
+    from: OnRampRequestFrom;
     to: PublicBlockchainAddress;
 };
 
-export namespace OnRampProperties {
+export namespace OnRampRequestProperties {
 
     export enum type {
         ON_RAMP = 'OnRamp',
