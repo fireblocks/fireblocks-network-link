@@ -27,6 +27,7 @@ import { fakeSchemaObject } from '../../src/schemas';
 import _, { range } from 'lodash';
 
 const noTransfersCapability = !hasCapability('transfers');
+const noDepositAddressCapabilities = !hasCapability('transfersBlockchain') && !hasCapability('transfersFiat');
 const accountIds = getAllCapableAccountIds('transfers');
 
 function isInternalOrP2PTransfer(
@@ -87,7 +88,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
     });
   });
 
-  describe('Deposit addresses', () => {
+  describe.skipIf(noDepositAddressCapabilities)('Deposit addresses', () => {
     const getCreateDepositAddressFailureResult = async (
       accountId: string,
       requestBody: DepositAddressCreationRequest

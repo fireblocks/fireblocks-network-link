@@ -85,6 +85,13 @@ export class WebApp {
 
 function ajvRegisterJsonSchemaStandardStringFormats(ajv: Ajv) {
   addFormats(ajv);
+
+  ajv.addFormat("UNIX-timestamp-epoch", {
+  type: "number",
+  validate: (timestamp) => {
+      return Number.isInteger(timestamp) && timestamp > 0;
+    }
+  });
 }
 
 /**
