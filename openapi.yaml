@@ -1190,6 +1190,10 @@ components:
       - Manta
       - Neutron
       - Zircuit
+      - Somnia
+      - Etherlink
+      - NEM
+      - Centrifuge
       example:
         Ethereum
     Testnet_Networks:
