@@ -28,7 +28,7 @@ export class WebApp {
   constructor() {
     const loggerForFastify: FastifyBaseLogger = log.pinoLogger;
 
-    ajvRegisterJsonSchemaStandardStringFormats(this.ajv);
+    ajvRegisterJsonSchemaDataFormats(this.ajv);
 
     this.app = Fastify({
       // Currently maxParamLength expanded to 150 chars, due to the fact that collateralTxId (number.uuid.uuid.uuid.uuid) length is 149.
@@ -83,8 +83,15 @@ export class WebApp {
   }
 }
 
-function ajvRegisterJsonSchemaStandardStringFormats(ajv: Ajv) {
+function ajvRegisterJsonSchemaDataFormats(ajv: Ajv) {
   addFormats(ajv);
+
+  ajv.addFormat("UNIX-timestamp-epoch", {
+  type: "number",
+  validate: (timestamp) => {
+      return Number.isInteger(timestamp) && timestamp > 0;
+    }
+  });
 }
 
 /**

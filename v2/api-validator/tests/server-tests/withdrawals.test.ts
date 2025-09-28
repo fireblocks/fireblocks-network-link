@@ -42,7 +42,7 @@ const noTransfersCapability = !hasCapability('transfers');
 const noTransfersBlockchainCapability = !hasCapability('transfersBlockchain');
 const noTransfersFiatCapability = !hasCapability('transfersFiat');
 const noTransfersPeerAccountsCapability = !hasCapability('transfersPeerAccounts');
-const noTransfersSubaccountCapability = Client.getCachedAccounts().length <= 1;
+const noTransfersSubaccountCapability = !hasCapability('transfersInternal');
 
 const transfersCapableAccountIds = getAllCapableAccountIds('transfers');
 const blockchainTransfersCapableAccountIds = getAllCapableAccountIds('transfersBlockchain');

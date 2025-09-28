@@ -59,7 +59,15 @@ export class ResponseSchemaValidator {
 
 function compileResponseSchemas(schemas: EndpointSchema[]): ValidatorsDirectory {
   const ajv = new Ajv({ strictSchema: false });
+
   addFormats(ajv);
+
+  ajv.addFormat("UNIX-timestamp-epoch", {
+  type: "number",
+  validate: (timestamp) => {
+      return Number.isInteger(timestamp) && timestamp > 0;
+    }
+  });
 
   // Maps urls to HTTP methods to schema validation function
   const allValidators = new Map<string, Map<string, ValidateFunction>>();
