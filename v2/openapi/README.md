@@ -189,7 +189,7 @@ sent with each HTTP request:
   Epoch.
 - `X-FBAPI-NONCE` - request universal unique identifier (UUID).
 - `X-FBAPI-SIGNATURE` – request cryptographic signature, signed using the provider private key.
-- `X-FB-PLATFORM-SIGNATURE` - appears only in the Off-Exchange requests sent from Foreblocks;
+- `X-FB-PLATFORM-SIGNATURE` - appears only in the Off-Exchange requests sent from Fireblocks;
   contains request cryptographic signature, signed using Fireblocks private key.
 
 ### Signature
