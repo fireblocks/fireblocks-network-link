@@ -277,7 +277,7 @@ The signature verification usually consists of these steps:
    [Fireblocks public key](https://developers.fireblocks.com/docs/off-exchange).
 6. If the result is identical to the message hash, the signature is valid.
 
-Notice, that in many frameworks, some of these steps might are combined into a single step.
+Notice, that in many frameworks, some of these steps are combined into a single step.
 
 ## Assets and transfer methods
 
