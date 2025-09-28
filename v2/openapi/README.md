@@ -188,7 +188,9 @@ sent with each HTTP request:
 - `X-FBAPI-TIMESTAMP` - request creation UTC time, expressed in milliseconds since Unix
   Epoch.
 - `X-FBAPI-NONCE` - request universal unique identifier (UUID).
-- `X-FBAPI-SIGNATURE` – request cryptographic signature.
+- `X-FBAPI-SIGNATURE` – request cryptographic signature, signed using the provider private key.
+- `X-FB-PLATFORM-SIGNATURE` - appears only in the Off-Exchange requests sent from Fireblocks;
+  contains request cryptographic signature, signed using Fireblocks private key.
 
 ### Signature
 
@@ -253,10 +255,34 @@ Signing algorithms and possible hash functions:
 - RSA PKCS1v15 (SHA512, SHA3_256, or SHA256)
 - ECDSA prime256v1/secp256k1 (SHA256 only)
 
+### Off-Exchange (Collateral) platform signature
+
+Off-Exchange (Collateral) integration assumes bi-directional communication. All the requests,
+sent as part of this integration, from Fireblocks to a provider's servers, contain an additional
+header named `X-FB-PLATFORM-SIGNATURE`. This header contains the request signature signed with
+Fireblocks private key. All providers are expected to validate this signature.
+
+- [Public keys for the signature validation](https://developers.fireblocks.com/docs/off-exchange)
+
+The signed message is built identically to the [provider signature](#building-the-message-to-sign).
+The signature itself is calculated by applying SHA512 pre-encoding function, applying RSA PKCS1v15
+signing algorithm, and finally applying base64 encoding to the result.
+
+The signature verification usually consists of these steps:
+1. Build the message, as [described above](#building-the-message-to-sign).
+2. Calculate the message hash by applying SHA512 to the message.
+3. Get the value of the `X-FB-PLATFORM-SIGNATURE` header.
+4. Base64 decode the value to get the actual signature.
+5. Decrypt the signature using RSA PKCS1v15 and the
+   [Fireblocks public key](https://developers.fireblocks.com/docs/off-exchange).
+6. If the result is identical to the message hash, the signature is valid.
+
+Notice, that in many frameworks, some of these steps are combined into a single step.
+
 ## Assets and transfer methods
 
-An asset in Fireblocks Connectivity API is either a national currency (
-per [ISO-4217](https://en.wikipedia.org/wiki/ISO_4217)), one
+An asset in Fireblocks Connectivity API is either a national currency
+(per [ISO-4217](https://en.wikipedia.org/wiki/ISO_4217)), one
 of the blockchain native cryptocurrencies, explicitly listed in the API specification, or
 an arbitrary blockchain token. A provider can choose to support test
 versions of assets by setting testAsset flag in the capabilities response.
