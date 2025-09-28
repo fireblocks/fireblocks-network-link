@@ -8,6 +8,7 @@
     "transfersBlockchain": "*",
     "transfersFiat": "*",
     "transfersPeerAccounts": "*",
+    "transfersInternal": "*",
     "trading": "*",
     "liquidity": "*",
     "rates": "*"

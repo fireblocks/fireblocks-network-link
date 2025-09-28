@@ -669,7 +669,7 @@ paths:
       description: >
         Creates a new deposit address for the specified account and asset.
         The generated address can be used to receive deposits for the specified cryptocurrency or token.
-      tags: [ transfers ]
+      tags: [ transfersFiat, transfersBlockchain ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -704,7 +704,7 @@ paths:
       description: >
         Retrieves a paginated list of all deposit addresses associated with the specified account.
         Shows addresses for different cryptocurrencies and networks that can receive deposits.
-      tags: [ transfers ]
+      tags: [ transfersFiat, transfersBlockchain ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -743,7 +743,7 @@ paths:
       description: >
         Retrieves detailed information about a specific deposit address,
         including the address string, associated network, asset type, and usage metadata.
-      tags: [ transfers ]
+      tags: [ transfersFiat, transfersBlockchain ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
@@ -773,7 +773,7 @@ paths:
       description: >
         Disables a specific deposit address, preventing it from receiving new deposits.
         Existing funds sent to the address may still be processed depending on timing and confirmation status.
-      tags: [ transfers ]
+      tags: [ transfersFiat, transfersBlockchain ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'

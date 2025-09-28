@@ -14,8 +14,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: 
-    $ref: README.md
+  description: Placeholder for automatic documentation injection from README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -1694,7 +1693,8 @@ paths:
       description: |
         Creates a new deposit address for the specified account and asset. The generated address can be used to receive deposits for the specified cryptocurrency or token.
       tags:
-        - transfers
+        - transfersFiat
+        - transfersBlockchain
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1729,7 +1729,8 @@ paths:
       description: |
         Retrieves a paginated list of all deposit addresses associated with the specified account. Shows addresses for different cryptocurrencies and networks that can receive deposits.
       tags:
-        - transfers
+        - transfersFiat
+        - transfersBlockchain
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1768,7 +1769,8 @@ paths:
       description: |
         Retrieves detailed information about a specific deposit address, including the address string, associated network, asset type, and usage metadata.
       tags:
-        - transfers
+        - transfersFiat
+        - transfersBlockchain
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
@@ -1797,7 +1799,8 @@ paths:
       description: |
         Disables a specific deposit address, preventing it from receiving new deposits. Existing funds sent to the address may still be processed depending on timing and confirmation status.
       tags:
-        - transfers
+        - transfersFiat
+        - transfersBlockchain
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
