@@ -31,7 +31,7 @@ describe('Test request bodies missing one required property', () => {
       if (!goodBody || typeof goodBody !== 'object') throw new Error('Unexpected body type');
 
       const sendRequest = async (requestBody: JsonValue) => {
-      const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
+        const operationFunction = client[schema.tags[0]]?.[operationId].bind(client);
 
         try {
           await operationFunction({ requestBody, accountId });
