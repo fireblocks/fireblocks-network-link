@@ -1184,6 +1184,10 @@ components:
       - Berachain
       - Sui
       - Babylon
+      - Somnia
+      - Etherlink
+      - NEM
+      - Centrifuge
       example:
         Ethereum
     Testnet_Networks:
