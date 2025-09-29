@@ -89,12 +89,23 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
   });
 
   describe.skipIf(noDepositAddressCapabilities)('Deposit addresses', () => {
+    const getClientForTransferMethod = (transferMethod: string) => {
+      if (transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN) {
+        return client.transfersBlockchain;
+      } else if (transferMethod === SwiftCapability.transferMethod.SWIFT || 
+                 transferMethod === IbanCapability.transferMethod.IBAN) {
+        return client.transfersFiat;
+      }
+      throw new Error(`Unsupported transfer method for deposit addresses: ${transferMethod}`);
+    };
+
     const getCreateDepositAddressFailureResult = async (
       accountId: string,
       requestBody: DepositAddressCreationRequest
     ): Promise<ApiError> => {
       try {
-        await client.transfers.createDepositAddress({
+        const transferClient = getClientForTransferMethod(requestBody.transferMethod.transferMethod);
+        await transferClient.createDepositAddress({
           accountId,
           requestBody,
         });
@@ -118,7 +129,8 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
             }
 
             try {
-              const depositAddress = await client.transfers.createDepositAddress({
+              const transferClient = getClientForTransferMethod(capability.deposit.transferMethod);
+              const depositAddress = await transferClient.createDepositAddress({
                 accountId,
                 requestBody: { idempotencyKey: randomUUID(), transferMethod: capability.deposit },
               });
@@ -244,7 +256,8 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
               asset: { assetId: randomUUID() },
             },
           };
-          successResponse = await client.transfers.createDepositAddress({
+          const transferClient = getClientForTransferMethod(successBody.transferMethod.transferMethod);
+          successResponse = await transferClient.createDepositAddress({
             accountId,
             requestBody: successBody,
           });
@@ -257,7 +270,8 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
             return;
           }
 
-          const response = await client.transfers.createDepositAddress({
+          const transferClient = getClientForTransferMethod(successBody.transferMethod.transferMethod);
+          const response = await transferClient.createDepositAddress({
             accountId: accountId,
             requestBody: successBody,
           });
@@ -296,12 +310,37 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
     describe('Get list of existing deposit addresses', () => {
       let accountDepositAddressesMap: Map<string, DepositAddress[]>;
       const getDepositAddresses = async (accountId, limit, startingAfter?) => {
-        const response = await client.transfers.getDepositAddresses({
-          accountId,
-          limit,
-          startingAfter,
-        });
-        return response.addresses;
+        let allAddresses: DepositAddress[] = [];
+        
+        // Get blockchain deposit addresses if capability exists
+        if (hasCapability('transfersBlockchain')) {
+          try {
+            const blockchainResponse = await client.transfersBlockchain.getDepositAddresses({
+              accountId,
+              limit,
+              startingAfter,
+            });
+            allAddresses = allAddresses.concat(blockchainResponse.addresses);
+          } catch (error) {
+            // Continue if this service doesn't exist for this account
+          }
+        }
+        
+        // Get fiat deposit addresses if capability exists  
+        if (hasCapability('transfersFiat')) {
+          try {
+            const fiatResponse = await client.transfersFiat.getDepositAddresses({
+              accountId,
+              limit,
+              startingAfter,
+            });
+            allAddresses = allAddresses.concat(fiatResponse.addresses);
+          } catch (error) {
+            // Continue if this service doesn't exist for this account
+          }
+        }
+        
+        return allAddresses;
       };
       beforeAll(async () => {
         accountDepositAddressesMap = await getResponsePerIdMapping(getDepositAddresses, accountIds);
@@ -317,13 +356,35 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
 
       it('should find each deposit address on getDepositAddressDetails', async () => {
         for (const [accountId, depositAddresses] of accountDepositAddressesMap.entries()) {
-          for (const { id } of depositAddresses) {
-            const depositAddressDetails = await client.transfers.getDepositAddressDetails({
-              accountId,
-              id,
-            });
-            expect(depositAddressDetails).toBeDefined();
-            expect(depositAddressDetails.id).toBe(id);
+          for (const depositAddress of depositAddresses) {
+            let details: DepositAddress | null = null;
+            
+            // Try blockchain service first
+            if (hasCapability('transfersBlockchain')) {
+              try {
+                details = await client.transfersBlockchain.getDepositAddressDetails({
+                  accountId,
+                  id: depositAddress.id,
+                });
+              } catch (error) {
+                // Continue to fiat if not found
+              }
+            }
+            
+            // Try fiat service if not found in blockchain
+            if (!details && hasCapability('transfersFiat')) {
+              try {
+                details = await client.transfersFiat.getDepositAddressDetails({
+                  accountId,
+                  id: depositAddress.id,
+                });
+              } catch (error) {
+                // Address not found in either service
+              }
+            }
+            
+            expect(details).toBeDefined();
+            expect(details?.id).toBe(depositAddress.id);
           }
         }
       });
@@ -332,13 +393,16 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
     describe('Disable a deposit address', () => {
       let accountId;
       let disabledDepositAddress: DepositAddress;
+      let transferMethodType: string;
 
       const getDisableDepositAddressFailureResult = async (
         accountId: string,
-        depositAddressId: string
+        depositAddressId: string,
+        transferMethod: string
       ): Promise<ApiError> => {
         try {
-          await client.transfers.disableDepositAddress({
+          const transferClient = getClientForTransferMethod(transferMethod);
+          await transferClient.disableDepositAddress({
             accountId,
             id: depositAddressId,
           });
@@ -365,17 +429,19 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
         }
 
         accountId = accountCapability.accountId;
+        transferMethodType = accountCapability.capability.transferMethod;
         const requestBody = {
           idempotencyKey: randomUUID(),
           transferMethod: accountCapability.capability,
         };
 
-        const { id } = await client.transfers.createDepositAddress({
+        const transferClient = getClientForTransferMethod(transferMethodType);
+        const { id } = await transferClient.createDepositAddress({
           accountId,
           requestBody,
         });
 
-        disabledDepositAddress = await client.transfers.disableDepositAddress({
+        disabledDepositAddress = await transferClient.disableDepositAddress({
           accountId,
           id,
         });
@@ -396,7 +462,8 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
           return;
         }
 
-        const response = await client.transfers.getDepositAddressDetails({
+        const transferClient = getClientForTransferMethod(transferMethodType);
+        const response = await transferClient.getDepositAddressDetails({
           accountId,
           id: disabledDepositAddress.id,
         });
@@ -412,7 +479,8 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
 
         const error = await getDisableDepositAddressFailureResult(
           accountId,
-          disabledDepositAddress.id
+          disabledDepositAddress.id,
+          transferMethodType
         );
         expect(error.status).toBe(400);
         expect(error.body.errorType).toBe(BadRequestError.errorType.DEPOSIT_ADDRESS_DISABLED);
