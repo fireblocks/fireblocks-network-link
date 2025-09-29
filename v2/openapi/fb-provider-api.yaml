@@ -165,6 +165,14 @@ paths:
                         "symbol": "USDC",
                         "description": "USDC is a fully collateralized US Dollar stablecoin, based on the open source fiat stablecoin framework developed by Centre.",
                         "decimalPlaces": 2,
+                      }, {
+                        "id": "4386cf4d-83b2-4410-96va-0d3919a45506",
+                        "type": "VirtualAsset",
+                        "name": "SXDB",
+                        "symbol": "SXDB",
+                        "description": "SXDB is an internal securities asset designed to deliver monthly benefits to stakeholders.",
+                        "decimalPlaces": 6,
+                        "paagedTo": { "assetId": "f0844d82-7097-4521-95bc-d843724a893e" }
                       }
                     ]
                 usdcBucket:
@@ -925,6 +933,16 @@ components:
           properties:
             type:
               enum: [ BucketAsset ]
+    
+    VirtualAsset:
+      allOf:
+        - $ref: '#/components/schemas/AssetCommonProperties'
+        - type: object
+          properties:
+            type:
+              enum: [ VirtualAsset ]
+            peggedTo:
+              $ref: '#/components/schemas/AssetReference'
 
     Erc20Token:
       allOf:
@@ -1020,6 +1038,7 @@ components:
     AssetDefinition:
       anyOf:
         - $ref: '#/components/schemas/BucketAsset'
+        - $ref: '#/components/schemas/VirtualAsset'
         - $ref: '#/components/schemas/Erc20Token'
         - $ref: '#/components/schemas/Bep20Token'
         - $ref: '#/components/schemas/StellarToken'
