@@ -168,7 +168,9 @@ export class HttpRequestWithSecurityHeaders extends BaseHttpRequest {
   ) {
     super(openAPIConfig);
 
-    this.axiosClient = axios.create();
+    this.axiosClient = axios.create({
+      timeout: 30000,
+    });
 
     this.axiosClient.interceptors.request.use((request) => {
       log.debug('Sending HTTP request', { request });

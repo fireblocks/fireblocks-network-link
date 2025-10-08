@@ -93,7 +93,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
     const accounts = await arrayFromAsyncGenerator(paginated(getAccounts));
     accountsMap = new Map<string, Account>();
     accounts.forEach((account) => accountsMap.set(account.id, account));
-  });
+  }, 60000);
 
   describe('Capabilities', () => {
     it('should return only known assets in response', () => {
@@ -205,7 +205,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         getSubAccountWithdrawals,
         transfersCapableAccountIds
       );
-    });
+    }, 60000);
 
     it('should be sorted by creation time in a descending order', () => {
       const allWithdrawalResponses = [
