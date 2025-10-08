@@ -8,12 +8,12 @@ export type Pageable<T> = (limit: number, startingAfter?: string) => Promise<T[]
  * one by one while automagically managing the pagination behind the scene.
  */
 export async function* paginated<T>(f: Pageable<T>, idPropName = 'id'): AsyncGenerator<T> {
-  const MAX_PAGES = 20;
+  const MAX_PAGES = 1000;
   let pageCount = 0;
-  let cursor: string | undefined;
+  let startingAfter: string | undefined;
   
   while (pageCount < MAX_PAGES) {
-    const currentPage = await f(LIMIT, cursor);
+    const currentPage = await f(LIMIT, startingAfter);
     
     if (currentPage.length === 0) {
       break;
@@ -26,13 +26,13 @@ export async function* paginated<T>(f: Pageable<T>, idPropName = 'id'): AsyncGen
     }
     
     const lastItem = currentPage[currentPage.length - 1];
-    const nextCursor = lastItem?.[idPropName];
+    const lastItemId = lastItem?.[idPropName];
     
-    if (!nextCursor || nextCursor === cursor) {
+    if (!lastItemId || lastItemId === startingAfter) {
       break;
     }
     
-    cursor = nextCursor;
+    startingAfter = lastItemId;
   }
 }
 
