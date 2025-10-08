@@ -1,7 +1,7 @@
 import config from '../../src/config';
 
 const LIMIT = config.get('paginationLimit');
-// Function supporting paginationgit commit 
+// Function supporting pagination
 export type Pageable<T> = (limit: number, startingAfter?: string) => Promise<T[]>;
 /**
  * Wraps a pageable function with a generator function, returning all the items
