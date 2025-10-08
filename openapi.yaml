@@ -1184,6 +1184,12 @@ components:
       - Berachain
       - Sui
       - Babylon
+      - Mantle
+      - Blast
+      - Fastex Bahamut
+      - Manta
+      - Neutron
+      - Zircuit
       example:
         Ethereum
     Testnet_Networks:
