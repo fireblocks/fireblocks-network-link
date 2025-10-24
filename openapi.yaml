@@ -1184,6 +1184,8 @@ components:
       - Berachain
       - Sui
       - Babylon
+      - Sei
+      - World Chain
       example:
         Ethereum
     Testnet_Networks:
@@ -1238,6 +1240,7 @@ components:
         - Astar
         - Berachain
         - Sui
+        - World Chain
       example:
         Westend
     Coin_Class:
