@@ -48,6 +48,22 @@ tags:
       Beta Feature – Limited Access.
 
       On-ramp, off-ramp and bridging operations.
+ 
+  - name: Off Exchange
+    description: Endpoints used by external providers (exchanges) calling Fireblocks
+      for off-exchange collateral flows.
+  - name: Collateral webhooks
+    description: Webhook notifications sent by Fireblocks to exchanges for collateral events.
+
+x-tagGroups:
+  - name: Providers to Fireblocks APIs
+    tags:
+      - Off Exchange
+  - name: Webhooks
+    tags:
+      - Collateral webhooks
+
+
 paths:
   /capabilities:
     get:
