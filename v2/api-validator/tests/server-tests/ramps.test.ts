@@ -404,8 +404,15 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         ).toEqual(capability.from.asset);
       });
 
-      it('should receive initial status PENDING', async () => {
-        expect(createdRamp.status).toBe(RampStatus.PENDING);
+      it('should receive initial status based on the ramp type', async () => {
+        const isPrefunded =
+          'type' in capability.from &&
+          capability.from.type === PrefundedFiatCapability.type.PREFUNDED;
+        if (isPrefunded) {
+          expect(createdRamp.status).toBe(RampStatus.PROCESSING);
+        } else {
+          expect(createdRamp.status).toBe(RampStatus.PENDING);
+        }
       });
 
       it('should find ramp in details endpoint', async () => {
