@@ -1,3 +1,4 @@
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import config from '../config';
 import logger from '../logging';
 import { randomUUID } from 'crypto';
@@ -6,7 +7,9 @@ import { buildRequestSignature } from '../security';
 import { ResponseSchemaValidator } from './response-schema-validator';
 import { request as requestInternal } from './generated/core/request';
 import { ApiRequestOptions } from './generated/core/ApiRequestOptions';
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, Method } from 'axios';
+import { ApiError } from './generated/core/ApiError';
+import { getRelativeUrlWithoutPathPrefix } from '../url-helpers';
+import { formatApiError, formatAxiosError } from './error-formatter';
 import {
   Account,
   AccountsService,
@@ -29,7 +32,6 @@ import {
   TransfersPeerAccountsService,
   TransfersService,
 } from './generated';
-import { getRelativeUrlWithoutPathPrefix } from '../url-helpers';
 
 const log = logger('api-client');
 
@@ -83,7 +85,22 @@ function stripSecurityHeaderArgs<ServiceType extends object>(
 
     if (prop instanceof Function) {
       const originalMethod = prop.bind(service);
-      securedService[propName] = (args) => originalMethod({ ...args, ...emptySecurityHeaders });
+
+      // Wrapped original method with improved error reporting
+      securedService[propName] = async (args) => {
+        try {
+          return await originalMethod({ ...args, ...emptySecurityHeaders });
+        } catch (error) {
+          if (error instanceof ApiError) {
+            error.message = formatApiError(error);
+          }
+          else if (error instanceof AxiosError) {
+            throw new Error(formatAxiosError(error));
+          }
+          throw error;
+        }
+      }
+
     }
   }
 
