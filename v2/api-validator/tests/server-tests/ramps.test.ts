@@ -405,7 +405,9 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
       });
 
       it('should receive initial status based on the ramp type', async () => {
-        const isPrefunded = 'type' in capability.from && capability.from.type === 'Prefunded';
+        const isPrefunded =
+          'type' in capability.from &&
+          capability.from.type === PrefundedFiatCapability.type.PREFUNDED;
         if (isPrefunded) {
           expect(createdRamp.status).toBe(RampStatus.PROCESSING);
         } else {
