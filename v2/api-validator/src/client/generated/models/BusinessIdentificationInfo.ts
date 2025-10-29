@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { MobilePhoneNumber } from './MobilePhoneNumber';
 import type { ParticipantRelationshipType } from './ParticipantRelationshipType';
 import type { PostalAddress } from './PostalAddress';
 
@@ -25,6 +26,8 @@ export type BusinessIdentificationInfo = {
      */
     registrationNumber?: string;
     postalAddress?: PostalAddress;
+    email?: string;
+    phone?: MobilePhoneNumber;
 };
 
 export namespace BusinessIdentificationInfo {

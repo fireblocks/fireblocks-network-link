@@ -1632,6 +1632,13 @@ components:
             '1999-01-01'
         postalAddress:
           $ref: '#/components/schemas/PostalAddress'
+        email:
+          type: string
+          format: email
+          example:
+            'john.doe@example.com'
+        phone:
+          $ref: '#/components/schemas/MobilePhoneNumber'
 
     BusinessIdentificationInfo:
       type: object
@@ -1654,6 +1661,13 @@ components:
           description: A unique identifier assigned to the business entity by the relevant regulatory authority, often used for tax and legal purposes.
         postalAddress:
           $ref: '#/components/schemas/PostalAddress'
+        email:
+          type: string
+          format: email
+          example:
+            'john.doe@example.com'
+        phone:
+          $ref: '#/components/schemas/MobilePhoneNumber'
 
     ParticipantsIdentification:
       type: object
