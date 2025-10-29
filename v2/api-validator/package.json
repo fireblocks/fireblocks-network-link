@@ -32,7 +32,7 @@
     "generate-openapi-client": "(cd ../openapi; ./lint-openapi.sh) && NODE_ENV=development ts-node generate-openapi-client.ts",
     "make-unified-openapi": "NODE_ENV=development ts-node make-unified-openapi.ts",
     "build-docs": "npx @redocly/cli build-docs ../openapi/fb-unified-openapi.yaml --output ../openapi/docs.html",
-    "download-server-capabilities": "ts-node download-server-capabilities.ts  | pino-pretty"
+    "download-server-capabilities": "NODE_ENV=test ts-node download-server-capabilities.ts  | pino-pretty"
   },
   "overrides": {
     "@apidevtools/json-schema-ref-parser": "^11.1.0"

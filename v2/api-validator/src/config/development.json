@@ -1,8 +1,5 @@
 {
   "logging": {
     "level": "debug"
-  },
-  "authentication": {
-    "apiKey": "d6a4ca60-471f-4280-bd20-e71934efc423"
   }
 }
