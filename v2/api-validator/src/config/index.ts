@@ -34,7 +34,7 @@ const config = convict({
       default: null,
       env: 'SERVER',
       format: (value) => {
-        if (value === null || typeof value !== 'string' || value.trim() === '') {
+        if (value == null || typeof value !== 'string' || value.trim() === '') {
           throw new Error('Server URL is not set. Please set the SERVER variable in your .env file.');
         }
         try {
@@ -613,9 +613,13 @@ const config = convict({
   authentication: {
     apiKey: {
       doc: 'API key used for identification',
-      env: 'API_KEY',
-      format: String,
       default: null,
+      env: 'API_KEY',
+      format: (value) => {
+        if (value == null || typeof value !== 'string' || value.trim() === '') {
+          throw new Error('API_KEY is not set. Please set it in your .env file.');
+        }
+      },
     },
     requestTTL: {
       doc: 'Request time to live (TTL) in seconds, which is expressed by the time that has passed since the timestamp recorded in X-FBAPI-TIMESTAMP header',
