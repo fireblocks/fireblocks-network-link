@@ -24,6 +24,7 @@ npm install
 Run the mock server:
 
 ```shell
+cp .env.mockserver .env
 npm run server
 ```
 

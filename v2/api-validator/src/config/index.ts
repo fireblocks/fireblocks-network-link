@@ -31,8 +31,18 @@ const config = convict({
   client: {
     serverBaseUrl: {
       doc: 'URL of the server that will be used to run the tests',
-      default: 'http://0.0.0.0:8000/v2',
+      default: null,
       env: 'SERVER',
+      format: (value) => {
+        if (value === null || typeof value !== 'string' || value.trim() === '') {
+          throw new Error('Server URL is not set. Please set the SERVER variable in your .env file.');
+        }
+        try {
+          const url = new URL(value);
+        } catch {
+          throw new Error('SERVER value is not a valid URL');
+        }
+      },
     },
   },
   logging: {
@@ -643,7 +653,7 @@ const config = convict({
       postEncoding: {
         doc: 'Encoding to be applied to the signature',
         format: encodingTypes,
-        default: 'url-encoded',
+        default: 'base64',
         env: 'SIGNING_POST_ENCODING',
       },
     },
