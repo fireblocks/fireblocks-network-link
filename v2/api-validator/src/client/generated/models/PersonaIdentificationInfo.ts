@@ -5,6 +5,7 @@
 
 import type { FullName } from './FullName';
 import type { ParticipantRelationshipType } from './ParticipantRelationshipType';
+import type { PhoneNumber } from './PhoneNumber';
 import type { PostalAddress } from './PostalAddress';
 
 /**
@@ -20,6 +21,8 @@ export type PersonaIdentificationInfo = {
     fullName?: FullName;
     dateOfBirth?: string;
     postalAddress?: PostalAddress;
+    email?: string;
+    phone?: PhoneNumber;
 };
 
 export namespace PersonaIdentificationInfo {

@@ -1601,6 +1601,13 @@ components:
         country:
           $ref: '#/components/schemas/CountryAlpha2Code'
 
+    PhoneNumber:
+      type: string
+      pattern: '^\+[1-9]\d{1,14}$'
+      description: Mobile phone number in E.164 format
+      example:
+        '+1234567890'
+
     FullName:
       type: object
       description: Contains the first name and last name of a person.
@@ -1632,6 +1639,13 @@ components:
             '1999-01-01'
         postalAddress:
           $ref: '#/components/schemas/PostalAddress'
+        email:
+          type: string
+          format: email
+          example:
+            'john.doe@example.com'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
 
     BusinessIdentificationInfo:
       type: object
@@ -1654,6 +1668,13 @@ components:
           description: A unique identifier assigned to the business entity by the relevant regulatory authority, often used for tax and legal purposes.
         postalAddress:
           $ref: '#/components/schemas/PostalAddress'
+        email:
+          type: string
+          format: email
+          example:
+            'john.doe@example.com'
+        phone:
+          $ref: '#/components/schemas/PhoneNumber'
 
     ParticipantsIdentification:
       type: object

@@ -4,6 +4,7 @@
 /* eslint-disable */
 
 import type { ParticipantRelationshipType } from './ParticipantRelationshipType';
+import type { PhoneNumber } from './PhoneNumber';
 import type { PostalAddress } from './PostalAddress';
 
 /**
@@ -25,6 +26,8 @@ export type BusinessIdentificationInfo = {
      */
     registrationNumber?: string;
     postalAddress?: PostalAddress;
+    email?: string;
+    phone?: PhoneNumber;
 };
 
 export namespace BusinessIdentificationInfo {
