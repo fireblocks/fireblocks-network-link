@@ -4,8 +4,8 @@
 /* eslint-disable */
 
 import type { FullName } from './FullName';
+import type { MobilePhoneNumber } from './MobilePhoneNumber';
 import type { ParticipantRelationshipType } from './ParticipantRelationshipType';
-import type { PhoneNumber } from './PhoneNumber';
 import type { PostalAddress } from './PostalAddress';
 
 /**
@@ -22,7 +22,7 @@ export type PersonaIdentificationInfo = {
     dateOfBirth?: string;
     postalAddress?: PostalAddress;
     email?: string;
-    phone?: PhoneNumber;
+    phone?: MobilePhoneNumber;
 };
 
 export namespace PersonaIdentificationInfo {

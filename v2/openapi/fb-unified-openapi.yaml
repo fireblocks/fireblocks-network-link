@@ -4877,11 +4877,6 @@ components:
           type: string
         country:
           $ref: '#/components/schemas/CountryAlpha2Code'
-    PhoneNumber:
-      type: string
-      pattern: ^\+[1-9]\d{1,14}$
-      description: Mobile phone number in E.164 format
-      example: '+1234567890'
     FullName:
       type: object
       description: Contains the first name and last name of a person.
@@ -4916,7 +4911,7 @@ components:
           format: email
           example: john.doe@example.com
         phone:
-          $ref: '#/components/schemas/PhoneNumber'
+          $ref: '#/components/schemas/MobilePhoneNumber'
     BusinessIdentificationInfo:
       type: object
       description: Information related to the business entity acting as the beneficiary of the transaction.
@@ -4943,7 +4938,7 @@ components:
           format: email
           example: john.doe@example.com
         phone:
-          $ref: '#/components/schemas/PhoneNumber'
+          $ref: '#/components/schemas/MobilePhoneNumber'
     ParticipantsIdentification:
       type: object
       description: |
