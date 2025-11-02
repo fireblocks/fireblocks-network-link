@@ -31,8 +31,18 @@ const config = convict({
   client: {
     serverBaseUrl: {
       doc: 'URL of the server that will be used to run the tests',
-      default: 'http://0.0.0.0:8000/v2',
+      default: null,
       env: 'SERVER',
+      format: (value) => {
+        if (value == null || typeof value !== 'string' || value.trim() === '') {
+          throw new Error('Server URL is not set. Please set the SERVER variable in your .env file.');
+        }
+        try {
+          const url = new URL(value);
+        } catch {
+          throw new Error('SERVER value is not a valid URL');
+        }
+      },
     },
   },
   logging: {
@@ -603,9 +613,13 @@ const config = convict({
   authentication: {
     apiKey: {
       doc: 'API key used for identification',
-      env: 'API_KEY',
-      format: String,
       default: null,
+      env: 'API_KEY',
+      format: (value) => {
+        if (value == null || typeof value !== 'string' || value.trim() === '') {
+          throw new Error('API_KEY is not set. Please set it in your .env file.');
+        }
+      },
     },
     requestTTL: {
       doc: 'Request time to live (TTL) in seconds, which is expressed by the time that has passed since the timestamp recorded in X-FBAPI-TIMESTAMP header',
@@ -643,7 +657,7 @@ const config = convict({
       postEncoding: {
         doc: 'Encoding to be applied to the signature',
         format: encodingTypes,
-        default: 'url-encoded',
+        default: 'base64',
         env: 'SIGNING_POST_ENCODING',
       },
     },
