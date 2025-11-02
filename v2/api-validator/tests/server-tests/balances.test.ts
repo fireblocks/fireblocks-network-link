@@ -16,6 +16,7 @@ import {
   RequestPart,
 } from '../../src/client/generated';
 
+const noBalancesCapability = !hasCapability('balances');
 const noHistoricBalancesCapability = !hasCapability('historicBalances');
 
 const invalidAssetParamsCombinations = [
@@ -58,7 +59,7 @@ describe('Balances', () => {
     isKnownAsset = assets.isKnownAsset.bind(assets);
   });
 
-  describe('List balances', () => {
+  describe.skipIf(noBalancesCapability)('List balances', () => {
     let accountBalancesMap: Map<string, Balances>;
 
     const getAccountBalancesMap = async (accounts: Account[]): Promise<Map<string, Balances>> => {
