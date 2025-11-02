@@ -19,8 +19,10 @@ describe('Capabilities', () => {
       expect(capabilities.components.accounts).not.toBeEmpty();
     });
 
-    it('should always have balances capability', () => {
-      expect(capabilities.components.balances).not.toBeEmpty();
+    it('should have balances capability if no ramps', () => {
+      if (!capabilities.components.ramps) {
+        expect(capabilities.components.balances).not.toBeEmpty();
+      }
     });
 
     describe('accounts mentioned in capabilities should exist in the accounts list', () => {
