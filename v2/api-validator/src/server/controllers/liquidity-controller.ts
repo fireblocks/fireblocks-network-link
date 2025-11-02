@@ -44,7 +44,7 @@ type QuoteCapabilityAssets = {
   toAsset: AssetReference;
 };
 
-const QUOTE_EXPIRATION_IN_MS = 1000;
+const QUOTE_EXPIRATION_IN_MS = 30000;
 const QUOTES_COUNT = 5;
 const QUOTE_CAPABILITIES_COUNT = 5;
 
