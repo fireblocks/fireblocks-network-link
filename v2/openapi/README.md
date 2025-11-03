@@ -15,33 +15,10 @@ risk of a centralized malfunction, all through the Fireblocks platform.
 Reach out to us for a partnership agreement and add a Connector
 to have your product integrated.
 
-## How Fireblocks customers access third-party accounts
+Further reading:
 
-Fireblocks customers use the Fireblocks web-based console to connect their Fireblocks
-account to third-party solution providers. Fireblocks supports the integration of various
-solution providers such as banks, cryptocurrency exchanges, and cryptocurrency on-ramp and
-off-ramp services.
-
-After a third-party account is connected, customers use the Fireblocks Console and
-Fireblocks API to:
-
-- View account balances for their primary, secondary, and trading accounts.
-- Move funds between their accounts and their Fireblocks Vaults.
-- Withdraw funds from and deposit funds to their accounts.
-- Convert cryptocurrencies to and from fiat currencies (for on/off-ramping).
-- Track the status of their withdrawals and deposits.
-- View and audit their transaction history.
-- With the off-exchange solution, the provider can serve its end user with:
-  - A complete control on their funds
-  - A trustable relationship, where the customer safely continues their work with the exchange
-
-## How to register as a service provider?
-
-Fireblocks gives you, as a partner, the ability to integrate your services and be
-listed on Fireblocks platform as a bank or an exchange (including being registered as an
-on/off-ramp provider). To be listed as a partner on Fireblocks platform, partners
-implement the Fireblocks Connectivity API and register their services by contacting
-Fireblocks support team.
+- [Listing Your Service on the Provider Network ⧉](https://support.fireblocks.io/hc/en-us/articles/22144765384348-Listing-your-service-on-the-Provider-Network)
+- [Network Link Integration Guide for Provider Connectivity ⧉](https://developers.fireblocks.com/docs/network-link-integration-guide-for-provider-connectivity)
 
 # API Usage Guide
 
@@ -85,7 +62,7 @@ as follows:
   the server should handle the new request and consider the new response as the original
   response when handling any consecutive retries.
 
-Servers are expected to recognize a retry for 7 days, at least, since the last attempt.
+Servers are expected to recognize a retry for 72 hours, at least, since the last attempt.
 
 ## Pagination
 
@@ -166,18 +143,6 @@ be replaced by a list of account IDs:
 
 Based on the response, Fireblocks platform will use the endpoints specific to each
 component to discover the specific capabilities for each component.
-
-## Mandatory endpoints
-
-All the capability, accounts, and balances endpoints must be always implemented, for all
-the users and all their accounts. These endpoints are:
-
-- `GET /capabilities`
-- `GET /capabilities/assets`
-- `GET /capabilities/assets/{id}`
-- `GET /accounts`
-- `GET /accounts/{accountId}`
-- `GET /accounts/{accountId}/balances`
 
 ## Security
 
