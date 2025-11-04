@@ -10,7 +10,6 @@ import { AccountsService } from './services/AccountsService';
 import { BalancesService } from './services/BalancesService';
 import { CapabilitiesService } from './services/CapabilitiesService';
 import { CollateralService } from './services/CollateralService';
-import { HistoricBalancesService } from './services/HistoricBalancesService';
 import { LiquidityService } from './services/LiquidityService';
 import { RampsService } from './services/RampsService';
 import { RatesService } from './services/RatesService';
@@ -29,7 +28,6 @@ export class ApiClient {
     public readonly balances: BalancesService;
     public readonly capabilities: CapabilitiesService;
     public readonly collateral: CollateralService;
-    public readonly historicBalances: HistoricBalancesService;
     public readonly liquidity: LiquidityService;
     public readonly ramps: RampsService;
     public readonly rates: RatesService;
@@ -59,7 +57,6 @@ export class ApiClient {
         this.balances = new BalancesService(this.request);
         this.capabilities = new CapabilitiesService(this.request);
         this.collateral = new CollateralService(this.request);
-        this.historicBalances = new HistoricBalancesService(this.request);
         this.liquidity = new LiquidityService(this.request);
         this.ramps = new RampsService(this.request);
         this.rates = new RatesService(this.request);

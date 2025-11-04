@@ -29,7 +29,6 @@ describe('Capabilities', () => {
       const components = [
         'accounts',
         'balances',
-        'historicBalances',
         'transfers',
         'transfersBlockchain',
         'transfersFiat',

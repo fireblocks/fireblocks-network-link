@@ -51,7 +51,9 @@ export class WebApp {
     // content type and ignore the body
     this.app.addContentTypeParser('application/x-www-form-urlencoded', contentTypeParserEmptyBody);
 
-    this.app.register(fbNetworkLinkFastifyPlugin, { prefix: getServerUrlPathPrefix() });
+    const routePrefix = getServerUrlPathPrefix();
+    log.info('Registering API routes', { prefix: routePrefix });
+    this.app.register(fbNetworkLinkFastifyPlugin, { prefix: routePrefix });
   }
 
   public async start(): Promise<void> {

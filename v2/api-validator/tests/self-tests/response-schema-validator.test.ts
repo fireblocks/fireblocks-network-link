@@ -8,7 +8,6 @@ const requiredComponents = {
 };
 
 const optionalComponents = {
-  historicBalances: '*',
   transfers: '*',
   transfersBlockchain: '*',
   transfersFiat: '*',

@@ -403,8 +403,8 @@ The purpose of the Fireblocks collateral account is to enable a middle ground fo
 The collateral capability is a two-way integration between Fireblocks and the provider.
 Fireblocks will send requests to the provider for most cases, but some actions or data fetch will be initiated by the provider.
 
-The Fireblocks -> Provider requests are described in this API specification.
-The Provider -> Fireblocks requests are listed below (refer to the Fireblocks' API specification for the full details):
+The Fireblocks to Provider requests are described in this API specification.
+The Provider to Fireblocks requests are listed below (refer to the Fireblocks API specification for the full details):
 
 - `GET /v1/collateral/transactions/{collateralTxId}`
 - `POST /v1/collateral/settlements`

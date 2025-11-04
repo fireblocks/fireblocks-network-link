@@ -244,7 +244,6 @@ export { AccountsService } from './services/AccountsService';
 export { BalancesService } from './services/BalancesService';
 export { CapabilitiesService } from './services/CapabilitiesService';
 export { CollateralService } from './services/CollateralService';
-export { HistoricBalancesService } from './services/HistoricBalancesService';
 export { LiquidityService } from './services/LiquidityService';
 export { RampsService } from './services/RampsService';
 export { RatesService } from './services/RatesService';

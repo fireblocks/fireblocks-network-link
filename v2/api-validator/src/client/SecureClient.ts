@@ -19,7 +19,6 @@ import {
   CancelablePromise,
   CapabilitiesService,
   CollateralService,
-  HistoricBalancesService,
   LiquidityService,
   OpenAPI,
   OpenAPIConfig,
@@ -113,7 +112,6 @@ export class SecureClient {
   public readonly accounts: SecureService<AccountsService>;
   public readonly balances: SecureService<BalancesService>;
   public readonly capabilities: SecureService<CapabilitiesService>;
-  public readonly historicBalances: SecureService<HistoricBalancesService>;
   public readonly liquidity: SecureService<LiquidityService>;
   public readonly trading: SecureService<TradingService>;
   public readonly transfers: SecureService<TransfersService>;
@@ -139,7 +137,6 @@ export class SecureClient {
     this.accounts = stripSecurityHeaderArgs(new AccountsService(this.request));
     this.balances = stripSecurityHeaderArgs(new BalancesService(this.request));
     this.capabilities = stripSecurityHeaderArgs(new CapabilitiesService(this.request));
-    this.historicBalances = stripSecurityHeaderArgs(new HistoricBalancesService(this.request));
     this.liquidity = stripSecurityHeaderArgs(new LiquidityService(this.request));
     this.trading = stripSecurityHeaderArgs(new TradingService(this.request));
     this.transfers = stripSecurityHeaderArgs(new TransfersService(this.request));

@@ -1,4 +1,8 @@
+# Ruleset for Spectral OpenAPI linter
+# Documentation: https://docs.stoplight.io/docs/spectral/e5b9616d6d50c-rulesets
+
 extends: [[spectral:oas, all]]
+
 rules:
   operation-description: off
 
@@ -123,3 +127,10 @@ rules:
       functionOptions:
         type: camel
     message: "{{description}} But {{property}}: \"{{value}}\""
+
+overrides:
+  - files:
+      - '**#/paths/~1accounts~1%7BaccountId%7D~1transfers~1deposits~1addresses'
+      - '**#/paths/~1accounts~1%7BaccountId%7D~1transfers~1deposits~1addresses~1%7Bid%7D'
+    rules:
+      operation-singular-tag: off

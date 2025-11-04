@@ -8,7 +8,6 @@ const CAPABILITIES: Capabilities = {
   components: {
     accounts: '*',
     balances: '*',
-    historicBalances: '*',
     transfers: '*',
     transfersBlockchain: '*',
     transfersFiat: '*',
