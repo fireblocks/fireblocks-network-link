@@ -225,8 +225,7 @@ paths:
     get:
       operationId: getAccounts
       summary: Get list of sub-accounts
-      description: |
-        Retrieves a paginated list of all sub-accounts available to the provider. Can optionally include balance information for each account if requested.
+      description: Retrieves a paginated list of all sub-accounts available to the provider. Can optionally include balance information for each account if requested. Allows defining parent-child relationships between accounts. Notice that Fireblocks currently supports only one level of hierarchy.
       tags:
         - accounts
       parameters:
@@ -3082,7 +3081,7 @@ components:
           $ref: '#/components/schemas/AccountStatus'
         parentId:
           type: string
-          description: The ID of the parent account. If the field is empty, the account is a main account.
+          description: The ID of the parent account. If the field is empty, the account is a main account. Notice that Fireblocks currently supports only one level of hierarchy.
     AccountId:
       type: object
       required:
