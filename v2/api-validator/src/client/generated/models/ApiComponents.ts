@@ -11,7 +11,6 @@ import type { AccountsSet } from './AccountsSet';
 export type ApiComponents = {
     accounts: AccountsSet;
     balances: AccountsSet;
-    historicBalances?: AccountsSet;
     transfers?: AccountsSet;
     transfersBlockchain?: AccountsSet;
     transfersFiat?: AccountsSet;

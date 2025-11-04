@@ -13,8 +13,7 @@ export class AccountsService {
 
     /**
      * Get list of sub-accounts
-     * Retrieves a paginated list of all sub-accounts available to the provider. Can optionally include balance information for each account if requested.
-     *
+     * Retrieves a paginated list of all sub-accounts available to the provider. Can optionally include balance information for each account if requested. Allows defining parent-child relationships between accounts. Notice that Fireblocks currently supports only one level of hierarchy.
      * @returns any List of sub-accounts.
      * @throws ApiError
      */

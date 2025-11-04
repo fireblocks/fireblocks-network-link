@@ -23,8 +23,6 @@ tags:
     description: User accounts management operations.
   - name: balances
     description: Balances management operations.
-  - name: historicBalances
-    description: Historic balances operations.
   - name: rates
     description: Rates operations.
   - name: liquidity
@@ -227,8 +225,7 @@ paths:
     get:
       operationId: getAccounts
       summary: Get list of sub-accounts
-      description: |
-        Retrieves a paginated list of all sub-accounts available to the provider. Can optionally include balance information for each account if requested.
+      description: Retrieves a paginated list of all sub-accounts available to the provider. Can optionally include balance information for each account if requested. Allows defining parent-child relationships between accounts. Notice that Fireblocks currently supports only one level of hierarchy.
       tags:
         - accounts
       parameters:
@@ -411,53 +408,6 @@ paths:
                         asset:
                           assetId: f0844d82-7097-4521-95bc-d843724a893e
                         availableAmount: '95.03'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-  /accounts/{accountId}/historic-balances:
-    get:
-      operationId: getHistoricBalances
-      summary: Get balances at specific time in the past
-      description: |
-        Retrieves historical balance information for the specified account at a specific point in time. Useful for reconciliation and auditing purposes to see account states at historical moments.
-      tags:
-        - historicBalances
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/AssetIdQueryParam'
-        - $ref: '#/components/parameters/NationalCurrencyCodeQueryParam'
-        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
-        - $ref: '#/components/parameters/SubAccountIdPathParam'
-        - name: time
-          description: Time of the requested balances.
-          in: query
-          required: true
-          schema:
-            type: string
-            format: date-time
-      responses:
-        '200':
-          description: List of asset balances.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - balances
-                properties:
-                  balances:
-                    $ref: '#/components/schemas/Balances'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -858,44 +808,6 @@ paths:
                         amount: '0.01412'
                         totalPrice: '413.86'
                         side: BUY
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-  /trading/books/{id}/history:
-    get:
-      operationId: getBookOrderHistory
-      summary: List fulfilled orders in an order book
-      description: List fulfilled orders in an order book, sorted descending by the fulfillment time.
-      tags:
-        - trading
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/EntityIdPathParam'
-      responses:
-        '200':
-          description: List of fulfilled trades.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - trades
-                properties:
-                  trades:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MarketTrade'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -3117,8 +3029,6 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         balances:
           $ref: '#/components/schemas/AccountsSet'
-        historicBalances:
-          $ref: '#/components/schemas/AccountsSet'
         transfers:
           $ref: '#/components/schemas/AccountsSet'
         transfersBlockchain:
@@ -3171,7 +3081,7 @@ components:
           $ref: '#/components/schemas/AccountStatus'
         parentId:
           type: string
-          description: The ID of the parent account. If the field is empty, the account is a main account.
+          description: The ID of the parent account. If the field is empty, the account is a main account. Notice that Fireblocks currently supports only one level of hierarchy.
     AccountId:
       type: object
       required:

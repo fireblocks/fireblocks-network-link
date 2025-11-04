@@ -317,45 +317,6 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
-  /trading/books/{id}/history:
-    get:
-      operationId: getBookOrderHistory
-      summary: List fulfilled orders in an order book
-      description: >-
-        List fulfilled orders in an order book, sorted descending
-        by the fulfillment time.
-      tags: [ trading ]
-      parameters:
-        - $ref: '#/x-header-params/X-FBAPI-KEY'
-        - $ref: '#/x-header-params/X-FBAPI-NONCE'
-        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
-        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
-        - $ref: '#/x-query-params/PaginationLimit'
-        - $ref: '#/x-query-params/PaginationStartingAfter'
-        - $ref: '#/x-query-params/PaginationEndingBefore'
-        - $ref: '#/x-path-params/EntityIdPathParam'
-      responses:
-        '200':
-          description: List of fulfilled trades.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [ trades ]
-                properties:
-                  trades:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MarketTrade'
-        '400':
-          $ref: '#/x-responses/BadRequestResponse'
-        '401':
-          $ref: '#/x-responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/x-responses/ErrorResponse'
-        '5XX':
-          $ref: '#/x-responses/ErrorResponse'
-
   /accounts/{accountId}/trading/orders:
     get:
       operationId: getOrders
