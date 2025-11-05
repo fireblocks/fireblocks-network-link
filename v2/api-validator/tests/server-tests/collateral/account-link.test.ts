@@ -31,6 +31,9 @@ describe.skipIf(noCollateralCapability)('Account Link', () => {
             (link) => link.status !== CollateralLinkStatus.LINKED
           );
 
+        expect(unlinkedAccount?.status).toBeDefined();
+        expect(Object.values(CollateralLinkStatus)).toContain(unlinkedAccount?.status);
+
         if (unlinkedAccount) {
           const linkAccount = await client.collateral.createCollateralAccountLink({
             accountId,
@@ -49,7 +52,6 @@ describe.skipIf(noCollateralCapability)('Account Link', () => {
           expect(linkAccount.env).toBe(AccountEnvironment.PROD);
         }
 
-        expect(linkedAccount?.status).toBeDefined();
       });
     });
 
