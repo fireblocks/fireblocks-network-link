@@ -18,7 +18,6 @@ import {
   NationalCurrencyCode,
   PeerAccountTransferCapability,
   PublicBlockchainCapability,
-  SwiftCapability,
   type TransferCapability,
   Withdrawal,
   WithdrawalCapability,
@@ -56,7 +55,6 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
   let accountsMap: Map<string, Account>;
   const fiatTransferMethods: string[] = [
     IbanCapability.transferMethod.IBAN,
-    SwiftCapability.transferMethod.SWIFT,
   ];
 
   const findParentOf = (accountId: string) =>
@@ -321,7 +319,6 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
     const subAccountDestinationConfig = config.get('withdrawal.subAccount');
     const peerAccountDestinationConfig = config.get('withdrawal.peerAccount');
     const blockchainDestinationConfig = config.get('withdrawal.blockchain');
-    const swiftDestinationConfig = config.get('withdrawal.swift');
     const ibanDestinationConfig = config.get('withdrawal.iban');
 
     const getCapabilityAssetBalance = async (
@@ -480,15 +477,6 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         assetExample: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
         noRelevantCapability: noTransfersBlockchainCapability,
         withdrawalCapabilityName: 'PublicBlockchainCapability',
-      },
-      {
-        transferMethod: SwiftCapability.transferMethod.SWIFT,
-        config: swiftDestinationConfig,
-        createWithdrawal: (client: Client, { accountId, requestBody }) =>
-          client.transfersFiat.createFiatWithdrawal({ accountId, requestBody }),
-        assetExample: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        noRelevantCapability: noTransfersFiatCapability,
-        withdrawalCapabilityName: 'SwiftCapability',
       },
       {
         transferMethod: IbanCapability.transferMethod.IBAN,

@@ -28,7 +28,6 @@ import {
   RampStatus,
   RequestPart,
   SpeiCapability,
-  SwiftCapability,
   WireCapability,
   Retry,
   MobileMoneyCapability,
@@ -45,7 +44,6 @@ const noRampsCapability = !hasCapability('ramps');
 const accountIds = getAllCapableAccountIds('ramps');
 
 const blockchainDestinationConfig = config.get('withdrawal.blockchain');
-const swiftDestinationConfig = config.get('withdrawal.swift');
 const ibanDestinationConfig = config.get('withdrawal.iban');
 const achDestinationConfig = config.get('withdrawal.ach');
 const wireDestinationConfig = config.get('withdrawal.wire');
@@ -78,7 +76,6 @@ function isFiatMethod(
   return (
     'transferMethod' in capability &&
     (capability.transferMethod === IbanCapability.transferMethod.IBAN ||
-      capability.transferMethod === SwiftCapability.transferMethod.SWIFT ||
       capability.transferMethod === AchCapability.transferMethod.ACH ||
       capability.transferMethod === WireCapability.transferMethod.WIRE ||
       capability.transferMethod === SpeiCapability.transferMethod.SPEI ||
@@ -118,8 +115,6 @@ function getFiatDestinationConfig(transferMethod: string) {
   switch (transferMethod) {
     case IbanCapability.transferMethod.IBAN:
       return { ...ibanDestinationConfig, transferMethod: IbanCapability.transferMethod.IBAN };
-    case SwiftCapability.transferMethod.SWIFT:
-      return { ...swiftDestinationConfig, transferMethod: SwiftCapability.transferMethod.SWIFT };
     case AchCapability.transferMethod.ACH:
       return { ...achDestinationConfig, transferMethod: AchCapability.transferMethod.ACH };
     case WireCapability.transferMethod.WIRE:

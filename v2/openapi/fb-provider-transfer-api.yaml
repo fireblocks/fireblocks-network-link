@@ -871,50 +871,6 @@ components:
             referenceId:
               type: string
 
-    SwiftCode:
-      type: string
-      pattern: ^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$
-
-    SwiftCapability:
-      type: object
-      required: [ asset, transferMethod ]
-      properties:
-        asset:
-          $ref: '#/x-schemas/NationalCurrency'
-        transferMethod:
-          enum: [ Swift ]
-
-    SwiftAddress:
-      allOf:
-        - $ref: '#/components/schemas/SwiftCapability'
-        - type: object
-          required: [ accountHolder, swiftCode, routingNumber ]
-          properties:
-            accountHolder:
-              $ref: '#/components/schemas/AccountHolderDetails'
-            swiftCode:
-              $ref: '#/components/schemas/SwiftCode'
-            routingNumber:
-              type: string
-              description: Routing number identifying the bank account.
-
-    SwiftTransferDestination:
-      allOf:
-        - $ref: '#/components/schemas/SwiftAddress'
-        - type: object
-          required: [ amount ]
-          properties:
-            amount:
-              $ref: '#/x-schemas/PositiveAmount'
-
-    SwiftTransfer:
-      allOf:
-        - $ref: '#/components/schemas/SwiftTransferDestination'
-        - type: object
-          properties:
-            referenceId:
-              type: string
-
     AchCapability:
       type: object
       required: [ asset, transferMethod ]
@@ -1314,7 +1270,6 @@ components:
     FiatCapability:
       oneOf:
         - $ref: '#/components/schemas/IbanCapability'
-        - $ref: '#/components/schemas/SwiftCapability'
         - $ref: '#/components/schemas/AchCapability'
         - $ref: '#/components/schemas/WireCapability'
         - $ref: '#/components/schemas/SpeiCapability'
@@ -1443,17 +1398,14 @@ components:
         - $ref: '#/components/schemas/InternalTransferCapability'
         - $ref: '#/x-schemas/PublicBlockchainCapability'
         - $ref: '#/components/schemas/IbanCapability'
-        - $ref: '#/components/schemas/SwiftCapability'
 
     FiatTransferDestination:
       oneOf:
         - $ref: '#/components/schemas/IbanTransferDestination'
-        - $ref: '#/components/schemas/SwiftTransferDestination'
 
     FiatTransfer:
       oneOf:
         - $ref: '#/components/schemas/IbanTransfer'
-        - $ref: '#/components/schemas/SwiftTransfer'
         - $ref: '#/components/schemas/OtherFiatTransfer'
 
     Transfer:
@@ -1462,21 +1414,18 @@ components:
         - $ref: '#/components/schemas/InternalTransfer'
         - $ref: '#/components/schemas/PublicBlockchainTransaction'
         - $ref: '#/components/schemas/IbanTransfer'
-        - $ref: '#/components/schemas/SwiftTransfer'
         - $ref: '#/components/schemas/OtherFiatTransfer'
 
     DepositDestination:
       oneOf:
         - $ref: '#/x-schemas/PublicBlockchainAddress'
         - $ref: '#/components/schemas/IbanAddress'
-        - $ref: '#/components/schemas/SwiftAddress'
         - $ref: '#/components/schemas/PeerAccountTransferAddress'
         - $ref: '#/components/schemas/InternalTransferAddress'
 
     FiatAddress:
       oneOf:
         - $ref: '#/components/schemas/IbanAddress'
-        - $ref: '#/components/schemas/SwiftAddress'
         - $ref: '#/components/schemas/AchAddress'
         - $ref: '#/components/schemas/WireAddress'
         - $ref: '#/components/schemas/SpeiAddress'
@@ -1511,7 +1460,6 @@ components:
           oneOf:
             - $ref: '#/x-schemas/PublicBlockchainCapability'
             - $ref: '#/components/schemas/IbanCapability'
-            - $ref: '#/components/schemas/SwiftCapability'
 
     DepositCapability:
       type: object

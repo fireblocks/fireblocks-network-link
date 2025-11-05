@@ -75,10 +75,6 @@ x-schemas:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatAddress" }
   IbanTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanTransfer" }
-  SwiftTransfer:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SwiftTransfer",
-    }
   AchTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AchTransfer" }
   WireTransfer:
@@ -871,7 +867,6 @@ components:
     RampFiatTransfer:
       oneOf:
         - $ref: "#/x-schemas/IbanTransfer"
-        - $ref: "#/x-schemas/SwiftTransfer"
         - $ref: "#/x-schemas/AchTransfer"
         - $ref: "#/x-schemas/WireTransfer"
         - $ref: "#/x-schemas/SpeiTransfer"

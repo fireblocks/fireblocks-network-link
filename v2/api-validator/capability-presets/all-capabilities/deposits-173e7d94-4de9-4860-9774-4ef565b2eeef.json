@@ -47,22 +47,6 @@
     "addressCreationPolicy": "CannotCreate"
   },
   {
-    "id": "4c5e8c6a-ec29-4dec-adca-c2fd2b9ff186",
-    "deposit": {
-      "asset": {
-        "nationalCurrencyCode": "CUC",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "blockchain": "Aurora",
-      "cryptocurrencySymbol": "EVMOS",
-      "testAsset": false
-    },
-    "addressCreationPolicy": "CanCreate"
-  },
-  {
     "id": "261f0770-30cd-43ee-8a9e-aced583aa890",
     "deposit": {
       "asset": {
@@ -547,22 +531,6 @@
     "addressCreationPolicy": "CanCreate"
   },
   {
-    "id": "816b8005-9033-4076-9f96-739fd2ae69ce",
-    "deposit": {
-      "asset": {
-        "nationalCurrencyCode": "ZAR",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "blockchain": "Moonriver",
-      "cryptocurrencySymbol": "DYDX",
-      "testAsset": true
-    },
-    "addressCreationPolicy": "CanCreate"
-  },
-  {
     "id": "11885342-f360-4350-9727-9d2dff6a1785",
     "deposit": {
       "asset": {
@@ -608,22 +576,6 @@
       "testAsset": true
     },
     "addressCreationPolicy": "CannotCreate"
-  },
-  {
-    "id": "53d940ae-6900-4685-bfaf-ec7ad3fa587f",
-    "deposit": {
-      "asset": {
-        "nationalCurrencyCode": "BOB",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "blockchain": "Ronin",
-      "cryptocurrencySymbol": "CELESTIA",
-      "testAsset": false
-    },
-    "addressCreationPolicy": "CanCreate"
   },
   {
     "id": "67921899-30e0-4a24-a009-2116026bb9f4",

@@ -187,50 +187,6 @@ const config = convict({
         env: 'WITHDRAWAL_IBAN_IBAN',
       },
     },
-    swift: {
-      accountHolder: {
-        name: {
-          format: String,
-          default: 'John Doe',
-          env: 'WITHDRAWAL_SWIFT_ACCOUNT_NAME',
-        },
-        city: {
-          format: String,
-          default: undefined,
-          env: 'WITHDRAWAL_SWIFT_ACCOUNT_CITY',
-        },
-        country: {
-          format: String,
-          default: undefined,
-          env: 'WITHDRAWAL_SWIFT_ACCOUNT_COUNTRY',
-        },
-        subdivision: {
-          format: String,
-          default: undefined,
-          env: 'WITHDRAWAL_SWIFT_ACCOUNT_SUBDIVISION',
-        },
-        address: {
-          format: String,
-          default: undefined,
-          env: 'WITHDRAWAL_SWIFT_ACCOUNT_ADDRESS',
-        },
-        postalCode: {
-          format: String,
-          default: undefined,
-          env: 'WITHDRAWAL_SWIFT_ACCOUNT_POSTAL_CODE',
-        },
-      },
-      swiftCode: {
-        format: String,
-        default: 'KPKUJWXMLDB',
-        env: 'WITHDRAWAL_SWIFT_CODE',
-      },
-      routingNumber: {
-        format: String,
-        default: '8d73hc7sj8',
-        env: 'WITHDRAWAL_SWIFT_ROUTING_NUMBER',
-      },
-    },
     ach: {
       accountHolder: {
         name: {

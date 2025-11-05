@@ -20,7 +20,6 @@ import {
   PeerAccountTransferCapability,
   PublicBlockchainCapability,
   RequestPart,
-  SwiftCapability,
   type TransferCapability,
 } from '../../src/client/generated';
 import { fakeSchemaObject } from '../../src/schemas';
@@ -57,7 +56,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
   const findDepositCapabilitySupportingAddressCreation = ():
     | {
         accountId: string;
-        capability: PublicBlockchainCapability | IbanCapability | SwiftCapability;
+        capability: PublicBlockchainCapability | IbanCapability;
       }
     | undefined => {
     for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
@@ -92,8 +91,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
     const getClientForTransferMethod = (transferMethod: string) => {
       if (transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN) {
         return client.transfersBlockchain;
-      } else if (transferMethod === SwiftCapability.transferMethod.SWIFT || 
-                 transferMethod === IbanCapability.transferMethod.IBAN) {
+      } else if (transferMethod === IbanCapability.transferMethod.IBAN) {
         return client.transfersFiat;
       }
       throw new Error(`Unsupported transfer method for deposit addresses: ${transferMethod}`);
@@ -206,7 +204,6 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
         () => {
           it.each([
             fakeSchemaObject('IbanCapability') as IbanCapability,
-            fakeSchemaObject('SwiftCapability') as SwiftCapability,
             fakeBlockchainCapability,
           ])('should fail when using an unknown %s transfer method', async (fakeCapability) => {
             const requestBody: DepositAddressCreationRequest = {
