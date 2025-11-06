@@ -122,36 +122,6 @@
     "minWithdrawalAmount": "98115"
   },
   {
-    "id": "1cc69986-8d4b-4be2-8fd9-368f02ecd3f2",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "COU",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "MAD",
-      "testAsset": false
-    },
-    "minWithdrawalAmount": "466.64"
-  },
-  {
-    "id": "c3012597-e067-4ccf-9803-a386cb4e66d5",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "BGL",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "GNE",
-      "testAsset": false
-    },
-    "minWithdrawalAmount": "24212701"
-  },
-  {
     "id": "ceb68f6f-202b-424f-b697-68d53225226c",
     "withdrawal": {
       "asset": {
@@ -166,21 +136,6 @@
       "testAsset": true
     },
     "minWithdrawalAmount": "6359.35206"
-  },
-  {
-    "id": "1cbee1a1-01c7-4975-9dbb-9ca1c160f24b",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "XTS",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "ADP",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "13346190"
   },
   {
     "id": "5914552e-8bba-44c9-964d-5afd4ab88df7",
@@ -223,20 +178,6 @@
       "assetId": "a71fd97e-956b-4c50-bef8-13ad655ef4c1"
     },
     "minWithdrawalAmount": "78"
-  },
-  {
-    "id": "f88c053d-6c15-4f0e-8d7c-b24ec6f7e332",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "USS",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "assetId": "a2258cfd-c31b-44f1-ba31-201713c76f05"
-    },
-    "minWithdrawalAmount": "070.3810185"
   },
   {
     "id": "9ba7ad29-fa9b-4126-9474-728aa8ce0fea",
@@ -543,36 +484,6 @@
     "minWithdrawalAmount": "68498201"
   },
   {
-    "id": "3918a1c8-cdea-42ba-90a2-be7ec42cd31b",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "AUD",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "assetId": "bcd54bf9-db49-4e71-adad-71b5090db7fb"
-    },
-    "minWithdrawalAmount": "7571"
-  },
-  {
-    "id": "305dbd63-5fb9-467c-b976-7583bfd5addd",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "ZWL",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "blockchain": "XRP",
-      "cryptocurrencySymbol": "MOVR",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "200.509362"
-  },
-  {
     "id": "a7b7ef4c-0429-4efb-938e-25e425e19d21",
     "withdrawal": {
       "asset": {
@@ -602,35 +513,6 @@
       "testAsset": true
     },
     "minWithdrawalAmount": "97585734745"
-  },
-  {
-    "id": "d07f2368-f264-448d-bbcc-12ae4757ff4b",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "KWD",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "ZWC",
-      "testAsset": false
-    },
-    "minWithdrawalAmount": "6116804.015865"
-  },
-  {
-    "id": "97a1ed3b-232c-4d9f-9699-355fc6968ce9",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "ARP",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "assetId": "ed0cd5cb-5195-41a6-8ef5-3ab3c79ef394"
-    },
-    "minWithdrawalAmount": "6057.765278711"
   },
   {
     "id": "a6c74463-eb57-493d-9d8c-ca05401d830f",
@@ -675,22 +557,6 @@
       "testAsset": true
     },
     "minWithdrawalAmount": "096"
-  },
-  {
-    "id": "8ec73093-8c70-4f21-b7f0-a1bf3d43536c",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "AFN",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "blockchain": "Celo",
-      "cryptocurrencySymbol": "BSV",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "3133300581"
   },
   {
     "id": "55eb8a5b-ffef-407a-a11b-b1c2be82207c",

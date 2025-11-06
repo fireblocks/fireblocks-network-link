@@ -10,8 +10,7 @@ import type { LocalBankTransferCapability } from './LocalBankTransferCapability'
 import type { MobileMoneyCapability } from './MobileMoneyCapability';
 import type { PixCapability } from './PixCapability';
 import type { SpeiCapability } from './SpeiCapability';
-import type { SwiftCapability } from './SwiftCapability';
 import type { WireCapability } from './WireCapability';
 
-export type FiatCapability = (IbanCapability | SwiftCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | EuropeanSEPACapability | LocalBankTransferCapability | MobileMoneyCapability);
+export type FiatCapability = (IbanCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | EuropeanSEPACapability | LocalBankTransferCapability | MobileMoneyCapability);
 

@@ -26,8 +26,6 @@ import {
   RampStatus,
   SpeiAddress,
   SpeiCapability,
-  SwiftAddress,
-  SwiftCapability,
   WireAddress,
   WireCapability,
 } from '../../client/generated';
@@ -185,8 +183,6 @@ function getTransferMethod(transferMethod: FiatCapability['transferMethod']): Fi
   switch (transferMethod) {
     case IbanCapability.transferMethod.IBAN:
       return fakeSchemaObject('IbanAddress') as IbanAddress;
-    case SwiftCapability.transferMethod.SWIFT:
-      return fakeSchemaObject('SwiftAddress') as SwiftAddress;
     case AchCapability.transferMethod.ACH:
       return fakeSchemaObject('AchAddress') as AchAddress;
     case WireCapability.transferMethod.WIRE:

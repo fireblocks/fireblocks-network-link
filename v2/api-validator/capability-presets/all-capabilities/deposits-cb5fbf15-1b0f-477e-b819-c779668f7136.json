@@ -47,20 +47,6 @@
     "addressCreationPolicy": "CannotCreate"
   },
   {
-    "id": "0219f22a-35c7-4751-9b2a-03b8341a828e",
-    "deposit": {
-      "asset": {
-        "nationalCurrencyCode": "RSD",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "assetId": "d9c9c65b-bf14-4c3b-a5a5-f64621cc8ec7"
-    },
-    "addressCreationPolicy": "CannotCreate"
-  },
-  {
     "id": "68e61fbd-94e0-480d-810f-a2fa048541d9",
     "deposit": {
       "asset": {
@@ -161,35 +147,6 @@
     "balanceAsset": {
       "blockchain": "EthereumPoW",
       "cryptocurrencySymbol": "WEMIX",
-      "testAsset": true
-    },
-    "addressCreationPolicy": "CannotCreate"
-  },
-  {
-    "id": "68a9f444-8e95-4d49-b5e3-2c437f5aa490",
-    "deposit": {
-      "asset": {
-        "nationalCurrencyCode": "SRG",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "assetId": "a71fd97e-956b-4c50-bef8-13ad655ef4c1"
-    },
-    "addressCreationPolicy": "CannotCreate"
-  },
-  {
-    "id": "f9245f5a-a1e8-4cb5-b356-f17da1cd10de",
-    "deposit": {
-      "asset": {
-        "nationalCurrencyCode": "BDT",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "CZK",
       "testAsset": true
     },
     "addressCreationPolicy": "CannotCreate"
@@ -378,20 +335,6 @@
     "addressCreationPolicy": "CannotCreate"
   },
   {
-    "id": "1fc1b736-8c35-458d-a5ce-1addc87fa4cb",
-    "deposit": {
-      "asset": {
-        "nationalCurrencyCode": "FJD",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "assetId": "076e2789-8c85-4c66-95f0-fe8947d03b00"
-    },
-    "addressCreationPolicy": "CannotCreate"
-  },
-  {
     "id": "8a8dc34f-1eee-4e74-9875-572547671ffb",
     "deposit": {
       "asset": {
@@ -498,21 +441,6 @@
       "testAsset": true
     },
     "addressCreationPolicy": "CanCreate"
-  },
-  {
-    "id": "be237a05-65b7-4357-96e7-d44ff094184e",
-    "deposit": {
-      "asset": {
-        "nationalCurrencyCode": "BMD",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "KYD",
-      "testAsset": false
-    },
-    "addressCreationPolicy": "CannotCreate"
   },
   {
     "id": "37122b69-4a3b-427b-9926-e9f68470ec9e",

@@ -78,20 +78,6 @@
     "minWithdrawalAmount": "8853.0293"
   },
   {
-    "id": "d1fe09d2-b8bc-4ea0-8ec2-8821250347bb",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "ZWR",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "assetId": "a71fd97e-956b-4c50-bef8-13ad655ef4c1"
-    },
-    "minWithdrawalAmount": "275305"
-  },
-  {
     "id": "a0c8aae5-ad47-4359-9964-c761c7e35979",
     "withdrawal": {
       "asset": {
@@ -194,21 +180,6 @@
       "testAsset": false
     },
     "minWithdrawalAmount": "98492460799"
-  },
-  {
-    "id": "66c10afa-8cab-44c4-8a11-058332e1adc0",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "USS",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "SHP",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "9322264260"
   },
   {
     "id": "5fa2c22e-ee5b-4628-9aa6-1452f68b1ce8",
@@ -745,21 +716,5 @@
       "assetId": "d9790799-5539-4c54-803b-d7d998cf38f6"
     },
     "minWithdrawalAmount": "316057894.21178"
-  },
-  {
-    "id": "b3892bb4-19a8-4eeb-aee5-e42a482b3307",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "NIO",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "blockchain": "TokenEX",
-      "cryptocurrencySymbol": "HBAR",
-      "testAsset": false
-    },
-    "minWithdrawalAmount": "97"
   }
 ]

@@ -14,21 +14,6 @@
     "minWithdrawalAmount": "47.10341"
   },
   {
-    "id": "1769cd7a-3152-490a-8a65-7876f786babb",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "XXX",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "IEP",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "21289.2"
-  },
-  {
     "id": "03dda75c-6394-4cf7-9a47-499b0efabb8b",
     "withdrawal": {
       "asset": {
@@ -199,21 +184,6 @@
     "minWithdrawalAmount": "32259862.51"
   },
   {
-    "id": "7193f588-ddda-4b0c-bc04-c9f6557f7858",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "TND",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "KWD",
-      "testAsset": false
-    },
-    "minWithdrawalAmount": "3"
-  },
-  {
     "id": "364c9722-2532-4e91-92e8-dc76329e273c",
     "withdrawal": {
       "asset": {
@@ -231,37 +201,6 @@
     "minWithdrawalAmount": "3134510896"
   },
   {
-    "id": "9290d1ea-c1b7-4c52-ab2e-70987e4ce66d",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "GYD",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "EUR",
-      "testAsset": false
-    },
-    "minWithdrawalAmount": "132.5206424"
-  },
-  {
-    "id": "6894220c-ecfc-4db1-bc5f-5661b9b89825",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "MVR",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "blockchain": "Canto",
-      "cryptocurrencySymbol": "HT",
-      "testAsset": false
-    },
-    "minWithdrawalAmount": "75285.7133374901"
-  },
-  {
     "id": "67a8d8a9-1d47-4c38-877e-9f8be631bd2b",
     "withdrawal": {
       "asset": {
@@ -275,50 +214,6 @@
       "testAsset": true
     },
     "minWithdrawalAmount": "3"
-  },
-  {
-    "id": "85071c24-85a0-4b99-a984-d17308643adc",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "UYU",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "XOF",
-      "testAsset": false
-    },
-    "minWithdrawalAmount": "9979319380.534494"
-  },
-  {
-    "id": "0310fc94-3dc7-4fbe-aebb-1ef9847802fb",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "SDD",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "SOS",
-      "testAsset": false
-    },
-    "minWithdrawalAmount": "450894415.54442142115"
-  },
-  {
-    "id": "ec65eed7-a63f-4341-9879-c6b2ff1bfad7",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "ILR",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "assetId": "92ca683f-7c00-4c18-9349-2be61d4182f0"
-    },
-    "minWithdrawalAmount": "6132667916.468"
   },
   {
     "id": "3d135d79-19bc-4b78-9021-0f711899a583",
@@ -420,21 +315,6 @@
     "minWithdrawalAmount": "22.400"
   },
   {
-    "id": "763499c7-fdfe-4b3d-adc0-43ac6e05de58",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "XAF",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "RWF",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "12992269.935"
-  },
-  {
     "id": "0a89fb6e-95ac-47dc-8744-9b4c34b0bd08",
     "withdrawal": {
       "asset": {
@@ -478,21 +358,6 @@
       "assetId": "076e2789-8c85-4c66-95f0-fe8947d03b00"
     },
     "minWithdrawalAmount": "56063087565"
-  },
-  {
-    "id": "96d2f9cd-0345-49f5-8db1-d0f4226ad307",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "SDG",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "BRR",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "6637299016.035"
   },
   {
     "id": "70f80724-07f9-48eb-b5bc-c372042f86fe",
@@ -591,20 +456,6 @@
     "minWithdrawalAmount": "60291490781.029"
   },
   {
-    "id": "a7b02e35-0575-4d32-b0ae-5f702fbfc3b4",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "ARA",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "assetId": "4858e4b6-f8ff-4111-8b18-2330262c4983"
-    },
-    "minWithdrawalAmount": "013387"
-  },
-  {
     "id": "e664e2ad-e4c2-4ea2-884b-d3ab4875732a",
     "withdrawal": {
       "asset": {
@@ -635,21 +486,6 @@
     "minWithdrawalAmount": "031317465"
   },
   {
-    "id": "8042128f-5372-40b3-9bbc-0eb45efda6fe",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "VUV",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "IRR",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "92052.225159745"
-  },
-  {
     "id": "cffadcbe-442d-4db2-95d2-3026b6676f6f",
     "withdrawal": {
       "asset": {
@@ -665,22 +501,6 @@
     "minWithdrawalAmount": "85001251938.48811760"
   },
   {
-    "id": "a6077f88-503b-4186-94fc-4325a040db6e",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "XSU",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "blockchain": "Optimism",
-      "cryptocurrencySymbol": "FLR",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "5"
-  },
-  {
     "id": "f75581e8-4fa0-49af-8ffa-d91a84cfe7fb",
     "withdrawal": {
       "asset": {
@@ -694,21 +514,6 @@
       "testAsset": false
     },
     "minWithdrawalAmount": "9439220971.22400198"
-  },
-  {
-    "id": "b88dba1f-931f-45b4-8a0e-2c2cd711ca27",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "PEN",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "UGW",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "31903"
   },
   {
     "id": "af980e6b-04e3-44d0-a58a-403a8ada7dac",
@@ -753,20 +558,5 @@
       "assetId": "4858e4b6-f8ff-4111-8b18-2330262c4983"
     },
     "minWithdrawalAmount": "2612873"
-  },
-  {
-    "id": "a4326671-7409-4de1-81a5-bb5ebeaf70b4",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "CSD",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "YUD",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "3873423.0203"
   }
 ]

@@ -104,7 +104,6 @@ const ambiguousProperties = {
     [
       '/destination/transferMethod',
       '/destination/accountHolder',
-      '/destination/swiftCode',
       '/destination/routingNumber',
       '/destination/iban',
       '/destination/accountHolder/name',
@@ -178,7 +177,6 @@ const ambiguousProperties = {
       '/to/bankAccountNumber',
       '/to/accountType',
       '/to/iban',
-      '/to/swiftCode',
       '/to/pixKey',
       '/to/keyType',
       '/to/mobilePhoneNumber',

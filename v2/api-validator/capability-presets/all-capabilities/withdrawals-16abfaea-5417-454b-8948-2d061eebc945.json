@@ -59,22 +59,6 @@
     "minWithdrawalAmount": "09855.19023824"
   },
   {
-    "id": "50c3d991-c3cf-461c-a597-08533dd9387a",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "JOD",
-        "testAsset": true
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "blockchain": "Polygon PoS",
-      "cryptocurrencySymbol": "WEMIX",
-      "testAsset": false
-    },
-    "minWithdrawalAmount": "96364477179"
-  },
-  {
     "id": "4ad1ee9f-2e86-41a8-a727-b7fb0b8c2bc3",
     "withdrawal": {
       "asset": {
@@ -86,21 +70,6 @@
       "assetId": "4858e4b6-f8ff-4111-8b18-2330262c4983"
     },
     "minWithdrawalAmount": "3827"
-  },
-  {
-    "id": "729f9e7a-39cc-492e-8062-9c4736feb5bb",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "KPW",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "PAB",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "0791"
   },
   {
     "id": "1e13915b-513b-4981-b37d-e564100d28eb",
@@ -195,20 +164,6 @@
       "testAsset": true
     },
     "minWithdrawalAmount": "67390268.247786"
-  },
-  {
-    "id": "567085dc-7498-4bec-95a6-1c2a22c0c2e2",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "ZWR",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "assetId": "cabba90f-dc5a-477b-a645-6da78a63a805"
-    },
-    "minWithdrawalAmount": "2322914140.7"
   },
   {
     "id": "82ffcc1c-31eb-4c05-9cc1-d875ba3ee36f",
@@ -315,21 +270,6 @@
     "minWithdrawalAmount": "91352.626616"
   },
   {
-    "id": "d13fce1b-8825-4568-b387-0e5778336016",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "RSD",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "PHP",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "72376695.6483896"
-  },
-  {
     "id": "b1e783cd-9690-405b-a6bd-53ca01da4d98",
     "withdrawal": {
       "asset": {
@@ -405,21 +345,6 @@
     "minWithdrawalAmount": "197316819"
   },
   {
-    "id": "0fc2d253-4b1a-42ae-be2b-4cbade14f7f7",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "TZS",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "EUR",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "6343.3669327105"
-  },
-  {
     "id": "57ed27d4-bc6f-41a1-a844-f2dc966acb2e",
     "withdrawal": {
       "asset": {
@@ -435,21 +360,6 @@
       "testAsset": true
     },
     "minWithdrawalAmount": "2.6200"
-  },
-  {
-    "id": "c04a97ad-6731-4b86-a017-ff304b6a4967",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "ZWN",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "PGK",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "20"
   },
   {
     "id": "ca5b10af-7ca3-4c79-8171-4781f56456f5",
@@ -579,21 +489,6 @@
     "minWithdrawalAmount": "4748894"
   },
   {
-    "id": "6fdf0eb8-3042-4e3a-9668-c8ee845adb57",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "SCR",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "nationalCurrencyCode": "ZRZ",
-      "testAsset": true
-    },
-    "minWithdrawalAmount": "2622"
-  },
-  {
     "id": "395f2b29-c9d2-402d-a992-d54d63ce08bc",
     "withdrawal": {
       "asset": {
@@ -643,20 +538,6 @@
       "testAsset": true
     },
     "minWithdrawalAmount": "57"
-  },
-  {
-    "id": "9555be9a-3c30-4e2b-99fe-90c77596d54c",
-    "withdrawal": {
-      "asset": {
-        "nationalCurrencyCode": "KZT",
-        "testAsset": false
-      },
-      "transferMethod": "Swift"
-    },
-    "balanceAsset": {
-      "assetId": "fe0b63b1-19cc-4611-ab04-a458d125dd2a"
-    },
-    "minWithdrawalAmount": "52013"
   },
   {
     "id": "47473b84-877e-4b33-b406-2f1a683f4537",
