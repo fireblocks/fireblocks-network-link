@@ -12,6 +12,10 @@ tags:
     description: Server capabilities discovery operations.
   - name: collateral
     description: Collateral management operations.
+  - name: offExchange
+    description: Endpoints used by external providers (exchanges) calling Fireblocks for off-exchange collateral flows.
+  - name: collateralWebhooks
+    description: Webhook notifications sent by Fireblocks to exchanges for collateral events.
 
 x-path-params:
   EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
@@ -53,7 +57,8 @@ x-responses:
 paths:
   /accounts/{accountId}/collateral/link:
     post:
-      tags: [ collateral ]
+      tags: 
+        - collateral
       summary: Initiate collateral account link
       description: >
         Creates a new link between a collateral account and a provider account.
@@ -96,7 +101,8 @@ paths:
       description: >
         Retrieves all collateral account links associated with the specified account.
         Returns details about link status, eligible assets, and collateral configuration.
-      tags: [ collateral ]
+      tags: 
+        - collateral
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -151,7 +157,8 @@ paths:
 
   /accounts/{accountId}/collateral/{collateralId}/addresses:
     post:
-      tags: [ collateral ]
+      tags: 
+        - collateral
       summary: Create/register a collateral deposit address for a specific asset
       description: >
         Notifies the provider to have a new collateral deposit address for a specific asset.
@@ -199,7 +206,8 @@ paths:
       description: >
         Retrieves all registered deposit addresses for the specified collateral account.
         Can be filtered by asset ID or cryptocurrency symbol to get addresses for specific assets.
-      tags: [ collateral ]
+      tags: 
+        - collateral
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -238,7 +246,8 @@ paths:
       description: >
         Retrieves detailed information about a specific deposit address within a collateral account,
         including the address details and recovery account configuration.
-      tags: [ collateral ]
+      tags: 
+        - collateral
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -268,7 +277,8 @@ paths:
           $ref: '#/x-responses/ErrorResponse'
   /accounts/{accountId}/collateral/{collateralId}/intents/deposits:
     post:
-      tags: [ collateral ]
+      tags: 
+        - collateral
       summary: Preflight check before initiating a collateral deposit
       description: >
         Initiates a preflight request for a new collateral deposit transaction.
@@ -311,10 +321,11 @@ paths:
           description: Exchange internal error.
   /accounts/{accountId}/collateral/{collateralId}/deposits:
     post:
-      tags: [ collateral ]
+      tags:
+        - collateral
       summary: Register a collateral deposit transaction
       description: >
-        Notifies the provider to have start listening to a new collateral deposit transaction.
+        Notifies the provider to start listening for a new collateral deposit transaction.
         The provider is expected to listen to this address and credit the account accordingly
       operationId: registerCollateralDepositTransaction
       parameters:
@@ -358,7 +369,8 @@ paths:
       description: >
         Retrieves a paginated list of all deposit transactions for the specified collateral account.
         Transactions are sorted by creation time and include status information and approval details.
-      tags: [ collateral ]
+      tags: 
+        - collateral   
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -395,7 +407,8 @@ paths:
       description: >
         Retrieves detailed information about a specific collateral deposit transaction,
         including transaction status, approval details, and processing information.
-      tags: [ collateral ]
+      tags: 
+        - collateral
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -426,7 +439,8 @@ paths:
 
   /accounts/{accountId}/collateral/{collateralId}/intents/withdrawals:
     post:
-      tags: [ collateral ]
+      tags: 
+        - collateral
       summary: Preflight check before initiating a collateral withdrawal
       description: >
         Initiates a preflight request for a new collateral withdrawal transaction.
@@ -470,7 +484,8 @@ paths:
 
   /accounts/{accountId}/collateral/{collateralId}/withdrawals:
     post:
-      tags: [ collateral ]
+      tags: 
+        - collateral
       summary: Notify of a withdrawal from a collateral account
       description: >
         Initiate a withdrawal from the customers collateral account. 
@@ -518,7 +533,8 @@ paths:
       description: >
         Retrieves a paginated list of all withdrawal transactions for the specified collateral account.
         Transactions are sorted by creation time and include status, approval details, and settlement information.
-      tags: [ collateral ]
+      tags: 
+        - collateral
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -555,7 +571,8 @@ paths:
       description: >
         Retrieves detailed information about a specific collateral withdrawal transaction,
         including transaction status, approval details, settlement information, and rejection reasons if applicable.
-      tags: [ collateral ]
+      tags: 
+        - collateral
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -586,7 +603,8 @@ paths:
 
   /accounts/{accountId}/collateral/{collateralId}/settlement:
     post:
-      tags: [ collateral ]
+      tags: 
+        - collateral
       summary: Initiate a settlement request from the provider
       description: Request a settlement from the provider.
       operationId: initiateSettlement
@@ -630,7 +648,8 @@ paths:
       summary: Get current Instructions for settlement
       description: >
         Gets a list of required transactions to finalize the settlement
-      tags: [ collateral ]
+      tags: 
+        - collateral
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -664,7 +683,8 @@ paths:
       description: >
         Retrieves detailed information about a specific settlement state for a collateral account,
         including withdrawal and deposit transaction details, settlement status, and completion information.
-      tags: [ collateral ]
+      tags: 
+        - collateral
       parameters:
         - $ref: '#/x-header-params/X-FB-PLATFORM-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-KEY'
