@@ -53,6 +53,8 @@ const europeanSepaDestinationConfig = config.get('withdrawal.europeanSepa');
 const mobileMoneyDestinationConfig = config.get('withdrawal.mobileMoney');
 const lbtDestinationConfig = config.get('withdrawal.localBankTransfer');
 
+const rampsAmount = config.get('ramps.amount');
+
 function isBlockchainMethod(
   capability:
     | FiatCapability
@@ -153,7 +155,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '1000',
+      amount: rampsAmount,
     };
   }
 
@@ -166,7 +168,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '1000',
+      amount: rampsAmount,
     };
   }
 
@@ -179,7 +181,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...getFiatDestinationConfig(method.to.transferMethod),
       },
-      amount: '1000',
+      amount: rampsAmount,
     };
   }
   // Prefunded fiat to blockchain on-ramp
@@ -192,7 +194,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '1000',
+      amount: rampsAmount,
     };
   }
 
@@ -206,7 +208,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...getFiatDestinationConfig(method.to.transferMethod),
       },
-      amount: '1000',
+      amount: rampsAmount,
     };
   }
 
@@ -220,7 +222,7 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
         ...method.to,
         ...blockchainDestinationConfig,
       },
-      amount: '1000',
+      amount: rampsAmount,
     };
   }
 

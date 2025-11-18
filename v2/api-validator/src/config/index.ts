@@ -651,6 +651,13 @@ const config = convict({
     default: 'capability-presets/all-capabilities',
     env: 'CAPABILITIES_DIR',
   },
+  ramps: {
+    amount: {
+      format: String,
+      default: '10',
+      env: 'RAMPS_DEFAULT_AMOUNT',
+    },
+  },
 });
 
 function filename(f: string) {
