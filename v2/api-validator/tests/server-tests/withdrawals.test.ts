@@ -534,6 +534,14 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                   },
                 };
 
+                // Skip if trying to transfer to the same account (for internal transfers)
+                if (
+                  transferMethod === InternalTransferMethod.transferMethod.INTERNAL_TRANSFER &&
+                  requestBody.destination.accountId === accountId
+                ) {
+                  continue;
+                }
+
                 const withdrawal = await createWithdrawal(client, {
                   accountId,
                   requestBody,
