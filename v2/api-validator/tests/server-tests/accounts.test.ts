@@ -10,7 +10,6 @@ describe('Accounts', () => {
   });
 
   describe('/accounts', () => {
-
     describe('Without balances', () => {
       let accountsResponse: { accounts: Account[] };
 

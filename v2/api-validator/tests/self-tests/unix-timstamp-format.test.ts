@@ -3,16 +3,15 @@ import { ResponseSchemaValidator } from '../../src/client/response-schema-valida
 describe('ResponseSchemaValidator with UNIX-timestamp-epoch format', () => {
   let validator: ResponseSchemaValidator;
 
-  beforeAll(async () => {    
+  beforeAll(async () => {
     validator = new ResponseSchemaValidator();
   });
 
   describe('Rates API response schema validation using mock data', () => {
-    
     it('should validate valid rates response with UNIX-timestamp-epoch format', async () => {
       const validResponse = {
         rate: '1.25',
-        timestamp: 1609459200 // Valid UNIX timestamp (January 1, 2021)
+        timestamp: 1609459200, // Valid UNIX timestamp (January 1, 2021)
       };
 
       const validation = await validator.validate(
@@ -29,7 +28,7 @@ describe('ResponseSchemaValidator with UNIX-timestamp-epoch format', () => {
     it('should reject response with negative timestamp', async () => {
       const invalidResponse = {
         rate: '1.25',
-        timestamp: -1 // Invalid: negative timestamp
+        timestamp: -1, // Invalid: negative timestamp
       };
 
       const validation = await validator.validate(
@@ -47,7 +46,7 @@ describe('ResponseSchemaValidator with UNIX-timestamp-epoch format', () => {
     it('should reject response with zero timestamp', async () => {
       const invalidResponse = {
         rate: '1.25',
-        timestamp: 0 // Invalid: zero timestamp
+        timestamp: 0, // Invalid: zero timestamp
       };
 
       const validation = await validator.validate(
@@ -65,7 +64,7 @@ describe('ResponseSchemaValidator with UNIX-timestamp-epoch format', () => {
     it('should reject response with decimal timestamp', async () => {
       const invalidResponse = {
         rate: '1.25',
-        timestamp: 1609459200.5 // Invalid: decimal timestamp
+        timestamp: 1609459200.5, // Invalid: decimal timestamp
       };
 
       const validation = await validator.validate(
@@ -83,7 +82,7 @@ describe('ResponseSchemaValidator with UNIX-timestamp-epoch format', () => {
     it('should reject response with string timestamp', async () => {
       const invalidResponse = {
         rate: '1.25',
-        timestamp: '1609459200' // Invalid: string instead of number
+        timestamp: '1609459200', // Invalid: string instead of number
       };
 
       const validation = await validator.validate(
@@ -110,7 +109,7 @@ describe('ResponseSchemaValidator with UNIX-timestamp-epoch format', () => {
       for (const timestamp of validTimestamps) {
         const validResponse = {
           rate: '1.25',
-          timestamp: timestamp
+          timestamp: timestamp,
         };
 
         const validation = await validator.validate(
@@ -128,7 +127,7 @@ describe('ResponseSchemaValidator with UNIX-timestamp-epoch format', () => {
     it('should validate response structure completely', async () => {
       const validResponse = {
         rate: '45000.00',
-        timestamp: 1696118400
+        timestamp: 1696118400,
       };
 
       const validation = await validator.validate(

@@ -62,11 +62,11 @@ function compileResponseSchemas(schemas: EndpointSchema[]): ValidatorsDirectory 
 
   addFormats(ajv);
 
-  ajv.addFormat("UNIX-timestamp-epoch", {
-  type: "number",
-  validate: (timestamp) => {
+  ajv.addFormat('UNIX-timestamp-epoch', {
+    type: 'number',
+    validate: (timestamp) => {
       return Number.isInteger(timestamp) && timestamp > 0;
-    }
+    },
   });
 
   // Maps urls to HTTP methods to schema validation function
