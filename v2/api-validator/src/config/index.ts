@@ -35,7 +35,9 @@ const config = convict({
       env: 'SERVER',
       format: (value) => {
         if (value == null || typeof value !== 'string' || value.trim() === '') {
-          throw new Error('Server URL is not set. Please set the SERVER variable in your .env file.');
+          throw new Error(
+            'Server URL is not set. Please set the SERVER variable in your .env file.'
+          );
         }
         try {
           const url = new URL(value);

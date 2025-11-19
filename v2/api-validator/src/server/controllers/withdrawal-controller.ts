@@ -153,9 +153,7 @@ export class WithdrawalController {
   }
 
   public getFiatWithdrawals(order: Order): Withdrawal[] {
-    const fiatTransferMethods: string[] = [
-      IbanCapability.transferMethod.IBAN,
-    ];
+    const fiatTransferMethods: string[] = [IbanCapability.transferMethod.IBAN];
     const withdrawals = this.getWithdrawals(order);
     return withdrawals.filter((withdrawal) =>
       fiatTransferMethods.includes(withdrawal.destination.transferMethod)

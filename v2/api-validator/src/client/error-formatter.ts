@@ -1,5 +1,5 @@
-import { AxiosError } from "axios";
-import { ApiError } from "./generated/core/ApiError";
+import { AxiosError } from 'axios';
+import { ApiError } from './generated/core/ApiError';
 
 // ANSI color codes
 const cyan = '\x1b[36m';
@@ -32,33 +32,33 @@ function formatAndIndent(value: any, indentation: string): string {
 }
 
 export function formatAxiosError(error: AxiosError): string {
-    if (!error?.response?.status) {
-        let message = `AxiosError: ${error.message}`;
+  if (!error?.response?.status) {
+    let message = `AxiosError: ${error.message}`;
 
-        const url = error?.config?.url;
-        if (url) {
-            message += `\n  ${cyan}${error?.config?.method?.toUpperCase()} ${url}${reset}`;
-        }
-
-        return message;
+    const url = error?.config?.url;
+    if (url) {
+      message += `\n  ${cyan}${error?.config?.method?.toUpperCase()} ${url}${reset}`;
     }
 
-    const normalizedError: ApiError = {
-        name: 'AxiosError',
-        message: `AxiosError: ${error.message}`,
-        url: error?.config?.url || '',
-        status: error?.response?.status || 0,
-        statusText: error?.response?.statusText || 'NOT HTTP ERROR',
-        body: error?.response?.data,
-        request: {
-            method: (error?.config?.method || 'GET').toUpperCase() as any,
-            url: error?.config?.url || '',
-            body: error?.config?.data,
-            query: error?.config?.params,
-            headers: error?.config?.headers,
-        }
-    }
-    return formatApiError(normalizedError);
+    return message;
+  }
+
+  const normalizedError: ApiError = {
+    name: 'AxiosError',
+    message: `AxiosError: ${error.message}`,
+    url: error?.config?.url || '',
+    status: error?.response?.status || 0,
+    statusText: error?.response?.statusText || 'NOT HTTP ERROR',
+    body: error?.response?.data,
+    request: {
+      method: (error?.config?.method || 'GET').toUpperCase() as any,
+      url: error?.config?.url || '',
+      body: error?.config?.data,
+      query: error?.config?.params,
+      headers: error?.config?.headers,
+    },
+  };
+  return formatApiError(normalizedError);
 }
 
 /**

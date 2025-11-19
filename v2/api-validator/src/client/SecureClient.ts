@@ -92,14 +92,12 @@ function stripSecurityHeaderArgs<ServiceType extends object>(
         } catch (error) {
           if (error instanceof ApiError) {
             error.message = formatApiError(error);
-          }
-          else if (error instanceof AxiosError) {
+          } else if (error instanceof AxiosError) {
             throw new Error(formatAxiosError(error));
           }
           throw error;
         }
-      }
-
+      };
     }
   }
 

@@ -53,9 +53,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
   let assets: AssetsDirectory;
   let accountCapabilitiesMap: Map<string, WithdrawalCapability[]>;
   let accountsMap: Map<string, Account>;
-  const fiatTransferMethods: string[] = [
-    IbanCapability.transferMethod.IBAN,
-  ];
+  const fiatTransferMethods: string[] = [IbanCapability.transferMethod.IBAN];
 
   const findParentOf = (accountId: string) =>
     Array.from(accountsMap.values()).find((a) =>

@@ -11,27 +11,27 @@ export async function* paginated<T>(f: Pageable<T>, idPropName = 'id'): AsyncGen
   const MAX_PAGES = 1000;
   let pageCount = 0;
   let startingAfter: string | undefined;
-  
+
   while (pageCount < MAX_PAGES) {
     const currentPage = await f(LIMIT, startingAfter);
-    
+
     if (currentPage.length === 0) {
       break;
     }
-    
+
     pageCount++;
-    
+
     for (const item of currentPage) {
       yield item;
     }
-    
+
     const lastItem = currentPage[currentPage.length - 1];
     const lastItemId = lastItem?.[idPropName];
-    
+
     if (!lastItemId || lastItemId === startingAfter) {
       break;
     }
-    
+
     startingAfter = lastItemId;
   }
 }

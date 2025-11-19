@@ -26,7 +26,8 @@ import { fakeSchemaObject } from '../../src/schemas';
 import _, { range } from 'lodash';
 
 const noTransfersCapability = !hasCapability('transfers');
-const noDepositAddressCapabilities = !hasCapability('transfersBlockchain') && !hasCapability('transfersFiat');
+const noDepositAddressCapabilities =
+  !hasCapability('transfersBlockchain') && !hasCapability('transfersFiat');
 const accountIds = getAllCapableAccountIds('transfers');
 
 function isInternalOrP2PTransfer(
@@ -102,7 +103,9 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
       requestBody: DepositAddressCreationRequest
     ): Promise<ApiError> => {
       try {
-        const transferClient = getClientForTransferMethod(requestBody.transferMethod.transferMethod);
+        const transferClient = getClientForTransferMethod(
+          requestBody.transferMethod.transferMethod
+        );
         await transferClient.createDepositAddress({
           accountId,
           requestBody,
@@ -202,26 +205,26 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
       describe.each(range(1, ITERATIONS_NUMBER))(
         'should fail when using an a unknown transfer method - attempt %d',
         () => {
-          it.each([
-            fakeSchemaObject('IbanCapability') as IbanCapability,
-            fakeBlockchainCapability,
-          ])('should fail when using an unknown %s transfer method', async (fakeCapability) => {
-            const requestBody: DepositAddressCreationRequest = {
-              idempotencyKey: randomUUID(),
-              transferMethod: fakeCapability,
-            };
-            for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
-              if (capabilities.some((dc) => _.isEqual(dc.deposit, fakeCapability))) {
-                continue;
-              }
-              const error = await getCreateDepositAddressFailureResult(accountId, requestBody);
+          it.each([fakeSchemaObject('IbanCapability') as IbanCapability, fakeBlockchainCapability])(
+            'should fail when using an unknown %s transfer method',
+            async (fakeCapability) => {
+              const requestBody: DepositAddressCreationRequest = {
+                idempotencyKey: randomUUID(),
+                transferMethod: fakeCapability,
+              };
+              for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+                if (capabilities.some((dc) => _.isEqual(dc.deposit, fakeCapability))) {
+                  continue;
+                }
+                const error = await getCreateDepositAddressFailureResult(accountId, requestBody);
 
-              expect(error.status).toBe(400);
-              expect(error.body.errorType).toBe(
-                BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD
-              );
+                expect(error.status).toBe(400);
+                expect(error.body.errorType).toBe(
+                  BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD
+                );
+              }
             }
-          });
+          );
         }
       );
 
@@ -253,7 +256,9 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
               asset: { assetId: randomUUID() },
             },
           };
-          const transferClient = getClientForTransferMethod(successBody.transferMethod.transferMethod);
+          const transferClient = getClientForTransferMethod(
+            successBody.transferMethod.transferMethod
+          );
           successResponse = await transferClient.createDepositAddress({
             accountId,
             requestBody: successBody,
@@ -267,7 +272,9 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
             return;
           }
 
-          const transferClient = getClientForTransferMethod(successBody.transferMethod.transferMethod);
+          const transferClient = getClientForTransferMethod(
+            successBody.transferMethod.transferMethod
+          );
           const response = await transferClient.createDepositAddress({
             accountId: accountId,
             requestBody: successBody,
@@ -308,7 +315,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
       let accountDepositAddressesMap: Map<string, DepositAddress[]>;
       const getDepositAddresses = async (accountId, limit, startingAfter?) => {
         let allAddresses: DepositAddress[] = [];
-        
+
         // Get blockchain deposit addresses if capability exists
         if (hasCapability('transfersBlockchain')) {
           try {
@@ -322,8 +329,8 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
             // Continue if this service doesn't exist for this account
           }
         }
-        
-        // Get fiat deposit addresses if capability exists  
+
+        // Get fiat deposit addresses if capability exists
         if (hasCapability('transfersFiat')) {
           try {
             const fiatResponse = await client.transfersFiat.getDepositAddresses({
@@ -336,7 +343,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
             // Continue if this service doesn't exist for this account
           }
         }
-        
+
         return allAddresses;
       };
       beforeAll(async () => {
@@ -355,7 +362,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
         for (const [accountId, depositAddresses] of accountDepositAddressesMap.entries()) {
           for (const depositAddress of depositAddresses) {
             let details: DepositAddress | null = null;
-            
+
             // Try blockchain service first
             if (hasCapability('transfersBlockchain')) {
               try {
@@ -367,7 +374,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
                 // Continue to fiat if not found
               }
             }
-            
+
             // Try fiat service if not found in blockchain
             if (!details && hasCapability('transfersFiat')) {
               try {
@@ -379,7 +386,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
                 // Address not found in either service
               }
             }
-            
+
             expect(details).toBeDefined();
             expect(details?.id).toBe(depositAddress.id);
           }
