@@ -14,7 +14,7 @@ export type CommonRamp = {
     updatedAt: string;
     status: RampStatus;
     amount: PositiveAmount;
-    fees?: RampFees;
+    estimatedFees?: RampFees;
     executionDetails?: OrderQuote;
     /**
      * Ramp expiration time.

@@ -327,7 +327,8 @@ components:
                   iban: "US1234567890"
                 estimatedFees:
                   - feeType: "ORDER"
-                    feeAsset: "USD"
+                    feeAsset:
+                      nationalCurrencyCode: "USD"
                     amountType: "FIXED"
                     amount: "100.00"
             onRampWithQuote:
@@ -365,9 +366,12 @@ components:
                     type: "Retry"
                     slippage: 0.02
                     count: 3
-                fees:
-                  subAccount: 75
-                  provider: 150
+                estimatedFees:
+                  - feeType: "ORDER"
+                    feeAsset:
+                      nationalCurrencyCode: "USD"
+                    amountType: "FIXED"
+                    amount: "100.00"
 
     GetRampDetailsResponse:
       description: Ramp details.
@@ -419,9 +423,12 @@ components:
                         name: "John Doe"
                         address: "123 Main St, New York, NY 10001"
                       iban: "US1234567890"
-                    fees:
-                      subAccount: 100
-                      provider: 200
+                    estimatedFees:
+                      - feeType: "ORDER"
+                        feeAsset:
+                          nationalCurrencyCode: "USD"
+                        amountType: "FIXED"
+                        amount: "100.00"
                     expiresAt: "2021-09-01T12:00:00Z"
                   - id: "69fa4f38-c1fd-4215-a310-82272225c4ef"
                     createdAt: "2021-09-01T12:00:00Z"
@@ -454,16 +461,21 @@ components:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
                     receipt:
-                      asset:
-                        nationalCurrencyCode: "USD"
-                      transferMethod: "Iban"
-                      accountHolder:
-                        name: "John Doe"
-                        address: "123 Main St, New York, NY 10001"
-                      iban: "US1234567890"
-                      amount: "1231.45"
-                    fees:
-                      subAccount: 100
+                      actualFees:
+                        - feeType: "ORDER"
+                          feeAsset:
+                            nationalCurrencyCode: "USD"
+                          amountType: "FIXED"
+                          amount: "100.00"
+                      payment:
+                        asset:
+                          nationalCurrencyCode: "USD"
+                        transferMethod: "Iban"
+                        accountHolder:
+                          name: "John Doe"
+                          address: "123 Main St, New York, NY 10001"
+                        iban: "US1234567890"
+                        amount: "1231.45"
                     expiresAt: "2021-09-01T12:00:00Z"
                   - id: "afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea"
                     createdAt: "2021-09-01T12:00:00Z"
@@ -494,14 +506,25 @@ components:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
                     receipt:
-                      blockchainTxId: "0x1234567890abcdef1234567899abcdef1234567890abcdef1234567890abcdef"
-                      amount: "1231.45"
-                      address: "0x1234567890abcdef1234567890abcdef12345678"
-                      asset:
-                        assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" # USDC on Polygon
-                      transferMethod: "PublicBlockchain"
-                    fees:
-                      subAccount: 100
+                      actualFees:
+                        - feeType: "ORDER"
+                          feeAsset:
+                            nationalCurrencyCode: "USD"
+                          amountType: "FIXED"
+                          amount: "100.00"
+                      payment:
+                        blockchainTxId: "0x1234567890abcdef1234567899abcdef1234567890abcdef1234567890abcdef"
+                        amount: "1231.45"
+                        address: "0x1234567890abcdef1234567890abcdef12345678"
+                        asset:
+                          assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" # USDC on Polygon
+                        transferMethod: "PublicBlockchain"
+                    estimatedFees:
+                      - feeType: "ORDER"
+                        feeAsset:
+                          nationalCurrencyCode: "USD"
+                        amountType: "FIXED"
+                        amount: "100.00"
                     expiresAt: "2021-09-01T12:00:00Z"
   schemas:
     RampStatus:
