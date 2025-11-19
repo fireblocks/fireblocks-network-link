@@ -71,7 +71,7 @@ describe('Accounts', () => {
       let account: Account;
 
       beforeAll(async () => {
-        account = await client.accounts.getAccountDetails({accountId});
+        account = await client.accounts.getAccountDetails({ accountId });
       });
 
       it('should have non empty title', () => {
