@@ -18,6 +18,12 @@ describe('Accounts', () => {
         accountsResponse = await client.accounts.getAccounts({});
       });
 
+      it('should return proper title for each account', () => {
+        for (const account of accountsResponse.accounts) {
+          expect(account.title?.trim().length, `Account ID: ${account.id}`).toBeGreaterThan(0);
+        }
+      });
+
       it('should exclude balances in each account response by default', () => {
         for (const account of accountsResponse.accounts) {
           expect(account.balances).toBeUndefined();
@@ -62,31 +68,33 @@ describe('Accounts', () => {
     });
 
     describe('Default request', () => {
-      let accountDetailsWithBalances: Account;
+      let account: Account;
 
       beforeAll(async () => {
-        accountDetailsWithBalances = await client.accounts.getAccountDetails({
-          accountId,
-        });
+        account = await client.accounts.getAccountDetails({accountId});
+      });
+
+      it('should have non empty title', () => {
+        expect(account.title?.trim().length, `Account ID: ${account.id}`).toBeGreaterThan(0);
       });
 
       it('should not have account balances in response', () => {
-        expect(accountDetailsWithBalances.balances).toBeUndefined();
+        expect(account.balances).toBeUndefined();
       });
     });
 
     describe('With balances', () => {
-      let accountDetailsWithoutBalances: Account;
+      let account: Account;
 
       beforeAll(async () => {
-        accountDetailsWithoutBalances = await client.accounts.getAccountDetails({
+        account = await client.accounts.getAccountDetails({
           accountId,
           balances: true,
         });
       });
 
       it('should have account balances in response', () => {
-        expect(accountDetailsWithoutBalances.balances).toBeDefined();
+        expect(account.balances).toBeDefined();
       });
     });
   });
