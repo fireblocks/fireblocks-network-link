@@ -219,6 +219,7 @@ export type { SubAccountIdPathParam } from './models/SubAccountIdPathParam';
 export type { Transfer } from './models/Transfer';
 export type { TransferCapability } from './models/TransferCapability';
 export { UnauthorizedError } from './models/UnauthorizedError';
+export { VirtualAsset } from './models/VirtualAsset';
 export type { WireAddress } from './models/WireAddress';
 export { WireCapability } from './models/WireCapability';
 export type { WireTransfer } from './models/WireTransfer';
