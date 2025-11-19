@@ -71,6 +71,8 @@ x-schemas:
     {
       $ref: "./fb-provider-api.yaml#/components/schemas/CryptocurrencyReference",
     }
+  AssetReference:
+    { $ref: "./fb-provider-api.yaml#/components/schemas/AssetReference" }
   FiatAddress:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatAddress" }
   IbanTransfer:
@@ -84,11 +86,17 @@ x-schemas:
   PixTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PixTransfer" }
   EuropeanSEPATransfer:
-    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/EuropeanSEPATransfer" }
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/EuropeanSEPATransfer",
+    }
   MobileMoneyTransfer:
-    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyTransfer" }
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyTransfer",
+    }
   LocalBankTransfer:
-    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransfer" }
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransfer",
+    }
   PublicBlockchainTransaction:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
@@ -317,9 +325,11 @@ components:
                     name: "John Doe"
                     address: "123 Main St, New York, NY 10001"
                   iban: "US1234567890"
-                fees:
-                  subAccount: 100
-                  provider: 200
+                estimatedFees:
+                  - feeType: "ORDER"
+                    feeAsset: "USD"
+                    amountType: "FIXED"
+                    amount: "100.00"
             onRampWithQuote:
               summary: OnRamp with Quote
               description: An on-ramp that includes quote information for price execution.
@@ -351,14 +361,14 @@ components:
                 executionDetails:
                   type: "Quote"
                   quoteId: "quote-123456789"
-                  reQuote: 
+                  reQuote:
                     type: "Retry"
                     slippage: 0.02
                     count: 3
                 fees:
                   subAccount: 75
                   provider: 150
-  
+
     GetRampDetailsResponse:
       description: Ramp details.
       content:
@@ -746,16 +756,36 @@ components:
             participantsIdentification:
               $ref: "#/x-schemas/ParticipantsIdentification"
 
-    RampFees:
+    Fee:
       type: object
-      description: Fees associated with the ramp transfer.
       properties:
-        subAccount:
-          type: integer
-          description: Fees charged from the sub-account in basis points.
-        provider:
-          type: integer
-          description: Fees charged by the provider for the ramp service in basis points.
+        feeType:
+          type: string
+          description: >
+            Specifies the category of fee applied to the transaction.
+            - ORDER - Fee charged by the platform for executing the trade.
+            - NETWORK - Blockchain network fee paid to validators/miners.
+            - SPREAD - Implicit cost built into the price difference between quotes.
+            - REBATE - Negative fee returned to the user as a reward or incentive.
+          enum:
+            - ORDER
+            - NETWORK
+            - SPREAD
+            - REBATE
+        feeAsset:
+          $ref: "#/x-schemas/AssetReference"
+        amountType:
+          type: string
+          enum:
+            - FIXED
+            - BASIS_POINTS
+        amount:
+          $ref: "#/x-schemas/PositiveAmount"
+
+    RampFees:
+      type: array
+      items:
+        $ref: "#/components/schemas/Fee"
 
     CommonRamp:
       type: object
@@ -773,7 +803,7 @@ components:
           $ref: "#/components/schemas/RampStatus"
         amount:
           $ref: "#/x-schemas/PositiveAmount"
-        fees:
+        estimatedFees:
           $ref: "#/components/schemas/RampFees"
         executionDetails:
           oneOf:
@@ -824,6 +854,44 @@ components:
               $ref: "#/x-schemas/PublicBlockchainAddress"
         - $ref: "#/components/schemas/BridgeProperties"
 
+    CommonRampReceipt:
+      type: object
+      required:
+        - actualFees
+      properties:
+        actualFees:
+          $ref: "#/components/schemas/RampFees"
+
+    OnRampReceipt:
+      allOf:
+        - $ref: "#/components/schemas/CommonRampReceipt"
+        - type: object
+          required:
+            - payment
+          properties:
+            payment:
+              $ref: "#/x-schemas/PublicBlockchainTransaction"
+
+    OffRampReceipt:
+      allOf:
+        - $ref: "#/components/schemas/CommonRampReceipt"
+        - type: object
+          required:
+            - payment
+          properties:
+            payment:
+              $ref: "#/components/schemas/RampFiatTransfer"
+
+    BridgeReceipt:
+      allOf:
+        - $ref: "#/components/schemas/CommonRampReceipt"
+        - type: object
+          required:
+            - payment
+          properties:
+            payment:
+              $ref: "#/x-schemas/PublicBlockchainTransaction"
+
     OnRamp:
       title: On Ramp
       allOf:
@@ -834,7 +902,7 @@ components:
         - type: object
           properties:
             receipt:
-              $ref: "#/x-schemas/PublicBlockchainTransaction"
+              $ref: "#/components/schemas/OnRampReceipt"
 
     OffRamp:
       allOf:
@@ -845,7 +913,7 @@ components:
         - type: object
           properties:
             receipt:
-              $ref: "#/components/schemas/RampFiatTransfer"
+              $ref: "#/components/schemas/OffRampReceipt"
 
     Bridge:
       allOf:
@@ -856,7 +924,7 @@ components:
         - type: object
           properties:
             receipt:
-              $ref: "#/x-schemas/PublicBlockchainTransaction"
+              $ref: "#/components/schemas/BridgeReceipt"
 
     Ramp:
       oneOf:
