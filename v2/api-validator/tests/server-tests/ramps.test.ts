@@ -336,6 +336,11 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         for (const ramp of ramps) {
           expect(ramp.from.asset).toSatisfy(isKnownAsset);
           expect(ramp.to.asset).toSatisfy(isKnownAsset);
+          if (ramp.receipt) {
+            for (const fee of ramp.receipt.actualFees) {
+              expect(fee.feeAsset).toSatisfy(isKnownAsset);
+            }
+          }
         }
       }
     });

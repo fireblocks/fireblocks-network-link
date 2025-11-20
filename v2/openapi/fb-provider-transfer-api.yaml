@@ -910,7 +910,7 @@ components:
             - amount
           properties:
             amount:
-              $ref: '#/components/schemas/PositiveAmount'
+              $ref: '#/x-schemas/PositiveAmount'
 
     AchTransfer:
         allOf:
@@ -957,7 +957,7 @@ components:
             - amount
           properties:
             amount:
-              $ref: '#/components/schemas/PositiveAmount'
+              $ref: '#/x-schemas/PositiveAmount'
 
     WireTransfer:
         allOf:
@@ -1011,7 +1011,7 @@ components:
             - amount
           properties:
             amount:
-              $ref: '#/components/schemas/PositiveAmount'
+              $ref: '#/x-schemas/PositiveAmount'
 
     SpeiTransfer:
         allOf:
@@ -1066,7 +1066,7 @@ components:
             - amount
           properties:
             amount:
-              $ref: '#/components/schemas/PositiveAmount'
+              $ref: '#/x-schemas/PositiveAmount'
     
     PixTransfer:
       allOf:
@@ -1123,7 +1123,7 @@ components:
             - amount
           properties:
             amount:
-              $ref: '#/components/schemas/PositiveAmount'
+              $ref: '#/x-schemas/PositiveAmount'
     
     EuropeanSEPATransfer:
       allOf:
@@ -1186,7 +1186,7 @@ components:
             - amount
           properties:
             amount:
-              $ref: '#/components/schemas/PositiveAmount'
+              $ref: '#/x-schemas/PositiveAmount'
     
     MobileMoneyTransfer:
       allOf:
@@ -1237,7 +1237,7 @@ components:
             - amount
           properties:
             amount:
-              $ref: '#/components/schemas/PositiveAmount'
+              $ref: '#/x-schemas/PositiveAmount'
     
     LocalBankTransfer:
       allOf:

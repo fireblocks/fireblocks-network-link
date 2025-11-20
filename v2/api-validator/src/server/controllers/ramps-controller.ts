@@ -64,7 +64,7 @@ export class RampsController {
     }
 
     const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
-    injectKnownAssetIdsToRampsAssetObjects(knownAssetIds, this.rampsRepository);
+    injectKnownAssetIdsToRamps(knownAssetIds, this.rampsRepository);
   }
 
   private loadRampMethods() {
@@ -75,7 +75,7 @@ export class RampsController {
       this.rampMethodRepository.create(capability);
     }
     const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
-    injectKnownAssetIdsToRampsAssetObjects(knownAssetIds, this.rampMethodRepository);
+    injectKnownAssetIdsToRampsMethods(knownAssetIds, this.rampMethodRepository);
   }
 
   private static generateRampMethods() {
@@ -143,7 +143,7 @@ export class RampsController {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { idempotencyKey, ...rampProps } = ramp;
     let paymentInstructions;
-
+    let status = RampStatus.PENDING;
     if (
       ramp.type === OffRampProperties.type.OFF_RAMP ||
       ramp.type === BridgeProperties.type.BRIDGE
@@ -154,6 +154,7 @@ export class RampsController {
       };
     } else if ('type' in ramp.from && ramp.from.type === 'Prefunded') {
       paymentInstructions = undefined;
+      status = RampStatus.PROCESSING;
     } else if (ramp.type === OnRampProperties.type.ON_RAMP) {
       const transferMethod = getTransferMethod((ramp.from as FiatCapability)?.transferMethod);
       paymentInstructions = {
@@ -170,7 +171,7 @@ export class RampsController {
       ...(paymentInstructions && { paymentInstructions }),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      status: RampStatus.PENDING,
+      status,
       fees: {},
       expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
     };
@@ -202,9 +203,9 @@ function getTransferMethod(transferMethod: FiatCapability['transferMethod']): Fi
   }
 }
 
-function injectKnownAssetIdsToRampsAssetObjects(
+function injectKnownAssetIdsToRampsMethods(
   knownAssetIds: string[],
-  repository: Repository<Ramp> | Repository<RampMethod>
+  repository: Repository<RampMethod>
 ) {
   for (const { id } of repository.list()) {
     const ramp = repository.find(id);
@@ -218,6 +219,30 @@ function injectKnownAssetIdsToRampsAssetObjects(
     }
     if ('assetId' in ramp.to.asset) {
       ramp.to.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+  }
+}
+
+function injectKnownAssetIdsToRamps(knownAssetIds: string[], repository: Repository<Ramp>) {
+  for (const { id } of repository.list()) {
+    const ramp = repository.find(id);
+    if (!ramp) {
+      throw new Error('Not possible!');
+    }
+
+    if ('assetId' in ramp.from.asset) {
+      ramp.from.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+    if ('assetId' in ramp.to.asset) {
+      ramp.to.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+
+    if (ramp.receipt) {
+      for (const fee of ramp.receipt.actualFees) {
+        if ('assetId' in fee.feeAsset) {
+          fee.feeAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+        }
+      }
     }
   }
 }

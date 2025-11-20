@@ -3,6 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { Fee } from './Fee';
+import type { RampFees } from './RampFees';
 
-export type RampFees = Array<Fee>;
+export type CommonRampReceipt = {
+    actualFees: RampFees;
+};
+

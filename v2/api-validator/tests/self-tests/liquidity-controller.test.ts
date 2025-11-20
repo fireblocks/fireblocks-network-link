@@ -13,6 +13,7 @@ describe('Liquidity Controller', () => {
     toAmount: defaultAmount,
     fromAsset: defaultAssetReference,
     toAsset: defaultAssetReference,
+    conversionFeeAsset: defaultAssetReference,
     conversionFeeBps: 1,
     createdAt: new Date(Date.now()).toISOString(),
     expiresAt: new Date(Date.now() + 1000).toISOString(),
