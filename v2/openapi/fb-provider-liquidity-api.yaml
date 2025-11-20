@@ -270,6 +270,7 @@ components:
         - toAsset
         - toAmount
         - conversionFeeBps
+        - conversionFeeAsset
         - status
         - createdAt
         - expiresAt
@@ -287,6 +288,8 @@ components:
         conversionFeeBps:
           type: integer
           description: Conversion fee in basis points. The amounts are expected to include the fee.
+        conversionFeeAsset:
+          $ref: '#/x-schemas/AssetReference'
         status:
           $ref: '#/components/schemas/QuoteStatus'
         createdAt:

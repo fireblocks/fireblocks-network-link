@@ -17,6 +17,7 @@ export type Quote = {
      * Conversion fee in basis points. The amounts are expected to include the fee.
      */
     conversionFeeBps: number;
+    conversionFeeAsset: AssetReference;
     status: QuoteStatus;
     /**
      * Quote creation time.
