@@ -5927,6 +5927,11 @@ components:
               $ref: '#/components/schemas/ParticipantsIdentification'
     Fee:
       type: object
+      required:
+        - feeType
+        - feeAsset
+        - amountType
+        - amount
       properties:
         feeType:
           type: string

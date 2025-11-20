@@ -105,6 +105,7 @@ export class LiquidityController {
       fromAsset,
       toAsset,
       conversionFeeBps: 1,
+      conversionFeeAsset: fromAsset,
       createdAt: new Date(Date.now()).toISOString(),
       expiresAt: new Date(Date.now() + QUOTE_EXPIRATION_IN_MS).toISOString(),
       id: randomUUID(),

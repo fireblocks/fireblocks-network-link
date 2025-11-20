@@ -781,6 +781,11 @@ components:
 
     Fee:
       type: object
+      required:
+        - feeType
+        - feeAsset
+        - amountType
+        - amount
       properties:
         feeType:
           type: string

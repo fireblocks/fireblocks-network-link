@@ -125,6 +125,7 @@ function shapeRequestForLog(request: FastifyRequest) {
 }
 
 function errorHandler(error: FastifyError, request: FastifyRequest, reply: FastifyReply) {
+  log.error('Error in errorHandler', { error, request: shapeRequestForLog(request) });
   if (error.code === 'FST_ERR_VALIDATION') {
     sendValidationError(error, reply);
   } else {
@@ -143,6 +144,8 @@ function sendValidationError(error: FastifyError, reply: FastifyReply) {
     log.error('Unexpected error', { error });
     return reply.status(error.statusCode ?? 500).send(error.message);
   }
+
+  log.error('Validation error', { error });
 
   const validation = error.validation[0];
   const message = `Request schema validation error: ${validation.message}`;
