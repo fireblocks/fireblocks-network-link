@@ -1,13 +1,16 @@
 openapi: 3.0.0
 info:
-  title: 'Fireblocks Provider Off-Exchange API'
+  title: 'Fireblocks Collateral API'
+  description: >
+    This API is implemented by Fireblocks and provides collateral-related
+    endpoints for off-exchange workflows. Unlike the provider APIs in this
+    project, which are implemented by external providers, this API is served
+    by Fireblocks and defines the endpoints providers interact with.
   version: 0.0.1
 
 tags:
-  - name: offExchange
+  - name: collateral
     description: Endpoints used by external providers (exchanges) calling Fireblocks for off-exchange collateral flows.
-  - name: collateralWebhooks
-    description: Webhook notifications sent by Fireblocks to exchanges for collateral events.
 
 x-path-params:
   EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
