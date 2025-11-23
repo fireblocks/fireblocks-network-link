@@ -2757,8 +2757,9 @@ components:
                   - feeType: ORDER
                     feeAsset:
                       nationalCurrencyCode: USD
-                    amountType: FIXED
-                    amount: '100.00'
+                    fee:
+                      amountType: FIXED
+                      amount: '100.00'
             onRampWithQuote:
               summary: OnRamp with Quote
               description: An on-ramp that includes quote information for price execution.
@@ -2798,8 +2799,9 @@ components:
                   - feeType: ORDER
                     feeAsset:
                       nationalCurrencyCode: USD
-                    amountType: FIXED
-                    amount: '100.00'
+                    fee:
+                      amountType: FIXED
+                      amount: '100.00'
     GetRampDetailsResponse:
       description: Ramp details.
       content:
@@ -2853,8 +2855,9 @@ components:
                       - feeType: ORDER
                         feeAsset:
                           nationalCurrencyCode: USD
-                        amountType: FIXED
-                        amount: '100.00'
+                        fee:
+                          amountType: FIXED
+                          amount: '100.00'
                     expiresAt: '2021-09-01T12:00:00Z'
                   - id: 69fa4f38-c1fd-4215-a310-82272225c4ef
                     createdAt: '2021-09-01T12:00:00Z'
@@ -2899,8 +2902,9 @@ components:
                         - feeType: ORDER
                           feeAsset:
                             nationalCurrencyCode: USD
-                          amountType: FIXED
-                          amount: '100.00'
+                          fee:
+                            amountType: FIXED
+                            amount: '100.00'
                     expiresAt: '2021-09-01T12:00:00Z'
                   - id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
                     createdAt: '2021-09-01T12:00:00Z'
@@ -2935,8 +2939,9 @@ components:
                         - feeType: ORDER
                           feeAsset:
                             nationalCurrencyCode: USD
-                          amountType: FIXED
-                          amount: '100.00'
+                          fee:
+                            amountType: FIXED
+                            amount: '100.00'
                       blockchainTxId: '0x1234567890abcdef1234567899abcdef1234567890abcdef1234567890abcdef'
                       amount: '1231.45'
                       address: '0x1234567890abcdef1234567890abcdef12345678'
@@ -2947,8 +2952,9 @@ components:
                       - feeType: ORDER
                         feeAsset:
                           nationalCurrencyCode: USD
-                        amountType: FIXED
-                        amount: '100.00'
+                        fee:
+                          amountType: FIXED
+                          amount: '100.00'
                     expiresAt: '2021-09-01T12:00:00Z'
   schemas:
     GeneralError:
@@ -5923,13 +5929,37 @@ components:
           properties:
             participantsIdentification:
               $ref: '#/components/schemas/ParticipantsIdentification'
+    FeeAmount:
+      oneOf:
+        - type: object
+          required:
+            - amountType
+            - amount
+          properties:
+            amountType:
+              type: string
+              enum:
+                - FIXED
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+        - type: object
+          required:
+            - amountType
+            - amount
+          properties:
+            amountType:
+              type: string
+              enum:
+                - BASIS_POINTS
+            amount:
+              type: number
+              description: Basis points (bps) - 1 is 0.01% and 10000 is 100%
     Fee:
       type: object
       required:
         - feeType
         - feeAsset
-        - amountType
-        - amount
+        - fee
       properties:
         feeType:
           type: string
@@ -5942,13 +5972,8 @@ components:
             - REBATE
         feeAsset:
           $ref: '#/components/schemas/AssetReference'
-        amountType:
-          type: string
-          enum:
-            - FIXED
-            - BASIS_POINTS
-        amount:
-          $ref: '#/components/schemas/PositiveAmount'
+        fee:
+          $ref: '#/components/schemas/FeeAmount'
     RampFees:
       type: array
       items:

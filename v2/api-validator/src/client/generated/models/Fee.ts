@@ -4,7 +4,7 @@
 /* eslint-disable */
 
 import type { AssetReference } from './AssetReference';
-import type { PositiveAmount } from './PositiveAmount';
+import type { FeeAmount } from './FeeAmount';
 
 export type Fee = {
     /**
@@ -13,8 +13,7 @@ export type Fee = {
      */
     feeType: Fee.feeType;
     feeAsset: AssetReference;
-    amountType: Fee.amountType;
-    amount: PositiveAmount;
+    fee: FeeAmount;
 };
 
 export namespace Fee {
@@ -28,11 +27,6 @@ export namespace Fee {
         NETWORK = 'NETWORK',
         SPREAD = 'SPREAD',
         REBATE = 'REBATE',
-    }
-
-    export enum amountType {
-        FIXED = 'FIXED',
-        BASIS_POINTS = 'BASIS_POINTS',
     }
 
 

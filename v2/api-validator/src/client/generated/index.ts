@@ -94,6 +94,7 @@ export { EuropeanSEPACapability } from './models/EuropeanSEPACapability';
 export type { EuropeanSEPATransfer } from './models/EuropeanSEPATransfer';
 export type { EuropeanSEPATransferDestination } from './models/EuropeanSEPATransferDestination';
 export { Fee } from './models/Fee';
+export { FeeAmount } from './models/FeeAmount';
 export type { FiatAddress } from './models/FiatAddress';
 export type { FiatCapability } from './models/FiatCapability';
 export type { FiatTransfer } from './models/FiatTransfer';
