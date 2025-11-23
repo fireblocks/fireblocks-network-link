@@ -12,6 +12,8 @@ tags:
     description: Server capabilities discovery operations.
   - name: collateral
     description: Collateral management operations.
+  - name: collateralNotifications
+    description: Webhook notifications sent by Fireblocks to exchanges for collateral events.
 
 x-path-params:
   EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
