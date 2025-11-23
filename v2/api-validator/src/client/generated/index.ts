@@ -72,7 +72,6 @@ export type { CollateralWithdrawalTransactionRequest } from './models/Collateral
 export type { CollateralWithdrawalTransactions } from './models/CollateralWithdrawalTransactions';
 export { CollateralWithdrawalTransactionStatus } from './models/CollateralWithdrawalTransactionStatus';
 export type { CommonRamp } from './models/CommonRamp';
-export type { CommonRampReceipt } from './models/CommonRampReceipt';
 export type { CommonRampRequestProperties } from './models/CommonRampRequestProperties';
 export { ContractBasedToken } from './models/ContractBasedToken';
 export type { ConversionPairIdQueryParam } from './models/ConversionPairIdQueryParam';

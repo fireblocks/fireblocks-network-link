@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CommonRampReceipt } from './CommonRampReceipt';
 import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction';
+import type { RampFees } from './RampFees';
 
-export type BridgeReceipt = (CommonRampReceipt & {
-    payment: PublicBlockchainTransaction;
+export type BridgeReceipt = (PublicBlockchainTransaction & {
+    actualFees?: RampFees;
 });
 

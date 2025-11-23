@@ -342,7 +342,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
               expect(fee.feeAsset).toSatisfy(isKnownAsset);
             }
           }
-          if (ramp.receipt) {
+          if (ramp.receipt?.actualFees) {
             for (const fee of ramp.receipt.actualFees) {
               expect(fee.feeAsset).toSatisfy(isKnownAsset);
             }

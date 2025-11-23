@@ -2887,21 +2887,20 @@ components:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
                     receipt:
+                      asset:
+                        nationalCurrencyCode: USD
+                      transferMethod: Iban
+                      accountHolder:
+                        name: John Doe
+                        address: 123 Main St, New York, NY 10001
+                      iban: US1234567890
+                      amount: '1231.45'
                       actualFees:
                         - feeType: ORDER
                           feeAsset:
                             nationalCurrencyCode: USD
                           amountType: FIXED
                           amount: '100.00'
-                      payment:
-                        asset:
-                          nationalCurrencyCode: USD
-                        transferMethod: Iban
-                        accountHolder:
-                          name: John Doe
-                          address: 123 Main St, New York, NY 10001
-                        iban: US1234567890
-                        amount: '1231.45'
                     expiresAt: '2021-09-01T12:00:00Z'
                   - id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
                     createdAt: '2021-09-01T12:00:00Z'
@@ -2938,13 +2937,12 @@ components:
                             nationalCurrencyCode: USD
                           amountType: FIXED
                           amount: '100.00'
-                      payment:
-                        blockchainTxId: '0x1234567890abcdef1234567899abcdef1234567890abcdef1234567890abcdef'
-                        amount: '1231.45'
-                        address: '0x1234567890abcdef1234567890abcdef12345678'
-                        asset:
-                          assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
-                        transferMethod: PublicBlockchain
+                      blockchainTxId: '0x1234567890abcdef1234567899abcdef1234567890abcdef1234567890abcdef'
+                      amount: '1231.45'
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                      asset:
+                        assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                      transferMethod: PublicBlockchain
                     estimatedFees:
                       - feeType: ORDER
                         feeAsset:
@@ -6024,40 +6022,27 @@ components:
             paymentInstructions:
               $ref: '#/components/schemas/PublicBlockchainAddress'
         - $ref: '#/components/schemas/BridgeProperties'
-    CommonRampReceipt:
-      type: object
-      required:
-        - actualFees
-      properties:
-        actualFees:
-          $ref: '#/components/schemas/RampFees'
     OnRampReceipt:
       allOf:
-        - $ref: '#/components/schemas/CommonRampReceipt'
+        - $ref: '#/components/schemas/PublicBlockchainTransaction'
         - type: object
-          required:
-            - payment
           properties:
-            payment:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
+            actualFees:
+              $ref: '#/components/schemas/RampFees'
     OffRampReceipt:
       allOf:
-        - $ref: '#/components/schemas/CommonRampReceipt'
+        - $ref: '#/components/schemas/RampFiatTransfer'
         - type: object
-          required:
-            - payment
           properties:
-            payment:
-              $ref: '#/components/schemas/RampFiatTransfer'
+            actualFees:
+              $ref: '#/components/schemas/RampFees'
     BridgeReceipt:
       allOf:
-        - $ref: '#/components/schemas/CommonRampReceipt'
+        - $ref: '#/components/schemas/PublicBlockchainTransaction'
         - type: object
-          required:
-            - payment
           properties:
-            payment:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
+            actualFees:
+              $ref: '#/components/schemas/RampFees'
     OnRamp:
       title: On Ramp
       allOf:
