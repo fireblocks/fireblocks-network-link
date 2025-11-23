@@ -34,6 +34,7 @@ import {
   PixCapability,
   EuropeanSEPACapability,
   LocalBankTransferCapability,
+  CryptocurrencySymbol,
 } from '../../src/client/generated';
 import config from '../../src/config';
 import { AssetsDirectory } from '../utils/assets-directory';
@@ -336,6 +337,11 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         for (const ramp of ramps) {
           expect(ramp.from.asset).toSatisfy(isKnownAsset);
           expect(ramp.to.asset).toSatisfy(isKnownAsset);
+          if (ramp.estimatedFees) {
+            for (const fee of ramp.estimatedFees) {
+              expect(fee.feeAsset).toSatisfy(isKnownAsset);
+            }
+          }
           if (ramp.receipt) {
             for (const fee of ramp.receipt.actualFees) {
               expect(fee.feeAsset).toSatisfy(isKnownAsset);
@@ -530,10 +536,11 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
 
-      it('should fail when invalid transfer method is used', async () => {
-        const blockchainMethod: PublicBlockchainCapability = isBlockchainMethod(capability.from)
-          ? capability.from
-          : (capability.to as PublicBlockchainCapability);
+      it('should fail when invalid ramp method is used (asset to same asset', async () => {
+        const blockchainMethod: PublicBlockchainCapability = {
+          asset: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
+          transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+        };
         const requestBody = rampRequestFromMethod({
           from: blockchainMethod,
           to: blockchainMethod,

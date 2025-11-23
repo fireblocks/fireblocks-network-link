@@ -237,6 +237,14 @@ function injectKnownAssetIdsToRamps(knownAssetIds: string[], repository: Reposit
       ramp.to.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
     }
 
+    if (ramp.estimatedFees) {
+      for (const fee of ramp.estimatedFees) {
+        if ('assetId' in fee.feeAsset) {
+          fee.feeAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+        }
+      }
+    }
+
     if (ramp.receipt) {
       for (const fee of ramp.receipt.actualFees) {
         if ('assetId' in fee.feeAsset) {
