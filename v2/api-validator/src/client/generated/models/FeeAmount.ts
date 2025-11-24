@@ -3,25 +3,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { PositiveAmount } from './PositiveAmount';
+import type { BasisPointsFeeAmount } from './BasisPointsFeeAmount';
+import type { FixedFeeAmount } from './FixedFeeAmount';
 
-export type FeeAmount = ({
-    amountType: FeeAmount.amountType;
-    amount: PositiveAmount;
-} | {
-    amountType: FeeAmount.amountType;
-    /**
-     * Basis points (bps) - 1 is 0.01% and 10000 is 100%
-     */
-    amount: number;
-});
-
-export namespace FeeAmount {
-
-    export enum amountType {
-        FIXED = 'FIXED',
-    }
-
-
-}
+export type FeeAmount = (FixedFeeAmount | BasisPointsFeeAmount);
 

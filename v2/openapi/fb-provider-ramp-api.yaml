@@ -783,31 +783,37 @@ components:
             participantsIdentification:
               $ref: "#/x-schemas/ParticipantsIdentification"
 
+    FixedFeeAmount:
+      type: object
+      required:
+        - amountType
+        - amount
+      properties:
+        amountType:
+          type: string
+          enum:
+            - FIXED
+        amount:
+          $ref: "#/x-schemas/PositiveAmount"
+
+    BasisPointsFeeAmount:
+      type: object
+      required:
+        - amountType
+        - amount
+      properties:
+        amountType:
+          type: string
+          enum:
+            - BASIS_POINTS
+        amount:
+          type: number
+          description: Basis points (bps) - 1 is 0.01% and 10000 is 100%
+
     FeeAmount:
       oneOf:
-        - type: object
-          required:
-            - amountType
-            - amount
-          properties:
-            amountType:
-              type: string
-              enum:
-                - FIXED
-            amount:
-              $ref: "#/x-schemas/PositiveAmount"
-        - type: object
-          required:
-            - amountType
-            - amount
-          properties:
-            amountType:
-              type: string
-              enum:
-                - BASIS_POINTS
-            amount:
-              type: number
-              description: Basis points (bps) - 1 is 0.01% and 10000 is 100%
+        - $ref: "#/components/schemas/FixedFeeAmount"
+        - $ref: "#/components/schemas/BasisPointsFeeAmount"
 
     Fee:
       type: object
