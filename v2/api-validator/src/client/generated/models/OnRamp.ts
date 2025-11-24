@@ -5,10 +5,10 @@
 
 import type { CommonRamp } from './CommonRamp';
 import type { OnRampPropertiesWithPaymentInstructions } from './OnRampPropertiesWithPaymentInstructions';
+import type { OnRampReceipt } from './OnRampReceipt';
 import type { PrefundedOnRampProperties } from './PrefundedOnRampProperties';
-import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction';
 
 export type OnRamp = (CommonRamp & (OnRampPropertiesWithPaymentInstructions | PrefundedOnRampProperties) & {
-    receipt?: PublicBlockchainTransaction;
+    receipt?: OnRampReceipt;
 });
 

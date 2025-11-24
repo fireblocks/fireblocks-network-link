@@ -4,11 +4,11 @@
 /* eslint-disable */
 
 import type { BridgePropertiesWithPaymentInstructions } from './BridgePropertiesWithPaymentInstructions';
+import type { BridgeReceipt } from './BridgeReceipt';
 import type { CommonRamp } from './CommonRamp';
 import type { PrefundedBridgeProperties } from './PrefundedBridgeProperties';
-import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction';
 
 export type Bridge = (CommonRamp & (BridgePropertiesWithPaymentInstructions | PrefundedBridgeProperties) & {
-    receipt?: PublicBlockchainTransaction;
+    receipt?: BridgeReceipt;
 });
 
