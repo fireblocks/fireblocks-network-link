@@ -116,7 +116,6 @@ this response indicates that all the capabilities are supported:
     "transfersBlockchain": "*",
     "transfersFiat": "*",
     "transfersPeerAccounts": "*",
-    "trading": "*",
     "liquidity": "*",
     "ramps": "*"
   }
@@ -234,6 +233,7 @@ The signature itself is calculated by applying SHA512 pre-encoding function, app
 signing algorithm, and finally applying base64 encoding to the result.
 
 The signature verification usually consists of these steps:
+
 1. Build the message, as [described above](#building-the-message-to-sign).
 2. Calculate the message hash by applying SHA512 to the message.
 3. Get the value of the `X-FB-PLATFORM-SIGNATURE` header.
@@ -594,8 +594,8 @@ Afterwards, the pairing token can be added as a new Collateral Signer user to th
 
 ![FlowInvoked](doc-assets/flow_invoked_enforcement.png)
 
-
 # Operational Considerations
+
 ## IP whitelisting
 
 All API calls from Fireblocks to the provider service are sent from a fixed set of

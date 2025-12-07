@@ -12,7 +12,6 @@ const optionalComponents = {
   transfersBlockchain: '*',
   transfersFiat: '*',
   transfersPeerAccounts: '*',
-  trading: ['account1'],
   liquidity: ['account1', 'account2'],
 };
 

@@ -5,7 +5,7 @@ import {
   getObjectSchema,
   loadOpenApiSchemas,
 } from '../../src/schemas';
-import { OrderRequest } from '../../src/client/generated';
+import { RampRequest } from '../../src/client/generated';
 
 describe('Test loading OpenAPI schemas from YAML file', () => {
   beforeAll(async () => {
@@ -20,13 +20,13 @@ describe('Test loading OpenAPI schemas from YAML file', () => {
   });
 
   it('should load object schemas', () => {
-    const schema = getObjectSchema('OrderRequest');
+    const schema = getObjectSchema('GeneralError');
     expect(schema).toBeDefined();
     expect(schema.type).toEqual('object');
   });
 
   it('should be able to fake an object', () => {
-    const orderRequest = fakeSchemaObject('OrderRequest') as OrderRequest;
+    const orderRequest = fakeSchemaObject('RampRequest') as RampRequest;
     expect(orderRequest).toBeDefined();
     expect(orderRequest.idempotencyKey).toMatch(/(\w+-){4}\w+/);
   });

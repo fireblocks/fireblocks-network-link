@@ -84,9 +84,6 @@ const ambiguousProperties = {
     ['/toAsset/nationalCurrencyCode', '/toAsset/cryptocurrencySymbol', '/toAsset/assetId'],
     ['/fromAsset/nationalCurrencyCode', '/fromAsset/cryptocurrencySymbol', '/fromAsset/assetId'],
   ],
-  '/accounts/:accountId/trading/orders': [
-    ['/quoteAssetQuantity', '/baseAssetQuantity', '/quoteAssetPrice', '/baseAssetPrice'],
-  ],
   '/accounts/:accountId/transfers/withdrawals/blockchain': [
     [
       '/balanceAsset/nationalCurrencyCode',

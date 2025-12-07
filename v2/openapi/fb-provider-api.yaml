@@ -67,7 +67,6 @@ paths:
                       transfersFiat: "*"
                       transfersPeerAccounts: "*"
                       transfersInternal: "*"
-                      trading: "*"
                       liquidity: "*"
                       collateral: "*"
                       ramps: "*"
@@ -681,7 +680,6 @@ components:
             - unsupported-conversion
             - quote-not-ready
             - deposit-address-disabled
-            - order-not-trading
             - idempotency-key-reuse
             - deposit-address-creation-not-allowed
             - unsupported-transfer-method
@@ -760,8 +758,6 @@ components:
         transfersPeerAccounts:
           $ref: '#/components/schemas/AccountsSet'
         transfersInternal:
-          $ref: '#/components/schemas/AccountsSet'
-        trading:
           $ref: '#/components/schemas/AccountsSet'
         liquidity:
           $ref: '#/components/schemas/AccountsSet'
