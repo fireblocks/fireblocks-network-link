@@ -13,14 +13,6 @@ export function badRequest(reply: FastifyReply, errorData: BadRequestError): Fas
   return reply.code(400).send(errorData);
 }
 
-export function orderNotTrading(reply: FastifyReply): FastifyReply {
-  const errorData: BadRequestError = {
-    message: 'Cannot cancel non active order',
-    errorType: BadRequestError.errorType.ORDER_NOT_TRADING,
-  };
-  return reply.code(400).send(errorData);
-}
-
 export function idempotencyKeyReuse(reply: FastifyReply): FastifyReply {
   const errorData: BadRequestError = {
     message: 'Idempotency key has already been used for a different request',

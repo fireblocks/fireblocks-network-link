@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.2 - 2025-12-07
+
+### Specification changes
+
+- Removed trading and order book endpoints from the API specification.
+  - Removed `GET /accounts/{accountId}/trading/orders` endpoint
+  - Removed `POST /accounts/{accountId}/trading/orders` endpoint  
+  - Removed `GET /accounts/{accountId}/trading/orders/{orderId}` endpoint
+  - Removed `DELETE /accounts/{accountId}/trading/orders/{orderId}` endpoint
+  - Removed `GET /accounts/{accountId}/trading/orderbook` endpoint
+  - Removed trading capabilities from the capabilities endpoint
+
 ## 0.4.1 - 2024-05-20
 
 ### Non-breaking improvements
