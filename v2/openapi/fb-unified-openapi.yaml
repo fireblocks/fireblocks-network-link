@@ -2753,9 +2753,13 @@ components:
                     name: John Doe
                     address: 123 Main St, New York, NY 10001
                   iban: US1234567890
-                fees:
-                  subAccount: 100
-                  provider: 200
+                estimatedFees:
+                  - feeType: ORDER
+                    feeAsset:
+                      nationalCurrencyCode: USD
+                    fee:
+                      amountType: FIXED
+                      amount: '100.00'
             onRampWithQuote:
               summary: OnRamp with Quote
               description: An on-ramp that includes quote information for price execution.
@@ -2791,9 +2795,13 @@ components:
                     type: Retry
                     slippage: 0.02
                     count: 3
-                fees:
-                  subAccount: 75
-                  provider: 150
+                estimatedFees:
+                  - feeType: ORDER
+                    feeAsset:
+                      nationalCurrencyCode: USD
+                    fee:
+                      amountType: FIXED
+                      amount: '100.00'
     GetRampDetailsResponse:
       description: Ramp details.
       content:
@@ -2843,9 +2851,13 @@ components:
                         name: John Doe
                         address: 123 Main St, New York, NY 10001
                       iban: US1234567890
-                    fees:
-                      subAccount: 100
-                      provider: 200
+                    estimatedFees:
+                      - feeType: ORDER
+                        feeAsset:
+                          nationalCurrencyCode: USD
+                        fee:
+                          amountType: FIXED
+                          amount: '100.00'
                     expiresAt: '2021-09-01T12:00:00Z'
                   - id: 69fa4f38-c1fd-4215-a310-82272225c4ef
                     createdAt: '2021-09-01T12:00:00Z'
@@ -2886,8 +2898,13 @@ components:
                         address: 123 Main St, New York, NY 10001
                       iban: US1234567890
                       amount: '1231.45'
-                    fees:
-                      subAccount: 100
+                      actualFees:
+                        - feeType: ORDER
+                          feeAsset:
+                            nationalCurrencyCode: USD
+                          fee:
+                            amountType: FIXED
+                            amount: '100.00'
                     expiresAt: '2021-09-01T12:00:00Z'
                   - id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
                     createdAt: '2021-09-01T12:00:00Z'
@@ -2918,14 +2935,26 @@ components:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
                     receipt:
+                      actualFees:
+                        - feeType: ORDER
+                          feeAsset:
+                            nationalCurrencyCode: USD
+                          fee:
+                            amountType: FIXED
+                            amount: '100.00'
                       blockchainTxId: '0x1234567890abcdef1234567899abcdef1234567890abcdef1234567890abcdef'
                       amount: '1231.45'
                       address: '0x1234567890abcdef1234567890abcdef12345678'
                       asset:
                         assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
                       transferMethod: PublicBlockchain
-                    fees:
-                      subAccount: 100
+                    estimatedFees:
+                      - feeType: ORDER
+                        feeAsset:
+                          nationalCurrencyCode: USD
+                        fee:
+                          amountType: FIXED
+                          amount: '100.00'
                     expiresAt: '2021-09-01T12:00:00Z'
   schemas:
     GeneralError:
@@ -3851,6 +3880,11 @@ components:
         conversionFeeBps:
           type: integer
           description: Conversion fee in basis points. The amounts are expected to include the fee.
+        conversionFeeAsset:
+          allOf:
+            - $ref: '#/components/schemas/AssetReference'
+            - description: |
+                This is the asset that will be used to pay the conversion fee. If not returned, the asset will be the same as the fromAsset.
         status:
           $ref: '#/components/schemas/QuoteStatus'
         createdAt:
@@ -5897,16 +5931,59 @@ components:
           properties:
             participantsIdentification:
               $ref: '#/components/schemas/ParticipantsIdentification'
-    RampFees:
+    FixedFeeAmount:
       type: object
-      description: Fees associated with the ramp transfer.
+      required:
+        - amountType
+        - amount
       properties:
-        subAccount:
-          type: integer
-          description: Fees charged from the sub-account in basis points.
-        provider:
-          type: integer
-          description: Fees charged by the provider for the ramp service in basis points.
+        amountType:
+          type: string
+          enum:
+            - FIXED
+        amount:
+          $ref: '#/components/schemas/PositiveAmount'
+    BasisPointsFeeAmount:
+      type: object
+      required:
+        - amountType
+        - amount
+      properties:
+        amountType:
+          type: string
+          enum:
+            - BASIS_POINTS
+        amount:
+          type: number
+          description: Basis points (bps) - 1 is 0.01% and 10000 is 100%
+    FeeAmount:
+      oneOf:
+        - $ref: '#/components/schemas/FixedFeeAmount'
+        - $ref: '#/components/schemas/BasisPointsFeeAmount'
+    Fee:
+      type: object
+      required:
+        - feeType
+        - feeAsset
+        - fee
+      properties:
+        feeType:
+          type: string
+          description: |
+            Specifies the category of fee applied to the transaction. - ORDER - Fee charged by the platform for executing the trade. - NETWORK - Blockchain network fee paid to validators/miners. - SPREAD - Implicit cost built into the price difference between quotes. - REBATE - Negative fee returned to the user as a reward or incentive.
+          enum:
+            - ORDER
+            - NETWORK
+            - SPREAD
+            - REBATE
+        feeAsset:
+          $ref: '#/components/schemas/AssetReference'
+        fee:
+          $ref: '#/components/schemas/FeeAmount'
+    RampFees:
+      type: array
+      items:
+        $ref: '#/components/schemas/Fee'
     CommonRamp:
       type: object
       required:
@@ -5929,7 +6006,7 @@ components:
           $ref: '#/components/schemas/RampStatus'
         amount:
           $ref: '#/components/schemas/PositiveAmount'
-        fees:
+        estimatedFees:
           $ref: '#/components/schemas/RampFees'
         executionDetails:
           oneOf:
@@ -5976,6 +6053,27 @@ components:
             paymentInstructions:
               $ref: '#/components/schemas/PublicBlockchainAddress'
         - $ref: '#/components/schemas/BridgeProperties'
+    OnRampReceipt:
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainTransaction'
+        - type: object
+          properties:
+            actualFees:
+              $ref: '#/components/schemas/RampFees'
+    OffRampReceipt:
+      allOf:
+        - $ref: '#/components/schemas/RampFiatTransfer'
+        - type: object
+          properties:
+            actualFees:
+              $ref: '#/components/schemas/RampFees'
+    BridgeReceipt:
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainTransaction'
+        - type: object
+          properties:
+            actualFees:
+              $ref: '#/components/schemas/RampFees'
     OnRamp:
       title: On Ramp
       allOf:
@@ -5986,7 +6084,7 @@ components:
         - type: object
           properties:
             receipt:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
+              $ref: '#/components/schemas/OnRampReceipt'
     OffRamp:
       allOf:
         - $ref: '#/components/schemas/CommonRamp'
@@ -5996,7 +6094,7 @@ components:
         - type: object
           properties:
             receipt:
-              $ref: '#/components/schemas/RampFiatTransfer'
+              $ref: '#/components/schemas/OffRampReceipt'
     Bridge:
       allOf:
         - $ref: '#/components/schemas/CommonRamp'
@@ -6006,7 +6104,7 @@ components:
         - type: object
           properties:
             receipt:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
+              $ref: '#/components/schemas/BridgeReceipt'
     Ramp:
       oneOf:
         - $ref: '#/components/schemas/OnRamp'

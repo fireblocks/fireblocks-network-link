@@ -5,10 +5,10 @@
 
 import type { CommonRamp } from './CommonRamp';
 import type { OffRampPropertiesWithPaymentInstructions } from './OffRampPropertiesWithPaymentInstructions';
+import type { OffRampReceipt } from './OffRampReceipt';
 import type { PrefundedOffRampProperties } from './PrefundedOffRampProperties';
-import type { RampFiatTransfer } from './RampFiatTransfer';
 
 export type OffRamp = (CommonRamp & (OffRampPropertiesWithPaymentInstructions | PrefundedOffRampProperties) & {
-    receipt?: RampFiatTransfer;
+    receipt?: OffRampReceipt;
 });
 
