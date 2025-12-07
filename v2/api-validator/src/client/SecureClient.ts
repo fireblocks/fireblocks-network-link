@@ -24,7 +24,7 @@ import {
   OpenAPIConfig,
   RampsService,
   RatesService,
-  TradingService,
+  // TradingService,
   TransfersBlockchainService,
   TransfersFiatService,
   TransfersInternalService,
@@ -111,7 +111,7 @@ export class SecureClient {
   public readonly balances: SecureService<BalancesService>;
   public readonly capabilities: SecureService<CapabilitiesService>;
   public readonly liquidity: SecureService<LiquidityService>;
-  public readonly trading: SecureService<TradingService>;
+  // public readonly trading: SecureService<TradingService>;
   public readonly transfers: SecureService<TransfersService>;
   public readonly transfersBlockchain: SecureService<TransfersBlockchainService>;
   public readonly transfersFiat: SecureService<TransfersFiatService>;
@@ -136,7 +136,7 @@ export class SecureClient {
     this.balances = stripSecurityHeaderArgs(new BalancesService(this.request));
     this.capabilities = stripSecurityHeaderArgs(new CapabilitiesService(this.request));
     this.liquidity = stripSecurityHeaderArgs(new LiquidityService(this.request));
-    this.trading = stripSecurityHeaderArgs(new TradingService(this.request));
+    // this.trading = stripSecurityHeaderArgs(new TradingService(this.request));
     this.transfers = stripSecurityHeaderArgs(new TransfersService(this.request));
     this.collateral = stripSecurityHeaderArgs(new CollateralService(this.request));
     this.transfersBlockchain = stripSecurityHeaderArgs(

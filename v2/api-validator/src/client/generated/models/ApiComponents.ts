@@ -16,7 +16,6 @@ export type ApiComponents = {
     transfersFiat?: AccountsSet;
     transfersPeerAccounts?: AccountsSet;
     transfersInternal?: AccountsSet;
-    trading?: AccountsSet;
     liquidity?: AccountsSet;
     collateral?: AccountsSet;
     ramps?: AccountsSet;

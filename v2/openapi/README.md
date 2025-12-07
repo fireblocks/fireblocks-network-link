@@ -116,7 +116,7 @@ this response indicates that all the capabilities are supported:
     "transfersBlockchain": "*",
     "transfersFiat": "*",
     "transfersPeerAccounts": "*",
-    "trading": "*",
+    // "trading": "*",
     "liquidity": "*",
     "ramps": "*"
   }

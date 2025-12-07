@@ -13,7 +13,7 @@ const CAPABILITIES: Capabilities = {
     transfersFiat: '*',
     transfersPeerAccounts: '*',
     transfersInternal: '*',
-    trading: '*',
+    // trading: '*',
     liquidity: '*',
     collateral: '*',
     ramps: '*',

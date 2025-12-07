@@ -632,7 +632,7 @@ const config = convict({
       default: [
         'fb-provider-api.yaml',
         'fb-provider-liquidity-api.yaml',
-        'fb-provider-trading-api.yaml',
+        // 'fb-provider-trading-api.yaml',
         'fb-provider-transfer-api.yaml',
         'fb-provider-collateral-api.yaml',
         'fb-provider-ramp-api.yaml',

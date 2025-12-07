@@ -59,13 +59,13 @@ async function downloadCapabilities() {
   });
   await downloadJsonFile('accounts', getAccounts);
 
-  if (hasCapability('trading')) {
-    const getBooks = makeDownloader(async (limit: number, startingAfter?: string) => {
-      const response = await client.capabilities.getBooks({ limit, startingAfter });
-      return response.books;
-    });
-    await downloadJsonFile('books', getBooks);
-  }
+  // if (hasCapability('trading')) {
+  //   const getBooks = makeDownloader(async (limit: number, startingAfter?: string) => {
+  //     const response = await client.capabilities.getBooks({ limit, startingAfter });
+  //     return response.books;
+  //   });
+  //   await downloadJsonFile('books', getBooks);
+  // }
 
   if (hasCapability('liquidity')) {
     const getQuoteCapabilities = makeDownloader(async (limit: number, startingAfter?: string) => {
