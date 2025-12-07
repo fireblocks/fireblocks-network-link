@@ -142,6 +142,7 @@ export class RampsController {
     this.validateRampRequest(ramp);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { idempotencyKey, ...rampProps } = ramp;
+    let status = RampStatus.PENDING;
     let paymentInstructions;
 
     if (
@@ -154,6 +155,7 @@ export class RampsController {
       };
     } else if ('type' in ramp.from && ramp.from.type === 'Prefunded') {
       paymentInstructions = undefined;
+      status = RampStatus.PROCESSING;
     } else if (ramp.type === OnRampProperties.type.ON_RAMP) {
       const transferMethod = getTransferMethod((ramp.from as FiatCapability)?.transferMethod);
       paymentInstructions = {
@@ -170,7 +172,7 @@ export class RampsController {
       ...(paymentInstructions && { paymentInstructions }),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      status: RampStatus.PENDING,
+      status,
       fees: {},
       expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
     };
