@@ -336,9 +336,41 @@ const config = convict({
         env: 'WITHDRAWAL_WIRE_ROUTING_NUMBER',
       },
       bankAddress: {
-        format: String,
-        default: '270 Park Ave, New York, NY 10017',
-        env: 'WITHDRAWAL_WIRE_BANK_ADDRESS',
+        streetName: {
+          format: String,
+          default: 'Park Ave',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_STREET_NAME',
+        },
+        buildingNumber: {
+          format: String,
+          default: '270',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_BUILDING_NUMBER',
+        },
+        city: {
+          format: String,
+          default: 'NY',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_CITY',
+        },
+        postalCode: {
+          format: String,
+          default: '10017',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_POSTAL_CODE',
+        },
+        subdivision: {
+          format: String,
+          default: 'NY',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_SUBDIVISION',
+        },
+        district: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_DISTRICT',
+        },
+        country: {
+          format: String,
+          default: 'US',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_COUNTRY',
+        },
       },
     },
     pix: {
