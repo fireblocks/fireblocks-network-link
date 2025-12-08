@@ -336,9 +336,41 @@ const config = convict({
         env: 'WITHDRAWAL_WIRE_ROUTING_NUMBER',
       },
       bankAddress: {
-        format: String,
-        default: '270 Park Ave, New York, NY 10017',
-        env: 'WITHDRAWAL_WIRE_BANK_ADDRESS',
+        streetName: {
+          format: String,
+          default: 'Park Ave',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_STREET_NAME',
+        },
+        buildingNumber: {
+          format: String,
+          default: '270',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_BUILDING_NUMBER',
+        },
+        city: {
+          format: String,
+          default: 'NY',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_CITY',
+        },
+        postalCode: {
+          format: String,
+          default: '10017',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_POSTAL_CODE',
+        },
+        subdivision: {
+          format: String,
+          default: 'NY',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_SUBDIVISION',
+        },
+        district: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_DISTRICT',
+        },
+        country: {
+          format: String,
+          default: 'US',
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_COUNTRY',
+        },
       },
     },
     pix: {
@@ -498,8 +530,14 @@ const config = convict({
         },
       },
       mobilePhoneNumber: {
-        format: String,
-        default: '12345678901',
+        format: (value) => {
+          const mobilePhoneNumberRegex = /^\+[1-9]\d{1,14}$/;
+          if (!mobilePhoneNumberRegex.test(value)) {
+            throw new Error('MOBILE_PHONE_NUMBER is not a valid mobile phone number');
+          }
+          return value;
+        },
+        default: '+12345678901',
         env: 'WITHDRAWAL_MOBILE_MONEY_MOBILE_PHONE_NUMBER',
       },
       provider: {
