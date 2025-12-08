@@ -144,7 +144,11 @@ export class RampsController {
     const { idempotencyKey, ...rampProps } = ramp;
     let paymentInstructions;
     let status = RampStatus.PENDING;
-    if (
+
+    if ('type' in ramp.from && ramp.from.type === 'Prefunded') {
+      paymentInstructions = undefined;
+      status = RampStatus.PROCESSING;
+    } else if (
       ramp.type === OffRampProperties.type.OFF_RAMP ||
       ramp.type === BridgeProperties.type.BRIDGE
     ) {
@@ -152,9 +156,6 @@ export class RampsController {
         ...(fakeSchemaObject('PublicBlockchainAddress') as PublicBlockchainAddress),
         asset: ramp.from.asset,
       };
-    } else if ('type' in ramp.from && ramp.from.type === 'Prefunded') {
-      paymentInstructions = undefined;
-      status = RampStatus.PROCESSING;
     } else if (ramp.type === OnRampProperties.type.ON_RAMP) {
       const transferMethod = getTransferMethod((ramp.from as FiatCapability)?.transferMethod);
       paymentInstructions = {
@@ -168,11 +169,10 @@ export class RampsController {
     const newRamp: Ramp = {
       ...rampProps,
       id: randomUUID(),
-      ...(paymentInstructions && { paymentInstructions }),
+      paymentInstructions,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       status,
-      fees: {},
       expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
     };
     this.rampsRepository.create(newRamp);

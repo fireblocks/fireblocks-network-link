@@ -498,8 +498,14 @@ const config = convict({
         },
       },
       mobilePhoneNumber: {
-        format: String,
-        default: '12345678901',
+        format: (value) => {
+          const mobilePhoneNumberRegex = /^\+[1-9]\d{1,14}$/;
+          if (!mobilePhoneNumberRegex.test(value)) {
+            throw new Error('MOBILE_PHONE_NUMBER is not a valid mobile phone number');
+          }
+          return value;
+        },
+        default: '+12345678901',
         env: 'WITHDRAWAL_MOBILE_MONEY_MOBILE_PHONE_NUMBER',
       },
       provider: {
