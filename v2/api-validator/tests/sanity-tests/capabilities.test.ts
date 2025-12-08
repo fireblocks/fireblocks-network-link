@@ -33,7 +33,7 @@ describe('Capabilities', () => {
         'transfersBlockchain',
         'transfersFiat',
         'transfersPeerAccounts',
-        'trading',
+        // 'trading',
         'liquidity',
         'ramps',
       ];

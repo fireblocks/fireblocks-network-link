@@ -67,7 +67,7 @@ paths:
                       transfersFiat: "*"
                       transfersPeerAccounts: "*"
                       transfersInternal: "*"
-                      trading: "*"
+                      # trading: "*"
                       liquidity: "*"
                       collateral: "*"
                       ramps: "*"
@@ -761,8 +761,8 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         transfersInternal:
           $ref: '#/components/schemas/AccountsSet'
-        trading:
-          $ref: '#/components/schemas/AccountsSet'
+        # trading:
+        #   $ref: '#/components/schemas/AccountsSet'
         liquidity:
           $ref: '#/components/schemas/AccountsSet'
         collateral:
