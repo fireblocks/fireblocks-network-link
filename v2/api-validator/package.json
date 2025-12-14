@@ -46,7 +46,7 @@
     "bs58": "^5.0.0",
     "convict": "^6.2.4",
     "dotenv": "^16.3.1",
-    "fastify": "^4.19.2",
+    "fastify": "^4.29.1",
     "fastify-openapi-glue": "^2.8.0",
     "form-data": "^4.0.0",
     "hi-base32": "^0.5.1",
