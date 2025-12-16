@@ -21,37 +21,37 @@ export class URL implements Encoder {
 
 export class Base64 implements Encoder {
   public encode(payload: string): string {
-    return Buffer.from(payload, 'binary').toString('base64');
+    return Buffer.from(payload, 'latin1').toString('base64');
   }
   public decode(payload: string): string {
-    return Buffer.from(payload, 'base64').toString('binary');
+    return Buffer.from(payload, 'base64').toString('latin1');
   }
 }
 
 export class HexStr implements Encoder {
   public encode(payload: string): string {
-    return Buffer.from(payload, 'binary').toString('hex');
+    return Buffer.from(payload, 'latin1').toString('hex');
   }
   public decode(payload: string): string {
-    return Buffer.from(payload, 'hex').toString('binary');
+    return Buffer.from(payload, 'hex').toString('latin1');
   }
 }
 
 export class Base32 implements Encoder {
   public encode(payload: string): string {
-    return base32.encode(Buffer.from(payload, 'binary'));
+    return base32.encode(new Uint8Array(Buffer.from(payload, 'latin1')));
   }
   public decode(payload: string): string {
-    return Buffer.from(base32.decode.asBytes(payload)).toString('binary');
+    return Buffer.from(base32.decode.asBytes(payload)).toString('latin1');
   }
 }
 
 export class Base58 implements Encoder {
   public encode(payload: string): string {
-    return base58.encode(Buffer.from(payload, 'binary'));
+    return base58.encode(new Uint8Array(Buffer.from(payload, 'latin1')));
   }
   public decode(payload: string): string {
-    return Buffer.from(base58.decode(payload)).toString('binary');
+    return Buffer.from(base58.decode(payload)).toString('latin1');
   }
 }
 
