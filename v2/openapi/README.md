@@ -219,6 +219,10 @@ Signing algorithms and possible hash functions:
 - RSA PKCS1v15 (SHA512, SHA3_256, or SHA256)
 - ECDSA prime256v1/secp256k1 (SHA256 only)
 
+### Important:
+
+- The message string must be UTF-8 encoded before signing.
+
 ### Off-Exchange (Collateral) platform signature
 
 Off-Exchange (Collateral) integration assumes bi-directional communication. All the requests,

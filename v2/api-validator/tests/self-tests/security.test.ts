@@ -123,3 +123,103 @@ function getPrivateKeyForAlgo(algorithm: string): string {
       throw new Error('Invalid signing algorithm');
   }
 }
+
+describe('Signature creation and verification with real payload', () => {
+  const timestamp = '1765796851069';
+  const nonce = '930de02e-6b6a-4b9b-9d61-132a12f98b90';
+  const endpoint = '/accounts/f30f1401-ed1d-4d6e-975f-425cf05b1ed4/ramps';
+  const method = 'POST';
+
+  const bodyObjWithUnicode = {
+    idempotencyKey: 'e8f3e0cb-388f-4293-8779-f2f61eac21f8',
+    amount: '1000',
+    participantsIdentification: {
+      originator: {
+        entityType: 'Individual',
+        participantRelationshipType: 'ThirdParty',
+        fullName: { firstName: 'Kassa', lastName: 'Loïc' },
+        dateOfBirth: '1997-03-04',
+        postalAddress: {
+          streetName: 'Main Street',
+          buildingNumber: '123',
+          postalCode: '10001',
+          city: 'Benin',
+          subdivision: 'District',
+          district: 'Abomey-Calavi',
+          country: 'BJ',
+        },
+      },
+      beneficiary: {
+        entityType: 'Individual',
+        participantRelationshipType: 'ThirdParty',
+        fullName: { firstName: 'Maor', lastName: 'Keinan' },
+        dateOfBirth: '1986-05-26',
+        postalAddress: {
+          streetName: 'Yitzhak Sade',
+          buildingNumber: '8',
+          postalCode: '6777508',
+          city: 'Tel Aviv',
+          subdivision: 'District',
+          country: 'IL',
+        },
+      },
+    },
+    type: 'OnRamp',
+    from: { asset: { nationalCurrencyCode: 'USD', testAsset: false }, transferMethod: 'Wire' },
+    to: {
+      asset: { cryptocurrencySymbol: 'ETH', blockchain: 'Ethereum', testAsset: false },
+      transferMethod: 'PublicBlockchain',
+      address: '',
+    },
+  };
+
+  const bodyObjWithRegular = {
+    ...bodyObjWithUnicode,
+    participantsIdentification: {
+      ...bodyObjWithUnicode.participantsIdentification,
+      originator: {
+        ...bodyObjWithUnicode.participantsIdentification.originator,
+        fullName: { firstName: 'Kassa', lastName: 'Loic' },
+      },
+    },
+  };
+
+  const payloadWithUnicode = `${timestamp}${nonce}${method}${endpoint}${JSON.stringify(bodyObjWithUnicode)}`;
+  const payloadWithRegular = `${timestamp}${nonce}${method}${endpoint}${JSON.stringify(bodyObjWithRegular)}`;
+
+  describe.each(makeSigningVariations())(
+    '#️⃣  $index: $preEncoding ❯ $hashAlgorithm ❯ $signingAlgorithm ❯ $postEncoding',
+    ({ signingAlgorithm, hashAlgorithm, preEncoding, postEncoding, privateKey }) => {
+      let signatureUnicode: string;
+      let signatureRegular: string;
+
+      beforeAll(() => {
+        config.set('authentication.signing', {
+          signingAlgorithm,
+          hashAlgorithm,
+          preEncoding,
+          postEncoding,
+          privateKey,
+        });
+        signatureUnicode = buildRequestSignature(payloadWithUnicode);
+        signatureRegular = buildRequestSignature(payloadWithRegular);
+      });
+
+      it('should verify the signature successfully with unicode payload', () => {
+        expect(verifySignature(payloadWithUnicode, signatureUnicode)).toBe(true);
+      });
+
+      it('should verify the signature successfully with regular payload', () => {
+        expect(verifySignature(payloadWithRegular, signatureRegular)).toBe(true);
+      });
+
+      it('should fail when verifying unicode payload with regular signature', () => {
+        expect(verifySignature(payloadWithUnicode, signatureRegular)).toBe(false);
+      });
+
+      it('should fail when verifying regular payload with unicode signature', () => {
+        expect(verifySignature(payloadWithRegular, signatureUnicode)).toBe(false);
+      });
+    }
+  );
+});
