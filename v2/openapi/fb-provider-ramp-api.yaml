@@ -636,6 +636,8 @@ components:
           type: string
           enum:
             - Prefunded
+        takeFrom:
+          type: string
 
     PrefundedBlockchainCapability:
       type: object
@@ -649,6 +651,8 @@ components:
           type: string
           enum:
             - Prefunded
+        takeFrom:
+          type: string
 
     PrefundedOnRampProperties:
       type: object
