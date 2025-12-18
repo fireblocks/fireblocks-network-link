@@ -22,7 +22,8 @@
   "include": ["./src", "./src/config/*.json", "./jest.config.ts", "./tests"],
   "exclude": ["node_modules"],
   "ts-node": {
-    "files": true
+    "files": true,
+    "transpileOnly": true
   },
   "files": ["node_modules/jest-expect-message/types/index.d.ts"]
 }
