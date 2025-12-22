@@ -5227,8 +5227,6 @@ components:
           type: string
           enum:
             - Prefunded
-        takeFrom:
-          type: string
     PrefundedBlockchainCapability:
       type: object
       required:
@@ -5241,8 +5239,13 @@ components:
           type: string
           enum:
             - Prefunded
-        takeFrom:
-          type: string
+    PrefundedOnRampFrom:
+      allOf:
+        - $ref: '#/components/schemas/PrefundedFiatCapability'
+        - type: object
+          properties:
+            takeFrom:
+              type: string
     PrefundedOnRampProperties:
       type: object
       title: On Ramp - Prefunded
@@ -5256,7 +5259,7 @@ components:
           enum:
             - OnRamp
         from:
-          $ref: '#/components/schemas/PrefundedFiatCapability'
+          $ref: '#/components/schemas/PrefundedOnRampFrom'
         to:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     OnRampProperties:
@@ -5275,6 +5278,13 @@ components:
           $ref: '#/components/schemas/FiatCapability'
         to:
           $ref: '#/components/schemas/PublicBlockchainAddress'
+    PrefundedOffRampFrom:
+      allOf:
+        - $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        - type: object
+          properties:
+            takeFrom:
+              type: string
     PrefundedOffRampProperties:
       type: object
       title: Off Ramp - Prefunded
@@ -5288,7 +5298,7 @@ components:
           enum:
             - OffRamp
         from:
-          $ref: '#/components/schemas/PrefundedBlockchainCapability'
+          $ref: '#/components/schemas/PrefundedOffRampFrom'
         to:
           $ref: '#/components/schemas/FiatAddress'
     OffRampProperties:
@@ -5307,6 +5317,13 @@ components:
           $ref: '#/components/schemas/BlockchainCapabilityWithOptionalAddress'
         to:
           $ref: '#/components/schemas/FiatAddress'
+    PrefundedBridgeFrom:
+      allOf:
+        - $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        - type: object
+          properties:
+            takeFrom:
+              type: string
     PrefundedBridgeProperties:
       type: object
       title: Bridge - Prefunded
@@ -5320,7 +5337,7 @@ components:
           enum:
             - Bridge
         from:
-          $ref: '#/components/schemas/PrefundedBlockchainCapability'
+          $ref: '#/components/schemas/PrefundedBridgeFrom'
         to:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     BridgeProperties:

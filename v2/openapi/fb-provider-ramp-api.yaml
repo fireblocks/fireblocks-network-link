@@ -636,8 +636,6 @@ components:
           type: string
           enum:
             - Prefunded
-        takeFrom:
-          type: string
 
     PrefundedBlockchainCapability:
       type: object
@@ -651,8 +649,14 @@ components:
           type: string
           enum:
             - Prefunded
-        takeFrom:
-          type: string
+
+    PrefundedOnRampFrom:
+      allOf:
+        - $ref: "#/components/schemas/PrefundedFiatCapability"
+        - type: object
+          properties:
+            takeFrom:
+              type: string
 
     PrefundedOnRampProperties:
       type: object
@@ -667,7 +671,7 @@ components:
           enum:
             - OnRamp
         from:
-          $ref: "#/components/schemas/PrefundedFiatCapability"
+          $ref: "#/components/schemas/PrefundedOnRampFrom"
         to:
           $ref: "#/x-schemas/PublicBlockchainAddress"
 
@@ -687,6 +691,14 @@ components:
           $ref: "#/x-schemas/FiatCapability"
         to:
           $ref: "#/x-schemas/PublicBlockchainAddress"
+    
+    PrefundedOffRampFrom:
+      allOf:
+        - $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        - type: object
+          properties:
+            takeFrom:
+              type: string
 
     PrefundedOffRampProperties:
       type: object
@@ -701,7 +713,7 @@ components:
           enum:
             - OffRamp
         from:
-          $ref: "#/components/schemas/PrefundedBlockchainCapability"
+          $ref: "#/components/schemas/PrefundedOffRampFrom"
         to:
           $ref: "#/x-schemas/FiatAddress"
 
@@ -722,6 +734,14 @@ components:
         to:
           $ref: "#/x-schemas/FiatAddress"
 
+    PrefundedBridgeFrom:
+      allOf:
+        - $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        - type: object
+          properties:
+            takeFrom:
+              type: string
+
     PrefundedBridgeProperties:
       type: object
       title: Bridge - Prefunded
@@ -735,7 +755,7 @@ components:
           enum:
             - Bridge
         from:
-          $ref: "#/components/schemas/PrefundedBlockchainCapability"
+          $ref: "#/components/schemas/PrefundedBridgeFrom"
         to:
           $ref: "#/x-schemas/PublicBlockchainAddress"
 

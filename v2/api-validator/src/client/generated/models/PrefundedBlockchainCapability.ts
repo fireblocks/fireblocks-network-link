@@ -8,7 +8,6 @@ import type { CryptocurrencyReference } from './CryptocurrencyReference';
 export type PrefundedBlockchainCapability = {
     asset: CryptocurrencyReference;
     type: PrefundedBlockchainCapability.type;
-    takeFrom?: string;
 };
 
 export namespace PrefundedBlockchainCapability {

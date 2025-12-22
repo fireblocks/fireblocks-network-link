@@ -8,7 +8,6 @@ import type { NationalCurrency } from './NationalCurrency';
 export type PrefundedFiatCapability = {
     asset: NationalCurrency;
     type: PrefundedFiatCapability.type;
-    takeFrom?: string;
 };
 
 export namespace PrefundedFiatCapability {
