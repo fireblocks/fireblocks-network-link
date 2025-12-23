@@ -4,8 +4,7 @@
 /* eslint-disable */
 
 import type { PrefundedBlockchainCapability } from './PrefundedBlockchainCapability';
+import type { TakeFrom } from './TakeFrom';
 
-export type PrefundedOffRampFrom = (PrefundedBlockchainCapability & {
-    takeFrom?: string;
-});
+export type PrefundedOffRampFrom = (PrefundedBlockchainCapability & TakeFrom);
 

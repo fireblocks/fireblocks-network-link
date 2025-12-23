@@ -4,8 +4,7 @@
 /* eslint-disable */
 
 import type { PrefundedFiatCapability } from './PrefundedFiatCapability';
+import type { TakeFrom } from './TakeFrom';
 
-export type PrefundedOnRampFrom = (PrefundedFiatCapability & {
-    takeFrom?: string;
-});
+export type PrefundedOnRampFrom = (PrefundedFiatCapability & TakeFrom);
 

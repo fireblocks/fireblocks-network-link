@@ -5242,10 +5242,7 @@ components:
     PrefundedOnRampFrom:
       allOf:
         - $ref: '#/components/schemas/PrefundedFiatCapability'
-        - type: object
-          properties:
-            takeFrom:
-              type: string
+        - $ref: '#/components/schemas/TakeFrom'
     PrefundedOnRampProperties:
       type: object
       title: On Ramp - Prefunded
@@ -5281,10 +5278,7 @@ components:
     PrefundedOffRampFrom:
       allOf:
         - $ref: '#/components/schemas/PrefundedBlockchainCapability'
-        - type: object
-          properties:
-            takeFrom:
-              type: string
+        - $ref: '#/components/schemas/TakeFrom'
     PrefundedOffRampProperties:
       type: object
       title: Off Ramp - Prefunded
@@ -5320,10 +5314,7 @@ components:
     PrefundedBridgeFrom:
       allOf:
         - $ref: '#/components/schemas/PrefundedBlockchainCapability'
-        - type: object
-          properties:
-            takeFrom:
-              type: string
+        - $ref: '#/components/schemas/TakeFrom'
     PrefundedBridgeProperties:
       type: object
       title: Bridge - Prefunded
@@ -5574,6 +5565,12 @@ components:
         - $ref: '#/components/schemas/EuropeanSEPATransfer'
         - $ref: '#/components/schemas/LocalBankTransfer'
         - $ref: '#/components/schemas/MobileMoneyTransfer'
+    TakeFrom:
+      type: object
+      properties:
+        takeFrom:
+          description: Instructs the provider which prefunded source sub-account to debit for this ramp's settlement. If omitted, the provider debits the prefunded balance from the ramps's accountId by default.
+          type: string
     OrderQuote:
       type: object
       required:

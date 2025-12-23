@@ -213,6 +213,7 @@ export type { SpeiTransfer } from './models/SpeiTransfer';
 export type { SpeiTransferDestination } from './models/SpeiTransferDestination';
 export { StellarToken } from './models/StellarToken';
 export type { SubAccountIdPathParam } from './models/SubAccountIdPathParam';
+export type { TakeFrom } from './models/TakeFrom';
 export type { Transfer } from './models/Transfer';
 export type { TransferCapability } from './models/TransferCapability';
 export { UnauthorizedError } from './models/UnauthorizedError';

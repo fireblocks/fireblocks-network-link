@@ -4,8 +4,7 @@
 /* eslint-disable */
 
 import type { PrefundedBlockchainCapability } from './PrefundedBlockchainCapability';
+import type { TakeFrom } from './TakeFrom';
 
-export type PrefundedBridgeFrom = (PrefundedBlockchainCapability & {
-    takeFrom?: string;
-});
+export type PrefundedBridgeFrom = (PrefundedBlockchainCapability & TakeFrom);
 
