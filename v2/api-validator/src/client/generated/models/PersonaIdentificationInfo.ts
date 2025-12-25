@@ -6,6 +6,7 @@
 import type { FullName } from './FullName';
 import type { MobilePhoneNumber } from './MobilePhoneNumber';
 import type { ParticipantRelationshipType } from './ParticipantRelationshipType';
+import type { PersonalIdentificationType } from './PersonalIdentificationType';
 import type { PostalAddress } from './PostalAddress';
 
 /**
@@ -23,6 +24,16 @@ export type PersonaIdentificationInfo = {
     postalAddress?: PostalAddress;
     email?: string;
     phone?: MobilePhoneNumber;
+    /**
+     * A unique identifier assigned to the individual by the relevant regulatory authority.
+     */
+    idNumber?: string;
+    idType?: PersonalIdentificationType;
+    /**
+     * An additional unique identifier assigned to the individual by the relevant regulatory authority.
+     */
+    additionalIdNumber?: string;
+    additionalIdType?: PersonalIdentificationType;
 };
 
 export namespace PersonaIdentificationInfo {

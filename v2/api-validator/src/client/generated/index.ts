@@ -165,6 +165,7 @@ export type { PeerAccountTransferDestination } from './models/PeerAccountTransfe
 export type { PeerAccountWithdrawal } from './models/PeerAccountWithdrawal';
 export type { PeerAccountWithdrawalRequest } from './models/PeerAccountWithdrawalRequest';
 export { PersonaIdentificationInfo } from './models/PersonaIdentificationInfo';
+export { PersonalIdentificationType } from './models/PersonalIdentificationType';
 export { PixAddress } from './models/PixAddress';
 export { PixCapability } from './models/PixCapability';
 export type { PixTransfer } from './models/PixTransfer';

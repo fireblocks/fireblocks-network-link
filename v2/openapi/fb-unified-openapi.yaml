@@ -3421,6 +3421,29 @@ components:
         - ZWL
         - ZWN
         - ZWR
+    PersonalIdentificationType:
+      type: string
+      description: The type of identification document issued to the individual.
+      enum:
+        - NIN Slip/Card
+        - BVN
+        - BVN_NIN
+        - ID Card
+        - ID Book
+        - National ID
+        - Alien Card
+        - Passport
+        - Ecowas Card
+        - Rwanda Card
+        - Drivers License
+        - Resident Card
+        - Voter ID
+        - Health Insurance ID
+        - Ghana Card
+        - Refugee ID
+        - SSNIT
+        - Non Citizen ID
+        - National Registration Card
     QuoteCapability:
       type: object
       required:
@@ -4295,6 +4318,16 @@ components:
           example: john.doe@example.com
         phone:
           $ref: '#/components/schemas/MobilePhoneNumber'
+        idNumber:
+          type: string
+          description: A unique identifier assigned to the individual by the relevant regulatory authority.
+        idType:
+          $ref: '#/components/schemas/PersonalIdentificationType'
+        additionalIdNumber:
+          type: string
+          description: An additional unique identifier assigned to the individual by the relevant regulatory authority.
+        additionalIdType:
+          $ref: '#/components/schemas/PersonalIdentificationType'
     BusinessIdentificationInfo:
       type: object
       description: Information related to the business entity acting as the beneficiary of the transaction.
