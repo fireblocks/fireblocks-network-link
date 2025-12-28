@@ -1,0 +1,27 @@
+name: Validate v2/api-validator/package-lock.json
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Ensure no Fireblocks URLs in v2/api-validator/package-lock.json
+        run: |
+          echo "Checking for Fireblocks URLs in v2/api-validator/package-lock.json..."
+          
+          if grep --ignore-case --line-number '"resolved".*fireblocks' v2/api-validator/package-lock.json; then
+            echo ""
+            echo "❌ ERROR: v2/api-validator/package-lock.json contains Fireblocks URLs."
+            echo "          All URLs in this file must be publicly accessible."
+            echo "          Contact project owners for assistance."
+            exit 1
+          else
+            echo "✅ SUCCESS: No Fireblocks URLs found in v2/api-validator/package-lock.json"
+            exit 0
+          fi

@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Build redoc
+    - name: Build redoc for v1
       run: npx @redocly/cli build-docs openapi.yaml --output index.html
     - name: Build redoc for v2
       run:  npx @redocly/cli build-docs v2/openapi/fb-unified-openapi.yaml --output v2/docs.html
