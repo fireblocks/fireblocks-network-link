@@ -3,12 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { PrefundedFiatCapability } from './PrefundedFiatCapability';
+import type { PrefundedOnRampFrom } from './PrefundedOnRampFrom';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
 export type PrefundedOnRampProperties = {
     type: PrefundedOnRampProperties.type;
-    from: PrefundedFiatCapability;
+    from: PrefundedOnRampFrom;
     to: PublicBlockchainAddress;
 };
 
