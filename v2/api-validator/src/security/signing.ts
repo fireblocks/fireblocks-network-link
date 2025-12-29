@@ -1,23 +1,26 @@
-import { createHmac, createPrivateKey, createPublicKey, createSign, createVerify, timingSafeEqual } from 'crypto';
+import { createHmac, createPrivateKey, createPublicKey, createSign, createVerify, timingSafeEqual, KeyObject } from 'crypto';
 
 export class AlgorithmNotSupportedError extends Error {}
 
 export type HashAlgorithm = 'sha256' | 'sha512' | 'sha3-256';
 export type SigningAlgorithm = 'hmac' | 'rsa' | 'ecdsa';
 
+export type KeyInput = string | Buffer | KeyObject;
+
 export interface Signer {
-  sign(payload: string, key: string, hashAlgorithm: HashAlgorithm): Buffer;
-  verify(payload: string, key: string, signature: Buffer, hashAlgorithm: HashAlgorithm): boolean;
+  sign(payload: string, key: KeyInput, hashAlgorithm: HashAlgorithm): Buffer;
+  verify(payload: string, key: KeyInput, signature: Buffer, hashAlgorithm: HashAlgorithm): boolean;
 }
 
 export class HMAC implements Signer {
-  public sign(data: string, key: string, hashAlgorithm: HashAlgorithm): Buffer {
-    return createHmac(hashAlgorithm, key).update(data, 'utf8').digest();
+  public sign(data: string, key: KeyInput, hashAlgorithm: HashAlgorithm): Buffer {
+    const hmacKey = key instanceof KeyObject ? key : Buffer.isBuffer(key) ? Uint8Array.from(key) : key;
+    return createHmac(hashAlgorithm, hmacKey).update(data, 'utf8').digest();
   }
 
   public verify(
     data: string,
-    key: string,
+    key: KeyInput,
     recv: Buffer,
     hashAlgorithm: HashAlgorithm
   ): boolean {
@@ -27,8 +30,8 @@ export class HMAC implements Signer {
 }
 
 export class RSA implements Signer {
-  public sign(data: string, privateKey: string, hashAlgorithm: HashAlgorithm): Buffer {
-    const priv = createPrivateKey({ key: pemToDer(privateKey), format: 'der', type: 'pkcs1' });
+  public sign(data: string, privateKey: KeyInput, hashAlgorithm: HashAlgorithm): Buffer {
+    const priv = loadPrivateKey(privateKey, 'pkcs1');
     const sign = createSign(`rsa-${hashAlgorithm}`);
     sign.update(data, 'utf8');
     return sign.sign(priv);
@@ -36,11 +39,11 @@ export class RSA implements Signer {
 
   public verify(
     data: string,
-    publicKey: string,
+    publicKey: KeyInput,
     signature: Buffer,
     hashAlgorithm: HashAlgorithm
   ): boolean {
-    const pub = createPublicKey({ key: pemToDer(publicKey), format: 'der', type: 'spki' });
+    const pub = loadPublicKey(publicKey);
     const verify = createVerify(`rsa-${hashAlgorithm}`);
     verify.update(data, 'utf8');
     return verify.verify(pub, new Uint8Array(signature));
@@ -49,28 +52,29 @@ export class RSA implements Signer {
 
 export class ECDSA implements Signer {
   private validateHashAlgorithm(hashAlgorithm: HashAlgorithm) {
+    // SGX signer supports only SHA-256 for ECDSA
     if (hashAlgorithm !== 'sha256') {
       throw new AlgorithmNotSupportedError();
     }
   }
 
-  public sign(data: string, privateKey: string, hashAlgorithm: HashAlgorithm): Buffer {
+  public sign(data: string, privateKey: KeyInput, hashAlgorithm: HashAlgorithm): Buffer {
     this.validateHashAlgorithm(hashAlgorithm);
-    const priv = createPrivateKey({ key: pemToDer(privateKey), format: 'der', type: 'sec1' });
-    const sign = createSign('sha256');
+    const priv = loadPrivateKey(privateKey, 'sec1');
+    const sign = createSign(hashAlgorithm);
     sign.update(data, 'utf8');
     return sign.sign(priv);
   }
 
   public verify(
     data: string,
-    publicKey: string,
+    publicKey: KeyInput,
     signature: Buffer,
     hashAlgorithm: HashAlgorithm
   ): boolean {
     this.validateHashAlgorithm(hashAlgorithm);
-    const pub = createPublicKey({ key: pemToDer(publicKey), format: 'der', type: 'spki' });
-    const verify = createVerify('sha256');
+    const pub = loadPublicKey(publicKey);
+    const verify = createVerify(hashAlgorithm);
     verify.update(data, 'utf8');
     return verify.verify(pub, new Uint8Array(signature));
   }
@@ -87,16 +91,19 @@ export function signerFactory(algorithm: SigningAlgorithm): Signer {
   }
 }
 
-function pemToDer(key: string): Buffer {
-  const keyLines = key.split('\n').filter((line) => !line.startsWith('-----'));
-  const cleaned = keyLines.join('').replace(/\r|\n/g, '');
-  return Buffer.from(cleaned, 'base64');
+function normalizeKeyToString(key: KeyInput): string {
+  if (typeof key === 'string') return key;
+  if (Buffer.isBuffer(key)) return key.toString('utf8');
+  if (key instanceof KeyObject) {
+    return key.export({ type: 'pkcs8', format: 'pem' }).toString();
+  }
+  throw new Error('Unsupported key type');
 }
 
-export function getVerifyKey(privateKey: string, algorithm: SigningAlgorithm): string {
+export function getVerifyKey(privateKey: KeyInput, algorithm: SigningAlgorithm): string {
   switch (algorithm) {
     case 'hmac':
-      return privateKey;
+      return normalizeKeyToString(privateKey);
     case 'rsa':
       return generateRSAPublicKey(privateKey);
     case 'ecdsa':
@@ -104,14 +111,31 @@ export function getVerifyKey(privateKey: string, algorithm: SigningAlgorithm): s
   }
 }
 
-function generateRSAPublicKey(privateKey: string): string {
-  const priv = createPrivateKey({ key: pemToDer(privateKey), format: 'der', type: 'pkcs1' });
+function generateRSAPublicKey(privateKey: KeyInput): string {
+  const priv = loadPrivateKey(privateKey, 'pkcs1');
   const pub = createPublicKey(priv).export({ type: 'spki', format: 'pem' }).toString();
   return pub;
 }
 
-function generateECDSAPublicKey(privateKey: string): string {
-  const priv = createPrivateKey({ key: pemToDer(privateKey), format: 'der', type: 'sec1' });
+function generateECDSAPublicKey(privateKey: KeyInput): string {
+  const priv = loadPrivateKey(privateKey, 'sec1');
   const pub = createPublicKey(priv).export({ type: 'spki', format: 'pem' }).toString();
   return pub;
+}
+
+function loadPrivateKey(key: KeyInput, fallbackDerType: 'pkcs1' | 'sec1') {
+  if (key instanceof KeyObject) return key;
+  if (Buffer.isBuffer(key)) {
+    const attemptPkcs1OrSec1 = createPrivateKey({ key, format: 'der', type: fallbackDerType });
+    return attemptPkcs1OrSec1;
+  }
+  return createPrivateKey(normalizeKeyToString(key));
+}
+
+function loadPublicKey(key: KeyInput) {
+  if (key instanceof KeyObject) return key;
+  if (Buffer.isBuffer(key)) {
+    return createPublicKey({ key, format: 'der', type: 'spki' });
+  }
+  return createPublicKey(normalizeKeyToString(key));
 }
