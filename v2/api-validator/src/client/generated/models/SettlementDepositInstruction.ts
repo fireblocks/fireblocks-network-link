@@ -10,4 +10,3 @@ export type SettlementDepositInstruction = {
     amount: PositiveAmount;
     destinationAddress: PublicBlockchainAddress;
 };
-

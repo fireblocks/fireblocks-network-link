@@ -9,4 +9,3 @@ export type WithdrawalRequestCommonProperties = {
     idempotencyKey: string;
     balanceAmount: PositiveAmount;
 };
-

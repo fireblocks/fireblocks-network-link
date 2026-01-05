@@ -8,7 +8,6 @@ import type { FiatTransferDestination } from './FiatTransferDestination';
 import type { WithdrawalRequestCommonProperties } from './WithdrawalRequestCommonProperties';
 
 export type FiatWithdrawalRequest = (WithdrawalRequestCommonProperties & {
-    balanceAsset: AssetReference;
-    destination: FiatTransferDestination;
+balanceAsset: AssetReference;
+destination: FiatTransferDestination;
 });
-

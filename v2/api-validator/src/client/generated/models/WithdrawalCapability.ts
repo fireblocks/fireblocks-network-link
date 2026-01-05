@@ -16,4 +16,3 @@ export type WithdrawalCapability = {
     balanceAsset: AssetReference;
     minWithdrawalAmount?: PositiveAmount;
 };
-

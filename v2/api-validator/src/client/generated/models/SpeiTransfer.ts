@@ -6,6 +6,5 @@
 import type { SpeiTransferDestination } from './SpeiTransferDestination';
 
 export type SpeiTransfer = (SpeiTransferDestination & {
-    referenceId?: string;
+referenceId?: string;
 });
-

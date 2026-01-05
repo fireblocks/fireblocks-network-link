@@ -9,4 +9,3 @@ import type { InternalWithdrawal } from './InternalWithdrawal';
 import type { PeerAccountWithdrawal } from './PeerAccountWithdrawal';
 
 export type Withdrawal = (PeerAccountWithdrawal | InternalWithdrawal | BlockchainWithdrawal | FiatWithdrawal);
-

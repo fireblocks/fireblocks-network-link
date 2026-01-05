@@ -12,7 +12,7 @@
  * - **PENDING_SERVICE_MANUAL_APPROVAL** - The transaction is pending service manual approval
  * - **REJECTED** - The transaction was rejected
  * - **COMPLETED** - The transaction was completed
- *
+ * 
  */
 export enum SettlementTransactionStatus {
     NOT_FOUND = 'NOT_FOUND',

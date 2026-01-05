@@ -8,4 +8,3 @@ import type { CollateralWithdrawalTransaction } from './CollateralWithdrawalTran
 export type CollateralWithdrawalTransactions = {
     transactions: Array<CollateralWithdrawalTransaction>;
 };
-

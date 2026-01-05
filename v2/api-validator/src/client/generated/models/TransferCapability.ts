@@ -9,4 +9,3 @@ import type { PeerAccountTransferCapability } from './PeerAccountTransferCapabil
 import type { PublicBlockchainCapability } from './PublicBlockchainCapability';
 
 export type TransferCapability = (PeerAccountTransferCapability | InternalTransferCapability | PublicBlockchainCapability | IbanCapability);
-

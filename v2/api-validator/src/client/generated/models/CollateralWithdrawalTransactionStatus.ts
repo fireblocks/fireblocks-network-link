@@ -7,7 +7,7 @@
  * - **Pending** - The withdrawal transaction is pending the provider's approval
  * - **Approved** - The withdrawal transaction has been approved and it is in progress
  * - **Rejected** - The withdrawal transaction has been rejected
- *
+ * 
  */
 export enum CollateralWithdrawalTransactionStatus {
     PENDING = 'Pending',

@@ -7,11 +7,11 @@ import type { AccountHolderDetails } from './AccountHolderDetails';
 import type { PixCapability } from './PixCapability';
 
 export type PixAddress = (PixCapability & {
-    accountHolder: AccountHolderDetails;
-    pixKey: string;
-    keyType: PixAddress.keyType;
-    bankName?: string;
-    bankCode?: string;
+accountHolder: AccountHolderDetails;
+pixKey: string;
+keyType: PixAddress.keyType;
+bankName?: string;
+bankCode?: string;
 });
 
 export namespace PixAddress {
@@ -26,4 +26,3 @@ export namespace PixAddress {
 
 
 }
-

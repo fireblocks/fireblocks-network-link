@@ -9,4 +9,3 @@ export type OtherAssetReference = {
      */
     assetId: string;
 };
-

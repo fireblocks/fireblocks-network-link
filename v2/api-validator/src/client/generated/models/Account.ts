@@ -7,4 +7,3 @@ import type { AccountData } from './AccountData';
 import type { AccountId } from './AccountId';
 
 export type Account = (AccountId & AccountData);
-

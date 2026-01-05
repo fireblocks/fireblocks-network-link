@@ -16,4 +16,3 @@ export type CollateralWithdrawalTransactionIntentResponse = {
     status: CollateralTransactionIntentStatus;
     rejectionReason?: string;
 };
-

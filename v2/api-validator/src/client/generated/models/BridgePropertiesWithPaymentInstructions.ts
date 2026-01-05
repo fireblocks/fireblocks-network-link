@@ -7,6 +7,5 @@ import type { BridgeProperties } from './BridgeProperties';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
 export type BridgePropertiesWithPaymentInstructions = ({
-    paymentInstructions: PublicBlockchainAddress;
+paymentInstructions: PublicBlockchainAddress;
 } & BridgeProperties);
-

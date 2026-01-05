@@ -9,4 +9,3 @@ import type { PeerAccountTransferAddress } from './PeerAccountTransferAddress';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
 export type DepositDestination = (PublicBlockchainAddress | IbanAddress | PeerAccountTransferAddress | InternalTransferAddress);
-

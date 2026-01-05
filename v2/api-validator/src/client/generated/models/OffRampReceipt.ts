@@ -7,6 +7,5 @@ import type { RampFees } from './RampFees';
 import type { RampFiatTransfer } from './RampFiatTransfer';
 
 export type OffRampReceipt = (RampFiatTransfer & {
-    actualFees?: RampFees;
+actualFees?: RampFees;
 });
-

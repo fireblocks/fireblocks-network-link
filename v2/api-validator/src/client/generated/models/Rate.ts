@@ -10,4 +10,3 @@ export type Rate = {
      */
     timestamp: number;
 };
-

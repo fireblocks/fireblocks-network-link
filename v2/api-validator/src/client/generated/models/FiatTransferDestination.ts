@@ -6,4 +6,3 @@
 import type { IbanTransferDestination } from './IbanTransferDestination';
 
 export type FiatTransferDestination = IbanTransferDestination;
-

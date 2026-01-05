@@ -10,4 +10,3 @@ export type DepositAddressCreationRequest = {
     idempotencyKey: string;
     transferMethod: (PublicBlockchainCapability | IbanCapability);
 };
-

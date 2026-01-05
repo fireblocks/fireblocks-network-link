@@ -6,6 +6,5 @@
 import type { InternalTransferMethod } from './InternalTransferMethod';
 
 export type InternalTransferAddress = (InternalTransferMethod & {
-    accountId: string;
+accountId: string;
 });
-

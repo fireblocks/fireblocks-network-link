@@ -6,4 +6,3 @@
 export type AccountId = {
     id: string;
 };
-

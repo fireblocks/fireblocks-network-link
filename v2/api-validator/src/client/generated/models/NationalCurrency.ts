@@ -9,4 +9,3 @@ export type NationalCurrency = {
     nationalCurrencyCode: NationalCurrencyCode;
     testAsset?: boolean;
 };
-

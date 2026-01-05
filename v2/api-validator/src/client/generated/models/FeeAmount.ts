@@ -7,4 +7,3 @@ import type { BasisPointsFeeAmount } from './BasisPointsFeeAmount';
 import type { FixedFeeAmount } from './FixedFeeAmount';
 
 export type FeeAmount = (FixedFeeAmount | BasisPointsFeeAmount);
-

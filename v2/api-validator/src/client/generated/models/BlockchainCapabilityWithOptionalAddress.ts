@@ -6,6 +6,5 @@
 import type { PublicBlockchainCapability } from './PublicBlockchainCapability';
 
 export type BlockchainCapabilityWithOptionalAddress = (PublicBlockchainCapability & {
-    address?: string;
+address?: string;
 });
-

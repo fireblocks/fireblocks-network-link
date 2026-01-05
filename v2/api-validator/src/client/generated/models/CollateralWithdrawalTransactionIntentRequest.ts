@@ -12,4 +12,3 @@ export type CollateralWithdrawalTransactionIntentRequest = {
     destinationAddress: PublicBlockchainAddress;
     intentApprovalRequest: IntentApprovalRequest;
 };
-

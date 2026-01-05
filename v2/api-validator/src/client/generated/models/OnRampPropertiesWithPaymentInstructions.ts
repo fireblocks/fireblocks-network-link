@@ -7,8 +7,7 @@ import type { FiatAddress } from './FiatAddress';
 import type { OnRampProperties } from './OnRampProperties';
 
 export type OnRampPropertiesWithPaymentInstructions = ({
-    paymentInstructions: (FiatAddress & {
-        referenceId?: string;
-    });
+paymentInstructions: (FiatAddress & {
+referenceId?: string;
+});
 } & OnRampProperties);
-

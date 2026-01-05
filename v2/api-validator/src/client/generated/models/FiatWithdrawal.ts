@@ -7,6 +7,5 @@ import type { FiatTransfer } from './FiatTransfer';
 import type { WithdrawalCommonProperties } from './WithdrawalCommonProperties';
 
 export type FiatWithdrawal = (WithdrawalCommonProperties & {
-    destination: FiatTransfer;
+destination: FiatTransfer;
 });
-

@@ -17,49 +17,49 @@ export class RatesService {
      * @throws ApiError
      */
     public getRateByAccountAndPairId({
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiTimestamp,
-        xFbapiSignature,
-        accountId,
-        conversionPairId,
-        rampsPairId,
-        orderBookPairId,
-    }: {
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * Conversion pair to get the rate for.
-         */
-        conversionPairId?: string,
-        /**
-         * Ramps pair to get the rate for.
-         */
-        rampsPairId?: string,
-        /**
-         * Order book pair to get the rate for.
-         */
-        orderBookPairId?: string,
-    }): CancelablePromise<Rate> {
+xFbapiKey,
+xFbapiNonce,
+xFbapiTimestamp,
+xFbapiSignature,
+accountId,
+conversionPairId,
+rampsPairId,
+orderBookPairId,
+}: {
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * Conversion pair to get the rate for.
+ */
+conversionPairId?: string,
+/**
+ * Ramps pair to get the rate for.
+ */
+rampsPairId?: string,
+/**
+ * Order book pair to get the rate for.
+ */
+orderBookPairId?: string,
+}): CancelablePromise<Rate> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/rate',

@@ -16,4 +16,3 @@ export type ApprovalRequest = {
      */
     partnerIntentId: string;
 };
-

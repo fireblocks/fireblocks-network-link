@@ -7,6 +7,5 @@ import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction'
 import type { WithdrawalCommonProperties } from './WithdrawalCommonProperties';
 
 export type BlockchainWithdrawal = (WithdrawalCommonProperties & {
-    destination: PublicBlockchainTransaction;
+destination: PublicBlockchainTransaction;
 });
-

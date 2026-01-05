@@ -8,4 +8,3 @@ import type { CollateralAssetAddress } from './CollateralAssetAddress';
 export type CollateralDepositAddresses = {
     addresses: Array<CollateralAssetAddress>;
 };
-

@@ -16,4 +16,3 @@ export type WithdrawalEvent = {
      */
     createdAt: string;
 };
-

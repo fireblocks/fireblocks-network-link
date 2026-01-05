@@ -27,4 +27,3 @@ export type Deposit = {
      */
     finalizedAt?: string;
 };
-

@@ -13,4 +13,3 @@ import type { SpeiCapability } from './SpeiCapability';
 import type { WireCapability } from './WireCapability';
 
 export type FiatCapability = (IbanCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | EuropeanSEPACapability | LocalBankTransferCapability | MobileMoneyCapability);
-

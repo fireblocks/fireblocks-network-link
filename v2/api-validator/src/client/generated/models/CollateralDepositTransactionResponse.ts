@@ -7,7 +7,6 @@ import type { CollateralDepositTransactionRequest } from './CollateralDepositTra
 import type { CollateralDepositTransactionStatus } from './CollateralDepositTransactionStatus';
 
 export type CollateralDepositTransactionResponse = ({
-    id: string;
-    status: CollateralDepositTransactionStatus;
+id: string;
+status: CollateralDepositTransactionStatus;
 } & CollateralDepositTransactionRequest);
-

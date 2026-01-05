@@ -8,7 +8,6 @@ import type { InternalTransferDestination } from './InternalTransferDestination'
 import type { WithdrawalRequestCommonProperties } from './WithdrawalRequestCommonProperties';
 
 export type InternalWithdrawalRequest = (WithdrawalRequestCommonProperties & {
-    balanceAsset: AssetReference;
-    destination: InternalTransferDestination;
+balanceAsset: AssetReference;
+destination: InternalTransferDestination;
 });
-

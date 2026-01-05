@@ -7,6 +7,5 @@ import type { PositiveAmount } from './PositiveAmount';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
 export type PublicBlockchainTransactionDestination = (PublicBlockchainAddress & {
-    amount: PositiveAmount;
+amount: PositiveAmount;
 });
-

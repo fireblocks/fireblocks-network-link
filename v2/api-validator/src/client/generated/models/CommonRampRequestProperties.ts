@@ -9,4 +9,3 @@ export type CommonRampRequestProperties = {
     idempotencyKey: string;
     amount: PositiveAmount;
 };
-

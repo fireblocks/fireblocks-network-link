@@ -10,4 +10,3 @@ export type OffRampCapability = {
     from: PublicBlockchainCapability;
     to: FiatCapability;
 };
-

@@ -11,4 +11,3 @@ export type CollateralWithdrawalTransactionRequest = {
     approvalRequest: ApprovalRequest;
     settlementDetails?: CollateralWithdrawalSettlementTransaction;
 };
-

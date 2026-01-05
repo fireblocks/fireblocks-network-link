@@ -6,6 +6,5 @@
 import type { PixTransferDestination } from './PixTransferDestination';
 
 export type PixTransfer = (PixTransferDestination & {
-    referenceId?: string;
+referenceId?: string;
 });
-

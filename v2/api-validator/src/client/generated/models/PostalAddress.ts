@@ -35,4 +35,3 @@ export type PostalAddress = {
     district?: string;
     country?: CountryAlpha2Code;
 };
-

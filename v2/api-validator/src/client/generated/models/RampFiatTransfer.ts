@@ -13,4 +13,3 @@ import type { SpeiTransfer } from './SpeiTransfer';
 import type { WireTransfer } from './WireTransfer';
 
 export type RampFiatTransfer = (IbanTransfer | AchTransfer | WireTransfer | SpeiTransfer | PixTransfer | EuropeanSEPATransfer | LocalBankTransfer | MobileMoneyTransfer);
-

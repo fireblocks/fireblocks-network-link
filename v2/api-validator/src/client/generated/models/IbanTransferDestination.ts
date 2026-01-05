@@ -7,6 +7,5 @@ import type { IbanAddress } from './IbanAddress';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type IbanTransferDestination = (IbanAddress & {
-    amount: PositiveAmount;
+amount: PositiveAmount;
 });
-

@@ -7,6 +7,5 @@ import type { InternalTransferDestinationPolicy } from './InternalTransferDestin
 import type { InternalTransferMethod } from './InternalTransferMethod';
 
 export type InternalTransferCapability = (InternalTransferMethod & {
-    destinationPolicy: InternalTransferDestinationPolicy;
+destinationPolicy: InternalTransferDestinationPolicy;
 });
-

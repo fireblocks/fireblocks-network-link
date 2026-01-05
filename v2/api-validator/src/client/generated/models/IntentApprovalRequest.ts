@@ -9,4 +9,3 @@ export type IntentApprovalRequest = {
      */
     fireblocksIntentId: string;
 };
-

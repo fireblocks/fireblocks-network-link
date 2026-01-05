@@ -23,4 +23,3 @@ export type AccountHolderDetails = {
     address?: string;
     postalCode?: string;
 };
-

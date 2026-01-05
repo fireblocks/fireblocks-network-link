@@ -7,6 +7,5 @@ import type { AssetBalance } from './AssetBalance';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type AssetCreditBalance = (AssetBalance & {
-    creditAmount: PositiveAmount;
+creditAmount: PositiveAmount;
 });
-

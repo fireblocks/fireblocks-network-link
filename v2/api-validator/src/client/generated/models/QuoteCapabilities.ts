@@ -8,4 +8,3 @@ import type { QuoteCapability } from './QuoteCapability';
 export type QuoteCapabilities = {
     capabilities: Array<QuoteCapability>;
 };
-

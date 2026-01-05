@@ -12,4 +12,3 @@ export type CollateralDepositTransactionIntentRequest = {
     amount: PositiveAmount;
     intentApprovalRequest: IntentApprovalRequest;
 };
-

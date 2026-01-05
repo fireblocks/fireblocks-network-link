@@ -8,8 +8,7 @@ import type { Clabe } from './Clabe';
 import type { SpeiCapability } from './SpeiCapability';
 
 export type SpeiAddress = (SpeiCapability & {
-    accountHolder: AccountHolderDetails;
-    bankName?: string;
-    bankAccountNumber: Clabe;
+accountHolder: AccountHolderDetails;
+bankName?: string;
+bankAccountNumber: Clabe;
 });
-

@@ -11,4 +11,3 @@ export type DepositAddress = {
     destination: DepositDestination;
     status: DepositAddressStatus;
 };
-

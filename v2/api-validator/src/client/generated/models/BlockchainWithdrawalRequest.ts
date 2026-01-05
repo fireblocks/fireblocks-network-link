@@ -9,8 +9,7 @@ import type { PublicBlockchainTransactionDestination } from './PublicBlockchainT
 import type { WithdrawalRequestCommonProperties } from './WithdrawalRequestCommonProperties';
 
 export type BlockchainWithdrawalRequest = (WithdrawalRequestCommonProperties & {
-    balanceAsset: AssetReference;
-    destination: PublicBlockchainTransactionDestination;
-    participantsIdentification?: ParticipantsIdentification;
+balanceAsset: AssetReference;
+destination: PublicBlockchainTransactionDestination;
+participantsIdentification?: ParticipantsIdentification;
 });
-

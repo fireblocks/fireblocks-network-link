@@ -16,71 +16,71 @@ export class BalancesService {
     /**
      * Get current balances
      * Retrieves current balance information for the specified account. Can be filtered by asset ID, national currency code, or cryptocurrency symbol.
-     *
+ * 
      * @returns any List of asset balances.
      * @throws ApiError
      */
     public getBalances({
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiTimestamp,
-        xFbapiSignature,
-        accountId,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-        assetId,
-        nationalCurrencyCode,
-        cryptocurrencySymbol,
-    }: {
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-        /**
-         * ID of one of the assets returned in get-additional-assets. Limits the response to one. Cannot be used in conjunction with cryptocurrencySymbol or nationalCurrencyCode
-         */
-        assetId?: string,
-        /**
-         * Limits the response to one asset with the provided NationalCurrencyCode Cannot be used in conjunction with cryptocurrencySymbol or assetId
-         */
-        nationalCurrencyCode?: NationalCurrencyCode,
-        /**
-         * Limits the response to one asset with the provided CryptocurrencySymbol Cannot be used in conjunction with nationalCurrencyCode or assetId
-         */
-        cryptocurrencySymbol?: CryptocurrencySymbol,
-    }): CancelablePromise<{
-        balances: Balances;
-    }> {
+xFbapiKey,
+xFbapiNonce,
+xFbapiTimestamp,
+xFbapiSignature,
+accountId,
+limit = 10,
+startingAfter,
+endingBefore,
+assetId,
+nationalCurrencyCode,
+cryptocurrencySymbol,
+}: {
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * Maximum number of returned items.
+ */
+limit?: number,
+/**
+ * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
+ */
+startingAfter?: string,
+/**
+ * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
+ */
+endingBefore?: string,
+/**
+ * ID of one of the assets returned in get-additional-assets. Limits the response to one. Cannot be used in conjunction with cryptocurrencySymbol or nationalCurrencyCode
+ */
+assetId?: string,
+/**
+ * Limits the response to one asset with the provided NationalCurrencyCode Cannot be used in conjunction with cryptocurrencySymbol or assetId
+ */
+nationalCurrencyCode?: NationalCurrencyCode,
+/**
+ * Limits the response to one asset with the provided CryptocurrencySymbol Cannot be used in conjunction with nationalCurrencyCode or assetId
+ */
+cryptocurrencySymbol?: CryptocurrencySymbol,
+}): CancelablePromise<{
+balances: Balances;
+}> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/balances',

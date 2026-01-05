@@ -17,7 +17,7 @@ export type BadRequestError = {
     errorType: BadRequestError.errorType;
     /**
      * Name of property that caused the error. By convention, should always start with a slash ("/"). If the property is nested, the path should be separated by slashes.
-     * This property is required if the error type is caused by a missing or wrong property in the request.
+ * This property is required if the error type is caused by a missing or wrong property in the request.
      */
     propertyName?: string;
     requestPart?: RequestPart;
@@ -43,4 +43,3 @@ export namespace BadRequestError {
 
 
 }
-

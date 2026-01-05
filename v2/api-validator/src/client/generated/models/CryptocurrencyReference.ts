@@ -7,4 +7,3 @@ import type { NativeCryptocurrency } from './NativeCryptocurrency';
 import type { OtherAssetReference } from './OtherAssetReference';
 
 export type CryptocurrencyReference = (NativeCryptocurrency | OtherAssetReference);
-

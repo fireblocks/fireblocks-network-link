@@ -9,4 +9,3 @@ export type BridgeCapability = {
     from: PublicBlockchainCapability;
     to: PublicBlockchainCapability;
 };
-

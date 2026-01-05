@@ -6,4 +6,3 @@
 import type { InternalTransferDestination } from './InternalTransferDestination';
 
 export type InternalTransfer = InternalTransferDestination;
-

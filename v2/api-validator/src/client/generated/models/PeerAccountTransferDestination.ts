@@ -7,6 +7,5 @@ import type { PeerAccountTransferAddress } from './PeerAccountTransferAddress';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type PeerAccountTransferDestination = (PeerAccountTransferAddress & {
-    amount: PositiveAmount;
+amount: PositiveAmount;
 });
-

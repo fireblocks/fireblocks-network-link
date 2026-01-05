@@ -7,6 +7,5 @@ import type { PositiveAmount } from './PositiveAmount';
 import type { WireAddress } from './WireAddress';
 
 export type WireTransferDestination = (WireAddress & {
-    amount: PositiveAmount;
+amount: PositiveAmount;
 });
-

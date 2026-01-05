@@ -16,4 +16,3 @@ export type CollateralWithdrawalSettlementTransaction = {
      */
     settlementTxId: string;
 };
-

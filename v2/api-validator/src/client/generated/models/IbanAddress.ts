@@ -8,7 +8,6 @@ import type { Iban } from './Iban';
 import type { IbanCapability } from './IbanCapability';
 
 export type IbanAddress = (IbanCapability & {
-    accountHolder: AccountHolderDetails;
-    iban: Iban;
+accountHolder: AccountHolderDetails;
+iban: Iban;
 });
-

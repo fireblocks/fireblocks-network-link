@@ -7,9 +7,9 @@ import type { AssetCommonProperties } from './AssetCommonProperties';
 import type { Blockchain } from './Blockchain';
 
 export type ContractBasedToken = (AssetCommonProperties & {
-    type: ContractBasedToken.type;
-    blockchain: Blockchain;
-    contractAddress: string;
+type: ContractBasedToken.type;
+blockchain: Blockchain;
+contractAddress: string;
 });
 
 export namespace ContractBasedToken {
@@ -20,4 +20,3 @@ export namespace ContractBasedToken {
 
 
 }
-

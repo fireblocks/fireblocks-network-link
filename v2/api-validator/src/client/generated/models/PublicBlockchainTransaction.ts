@@ -6,6 +6,5 @@
 import type { PublicBlockchainTransactionDestination } from './PublicBlockchainTransactionDestination';
 
 export type PublicBlockchainTransaction = (PublicBlockchainTransactionDestination & {
-    blockchainTxId?: string;
+blockchainTxId?: string;
 });
-

@@ -6,7 +6,7 @@
 import type { AssetCommonProperties } from './AssetCommonProperties';
 
 export type BucketAsset = (AssetCommonProperties & {
-    type: BucketAsset.type;
+type: BucketAsset.type;
 });
 
 export namespace BucketAsset {
@@ -17,4 +17,3 @@ export namespace BucketAsset {
 
 
 }
-

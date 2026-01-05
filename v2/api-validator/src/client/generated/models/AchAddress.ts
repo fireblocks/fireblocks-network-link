@@ -9,11 +9,11 @@ import type { BankAccountNumber } from './BankAccountNumber';
 import type { RoutingNumber } from './RoutingNumber';
 
 export type AchAddress = (AchCapability & {
-    accountHolder: AccountHolderDetails;
-    bankName?: string;
-    bankAccountNumber: BankAccountNumber;
-    routingNumber: RoutingNumber;
-    accountType: AchAddress.accountType;
+accountHolder: AccountHolderDetails;
+bankName?: string;
+bankAccountNumber: BankAccountNumber;
+routingNumber: RoutingNumber;
+accountType: AchAddress.accountType;
 });
 
 export namespace AchAddress {
@@ -25,4 +25,3 @@ export namespace AchAddress {
 
 
 }
-

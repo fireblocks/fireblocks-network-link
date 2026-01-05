@@ -20,4 +20,3 @@ export namespace BridgeProperties {
 
 
 }
-

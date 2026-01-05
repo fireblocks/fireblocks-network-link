@@ -65,4 +65,3 @@ export class ApiClient {
         this.transfersPeerAccounts = new TransfersPeerAccountsService(this.request);
     }
 }
-

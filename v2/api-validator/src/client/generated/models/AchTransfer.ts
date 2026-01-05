@@ -6,6 +6,5 @@
 import type { AchTransferDestination } from './AchTransferDestination';
 
 export type AchTransfer = (AchTransferDestination & {
-    referenceId?: string;
+referenceId?: string;
 });
-

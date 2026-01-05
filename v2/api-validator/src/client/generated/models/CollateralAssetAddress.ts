@@ -6,6 +6,5 @@
 import type { CollateralAddress } from './CollateralAddress';
 
 export type CollateralAssetAddress = ({
-    id: string;
+id: string;
 } & CollateralAddress);
-

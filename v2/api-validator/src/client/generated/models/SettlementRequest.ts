@@ -10,8 +10,7 @@ export type SettlementRequest = {
     settlementId: string;
     /**
      * A unique identifier of the settlement state version. This field is optional and can be used to indicate the version of the settlement state the client is referring to.
-     *
+ * 
      */
     settlementVersion: string;
 };
-

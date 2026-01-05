@@ -13,4 +13,3 @@ export type CollateralWithdrawalTransaction = {
     approvalRequest: ApprovalRequest;
     rejectionReason?: string;
 };
-

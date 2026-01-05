@@ -21,4 +21,3 @@ export type ApiComponents = {
     ramps?: AccountsSet;
     rates?: AccountsSet;
 };
-

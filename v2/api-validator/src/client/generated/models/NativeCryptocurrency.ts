@@ -11,4 +11,3 @@ export type NativeCryptocurrency = {
     cryptocurrencySymbol: CryptocurrencySymbol;
     testAsset?: boolean;
 };
-

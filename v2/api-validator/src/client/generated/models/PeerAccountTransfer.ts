@@ -6,6 +6,5 @@
 import type { PeerAccountTransferDestination } from './PeerAccountTransferDestination';
 
 export type PeerAccountTransfer = (PeerAccountTransferDestination & {
-    referenceId?: string;
+referenceId?: string;
 });
-

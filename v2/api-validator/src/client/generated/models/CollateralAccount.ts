@@ -12,4 +12,3 @@ export type CollateralAccount = {
     collateralSigners: Array<CollateralSignerId>;
     env: AccountEnvironment;
 };
-

@@ -9,6 +9,5 @@ import type { OnRampReceipt } from './OnRampReceipt';
 import type { PrefundedOnRampProperties } from './PrefundedOnRampProperties';
 
 export type OnRamp = (CommonRamp & (OnRampPropertiesWithPaymentInstructions | PrefundedOnRampProperties) & {
-    receipt?: OnRampReceipt;
+receipt?: OnRampReceipt;
 });
-

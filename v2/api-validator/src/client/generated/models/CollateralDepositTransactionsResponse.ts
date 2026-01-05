@@ -8,4 +8,3 @@ import type { CollateralDepositTransactionResponse } from './CollateralDepositTr
 export type CollateralDepositTransactionsResponse = {
     transactions: Array<CollateralDepositTransactionResponse>;
 };
-

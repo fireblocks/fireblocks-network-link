@@ -19,35 +19,35 @@ export class CapabilitiesService {
     /**
      * Describe server capabilities
      * Returns the API version and all the capabilities that the server supports.
-     *
-     * The capabilities are specified as a map. The map keys are the capability names and the values are lists of account IDs. If all the accounts support a capability, an asterisk could be used, instead of listing all the accounts.
+ *
+ * The capabilities are specified as a map. The map keys are the capability names and the values are lists of account IDs. If all the accounts support a capability, an asterisk could be used, instead of listing all the accounts.
      * @returns Capabilities Server capability details.
      * @throws ApiError
      */
     public getCapabilities({
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiTimestamp,
-        xFbapiSignature,
-    }: {
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-    }): CancelablePromise<Capabilities> {
+xFbapiKey,
+xFbapiNonce,
+xFbapiTimestamp,
+xFbapiSignature,
+}: {
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+}): CancelablePromise<Capabilities> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities',
@@ -71,46 +71,46 @@ export class CapabilitiesService {
      * @throws ApiError
      */
     public getAdditionalAssets({
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiTimestamp,
-        xFbapiSignature,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-    }: {
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<{
-        assets: Array<AssetDefinition>;
-    }> {
+xFbapiKey,
+xFbapiNonce,
+xFbapiTimestamp,
+xFbapiSignature,
+limit = 10,
+startingAfter,
+endingBefore,
+}: {
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Maximum number of returned items.
+ */
+limit?: number,
+/**
+ * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
+ */
+startingAfter?: string,
+/**
+ * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
+ */
+endingBefore?: string,
+}): CancelablePromise<{
+assets: Array<AssetDefinition>;
+}> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities/assets',
@@ -139,34 +139,34 @@ export class CapabilitiesService {
      * @throws ApiError
      */
     public getAssetDetails({
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiTimestamp,
-        xFbapiSignature,
-        id,
-    }: {
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Entity unique identifier.
-         */
-        id: string,
-    }): CancelablePromise<AssetDefinition> {
+xFbapiKey,
+xFbapiNonce,
+xFbapiTimestamp,
+xFbapiSignature,
+id,
+}: {
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Entity unique identifier.
+ */
+id: string,
+}): CancelablePromise<AssetDefinition> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities/assets/{id}',
@@ -189,49 +189,49 @@ export class CapabilitiesService {
     /**
      * List possible asset conversions
      * Retrieves the list of supported asset conversion pairs that can be quoted. Shows which assets can be converted to other assets through the liquidity service.
-     *
+ * 
      * @returns QuoteCapabilities List of possible asset conversions.
      * @throws ApiError
      */
     public getQuoteCapabilities({
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-    }: {
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<QuoteCapabilities> {
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+limit = 10,
+startingAfter,
+endingBefore,
+}: {
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Maximum number of returned items.
+ */
+limit?: number,
+/**
+ * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
+ */
+startingAfter?: string,
+/**
+ * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
+ */
+endingBefore?: string,
+}): CancelablePromise<QuoteCapabilities> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/capabilities/liquidity/quotes',
@@ -256,56 +256,56 @@ export class CapabilitiesService {
     /**
      * Get list of supported withdrawal methods
      * Retrieves the list of supported withdrawal methods available for the specified account. Shows which withdrawal types, networks, and destinations are supported for fund transfers.
-     *
+ * 
      * @returns any List of withdrawal methods for account.
      * @throws ApiError
      */
     public getWithdrawalMethods({
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-    }: {
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<{
-        capabilities: Array<WithdrawalCapability>;
-    }> {
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+limit = 10,
+startingAfter,
+endingBefore,
+}: {
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * Maximum number of returned items.
+ */
+limit?: number,
+/**
+ * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
+ */
+startingAfter?: string,
+/**
+ * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
+ */
+endingBefore?: string,
+}): CancelablePromise<{
+capabilities: Array<WithdrawalCapability>;
+}> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/capabilities/transfers/withdrawals',
@@ -333,56 +333,56 @@ export class CapabilitiesService {
     /**
      * Get list of supported deposit methods
      * Retrieves the list of supported deposit methods available for the specified account. Shows which deposit types, networks, and sources are supported for fund transfers.
-     *
+ * 
      * @returns any List of deposit methods for account.
      * @throws ApiError
      */
     public getDepositMethods({
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-    }: {
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<{
-        capabilities: Array<DepositCapability>;
-    }> {
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+limit = 10,
+startingAfter,
+endingBefore,
+}: {
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * Maximum number of returned items.
+ */
+limit?: number,
+/**
+ * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
+ */
+startingAfter?: string,
+/**
+ * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
+ */
+endingBefore?: string,
+}): CancelablePromise<{
+capabilities: Array<DepositCapability>;
+}> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/capabilities/transfers/deposits',
@@ -410,56 +410,56 @@ export class CapabilitiesService {
     /**
      * Get list of supported ramp methods
      * Retrieves the list of supported on-ramp and off-ramp methods available for the specified account. Shows which payment methods and currencies are supported for fiat-to-crypto and crypto-to-fiat conversions.
-     *
+ * 
      * @returns any List of ramp methods for account.
      * @throws ApiError
      */
     public getRampMethods({
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-    }: {
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<{
-        capabilities: Array<RampMethod>;
-    }> {
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+limit = 10,
+startingAfter,
+endingBefore,
+}: {
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * Maximum number of returned items.
+ */
+limit?: number,
+/**
+ * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
+ */
+startingAfter?: string,
+/**
+ * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
+ */
+endingBefore?: string,
+}): CancelablePromise<{
+capabilities: Array<RampMethod>;
+}> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/capabilities/ramps',

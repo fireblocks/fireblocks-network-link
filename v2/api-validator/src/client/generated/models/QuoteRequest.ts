@@ -7,11 +7,10 @@ import type { AssetReference } from './AssetReference';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type QuoteRequest = ({
-    fromAsset: AssetReference;
-    toAsset: AssetReference;
+fromAsset: AssetReference;
+toAsset: AssetReference;
 } & ({
-    fromAmount: PositiveAmount;
+fromAmount: PositiveAmount;
 } | {
-    toAmount: PositiveAmount;
+toAmount: PositiveAmount;
 }));
-

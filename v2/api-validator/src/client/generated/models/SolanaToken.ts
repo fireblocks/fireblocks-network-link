@@ -7,9 +7,9 @@ import type { AssetCommonProperties } from './AssetCommonProperties';
 import type { Blockchain } from './Blockchain';
 
 export type SolanaToken = (AssetCommonProperties & {
-    type: SolanaToken.type;
-    blockchain: Blockchain;
-    mintAddress: string;
+type: SolanaToken.type;
+blockchain: Blockchain;
+mintAddress: string;
 });
 
 export namespace SolanaToken {
@@ -20,4 +20,3 @@ export namespace SolanaToken {
 
 
 }
-

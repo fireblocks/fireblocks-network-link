@@ -7,6 +7,5 @@ import type { InternalTransferAddress } from './InternalTransferAddress';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type InternalTransferDestination = (InternalTransferAddress & {
-    amount: PositiveAmount;
+amount: PositiveAmount;
 });
-

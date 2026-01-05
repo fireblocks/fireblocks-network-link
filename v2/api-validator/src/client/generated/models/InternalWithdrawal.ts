@@ -7,6 +7,5 @@ import type { InternalTransfer } from './InternalTransfer';
 import type { WithdrawalCommonProperties } from './WithdrawalCommonProperties';
 
 export type InternalWithdrawal = (WithdrawalCommonProperties & {
-    destination: InternalTransfer;
+destination: InternalTransfer;
 });
-

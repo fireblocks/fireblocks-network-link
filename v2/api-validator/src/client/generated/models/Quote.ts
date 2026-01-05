@@ -28,4 +28,3 @@ export type Quote = {
      */
     expiresAt: string;
 };
-

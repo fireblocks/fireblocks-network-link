@@ -6,7 +6,7 @@
 /**
  * - **Approved** - The transaction is approved by the provider's
  * - **Rejected** - The transaction has been rejected by the provider's
- *
+ * 
  */
 export enum CollateralTransactionIntentStatus {
     APPROVED = 'Approved',

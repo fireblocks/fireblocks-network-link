@@ -10,4 +10,3 @@ export type PrefundedOnRampCapability = {
     from: PrefundedFiatCapability;
     to: PublicBlockchainCapability;
 };
-

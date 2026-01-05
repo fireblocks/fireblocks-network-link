@@ -7,6 +7,5 @@ import type { PeerAccountTransfer } from './PeerAccountTransfer';
 import type { WithdrawalCommonProperties } from './WithdrawalCommonProperties';
 
 export type PeerAccountWithdrawal = (WithdrawalCommonProperties & {
-    destination: PeerAccountTransfer;
+destination: PeerAccountTransfer;
 });
-

@@ -12,4 +12,3 @@ export type AssetBalance = {
     availableAmount: PositiveAmount;
     lockedAmount?: PositiveAmount;
 };
-

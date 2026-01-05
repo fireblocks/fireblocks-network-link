@@ -8,15 +8,14 @@ import type { BankAccountNumber } from './BankAccountNumber';
 import type { LocalBankTransferCapability } from './LocalBankTransferCapability';
 
 export type LocalBankTransferAddress = (LocalBankTransferCapability & {
-    accountHolder: AccountHolderDetails;
-    accountNumber: BankAccountNumber;
-    /**
-     * Name of the bank
-     */
-    bankName: string;
-    /**
-     * Internal bank identifier
-     */
-    bankCode: string;
+accountHolder: AccountHolderDetails;
+accountNumber: BankAccountNumber;
+/**
+ * Name of the bank
+ */
+bankName: string;
+/**
+ * Internal bank identifier
+ */
+bankCode: string;
 });
-

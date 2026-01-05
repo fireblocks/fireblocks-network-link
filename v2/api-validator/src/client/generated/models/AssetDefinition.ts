@@ -11,4 +11,3 @@ import type { SolanaToken } from './SolanaToken';
 import type { StellarToken } from './StellarToken';
 
 export type AssetDefinition = (BucketAsset | Erc20Token | Bep20Token | StellarToken | ContractBasedToken | SolanaToken);
-

@@ -16,4 +16,3 @@ export type DepositCapability = {
     balanceAsset: AssetReference;
     addressCreationPolicy: DepositAddressCreationPolicy;
 };
-

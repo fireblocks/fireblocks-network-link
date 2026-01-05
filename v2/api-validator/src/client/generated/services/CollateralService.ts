@@ -32,49 +32,49 @@ export class CollateralService {
     /**
      * Initiate collateral account link
      * Creates a new link between a collateral account and a provider account.
-     *
+ * 
      * @returns CollateralAccountLink Link created successfully
      * @throws ApiError
      */
     public createCollateralAccountLink({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        requestBody,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * Collateral account link details
-         */
-        requestBody: CollateralAccount,
-    }): CancelablePromise<CollateralAccountLink> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+requestBody,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * Collateral account link details
+ */
+requestBody: CollateralAccount,
+}): CancelablePromise<CollateralAccountLink> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/collateral/link',
@@ -100,61 +100,61 @@ export class CollateralService {
     /**
      * Get list of collateral account links
      * Retrieves all collateral account links associated with the specified account. Returns details about link status, eligible assets, and collateral configuration.
-     *
+ * 
      * @returns any List of collateral account links
      * @throws ApiError
      */
     public getCollateralAccountLinks({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<{
-        collateralLinks: Array<CollateralAccountLink>;
-    }> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+limit = 10,
+startingAfter,
+endingBefore,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * Maximum number of returned items.
+ */
+limit?: number,
+/**
+ * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
+ */
+startingAfter?: string,
+/**
+ * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
+ */
+endingBefore?: string,
+}): CancelablePromise<{
+collateralLinks: Array<CollateralAccountLink>;
+}> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/link',
@@ -183,54 +183,54 @@ export class CollateralService {
     /**
      * Create/register a collateral deposit address for a specific asset
      * Notifies the provider to have a new collateral deposit address for a specific asset. The provider is expected to listen to this address and credit the account accordingly,  or sending the funds to this address if a withdrawal is requested.
-     *
+ * 
      * @returns CollateralAssetAddress Successful Operation
      * @throws ApiError
      */
     public createCollateralDepositAddressForAsset({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        requestBody,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Collateral deposit address details
-         */
-        requestBody: CollateralAddress,
-    }): CancelablePromise<CollateralAssetAddress> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+requestBody,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * Collateral deposit address details
+ */
+requestBody: CollateralAddress,
+}): CancelablePromise<CollateralAssetAddress> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/collateral/{collateralId}/addresses',
@@ -260,74 +260,74 @@ export class CollateralService {
     /**
      * Get list of collateral account deposit addresses
      * Retrieves all registered deposit addresses for the specified collateral account. Can be filtered by asset ID or cryptocurrency symbol to get addresses for specific assets.
-     *
+ * 
      * @returns CollateralDepositAddresses List of collateral deposit addresses
      * @throws ApiError
      */
     public getCollateralDepositAddresses({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-        assetId,
-        cryptocurrencySymbol,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-        /**
-         * ID of one of the assets returned in get-additional-assets. Limits the response to one. Cannot be used in conjunction with cryptocurrencySymbol or nationalCurrencyCode
-         */
-        assetId?: string,
-        /**
-         * Limits the response to one asset with the provided CryptocurrencySymbol Cannot be used in conjunction with nationalCurrencyCode or assetId
-         */
-        cryptocurrencySymbol?: CryptocurrencySymbol,
-    }): CancelablePromise<CollateralDepositAddresses> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+limit = 10,
+startingAfter,
+endingBefore,
+assetId,
+cryptocurrencySymbol,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * Maximum number of returned items.
+ */
+limit?: number,
+/**
+ * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
+ */
+startingAfter?: string,
+/**
+ * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
+ */
+endingBefore?: string,
+/**
+ * ID of one of the assets returned in get-additional-assets. Limits the response to one. Cannot be used in conjunction with cryptocurrencySymbol or nationalCurrencyCode
+ */
+assetId?: string,
+/**
+ * Limits the response to one asset with the provided CryptocurrencySymbol Cannot be used in conjunction with nationalCurrencyCode or assetId
+ */
+cryptocurrencySymbol?: CryptocurrencySymbol,
+}): CancelablePromise<CollateralDepositAddresses> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/addresses',
@@ -359,54 +359,54 @@ export class CollateralService {
     /**
      * Get details of a specific deposit address in a collateral account.
      * Retrieves detailed information about a specific deposit address within a collateral account, including the address details and recovery account configuration.
-     *
+ * 
      * @returns CollateralAssetAddress Specific collateral deposit address
      * @throws ApiError
      */
     public getCollateralDepositAddressesDetails({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        id,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Entity unique identifier.
-         */
-        id: string,
-    }): CancelablePromise<CollateralAssetAddress> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+id,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * Entity unique identifier.
+ */
+id: string,
+}): CancelablePromise<CollateralAssetAddress> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/addresses/{id}',
@@ -432,54 +432,54 @@ export class CollateralService {
     /**
      * Preflight check before initiating a collateral deposit
      * Initiates a preflight request for a new collateral deposit transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
-     *
+ * 
      * @returns CollateralDepositTransactionIntentResponse Successful Operation
      * @throws ApiError
      */
     public initiateCollateralDepositTransactionIntent({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        requestBody,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Collateral deposit transaction preflight request details
-         */
-        requestBody: CollateralDepositTransactionIntentRequest,
-    }): CancelablePromise<CollateralDepositTransactionIntentResponse> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+requestBody,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * Collateral deposit transaction preflight request details
+ */
+requestBody: CollateralDepositTransactionIntentRequest,
+}): CancelablePromise<CollateralDepositTransactionIntentResponse> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/collateral/{collateralId}/intents/deposits',
@@ -509,54 +509,54 @@ export class CollateralService {
     /**
      * Register a collateral deposit transaction
      * Notifies the provider to have start listening to a new collateral deposit transaction. The provider is expected to listen to this address and credit the account accordingly
-     *
+ * 
      * @returns CollateralDepositTransactionResponse Successful Operation
      * @throws ApiError
      */
     public registerCollateralDepositTransaction({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        requestBody,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Collateral deposit transaction details
-         */
-        requestBody: CollateralDepositTransactionRequest,
-    }): CancelablePromise<CollateralDepositTransactionResponse> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+requestBody,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * Collateral deposit transaction details
+ */
+requestBody: CollateralDepositTransactionRequest,
+}): CancelablePromise<CollateralDepositTransactionResponse> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/collateral/{collateralId}/deposits',
@@ -586,64 +586,64 @@ export class CollateralService {
     /**
      * Get list of collateral account deposit transactions sorted by creation time
      * Retrieves a paginated list of all deposit transactions for the specified collateral account. Transactions are sorted by creation time and include status information and approval details.
-     *
+ * 
      * @returns CollateralDepositTransactionsResponse List of collateral deposit transactions
      * @throws ApiError
      */
     public getCollateralDepositTransactions({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<CollateralDepositTransactionsResponse> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+limit = 10,
+startingAfter,
+endingBefore,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * Maximum number of returned items.
+ */
+limit?: number,
+/**
+ * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
+ */
+startingAfter?: string,
+/**
+ * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
+ */
+endingBefore?: string,
+}): CancelablePromise<CollateralDepositTransactionsResponse> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/deposits',
@@ -673,54 +673,54 @@ export class CollateralService {
     /**
      * Get a collateral account deposit transaction details
      * Retrieves detailed information about a specific collateral deposit transaction, including transaction status, approval details, and processing information.
-     *
+ * 
      * @returns CollateralDepositTransactionResponse A collateral deposit transaction details
      * @throws ApiError
      */
     public getCollateralDepositTransactionDetails({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        collateralTxId,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * A Fireblocks' ID of a collateral transaction
-         */
-        collateralTxId: string,
-    }): CancelablePromise<CollateralDepositTransactionResponse> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+collateralTxId,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * A Fireblocks' ID of a collateral transaction
+ */
+collateralTxId: string,
+}): CancelablePromise<CollateralDepositTransactionResponse> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/deposits/{collateralTxId}',
@@ -746,54 +746,54 @@ export class CollateralService {
     /**
      * Preflight check before initiating a collateral withdrawal
      * Initiates a preflight request for a new collateral withdrawal transaction. The provider is notified, and Fireblocks waits for their approval before proceeding.
-     *
+ * 
      * @returns CollateralWithdrawalTransactionIntentResponse Successful Operation
      * @throws ApiError
      */
     public initiateCollateralWithdrawalTransactionIntent({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        requestBody,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Collateral withdrawal transaction preflight request details
-         */
-        requestBody: CollateralWithdrawalTransactionIntentRequest,
-    }): CancelablePromise<CollateralWithdrawalTransactionIntentResponse> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+requestBody,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * Collateral withdrawal transaction preflight request details
+ */
+requestBody: CollateralWithdrawalTransactionIntentRequest,
+}): CancelablePromise<CollateralWithdrawalTransactionIntentResponse> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/collateral/{collateralId}/intents/withdrawals',
@@ -823,54 +823,54 @@ export class CollateralService {
     /**
      * Notify of a withdrawal from a collateral account
      * Initiate a withdrawal from the customers collateral account.  The withdrawal has been confirmed by the provider and signed by the customer. The amount can be reduced from the customers available balance in the provider main account based on the withdrawal amount.
-     *
+ * 
      * @returns CollateralWithdrawalTransaction Successful Operation
      * @throws ApiError
      */
     public initiateCollateralWithdrawalTransaction({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        requestBody,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Collateral withdrawal transaction details
-         */
-        requestBody: CollateralWithdrawalTransactionRequest,
-    }): CancelablePromise<CollateralWithdrawalTransaction> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+requestBody,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * Collateral withdrawal transaction details
+ */
+requestBody: CollateralWithdrawalTransactionRequest,
+}): CancelablePromise<CollateralWithdrawalTransaction> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/collateral/{collateralId}/withdrawals',
@@ -900,64 +900,64 @@ export class CollateralService {
     /**
      * Get list of collateral withdrawal transactions sorted by creation time
      * Retrieves a paginated list of all withdrawal transactions for the specified collateral account. Transactions are sorted by creation time and include status, approval details, and settlement information.
-     *
+ * 
      * @returns CollateralWithdrawalTransactions List of collateral withdrawal transactions
      * @throws ApiError
      */
     public getCollateralWithdrawalTransactions({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<CollateralWithdrawalTransactions> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+limit = 10,
+startingAfter,
+endingBefore,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * Maximum number of returned items.
+ */
+limit?: number,
+/**
+ * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
+ */
+startingAfter?: string,
+/**
+ * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
+ */
+endingBefore?: string,
+}): CancelablePromise<CollateralWithdrawalTransactions> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/withdrawals',
@@ -987,54 +987,54 @@ export class CollateralService {
     /**
      * Get a collateral withdrawal transaction details
      * Retrieves detailed information about a specific collateral withdrawal transaction, including transaction status, approval details, settlement information, and rejection reasons if applicable.
-     *
+ * 
      * @returns CollateralWithdrawalTransaction A collateral withdrawal transaction details
      * @throws ApiError
      */
     public getCollateralWithdrawalTransactionDetails({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        collateralTxId,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * A Fireblocks' ID of a collateral transaction
-         */
-        collateralTxId: string,
-    }): CancelablePromise<CollateralWithdrawalTransaction> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+collateralTxId,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * A Fireblocks' ID of a collateral transaction
+ */
+collateralTxId: string,
+}): CancelablePromise<CollateralWithdrawalTransaction> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/withdrawals/{collateralTxId}',
@@ -1064,49 +1064,49 @@ export class CollateralService {
      * @throws ApiError
      */
     public initiateSettlement({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        requestBody,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * Collateral withdrawal transaction details
-         */
-        requestBody: SettlementRequest,
-    }): CancelablePromise<SettlementInstructions> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+requestBody,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * Collateral withdrawal transaction details
+ */
+requestBody: SettlementRequest,
+}): CancelablePromise<SettlementInstructions> {
         return this.httpRequest.request({
             method: 'POST',
             url: '/accounts/{accountId}/collateral/{collateralId}/settlement',
@@ -1136,49 +1136,49 @@ export class CollateralService {
     /**
      * Get current Instructions for settlement
      * Gets a list of required transactions to finalize the settlement
-     *
+ * 
      * @returns SettlementInstructions Settlement instructions
      * @throws ApiError
      */
     public getCurrentSettlementInstructions({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-    }): CancelablePromise<SettlementInstructions> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+}): CancelablePromise<SettlementInstructions> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/settlement',
@@ -1203,54 +1203,54 @@ export class CollateralService {
     /**
      * Get a settlement details
      * Retrieves detailed information about a specific settlement state for a collateral account, including withdrawal and deposit transaction details, settlement status, and completion information.
-     *
+ * 
      * @returns SettlementState A specific settlement details
      * @throws ApiError
      */
     public getSettlementDetails({
-        xFbPlatformSignature,
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        accountId,
-        collateralId,
-        settlementVersion,
-    }: {
-        /**
-         * Authentication signature of Fireblocks as the originator of the request
-         */
-        xFbPlatformSignature: string,
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Sub-account identifier.
-         */
-        accountId: string,
-        /**
-         * ID of a collateral account
-         */
-        collateralId: string,
-        /**
-         * A provider version ID of a settlement state
-         */
-        settlementVersion: string,
-    }): CancelablePromise<SettlementState> {
+xFbPlatformSignature,
+xFbapiKey,
+xFbapiNonce,
+xFbapiSignature,
+xFbapiTimestamp,
+accountId,
+collateralId,
+settlementVersion,
+}: {
+/**
+ * Authentication signature of Fireblocks as the originator of the request
+ */
+xFbPlatformSignature: string,
+/**
+ * API authentication key.
+ */
+xFbapiKey: string,
+/**
+ * Unique identifier of the request.
+ */
+xFbapiNonce: string,
+/**
+ * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
+ * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+ */
+xFbapiSignature: string,
+/**
+ * Request timestamp in milliseconds since Unix epoch.
+ */
+xFbapiTimestamp: number,
+/**
+ * Sub-account identifier.
+ */
+accountId: string,
+/**
+ * ID of a collateral account
+ */
+collateralId: string,
+/**
+ * A provider version ID of a settlement state
+ */
+settlementVersion: string,
+}): CancelablePromise<SettlementState> {
         return this.httpRequest.request({
             method: 'GET',
             url: '/accounts/{accountId}/collateral/{collateralId}/settlements/{settlementVersion}',

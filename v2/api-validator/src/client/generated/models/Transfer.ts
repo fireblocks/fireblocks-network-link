@@ -10,4 +10,3 @@ import type { PeerAccountTransfer } from './PeerAccountTransfer';
 import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction';
 
 export type Transfer = (PeerAccountTransfer | InternalTransfer | PublicBlockchainTransaction | IbanTransfer | OtherFiatTransfer);
-

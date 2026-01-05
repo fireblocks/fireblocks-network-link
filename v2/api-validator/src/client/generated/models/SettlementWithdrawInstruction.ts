@@ -11,4 +11,3 @@ export type SettlementWithdrawInstruction = {
     fee?: PositiveAmount;
     sourceAddress: PublicBlockchainAddress;
 };
-

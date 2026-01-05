@@ -10,4 +10,3 @@ export type PrefundedOffRampCapability = {
     from: PrefundedBlockchainCapability;
     to: FiatCapability;
 };
-

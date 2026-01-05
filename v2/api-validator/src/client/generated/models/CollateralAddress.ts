@@ -12,4 +12,3 @@ export type CollateralAddress = {
      */
     recoveryAccountId: string;
 };
-

@@ -10,10 +10,9 @@ import type { RoutingNumber } from './RoutingNumber';
 import type { WireCapability } from './WireCapability';
 
 export type WireAddress = (WireCapability & {
-    accountHolder: AccountHolderDetails;
-    bankName?: string;
-    bankAccountNumber: BankAccountNumber;
-    routingNumber: RoutingNumber;
-    bankAddress?: PostalAddress;
+accountHolder: AccountHolderDetails;
+bankName?: string;
+bankAccountNumber: BankAccountNumber;
+routingNumber: RoutingNumber;
+bankAddress?: PostalAddress;
 });
-

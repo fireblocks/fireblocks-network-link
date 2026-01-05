@@ -7,6 +7,5 @@ import type { MobileMoneyAddress } from './MobileMoneyAddress';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type MobileMoneyTransferDestination = (MobileMoneyAddress & {
-    amount: PositiveAmount;
+amount: PositiveAmount;
 });
-

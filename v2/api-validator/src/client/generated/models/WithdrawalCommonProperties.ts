@@ -23,4 +23,3 @@ export type WithdrawalCommonProperties = {
     finalizedAt?: string;
     events?: Array<WithdrawalEvent>;
 };
-

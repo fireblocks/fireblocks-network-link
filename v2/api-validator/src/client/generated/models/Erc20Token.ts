@@ -7,9 +7,9 @@ import type { AssetCommonProperties } from './AssetCommonProperties';
 import type { Blockchain } from './Blockchain';
 
 export type Erc20Token = (AssetCommonProperties & {
-    type: Erc20Token.type;
-    blockchain: Blockchain;
-    contractAddress: string;
+type: Erc20Token.type;
+blockchain: Blockchain;
+contractAddress: string;
 });
 
 export namespace Erc20Token {
@@ -20,4 +20,3 @@ export namespace Erc20Token {
 
 
 }
-

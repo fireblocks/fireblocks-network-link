@@ -6,6 +6,5 @@
 import type { WireTransferDestination } from './WireTransferDestination';
 
 export type WireTransfer = (WireTransferDestination & {
-    referenceId?: string;
+referenceId?: string;
 });
-

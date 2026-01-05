@@ -7,4 +7,3 @@ import type { IbanTransfer } from './IbanTransfer';
 import type { OtherFiatTransfer } from './OtherFiatTransfer';
 
 export type FiatTransfer = (IbanTransfer | OtherFiatTransfer);
-

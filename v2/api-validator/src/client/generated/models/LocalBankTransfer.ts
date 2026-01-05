@@ -6,6 +6,5 @@
 import type { LocalBankTransferDestination } from './LocalBankTransferDestination';
 
 export type LocalBankTransfer = (LocalBankTransferDestination & {
-    referenceId?: string;
+referenceId?: string;
 });
-

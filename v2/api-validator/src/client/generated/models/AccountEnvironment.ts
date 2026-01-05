@@ -5,7 +5,7 @@
 
 /**
  * AccountEnvironment field describes which environment is being run at the moment
- *
+ * 
  */
 export enum AccountEnvironment {
     PROD = 'prod',

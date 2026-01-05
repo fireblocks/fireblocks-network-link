@@ -9,6 +9,5 @@ import type { CommonRamp } from './CommonRamp';
 import type { PrefundedBridgeProperties } from './PrefundedBridgeProperties';
 
 export type Bridge = (CommonRamp & (BridgePropertiesWithPaymentInstructions | PrefundedBridgeProperties) & {
-    receipt?: BridgeReceipt;
+receipt?: BridgeReceipt;
 });
-

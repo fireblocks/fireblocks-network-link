@@ -6,6 +6,5 @@
 import type { EuropeanSEPATransferDestination } from './EuropeanSEPATransferDestination';
 
 export type EuropeanSEPATransfer = (EuropeanSEPATransferDestination & {
-    referenceId?: string;
+referenceId?: string;
 });
-

@@ -8,7 +8,6 @@ import type { PeerAccountTransferDestination } from './PeerAccountTransferDestin
 import type { WithdrawalRequestCommonProperties } from './WithdrawalRequestCommonProperties';
 
 export type PeerAccountWithdrawalRequest = (WithdrawalRequestCommonProperties & {
-    balanceAsset: AssetReference;
-    destination: PeerAccountTransferDestination;
+balanceAsset: AssetReference;
+destination: PeerAccountTransferDestination;
 });
-

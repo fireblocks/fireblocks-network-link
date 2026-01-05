@@ -6,6 +6,5 @@
 import type { MobileMoneyTransferDestination } from './MobileMoneyTransferDestination';
 
 export type MobileMoneyTransfer = (MobileMoneyTransferDestination & {
-    referenceId?: string;
+referenceId?: string;
 });
-

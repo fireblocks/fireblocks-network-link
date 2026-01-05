@@ -8,4 +8,3 @@ import type { OffRamp } from './OffRamp';
 import type { OnRamp } from './OnRamp';
 
 export type Ramp = (OnRamp | OffRamp | Bridge);
-

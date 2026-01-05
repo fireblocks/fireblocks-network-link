@@ -7,6 +7,5 @@ import type { AchAddress } from './AchAddress';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type AchTransferDestination = (AchAddress & {
-    amount: PositiveAmount;
+amount: PositiveAmount;
 });
-

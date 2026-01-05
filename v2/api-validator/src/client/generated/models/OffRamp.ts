@@ -9,6 +9,5 @@ import type { OffRampReceipt } from './OffRampReceipt';
 import type { PrefundedOffRampProperties } from './PrefundedOffRampProperties';
 
 export type OffRamp = (CommonRamp & (OffRampPropertiesWithPaymentInstructions | PrefundedOffRampProperties) & {
-    receipt?: OffRampReceipt;
+receipt?: OffRampReceipt;
 });
-

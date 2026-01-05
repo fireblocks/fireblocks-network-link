@@ -10,4 +10,3 @@ export type QuoteCapability = {
     fromAsset: AssetReference;
     toAsset: AssetReference;
 };
-

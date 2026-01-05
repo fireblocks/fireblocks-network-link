@@ -11,4 +11,3 @@ export type SettlementInstructions = {
     withdrawInstructions: Array<SettlementWithdrawInstruction>;
     depositInstructions: Array<SettlementDepositInstruction>;
 };
-

@@ -7,6 +7,5 @@ import type { PositiveAmount } from './PositiveAmount';
 import type { SpeiAddress } from './SpeiAddress';
 
 export type SpeiTransferDestination = (SpeiAddress & {
-    amount: PositiveAmount;
+amount: PositiveAmount;
 });
-

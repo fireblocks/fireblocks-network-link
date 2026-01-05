@@ -8,7 +8,7 @@ import type { PersonaIdentificationInfo } from './PersonaIdentificationInfo';
 
 /**
  * An object that ensures the inclusion of either the originator or  beneficiary details for transactions.
- *
+ * 
  */
 export type ParticipantsIdentification = {
     /**
@@ -20,4 +20,3 @@ export type ParticipantsIdentification = {
      */
     beneficiary?: (PersonaIdentificationInfo | BusinessIdentificationInfo);
 };
-

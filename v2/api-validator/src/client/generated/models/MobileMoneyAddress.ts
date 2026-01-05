@@ -8,20 +8,20 @@ import type { MobileMoneyCapability } from './MobileMoneyCapability';
 import type { MobilePhoneNumber } from './MobilePhoneNumber';
 
 export type MobileMoneyAddress = (MobileMoneyCapability & {
-    accountHolder: AccountHolderDetails;
-    mobilePhoneNumber: MobilePhoneNumber;
-    /**
-     * Mobile money provider
-     */
-    provider: MobileMoneyAddress.provider;
-    /**
-     * Beneficiary document identification (may be required)
-     */
-    beneficiaryDocumentId?: string;
-    /**
-     * Relationship to beneficiary for AML purposes
-     */
-    beneficiaryRelationship?: string;
+accountHolder: AccountHolderDetails;
+mobilePhoneNumber: MobilePhoneNumber;
+/**
+ * Mobile money provider
+ */
+provider: MobileMoneyAddress.provider;
+/**
+ * Beneficiary document identification (may be required)
+ */
+beneficiaryDocumentId?: string;
+/**
+ * Relationship to beneficiary for AML purposes
+ */
+beneficiaryRelationship?: string;
 });
 
 export namespace MobileMoneyAddress {
@@ -39,4 +39,3 @@ export namespace MobileMoneyAddress {
 
 
 }
-

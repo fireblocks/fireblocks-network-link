@@ -7,6 +7,5 @@ import type { PixAddress } from './PixAddress';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type PixTransferDestination = (PixAddress & {
-    amount: PositiveAmount;
+amount: PositiveAmount;
 });
-

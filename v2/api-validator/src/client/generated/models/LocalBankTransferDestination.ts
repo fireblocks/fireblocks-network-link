@@ -7,6 +7,5 @@ import type { LocalBankTransferAddress } from './LocalBankTransferAddress';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type LocalBankTransferDestination = (LocalBankTransferAddress & {
-    amount: PositiveAmount;
+amount: PositiveAmount;
 });
-

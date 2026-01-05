@@ -8,9 +8,8 @@ import type { CollateralLinkStatus } from './CollateralLinkStatus';
 import type { CryptocurrencyReference } from './CryptocurrencyReference';
 
 export type CollateralAccountLink = ({
-    id: string;
-    status: CollateralLinkStatus;
-    eligibleCollateralAssets: Array<CryptocurrencyReference>;
-    rejectionReason?: string;
+id: string;
+status: CollateralLinkStatus;
+eligibleCollateralAssets: Array<CryptocurrencyReference>;
+rejectionReason?: string;
 } & CollateralAccount);
-

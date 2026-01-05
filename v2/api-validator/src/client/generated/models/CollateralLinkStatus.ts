@@ -8,7 +8,7 @@
  * - **Linked** - The provider account is linked to a collateral account
  * - **Disabled** - The link is disabled at the moment, but can be re-enabled
  * - **Failed** - The link creation failed
- *
+ * 
  */
 export enum CollateralLinkStatus {
     ELIGIBLE = 'Eligible',

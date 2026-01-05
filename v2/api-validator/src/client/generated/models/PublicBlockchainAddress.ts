@@ -6,7 +6,6 @@
 import type { PublicBlockchainCapability } from './PublicBlockchainCapability';
 
 export type PublicBlockchainAddress = (PublicBlockchainCapability & {
-    address: string;
-    addressTag?: string;
+address: string;
+addressTag?: string;
 });
-

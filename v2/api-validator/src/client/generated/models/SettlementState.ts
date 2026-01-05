@@ -12,11 +12,11 @@ export type SettlementState = {
     depositTransactions?: Array<SettlementDepositTransaction>;
     /**
      * - **Invalid** - The settlement state is invalid and cannot be processed, usually due to balance changes
-     * - **Pending** - The settlement is pending and has not started yet
-     * - **InProgress** - The settlement is in progress
-     * - **Completed** - The settlement has been completed successfully
-     * - **Failed** - The settlement has failed
-     *
+ * - **Pending** - The settlement is pending and has not started yet
+ * - **InProgress** - The settlement is in progress
+ * - **Completed** - The settlement has been completed successfully
+ * - **Failed** - The settlement has failed
+ * 
      */
     status: SettlementState.status;
 };
@@ -25,11 +25,11 @@ export namespace SettlementState {
 
     /**
      * - **Invalid** - The settlement state is invalid and cannot be processed, usually due to balance changes
-     * - **Pending** - The settlement is pending and has not started yet
-     * - **InProgress** - The settlement is in progress
-     * - **Completed** - The settlement has been completed successfully
-     * - **Failed** - The settlement has failed
-     *
+ * - **Pending** - The settlement is pending and has not started yet
+ * - **InProgress** - The settlement is in progress
+ * - **Completed** - The settlement has been completed successfully
+ * - **Failed** - The settlement has failed
+ * 
      */
     export enum status {
         INVALID = 'Invalid',
@@ -41,4 +41,3 @@ export namespace SettlementState {
 
 
 }
-

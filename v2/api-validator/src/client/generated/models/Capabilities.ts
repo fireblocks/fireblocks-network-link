@@ -12,4 +12,3 @@ export type Capabilities = {
     version: string;
     components: ApiComponents;
 };
-

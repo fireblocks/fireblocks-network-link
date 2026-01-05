@@ -9,11 +9,10 @@ import type { CryptocurrencyReference } from './CryptocurrencyReference';
 import type { PositiveAmount } from './PositiveAmount';
 
 export type CollateralDepositTransactionIntentResponse = {
-    id: string;
-    status: CollateralTransactionIntentStatus;
-    asset: CryptocurrencyReference;
-    amount: PositiveAmount;
-    approvalRequest: ApprovalRequest;
-    rejectionReason?: string;
+id: string;
+status: CollateralTransactionIntentStatus;
+asset: CryptocurrencyReference;
+amount: PositiveAmount;
+approvalRequest: ApprovalRequest;
+rejectionReason?: string;
 };
-

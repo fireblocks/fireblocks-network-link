@@ -7,6 +7,5 @@ import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction'
 import type { RampFees } from './RampFees';
 
 export type OnRampReceipt = (PublicBlockchainTransaction & {
-    actualFees?: RampFees;
+actualFees?: RampFees;
 });
-

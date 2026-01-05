@@ -10,4 +10,3 @@ export type PrefundedBridgeCapability = {
     from: PrefundedBlockchainCapability;
     to: PublicBlockchainCapability;
 };
-
