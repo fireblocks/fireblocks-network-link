@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { InteracTransferDestination } from './InteracTransferDestination';
+import type { InteracDestination } from './InteracDestination';
 
-export type InteracTransfer = (InteracTransferDestination & {
+export type InteracTransfer = (InteracDestination & {
     referenceId?: string;
 });
 

@@ -5,12 +5,12 @@
 
 import type { NationalCurrency } from './NationalCurrency';
 
-export type InteracTransferCapability = {
+export type InteracCapability = {
     asset: NationalCurrency;
-    transferMethod: InteracTransferCapability.transferMethod;
+    transferMethod: InteracCapability.transferMethod;
 };
 
-export namespace InteracTransferCapability {
+export namespace InteracCapability {
 
     export enum transferMethod {
         INTERAC = 'Interac',

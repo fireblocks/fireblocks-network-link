@@ -4,10 +4,10 @@
 /* eslint-disable */
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
-import type { InteracTransferCapability } from './InteracTransferCapability';
+import type { InteracCapability } from './InteracCapability';
 import type { InteracTransferDetails } from './InteracTransferDetails';
 
-export type InteracTransferAddress = (InteracTransferCapability & {
+export type InteracAddress = (InteracCapability & {
     accountHolder: AccountHolderDetails;
     interacTransfer: InteracTransferDetails;
 });

@@ -3968,7 +3968,7 @@ components:
           properties:
             referenceId:
               type: string
-    InteracTransferCapability:
+    InteracCapability:
       type: object
       required:
         - asset
@@ -4005,14 +4005,16 @@ components:
         autoDeposit:
           type: boolean
         securityQuestion:
+          description: if autoDeposit is false, this is required
           type: string
         securityAnswer:
           type: string
+          description: if autoDeposit is false, this is required
         message:
           type: string
-    InteracTransferAddress:
+    InteracAddress:
       allOf:
-        - $ref: '#/components/schemas/InteracTransferCapability'
+        - $ref: '#/components/schemas/InteracCapability'
         - type: object
           required:
             - accountHolder
@@ -4022,9 +4024,9 @@ components:
               $ref: '#/components/schemas/AccountHolderDetails'
             interacTransfer:
               $ref: '#/components/schemas/InteracTransferDetails'
-    InteracTransferDestination:
+    InteracDestination:
       allOf:
-        - $ref: '#/components/schemas/InteracTransferAddress'
+        - $ref: '#/components/schemas/InteracAddress'
         - type: object
           required:
             - amount
@@ -4033,7 +4035,7 @@ components:
               $ref: '#/components/schemas/PositiveAmount'
     InteracTransfer:
       allOf:
-        - $ref: '#/components/schemas/InteracTransferDestination'
+        - $ref: '#/components/schemas/InteracDestination'
         - type: object
           properties:
             referenceId:
@@ -4071,7 +4073,7 @@ components:
         - $ref: '#/components/schemas/LocalBankTransferCapability'
         - $ref: '#/components/schemas/MobileMoneyCapability'
         - $ref: '#/components/schemas/PayIdCapability'
-        - $ref: '#/components/schemas/InteracTransferCapability'
+        - $ref: '#/components/schemas/InteracCapability'
     PublicBlockchainTransactionDestination:
       type: object
       allOf:
@@ -4219,7 +4221,7 @@ components:
         - $ref: '#/components/schemas/LocalBankTransferAddress'
         - $ref: '#/components/schemas/MobileMoneyAddress'
         - $ref: '#/components/schemas/PayIdAddress'
-        - $ref: '#/components/schemas/InteracTransferAddress'
+        - $ref: '#/components/schemas/InteracAddress'
     DepositAddressStatus:
       enum:
         - enabled

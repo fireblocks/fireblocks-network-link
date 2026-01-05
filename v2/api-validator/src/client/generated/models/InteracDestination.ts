@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { InteracTransferAddress } from './InteracTransferAddress';
+import type { InteracAddress } from './InteracAddress';
 import type { PositiveAmount } from './PositiveAmount';
 
-export type InteracTransferDestination = (InteracTransferAddress & {
+export type InteracDestination = (InteracAddress & {
     amount: PositiveAmount;
 });
 
