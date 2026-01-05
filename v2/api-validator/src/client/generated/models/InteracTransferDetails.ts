@@ -6,7 +6,7 @@
 import type { RecipientTransfer } from './RecipientTransfer';
 
 export type InteracTransferDetails = {
-    recipientTransfer?: RecipientTransfer;
+    recipientTransfer: RecipientTransfer;
     autoDeposit: boolean;
     securityQuestion?: string;
     securityAnswer?: string;

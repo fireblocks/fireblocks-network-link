@@ -9,6 +9,6 @@ import type { InteracTransferDetails } from './InteracTransferDetails';
 
 export type InteracTransferAddress = (InteracTransferCapability & {
     accountHolder: AccountHolderDetails;
-    interacTransfer?: InteracTransferDetails;
+    interacTransfer: InteracTransferDetails;
 });
 

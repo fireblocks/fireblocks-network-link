@@ -4,11 +4,11 @@
 /* eslint-disable */
 
 export type PayId = {
-    type?: PayId.type;
+    type: PayId.type;
     /**
      * PayId value
      */
-    value?: string;
+    value: string;
     /**
      * BSB value
      */

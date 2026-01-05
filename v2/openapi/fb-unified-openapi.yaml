@@ -3922,7 +3922,8 @@ components:
     PayId:
       type: object
       required:
-        - payId
+        - type
+        - value
       properties:
         type:
           type: string
@@ -3997,6 +3998,7 @@ components:
       type: object
       required:
         - autoDeposit
+        - recipientTransfer
       properties:
         recipientTransfer:
           $ref: '#/components/schemas/RecipientTransfer'
@@ -4014,6 +4016,7 @@ components:
         - type: object
           required:
             - accountHolder
+            - interacTransfer
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
