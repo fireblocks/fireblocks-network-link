@@ -14,8 +14,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: 
-    $ref: README.md
+  description: Placeholder for automatic documentation injection from README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -39,6 +38,8 @@ tags:
     description: Transfers to a sub account in the same account.
   - name: collateral
     description: Collateral management operations.
+  - name: collateralNotifications
+    description: Webhook notifications sent by Fireblocks to exchanges for collateral events.
   - name: ramps
     description: |-
       Beta Feature – Limited Access.
@@ -2044,6 +2045,54 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/ramps/requirements/{quoteId}:
+    get:
+      operationId: getRampCreationRequirements
+      summary: Get requirements for creating a new ramp
+      description: |
+        Retrieves the requirements for creating a new ramp, including any necessary certificates (public keys) for encrypting PII data.
+      tags:
+        - ramps
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/QuoteIdPathParam'
+      responses:
+        '200':
+          description: Ramp creation requirements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RampRequirements'
+              examples:
+                default:
+                  value:
+                    piiEncryption:
+                      certificate: |-
+                        -----BEGIN CERTIFICATE-----
+                        MIIDXTCCAkSgAwIBAgIJAJ...
+                        -----END CERTIFICATE-----
+                      keyId: key-v1-2026
+                      requiredPIIFields:
+                        - originator.fullName
+                        - originator.dateOfBirth
+                        - beneficiary.fullName
+                        - beneficiary.accountNumber
+                      supportedJWEAlgorithms:
+                        - RSA-OAEP-256
+                      supportedJWEEncryptions:
+                        - A128GCM
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/ramps/{id}:
     get:
       operationId: getRampDetails
@@ -2059,6 +2108,38 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/EntityIdPathParam'
+      responses:
+        '200':
+          $ref: '#/components/responses/GetRampDetailsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+    patch:
+      operationId: submitSignedRampPaymentPermit
+      summary: Submit signed transaction for a ramp
+      description: |
+        Submits the signed transaction string back to the provider for broadcasting. This is used in flows where the user is the transaction originator.
+      tags:
+        - ramps
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+      requestBody:
+        description: Signed transaction details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitSignedRampPaymentPermitRequest'
       responses:
         '200':
           $ref: '#/components/responses/GetRampDetailsResponse'
@@ -2216,6 +2297,13 @@ components:
       description: A provider version ID of a settlement state
       in: path
       required: true
+      schema:
+        type: string
+    QuoteIdPathParam:
+      name: quoteId
+      in: path
+      required: true
+      description: The ID of the quote for which requirements are needed.
       schema:
         type: string
   headers:
@@ -2388,6 +2476,71 @@ components:
                     fee:
                       amountType: FIXED
                       amount: '100.00'
+            offRampWithSigning:
+              summary: OffRamp with Signing Message
+              description: An off-ramp that returns an EIP-712 message to be signed by the user.
+              value:
+                id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
+                createdAt: '2021-09-01T12:00:00Z'
+                updatedAt: '2021-09-01T12:00:00Z'
+                status: Pending
+                amount: '1000.00'
+                type: OffRamp
+                expiresAt: '2021-09-01T12:00:00Z'
+                from:
+                  asset:
+                    assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                  transferMethod: PublicBlockchain
+                  address: '0x1234567890abcdef1234567890abcdef12345678'
+                to:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                  accountHolder:
+                    name: John Doe
+                paymentInstructions:
+                  type: EVM_EIP712
+                  message:
+                    types:
+                      EIP712Domain:
+                        - name: name
+                          type: string
+                        - name: version
+                          type: string
+                        - name: chainId
+                          type: uint256
+                        - name: verifyingContract
+                          type: address
+                      Permit:
+                        - name: owner
+                          type: address
+                        - name: spender
+                          type: address
+                        - name: value
+                          type: uint256
+                        - name: nonce
+                          type: uint256
+                        - name: deadline
+                          type: uint256
+                    primaryType: Permit
+                    domain:
+                      name: USD Coin
+                      version: '2'
+                      chainId: 1
+                      verifyingContract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+                    message:
+                      owner: '0x1234567890abcdef1234567890abcdef12345678'
+                      spender: '0xabcdef1234567890abcdef1234567890abcdef12'
+                      value: '1000000'
+                      nonce: 0
+                      deadline: 1736035200
+                estimatedFees:
+                  - feeType: ORDER
+                    feeAsset:
+                      nationalCurrencyCode: USD
+                    fee:
+                      amountType: FIXED
+                      amount: '10.00'
     GetRampDetailsResponse:
       description: Ramp details.
       content:
@@ -4262,6 +4415,11 @@ components:
           example: john.doe@example.com
         phone:
           $ref: '#/components/schemas/MobilePhoneNumber'
+    JweString:
+      type: string
+      description: JWE encrypted string (compact representation).
+      pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+      example: eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMTI4R0NNIn0.6JKB... (truncated)
     ParticipantsIdentification:
       type: object
       description: |
@@ -4272,11 +4430,13 @@ components:
           oneOf:
             - $ref: '#/components/schemas/PersonaIdentificationInfo'
             - $ref: '#/components/schemas/BusinessIdentificationInfo'
+            - $ref: '#/components/schemas/JweString'
         beneficiary:
           description: Information about the beneficiary of the transaction.
           oneOf:
             - $ref: '#/components/schemas/PersonaIdentificationInfo'
             - $ref: '#/components/schemas/BusinessIdentificationInfo'
+            - $ref: '#/components/schemas/JweString'
     WithdrawalRequestCommonProperties:
       type: object
       required:
@@ -5473,7 +5633,9 @@ components:
             - paymentInstructions
           properties:
             paymentInstructions:
-              $ref: '#/components/schemas/PublicBlockchainAddress'
+              oneOf:
+                - $ref: '#/components/schemas/PublicBlockchainAddress'
+                - $ref: '#/components/schemas/SigningMessage'
         - $ref: '#/components/schemas/OffRampProperties'
     BridgePropertiesWithPaymentInstructions:
       type: object
@@ -5569,6 +5731,156 @@ components:
           oneOf:
             - $ref: '#/components/schemas/Retry'
             - $ref: '#/components/schemas/Market'
+    SigningMessage:
+      oneOf:
+        - $ref: '#/components/schemas/EVM_EIP712SigningMessage'
+        - $ref: '#/components/schemas/SolanaSigningMessage'
+      discriminator:
+        propertyName: type
+    EVM_EIP712SigningMessage:
+      type: object
+      required:
+        - type
+        - message
+      properties:
+        type:
+          type: string
+          enum:
+            - EVM_EIP712
+        message:
+          $ref: '#/components/schemas/EIP712Message'
+      example:
+        type: EVM_EIP712
+        message:
+          types:
+            EIP712Domain:
+              - name: name
+                type: string
+              - name: version
+                type: string
+              - name: chainId
+                type: uint256
+              - name: verifyingContract
+                type: address
+            Permit:
+              - name: owner
+                type: address
+              - name: spender
+                type: address
+              - name: value
+                type: uint256
+              - name: nonce
+                type: uint256
+              - name: deadline
+                type: uint256
+          primaryType: Permit
+          domain:
+            name: USD Coin
+            version: '2'
+            chainId: 1
+            verifyingContract: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
+          message:
+            owner: '0x1234567890abcdef1234567890abcdef12345678'
+            spender: '0xabcdef1234567890abcdef1234567890abcdef12'
+            value: '1000000'
+            nonce: 0
+            deadline: 1736035200
+    SolanaSigningMessage:
+      type: object
+      required:
+        - type
+        - transaction
+      properties:
+        type:
+          type: string
+          enum:
+            - SOLANA_TRANSACTION
+        transaction:
+          type: string
+          description: Base64 encoded serialized Solana VersionedTransaction.
+      example:
+        type: SOLANA_TRANSACTION
+        transaction: AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAEDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==
+    EIP712Message:
+      type: object
+      description: EIP-712 message to be signed.
+      required:
+        - types
+        - primaryType
+        - domain
+        - message
+      properties:
+        types:
+          type: object
+          description: Type definitions for the message.
+        primaryType:
+          type: string
+          description: The primary type of the message.
+        domain:
+          type: object
+          description: The domain separator.
+        message:
+          type: object
+          description: The message content.
+    SubmitSignedRampPaymentPermitRequest:
+      type: object
+      required:
+        - signedTransaction
+      properties:
+        signedTransaction:
+          type: string
+          description: The signed transaction string to be broadcasted.
+      example:
+        signedTransaction: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1b'
+    RampRequirements:
+      type: object
+      required:
+        - piiEncryption
+      properties:
+        piiEncryption:
+          $ref: '#/components/schemas/PIIEncryptionRequirement'
+      example:
+        piiEncryption:
+          certificate: |-
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
+          keyId: key-123
+          requiredPIIFields:
+            - originator.fullName
+            - beneficiary.postalAddress
+          supportedJWEAlgorithms:
+            - RSA-OAEP-256
+          supportedJWEEncryptions:
+            - A128GCM
+    PIIEncryptionRequirement:
+      type: object
+      required:
+        - certificate
+        - keyId
+      properties:
+        certificate:
+          type: string
+          description: PEM encoded certificate (public key) for JWE encryption.
+        keyId:
+          type: string
+          description: Identifier for the public key.
+        requiredPIIFields:
+          type: array
+          items:
+            type: string
+          description: |
+            List of PII fields that must be included in the encrypted payload (e.g., "originator.fullName", "beneficiary.postalAddress").
+        supportedJWEAlgorithms:
+          type: array
+          items:
+            type: string
+          description: List of supported JWE algorithms (e.g., RSA-OAEP-256).
+        supportedJWEEncryptions:
+          type: array
+          items:
+            type: string
+          description: List of supported JWE encryption methods (e.g., A128GCM).
     Retry:
       type: object
       required:
