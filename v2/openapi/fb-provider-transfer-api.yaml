@@ -1247,6 +1247,144 @@ components:
             referenceId:
               type: string
    
+    PayIdCapability:
+      description: PayId Transfer Capability
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          enum: [ PayId ]
+
+    PayId:
+      type: object
+      required:
+        - type
+        - value
+      properties:
+        type:
+          type: string
+          enum:
+            - EMAIL
+        value:
+          type: string
+          description: PayId value
+          example: 'merchant@example.com'
+        bsb:
+          type: string
+          description: BSB value
+          example: '062000'
+        accountNumber:
+          type: string
+          description: Account number value
+
+    PayIdAddress:
+      allOf:
+        - $ref: '#/components/schemas/PayIdCapability'
+        - type: object
+          required:
+            - accountHolder
+            - payId
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            payId:
+              $ref: '#/components/schemas/PayId'
+
+    PayIdTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/PayIdAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/x-schemas/PositiveAmount'
+
+    PayIdTransfer:
+      allOf:
+        - $ref: '#/components/schemas/PayIdTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+
+    InteracCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          enum: [ Interac ]
+
+    RecipientTransfer:
+      type: object
+      required:
+        - type
+        - value
+      properties:
+        type:
+          type: string
+          enum:
+            - EMAIL
+            - PHONE
+        value:
+          type: string
+          description: Recipient value
+          example: 'merchant@example.com'
+
+    InteracTransferDetails:
+      type: object
+      required:
+        - autoDeposit
+        - recipientTransfer
+      properties:
+        recipientTransfer:
+          $ref: '#/components/schemas/RecipientTransfer'
+        autoDeposit:
+          type: boolean
+        securityQuestion:
+          description: if autoDeposit is false, this is required
+          type: string
+        securityAnswer:
+          type: string
+          description: if autoDeposit is false, this is required
+        message:
+          type: string
+
+    InteracAddress:
+      allOf:
+        - $ref: '#/components/schemas/InteracCapability'
+        - type: object
+          required:
+            - accountHolder
+            - interacTransfer
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            interacTransfer:
+              $ref: '#/components/schemas/InteracTransferDetails'
+    
+    InteracDestination:
+      allOf:
+        - $ref: '#/components/schemas/InteracAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/x-schemas/PositiveAmount'
+
+    InteracTransfer:
+      allOf:
+        - $ref: '#/components/schemas/InteracDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+
     OtherFiatTransfer:
       type: object
       description: >-
@@ -1277,6 +1415,8 @@ components:
         - $ref: '#/components/schemas/EuropeanSEPACapability'
         - $ref: '#/components/schemas/LocalBankTransferCapability'
         - $ref: '#/components/schemas/MobileMoneyCapability'
+        - $ref: '#/components/schemas/PayIdCapability'
+        - $ref: '#/components/schemas/InteracCapability'
 
     PublicBlockchainTransactionDestination:
       type: object
@@ -1433,6 +1573,8 @@ components:
         - $ref: '#/components/schemas/EuropeanSEPAAddress'
         - $ref: '#/components/schemas/LocalBankTransferAddress'
         - $ref: '#/components/schemas/MobileMoneyAddress'
+        - $ref: '#/components/schemas/PayIdAddress'
+        - $ref: '#/components/schemas/InteracAddress'
 
     DepositAddressStatus:
       enum:

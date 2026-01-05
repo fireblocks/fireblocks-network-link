@@ -97,6 +97,14 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransfer",
     }
+  PayIdTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PayIdTransfer",
+    }
+  InteracTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/InteracTransfer",
+    }
   PublicBlockchainTransaction:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
@@ -986,6 +994,8 @@ components:
         - $ref: "#/x-schemas/EuropeanSEPATransfer"
         - $ref: "#/x-schemas/LocalBankTransfer"
         - $ref: "#/x-schemas/MobileMoneyTransfer"
+        - $ref: "#/x-schemas/PayIdTransfer"
+        - $ref: "#/x-schemas/InteracTransfer"
 
     OrderQuote:
       type: object
