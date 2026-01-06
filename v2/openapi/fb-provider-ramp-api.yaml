@@ -312,6 +312,57 @@ paths:
         "5XX":
           $ref: "#/x-responses/ErrorResponse"
 
+  /ramps/subscriptions/rfi:
+    post:
+      summary: Subscribe to all ramp request for information events
+      description: >-
+        The subscription will cause a PUT request to the specified subscription
+        URL each time a ramp request for information is received.
+      tags: [ramps]
+      parameters:
+        - $ref: "#/x-header-params/X-FBAPI-KEY"
+        - $ref: "#/x-header-params/X-FBAPI-NONCE"
+        - $ref: "#/x-header-params/X-FBAPI-SIGNATURE"
+        - $ref: "#/x-header-params/X-FBAPI-TIMESTAMP"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Subscription"
+      responses:
+        "200":
+          description: Successful subscription.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+        "400":
+          $ref: "#/x-responses/BadRequestResponse"
+        "401":
+          $ref: "#/x-responses/UnauthorizedResponse"
+        "4XX":
+          $ref: "#/x-responses/ErrorResponse"
+        "5XX":
+          $ref: "#/x-responses/ErrorResponse"
+      callbacks:
+        onRampRequestForInformation:
+          "{$request.body#/subscriberUrl}":
+            put:
+              requestBody:
+                description: Details of the ramp request for information.
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/RampRequestForInformation"
+              responses:
+                "200":
+                  description: Successful update.
+                "4XX":
+                  $ref: "#/x-responses/ErrorResponse"
+                "5XX":
+                  $ref: "#/x-responses/ErrorResponse"
+
 components:
   parameters:
     QuoteIdPathParam:
@@ -1270,9 +1321,23 @@ components:
           supportedJWEEncryptions:
             - "A128GCM"
 
+    RampRequestForInformation:
+      allOf:
+        - type: object
+          required: [rampId]
+          properties:
+            rampId:
+              type: string
+        - $ref: "#/components/schemas/PIIEncryptionRequirement"
+
     PIIEncryptionRequirement:
       type: object
-      required: [certificate, keyId]
+      required:
+        - certificate
+        - keyId
+        - requiredPIIFields
+        - supportedJWEAlgorithms
+        - supportedJWEEncryptions
       properties:
         certificate:
           type: string
@@ -1324,3 +1389,21 @@ components:
           type: string
           enum:
             - Market
+
+    Subscription:
+      type: object
+      required:
+        - id
+        - subscriberUrl
+        - subscriptionPath
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        subscriberUrl:
+          description: URL that will be notified when the target event occurs.
+          type: string
+          format: uri
+        subscriptionPath:
+          description: Path on which the subscription was registered.
+          type: string
+          readOnly: true
+          example: /withdrawals/subscriptions/finalized
