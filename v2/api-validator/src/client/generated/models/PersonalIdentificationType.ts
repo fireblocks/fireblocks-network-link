@@ -9,7 +9,6 @@
 export enum PersonalIdentificationType {
     NIN_SLIP_CARD = 'NIN Slip/Card',
     BVN = 'BVN',
-    BVN_NIN = 'BVN_NIN',
     ID_CARD = 'ID Card',
     ID_BOOK = 'ID Book',
     NATIONAL_ID = 'National ID',

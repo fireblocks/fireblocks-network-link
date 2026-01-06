@@ -1530,7 +1530,6 @@ components:
       enum:
         - NIN Slip/Card
         - BVN
-        - BVN_NIN
         - ID Card
         - ID Book
         - National ID
