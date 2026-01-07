@@ -555,11 +555,12 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-    patch:
-      operationId: submitSignedRampPaymentPermit
-      summary: Submit signed transaction for a ramp
+  /accounts/{accountId}/ramps/{id}/payment:
+    post:
+      operationId: submitSignedPaymentPermit
+      summary: Submit signed payment permit for a ramp
       description: |
-        Submits the signed transaction string back to the provider for broadcasting. This is used in flows where the user is the transaction originator.
+        Submits the signed payment permit string back to the provider for broadcasting. This is used in flows where the user is the payment permit originator.
       tags:
         - ramps
       parameters:
@@ -570,12 +571,12 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/EntityIdPathParam'
       requestBody:
-        description: Signed transaction details
+        description: Signed payment permit details
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SubmitSignedRampPaymentPermitRequest'
+              $ref: '#/components/schemas/SubmitSignedPaymentPermitRequest'
       responses:
         '200':
           $ref: '#/components/responses/GetRampDetailsResponse'
@@ -587,10 +588,12 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /ramps/subscriptions/rfi:
+  /accounts/{accountId}/ramps/{id}/rfi:
     post:
-      summary: Subscribe to all ramp request for information events
-      description: The subscription will cause a PUT request to the specified subscription URL each time a ramp request for information is received.
+      operationId: submitRFI
+      summary: Submit RFI for a ramp
+      description: |
+        Submits the RFI details back to the provider for processing.
       tags:
         - ramps
       parameters:
@@ -598,19 +601,18 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/EntityIdPathParam'
       requestBody:
+        description: RFI details
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Subscription'
+              $ref: '#/components/schemas/ParticipantsIdentification'
       responses:
         '200':
-          description: Successful subscription.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Subscription'
+          $ref: '#/components/responses/GetRampDetailsResponse'
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -619,23 +621,6 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-      callbacks:
-        onRampRequestForInformation:
-          '{$request.body#/subscriberUrl}':
-            put:
-              requestBody:
-                description: Details of the ramp request for information.
-                content:
-                  application/json:
-                    schema:
-                      $ref: '#/components/schemas/RampRequestForInformation'
-              responses:
-                '200':
-                  description: Successful update.
-                4XX:
-                  $ref: '#/components/responses/ErrorResponse'
-                5XX:
-                  $ref: '#/components/responses/ErrorResponse'
 components:
   parameters:
     X-FB-PLATFORM-SIGNATURE:
@@ -2050,6 +2035,7 @@ components:
         - status
         - createdAt
         - expiresAt
+        - offeredBy
       properties:
         id:
           type: string
@@ -2079,6 +2065,20 @@ components:
           description: Quote expiration time.
           type: string
           format: date-time
+        offeredBy:
+          $ref: '#/components/schemas/QuoteProvider'
+    QuoteProvider:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: The ID of the provider that offered the quote.
+        name:
+          type: string
+          description: The name of the provider that offered the quote.
     AccountHolderDetails:
       type: object
       required:
@@ -3308,6 +3308,7 @@ components:
     RampStatus:
       enum:
         - Pending
+        - AdditionalInformationRequired
         - Processing
         - Canceled
         - Completed
@@ -3637,6 +3638,12 @@ components:
           description: Ramp expiration time.
           type: string
           format: date-time
+        rfis:
+          type: array
+          description: |
+            List of requests for information for the ramp. When the ramp is in AdditionalInformationRequired status, each RFI must be submitted via /accounts/{accountId}/ramps/{id}/rfi.
+          items:
+            $ref: '#/components/schemas/PIIEncryptionRequirement'
     OnRampPropertiesWithPaymentInstructions:
       type: object
       title: On Ramp
@@ -3851,16 +3858,16 @@ components:
         message:
           type: object
           description: The message content.
-    SubmitSignedRampPaymentPermitRequest:
+    SubmitSignedPaymentPermitRequest:
       type: object
       required:
-        - signedTransaction
+        - signedPaymentPermit
       properties:
-        signedTransaction:
+        signedPaymentPermit:
           type: string
-          description: The signed transaction string to be broadcasted.
+          description: The signed payment permit string to be broadcasted.
       example:
-        signedTransaction: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1b'
+        signedPaymentPermit: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1b'
     RampRequirements:
       type: object
       required:
@@ -3882,15 +3889,6 @@ components:
             - RSA-OAEP-256
           supportedJWEEncryptions:
             - A128GCM
-    RampRequestForInformation:
-      allOf:
-        - type: object
-          required:
-            - rampId
-          properties:
-            rampId:
-              type: string
-        - $ref: '#/components/schemas/PIIEncryptionRequirement'
     PIIEncryptionRequirement:
       type: object
       required:

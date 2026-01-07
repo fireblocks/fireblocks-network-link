@@ -266,6 +266,7 @@ components:
         - status
         - createdAt
         - expiresAt
+        - offeredBy
       properties:
         id:
           type: string
@@ -296,3 +297,16 @@ components:
           description: Quote expiration time.
           type: string
           format: date-time
+        offeredBy:
+          $ref: "#/components/schemas/QuoteProvider"
+
+    QuoteProvider:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          description: The ID of the provider that offered the quote.
+        name:
+          type: string
+          description: The name of the provider that offered the quote.
