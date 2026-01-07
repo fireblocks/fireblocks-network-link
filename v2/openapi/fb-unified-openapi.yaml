@@ -3387,6 +3387,8 @@ components:
           properties:
             id:
               type: string
+            hasRequirements:
+              type: boolean
         - oneOf:
             - $ref: '#/components/schemas/OnRampCapability'
             - $ref: '#/components/schemas/PrefundedOnRampCapability'
