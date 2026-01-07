@@ -39,6 +39,8 @@ tags:
     description: Transfers to a sub account in the same account.
   - name: collateral
     description: Collateral management operations.
+  - name: collateralNotifications
+    description: Webhook notifications sent by Fireblocks to exchanges for collateral events.
   - name: ramps
     description: |-
       Beta Feature – Limited Access.
