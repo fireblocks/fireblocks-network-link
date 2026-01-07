@@ -3,11 +3,11 @@ servers:
   - description: Local server
     url: http://0.0.0.0:8000
 info:
-  title: 'Fireblocks Provider Connectivity API v2'
+  title: "Fireblocks Provider Connectivity API v2"
   version: 0.4.1
   x-logo:
-    url: 'doc-assets/fireblocks-logo-lockup-network-navy.png'
-    altText: 'Fireblocks logo'
+    url: "doc-assets/fireblocks-logo-lockup-network-navy.png"
+    altText: "Fireblocks logo"
 
   contact:
     name: Fireblocks
@@ -17,18 +17,14 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 
-  description: >-
-    Placeholder for automatic documentation injection from README.md
+  description:
+    $ref: README.md
 
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
   - name: accounts
     description: User accounts management operations.
-  - name: balances
-    description: Balances management operations.
-  - name: rates
-    description: Rates operations.
 paths:
   /capabilities:
     get:
@@ -40,20 +36,20 @@ paths:
         The capabilities are specified as a map. The map keys are the capability
         names and the values are lists of account IDs. If all the accounts support
         a capability, an asterisk could be used, instead of listing all the accounts.
-      tags: [ capabilities ]
+      tags: [capabilities]
       parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: "#/components/parameters/X-FBAPI-KEY"
+        - $ref: "#/components/parameters/X-FBAPI-NONCE"
+        - $ref: "#/components/parameters/X-FBAPI-TIMESTAMP"
+        - $ref: "#/components/parameters/X-FBAPI-SIGNATURE"
       responses:
-        '200':
+        "200":
           description: >-
             Server capability details.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Capabilities'
+                $ref: "#/components/schemas/Capabilities"
               examples:
                 allAccountsSupportAllCapabilities:
                   summary: All accounts support all capabilities
@@ -61,45 +57,34 @@ paths:
                     version: "1.0.37"
                     components:
                       accounts: "*"
-                      balances: "*"
-                      transfers: "*"
-                      transfersBlockchain: "*"
-                      transfersFiat: "*"
-                      transfersPeerAccounts: "*"
-                      transfersInternal: "*"
-                      # trading: "*"
                       liquidity: "*"
-                      collateral: "*"
                       ramps: "*"
-                      rates: "*"
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:
                     version: "1.2.0"
                     components:
                       accounts: "*"
-                      balances: "*"
                 twoAccountsSupportTransfers:
                   summary: Only two accounts support fiat transfers
                   value:
                     version: "1.2.0"
                     components:
                       accounts: "*"
-                      balances: "*"
                       transfers:
                         - "6cd2fe1e-d0bc-4fad-a9ba-9384e0fdfdc0"
                         - "7885a47b-0719-4448-b59e-3b8497cd1685"
                       transfersFiat:
                         - "6cd2fe1e-d0bc-4fad-a9ba-9384e0fdfdc0"
                         - "7885a47b-0719-4448-b59e-3b8497cd1685"
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/components/responses/ErrorResponse'
-        '5XX':
-          $ref: '#/components/responses/ErrorResponse'
+        "400":
+          $ref: "#/components/responses/BadRequestResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "4XX":
+          $ref: "#/components/responses/ErrorResponse"
+        "5XX":
+          $ref: "#/components/responses/ErrorResponse"
 
   /capabilities/assets:
     get:
@@ -108,17 +93,17 @@ paths:
       description: >-
         Returns assets, supported in addition to the predefined national
         currencies and the native cryptocurrencies.
-      tags: [ capabilities ]
+      tags: [capabilities]
       parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
+        - $ref: "#/components/parameters/X-FBAPI-KEY"
+        - $ref: "#/components/parameters/X-FBAPI-NONCE"
+        - $ref: "#/components/parameters/X-FBAPI-TIMESTAMP"
+        - $ref: "#/components/parameters/X-FBAPI-SIGNATURE"
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationStartingAfter"
+        - $ref: "#/components/parameters/PaginationEndingBefore"
       responses:
-        '200':
+        "200":
           description: List of additional assets.
           content:
             application/json:
@@ -129,64 +114,68 @@ paths:
                   assets:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AssetDefinition'
+                      $ref: "#/components/schemas/AssetDefinition"
               examples:
                 usdcTokens:
                   summary: USDC tokens on various blockchains
                   value:
-                    assets: [
-                      {
-                        "id": "360de0ad-9ba1-45d5-8074-22453f193d65",
-                        "type": "Erc20Token",
-                        "blockchain": "Ethereum",
-                        "contractAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-                        "name": "USDC",
-                        "symbol": "USDC",
-                        "description": "USDC is a fully collateralized US Dollar stablecoin developed by CENTRE, the open source project with Circle being the first of several forthcoming issuers.",
-                        "decimalPlaces": 6,
-                      }, {
-                        "id": "606bce6b-ff15-4704-9390-b9e32a6cfcff",
-                        "type": "Erc20Token",
-                        "blockchain": "Polygon PoS",
-                        "contractAddress": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
-                        "name": "USDC",
-                        "symbol": "USDC",
-                        "description": "USD Coin is an ERC-20 stablecoin brought to you by Circle and Coinbase. It is issued by regulated and licensed financial institutions that maintain full reserves of the equivalent fiat currency.",
-                        "decimalPlaces": 6,
-                      }, {
-                        "id": "4386cf4d-83b2-4410-96da-0d3919a45506",
-                        "type": "StellarToken",
-                        "blockchain": "Stellar",
-                        "issuerAddress": "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-                        "stellarCurrencyCode": "USDC",
-                        "name": "USDC",
-                        "symbol": "USDC",
-                        "description": "USDC is a fully collateralized US Dollar stablecoin, based on the open source fiat stablecoin framework developed by Centre.",
-                        "decimalPlaces": 2,
-                      }
-                    ]
+                    assets:
+                      [
+                        {
+                          "id": "360de0ad-9ba1-45d5-8074-22453f193d65",
+                          "type": "Erc20Token",
+                          "blockchain": "Ethereum",
+                          "contractAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                          "name": "USDC",
+                          "symbol": "USDC",
+                          "description": "USDC is a fully collateralized US Dollar stablecoin developed by CENTRE, the open source project with Circle being the first of several forthcoming issuers.",
+                          "decimalPlaces": 6,
+                        },
+                        {
+                          "id": "606bce6b-ff15-4704-9390-b9e32a6cfcff",
+                          "type": "Erc20Token",
+                          "blockchain": "Polygon PoS",
+                          "contractAddress": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+                          "name": "USDC",
+                          "symbol": "USDC",
+                          "description": "USD Coin is an ERC-20 stablecoin brought to you by Circle and Coinbase. It is issued by regulated and licensed financial institutions that maintain full reserves of the equivalent fiat currency.",
+                          "decimalPlaces": 6,
+                        },
+                        {
+                          "id": "4386cf4d-83b2-4410-96da-0d3919a45506",
+                          "type": "StellarToken",
+                          "blockchain": "Stellar",
+                          "issuerAddress": "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+                          "stellarCurrencyCode": "USDC",
+                          "name": "USDC",
+                          "symbol": "USDC",
+                          "description": "USDC is a fully collateralized US Dollar stablecoin, based on the open source fiat stablecoin framework developed by Centre.",
+                          "decimalPlaces": 2,
+                        },
+                      ]
                 usdcBucket:
                   summary: USDC bucket
                   description: Buckets are used to aggregate various currencies in one balance entry.
                   value:
-                    assets: [
-                      {
-                        "id": "f0844d82-7097-4521-95bc-d843724a893e",
-                        "type": "BucketAsset",
-                        "name": "USDC",
-                        "symbol": "USDC",
-                        "description": "Aggregation of all USDC token over the different blockchains.",
-                        "decimalPlaces": 6,
-                      }
-                    ]
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/components/responses/ErrorResponse'
-        '5XX':
-          $ref: '#/components/responses/ErrorResponse'
+                    assets:
+                      [
+                        {
+                          "id": "f0844d82-7097-4521-95bc-d843724a893e",
+                          "type": "BucketAsset",
+                          "name": "USDC",
+                          "symbol": "USDC",
+                          "description": "Aggregation of all USDC token over the different blockchains.",
+                          "decimalPlaces": 6,
+                        },
+                      ]
+        "400":
+          $ref: "#/components/responses/BadRequestResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "4XX":
+          $ref: "#/components/responses/ErrorResponse"
+        "5XX":
+          $ref: "#/components/responses/ErrorResponse"
 
   /capabilities/assets/{id}:
     get:
@@ -195,28 +184,28 @@ paths:
       description: >-
         Returns the details of an assets, supported in addition to the predefined
         national currencies and the native cryptocurrencies.
-      tags: [ capabilities ]
+      tags: [capabilities]
       parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/EntityIdPathParam'
+        - $ref: "#/components/parameters/X-FBAPI-KEY"
+        - $ref: "#/components/parameters/X-FBAPI-NONCE"
+        - $ref: "#/components/parameters/X-FBAPI-TIMESTAMP"
+        - $ref: "#/components/parameters/X-FBAPI-SIGNATURE"
+        - $ref: "#/components/parameters/EntityIdPathParam"
       responses:
-        '200':
+        "200":
           description: List of additional assets.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AssetDefinition'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/components/responses/ErrorResponse'
-        '5XX':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/AssetDefinition"
+        "400":
+          $ref: "#/components/responses/BadRequestResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "4XX":
+          $ref: "#/components/responses/ErrorResponse"
+        "5XX":
+          $ref: "#/components/responses/ErrorResponse"
 
   /accounts:
     get:
@@ -227,37 +216,37 @@ paths:
         Can optionally include balance information for each account if requested.
         Allows defining parent-child relationships between accounts.
         Notice that Fireblocks currently supports only one level of hierarchy.
-      tags: [ accounts ]
+      tags: [accounts]
       parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/AccountBalancesQueryParam'
+        - $ref: "#/components/parameters/X-FBAPI-KEY"
+        - $ref: "#/components/parameters/X-FBAPI-NONCE"
+        - $ref: "#/components/parameters/X-FBAPI-TIMESTAMP"
+        - $ref: "#/components/parameters/X-FBAPI-SIGNATURE"
+        - $ref: "#/components/parameters/PaginationLimit"
+        - $ref: "#/components/parameters/PaginationStartingAfter"
+        - $ref: "#/components/parameters/PaginationEndingBefore"
+        - $ref: "#/components/parameters/AccountBalancesQueryParam"
       responses:
-        '200':
+        "200":
           description: List of sub-accounts.
           content:
             application/json:
               schema:
                 type: object
-                required: [ accounts ]
+                required: [accounts]
                 properties:
                   accounts:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Account'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/components/responses/ErrorResponse'
-        '5XX':
-          $ref: '#/components/responses/ErrorResponse'
+                      $ref: "#/components/schemas/Account"
+        "400":
+          $ref: "#/components/responses/BadRequestResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "4XX":
+          $ref: "#/components/responses/ErrorResponse"
+        "5XX":
+          $ref: "#/components/responses/ErrorResponse"
 
   /accounts/{accountId}:
     get:
@@ -266,180 +255,29 @@ paths:
       description: >
         Retrieves detailed information about a specific sub-account, including
         account metadata and optionally balance information if requested.
-      tags: [ accounts ]
+      tags: [accounts]
       parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/AccountBalancesQueryParam'
-        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: "#/components/parameters/X-FBAPI-KEY"
+        - $ref: "#/components/parameters/X-FBAPI-NONCE"
+        - $ref: "#/components/parameters/X-FBAPI-TIMESTAMP"
+        - $ref: "#/components/parameters/X-FBAPI-SIGNATURE"
+        - $ref: "#/components/parameters/AccountBalancesQueryParam"
+        - $ref: "#/components/parameters/SubAccountIdPathParam"
       responses:
-        '200':
+        "200":
           description: List of sub-accounts.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Account'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/components/responses/ErrorResponse'
-        '5XX':
-          $ref: '#/components/responses/ErrorResponse'
-  
-  /accounts/{accountId}/rate:
-    get:
-      operationId: getRateByAccountAndPairId
-      summary: Get rate by account and assets
-      tags: [ rates ]
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/SubAccountIdPathParam'
-        - $ref: '#/components/parameters/ConversionPairIdQueryParam'
-        - $ref: '#/components/parameters/RampsPairIdQueryParam'
-        - $ref: '#/components/parameters/OrderBookPairIdQueryParam'
-      responses:
-        '200':
-          description: Rate by pair id.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Rate'
-              examples:
-                usdToEur:
-                  summary: USD to EUR rate
-                  value:
-                    rate: "0.9"
-                    timestamp: 1546658861000
-                    baseAsset: {
-                      nationalCurrencyCode: "USD" 
-                    }
-                    quoteAsset: {
-                      nationalCurrencyCode: "EUR"
-                    }
-                btcToUsd:
-                  summary: BTC to USD rate    
-                  value:
-                    rate: "10000"
-                    timestamp: 1546658861000
-                    baseAsset: {
-                      cryptocurrencySymbol: "BTC"
-                    }
-                    quoteAsset: {   
-                      nationalCurrencyCode: "USD"
-                    }
-                usdcToUsd:
-                  summary: USDC to USD rate
-                  value:
-                    rate: "1" 
-                    timestamp: 1546658861000
-                    baseAsset: {
-                      assetId: "360de0ad-9ba1-45d5-8074-22453f193d65"
-                    }
-                    quoteAsset: {
-                      nationalCurrencyCode: "USD"
-                    }
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/components/responses/ErrorResponse'
-        '5XX':
-          $ref: '#/components/responses/ErrorResponse'
-
-  /accounts/{accountId}/balances:
-    get:
-      operationId: getBalances
-      summary: Get current balances
-      description: >
-        Retrieves current balance information for the specified account.
-        Can be filtered by asset ID, national currency code, or cryptocurrency symbol.
-      tags: [ balances ]
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/AssetIdQueryParam'
-        - $ref: '#/components/parameters/NationalCurrencyCodeQueryParam'
-        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
-        - $ref: '#/components/parameters/SubAccountIdPathParam'
-      responses:
-        '200':
-          description: List of asset balances.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [ balances ]
-                properties:
-                  balances:
-                    $ref: '#/components/schemas/Balances'
-              examples:
-                nationalCurrency:
-                  summary: National currency balance
-                  value: {
-                    "balances": [
-                      {
-                        "id": "4ff63424-7e09-4cdf-b7f1-da7b7c65eabe",
-                        "asset": {
-                          "nationalCurrencyCode": "USD"
-                        },
-                        "availableAmount": "1743.43",
-                        "lockedAmount": "0"
-                      }
-                    ]
-                  }
-                blockchainNativeCurrency:
-                  summary: Blockchain native currency balance
-                  value: {
-                    "balances": [
-                      {
-                        "id": "76a33ed9-8aa2-4781-93f8-d2369c0c2b14",
-                        "asset": {
-                          "blockchain": "Bitcoin",
-                          "cryptocurrencySymbol": "BTC"
-                        },
-                        "availableAmount": "7.00008214",
-                        "lockedAmount": "0"
-                      }
-                    ]
-                  }
-                bucketCurrency:
-                  summary: Usage of tokens and buckets in balance
-                  description: >-
-                    `assetId` must be one of the IDs returned by `GET /capabilities/assets`.
-                    The ID in this example is the ID of the USDC bucket defined in the example
-                    responses of `GET /capabilities/assets`.
-                  value: {
-                    "balances": [
-                      {
-                        "id": "6f572d77-2f8d-4962-adf4-de4a62bc236b",
-                        "asset": {
-                          "assetId": "f0844d82-7097-4521-95bc-d843724a893e"
-                        },
-                        "availableAmount": "95.03"
-                      }
-                    ]
-                  }
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/components/responses/ErrorResponse'
-        '5XX':
-          $ref: '#/components/responses/ErrorResponse'
+                $ref: "#/components/schemas/Account"
+        "400":
+          $ref: "#/components/responses/BadRequestResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedResponse"
+        "4XX":
+          $ref: "#/components/responses/ErrorResponse"
+        "5XX":
+          $ref: "#/components/responses/ErrorResponse"
 
 components:
   parameters:
@@ -483,7 +321,7 @@ components:
         Request signature using the chosen cryptographic algorithm.
         The signature is to be calculated on concatenation of the
         following request fields in the specified order:
-        
+
         - `X-FBAPI-TIMESTAMP`
         - `X-FBAPI-NONCE`
         - HTTP request method in upper case
@@ -568,7 +406,7 @@ components:
         Cannot be used in conjunction with cryptocurrencySymbol or assetId
       in: query
       schema:
-        $ref: '#/components/schemas/NationalCurrencyCode'
+        $ref: "#/components/schemas/NationalCurrencyCode"
 
     CryptocurrencySymbolQueryParam:
       name: cryptocurrencySymbol
@@ -577,7 +415,7 @@ components:
         Cannot be used in conjunction with nationalCurrencyCode or assetId
       in: query
       schema:
-        $ref: '#/components/schemas/CryptocurrencySymbol'
+        $ref: "#/components/schemas/CryptocurrencySymbol"
 
     ConversionPairIdQueryParam:
       name: conversionPairId
@@ -603,7 +441,6 @@ components:
       schema:
         type: string
 
-
     AccountBalancesQueryParam:
       name: balances
       in: query
@@ -626,28 +463,28 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/BadRequestError'
+            $ref: "#/components/schemas/BadRequestError"
 
     UnauthorizedResponse:
       description: Request is unauthorized
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/UnauthorizedError'
+            $ref: "#/components/schemas/UnauthorizedError"
 
     ErrorResponse:
       description: Failed to process request.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GeneralError'
+            $ref: "#/components/schemas/GeneralError"
 
   schemas:
     GeneralError:
       description: >-
         Should be returned only if there in no more specific object.
       type: object
-      required: [ message, errorType ]
+      required: [message, errorType]
       properties:
         message:
           description: Description of the error.
@@ -660,14 +497,14 @@ components:
     BadRequestError:
       description: >-
         Request could not be processed due to a client error.
-        
+
         If the error is caused by a missing or wrong property in the request,
         `errorType` must have the value `schema-property-error` and the properties 
         `propertyName` and `requestPart` must be specified. For more general
         schema errors, the error type should be `schema-error` and `requestPart` must
         be specified. For all the other cases the error type should be `bad-request`.
       type: object
-      required: [ message, errorType ]
+      required: [message, errorType]
       properties:
         message:
           description: Description of the error.
@@ -692,19 +529,19 @@ components:
             Name of property that caused the error.
             By convention, should always start with a slash ("/").
             If the property is nested, the path should be separated by slashes.
-            
+
             This property is required if the error type is caused by a missing or wrong
             property in the request.
           type: string
-          example: '/topLevelProperyName/childPropertyName/thirdLevelPropertyName'
+          example: "/topLevelProperyName/childPropertyName/thirdLevelPropertyName"
         requestPart:
-          $ref: '#/components/schemas/RequestPart'
+          $ref: "#/components/schemas/RequestPart"
 
     UnauthorizedError:
       description: >-
         Request is unauthorized
       type: object
-      required: [ message, errorType ]
+      required: [message, errorType]
       properties:
         message:
           description: Description of the error.
@@ -731,46 +568,28 @@ components:
 
     Capabilities:
       type: object
-      required: [ version, components ]
+      required: [version, components]
       properties:
         version:
           description: Version number of the API specification that this server implements
           type: string
           pattern: ^(\d)+\.(\d)+\.(\d)+$
-          example: '1.0.37'
+          example: "1.0.37"
         components:
-          $ref: '#/components/schemas/ApiComponents'
+          $ref: "#/components/schemas/ApiComponents"
 
     ApiComponents:
       description: >-
         Lists supported API components and which sub-accounts support the component.
       type: object
-      required: [ accounts, balances ]
+      required: [accounts]
       properties:
         accounts:
-          $ref: '#/components/schemas/AccountsSet'
-        balances:
-          $ref: '#/components/schemas/AccountsSet'
-        transfers:
-          $ref: '#/components/schemas/AccountsSet'
-        transfersBlockchain:
-          $ref: '#/components/schemas/AccountsSet'
-        transfersFiat:
-          $ref: '#/components/schemas/AccountsSet'
-        transfersPeerAccounts:
-          $ref: '#/components/schemas/AccountsSet'
-        transfersInternal:
-          $ref: '#/components/schemas/AccountsSet'
-        # trading:
-        #   $ref: '#/components/schemas/AccountsSet'
+          $ref: "#/components/schemas/AccountsSet"
         liquidity:
-          $ref: '#/components/schemas/AccountsSet'
-        collateral:
-          $ref: '#/components/schemas/AccountsSet'
+          $ref: "#/components/schemas/AccountsSet"
         ramps:
-          $ref: '#/components/schemas/AccountsSet'
-        rates:
-          $ref: '#/components/schemas/AccountsSet'
+          $ref: "#/components/schemas/AccountsSet"
 
     AccountsSet:
       description: >-
@@ -796,16 +615,16 @@ components:
 
     AccountData:
       type: object
-      required: [ title, status ]
+      required: [title, status]
       properties:
         title:
           type: string
         description:
           type: string
         balances:
-          $ref: '#/components/schemas/Balances'
+          $ref: "#/components/schemas/Balances"
         status:
-          $ref: '#/components/schemas/AccountStatus'
+          $ref: "#/components/schemas/AccountStatus"
         parentId:
           type: string
           description: >-
@@ -814,49 +633,49 @@ components:
 
     AccountId:
       type: object
-      required: [ id ]
+      required: [id]
       properties:
         id:
           type: string
 
     Account:
       allOf:
-        - $ref: '#/components/schemas/AccountId'
-        - $ref: '#/components/schemas/AccountData'
+        - $ref: "#/components/schemas/AccountId"
+        - $ref: "#/components/schemas/AccountData"
 
     Balances:
       type: array
       description: Maps balance assets to their balances.
       items:
         anyOf:
-          - $ref: '#/components/schemas/AssetCreditBalance'
-          - $ref: '#/components/schemas/AssetBalance'
+          - $ref: "#/components/schemas/AssetCreditBalance"
+          - $ref: "#/components/schemas/AssetBalance"
 
     AssetBalance:
       type: object
-      required: [ id, asset, availableAmount ]
+      required: [id, asset, availableAmount]
       properties:
         id:
           type: string
         asset:
-          $ref: '#/components/schemas/AssetReference'
+          $ref: "#/components/schemas/AssetReference"
         availableAmount:
-          $ref: '#/components/schemas/PositiveAmount'
+          $ref: "#/components/schemas/PositiveAmount"
         lockedAmount:
-          $ref: '#/components/schemas/PositiveAmount'
+          $ref: "#/components/schemas/PositiveAmount"
 
     AssetCreditBalance:
       allOf:
-        - $ref: '#/components/schemas/AssetBalance'
+        - $ref: "#/components/schemas/AssetBalance"
         - type: object
-          required: [ creditAmount ]
+          required: [creditAmount]
           properties:
             creditAmount:
-              $ref: '#/components/schemas/PositiveAmount'
+              $ref: "#/components/schemas/PositiveAmount"
 
     AssetCommonProperties:
       type: object
-      required: [ id, name, symbol, type, decimalPlaces ]
+      required: [id, name, symbol, type, decimalPlaces]
       properties:
         id:
           type: string
@@ -873,23 +692,23 @@ components:
 
     BucketAsset:
       allOf:
-        - $ref: '#/components/schemas/AssetCommonProperties'
+        - $ref: "#/components/schemas/AssetCommonProperties"
         - type: object
-          required: [ type ]
+          required: [type]
           properties:
             type:
-              enum: [ BucketAsset ]
+              enum: [BucketAsset]
 
     Erc20Token:
       allOf:
-        - $ref: '#/components/schemas/AssetCommonProperties'
+        - $ref: "#/components/schemas/AssetCommonProperties"
         - type: object
-          required: [ blockchain, contractAddress, type ]
+          required: [blockchain, contractAddress, type]
           properties:
             type:
-              enum: [ Erc20Token ]
+              enum: [Erc20Token]
             blockchain:
-              $ref: '#/components/schemas/Blockchain'
+              $ref: "#/components/schemas/Blockchain"
             contractAddress:
               type: string
       example:
@@ -897,31 +716,31 @@ components:
         name: Tether USD
         symbol: USDT
         decimalPlaces: 6
-        contractAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7'
+        contractAddress: "0xdAC17F958D2ee523a2206206994597C13D831ec7"
 
     Bep20Token:
       allOf:
-        - $ref: '#/components/schemas/AssetCommonProperties'
+        - $ref: "#/components/schemas/AssetCommonProperties"
         - type: object
-          required: [ blockchain, contractAddress, type ]
+          required: [blockchain, contractAddress, type]
           properties:
             type:
-              enum: [ Bep20Token ]
+              enum: [Bep20Token]
             blockchain:
-              $ref: '#/components/schemas/Blockchain'
+              $ref: "#/components/schemas/Blockchain"
             contractAddress:
               type: string
 
     StellarToken:
       allOf:
-        - $ref: '#/components/schemas/AssetCommonProperties'
+        - $ref: "#/components/schemas/AssetCommonProperties"
         - type: object
-          required: [ blockchain, issuerAddress, stellarCurrencyCode, type ]
+          required: [blockchain, issuerAddress, stellarCurrencyCode, type]
           properties:
             type:
-              enum: [ StellarToken ]
+              enum: [StellarToken]
             blockchain:
-              $ref: '#/components/schemas/Blockchain'
+              $ref: "#/components/schemas/Blockchain"
             issuerAddress:
               type: string
             stellarCurrencyCode:
@@ -929,14 +748,14 @@ components:
 
     ContractBasedToken:
       allOf:
-        - $ref: '#/components/schemas/AssetCommonProperties'
+        - $ref: "#/components/schemas/AssetCommonProperties"
         - type: object
-          required: [ type, blockchain, contractAddress ]
+          required: [type, blockchain, contractAddress]
           properties:
             type:
-              enum: [ Jetton ]
+              enum: [Jetton]
             blockchain:
-              $ref: '#/components/schemas/Blockchain'
+              $ref: "#/components/schemas/Blockchain"
             contractAddress:
               type: string
       example:
@@ -951,14 +770,14 @@ components:
 
     SolanaToken:
       allOf:
-        - $ref: '#/components/schemas/AssetCommonProperties'
+        - $ref: "#/components/schemas/AssetCommonProperties"
         - type: object
-          required: [ type, blockchain, mintAddress ]
+          required: [type, blockchain, mintAddress]
           properties:
             type:
-              enum: [ SplToken ]
+              enum: [SplToken]
             blockchain:
-              $ref: '#/components/schemas/Blockchain'
+              $ref: "#/components/schemas/Blockchain"
             mintAddress:
               type: string
       example:
@@ -973,12 +792,12 @@ components:
 
     AssetDefinition:
       anyOf:
-        - $ref: '#/components/schemas/BucketAsset'
-        - $ref: '#/components/schemas/Erc20Token'
-        - $ref: '#/components/schemas/Bep20Token'
-        - $ref: '#/components/schemas/StellarToken'
-        - $ref: '#/components/schemas/ContractBasedToken'
-        - $ref: '#/components/schemas/SolanaToken'
+        - $ref: "#/components/schemas/BucketAsset"
+        - $ref: "#/components/schemas/Erc20Token"
+        - $ref: "#/components/schemas/Bep20Token"
+        - $ref: "#/components/schemas/StellarToken"
+        - $ref: "#/components/schemas/ContractBasedToken"
+        - $ref: "#/components/schemas/SolanaToken"
 
     NationalCurrency:
       type: object
@@ -986,7 +805,7 @@ components:
         - nationalCurrencyCode
       properties:
         nationalCurrencyCode:
-          $ref: '#/components/schemas/NationalCurrencyCode'
+          $ref: "#/components/schemas/NationalCurrencyCode"
         testAsset:
           type: boolean
 
@@ -996,9 +815,9 @@ components:
         - cryptocurrencySymbol
       properties:
         blockchain:
-          $ref: '#/components/schemas/Blockchain'
+          $ref: "#/components/schemas/Blockchain"
         cryptocurrencySymbol:
-          $ref: '#/components/schemas/CryptocurrencySymbol'
+          $ref: "#/components/schemas/CryptocurrencySymbol"
         testAsset:
           type: boolean
 
@@ -1013,23 +832,23 @@ components:
 
     CryptocurrencyReference:
       oneOf:
-        - $ref: '#/components/schemas/NativeCryptocurrency'
-        - $ref: '#/components/schemas/OtherAssetReference'
+        - $ref: "#/components/schemas/NativeCryptocurrency"
+        - $ref: "#/components/schemas/OtherAssetReference"
 
     PublicBlockchainCapability:
       type: object
-      required: [ asset, transferMethod ]
+      required: [asset, transferMethod]
       properties:
         asset:
-          $ref: '#/components/schemas/CryptocurrencyReference'
+          $ref: "#/components/schemas/CryptocurrencyReference"
         transferMethod:
-          enum: [ PublicBlockchain ]
+          enum: [PublicBlockchain]
 
     PublicBlockchainAddress:
       allOf:
-        - $ref: '#/components/schemas/PublicBlockchainCapability'
+        - $ref: "#/components/schemas/PublicBlockchainCapability"
         - type: object
-          required: [ address ]
+          required: [address]
           properties:
             address:
               type: string
@@ -1038,7 +857,7 @@ components:
 
     Rate:
       type: object
-      required: [ rate, timestamp ]
+      required: [rate, timestamp]
       properties:
         rate:
           type: string
@@ -1050,9 +869,9 @@ components:
 
     AssetReference:
       oneOf:
-        - $ref: '#/components/schemas/NationalCurrency'
-        - $ref: '#/components/schemas/NativeCryptocurrency'
-        - $ref: '#/components/schemas/OtherAssetReference'
+        - $ref: "#/components/schemas/NationalCurrency"
+        - $ref: "#/components/schemas/NativeCryptocurrency"
+        - $ref: "#/components/schemas/OtherAssetReference"
 
     Blockchain:
       type: string

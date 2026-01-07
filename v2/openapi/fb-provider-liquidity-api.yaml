@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: '[Draft] Fireblocks Provider Liquidity API'
+  title: "[Draft] Fireblocks Provider Liquidity API"
   version: 0.0.1
 
   contact:
@@ -14,30 +14,54 @@ tags:
     description: Server capabilities discovery operations.
 
 x-path-params:
-  EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
-  SubAccountIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/SubAccountIdPathParam' }
+  EntityIdPathParam:
+    { $ref: "./fb-provider-api.yaml#/components/parameters/EntityIdPathParam" }
+  SubAccountIdPathParam:
+    {
+      $ref: "./fb-provider-api.yaml#/components/parameters/SubAccountIdPathParam",
+    }
 
 x-query-params:
-  PaginationLimit: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationLimit' }
-  PaginationStartingAfter: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationStartingAfter' }
-  PaginationEndingBefore: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationEndingBefore' }
-  ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
+  PaginationLimit:
+    { $ref: "./fb-provider-api.yaml#/components/parameters/PaginationLimit" }
+  PaginationStartingAfter:
+    {
+      $ref: "./fb-provider-api.yaml#/components/parameters/PaginationStartingAfter",
+    }
+  PaginationEndingBefore:
+    {
+      $ref: "./fb-provider-api.yaml#/components/parameters/PaginationEndingBefore",
+    }
+  ListOrderQueryParam:
+    {
+      $ref: "./fb-provider-api.yaml#/components/parameters/ListOrderQueryParam",
+    }
 
 x-header-params:
-  X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
-  X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
-  X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
-  X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
+  X-FBAPI-KEY:
+    { $ref: "./fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY" }
+  X-FBAPI-NONCE:
+    { $ref: "./fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE" }
+  X-FBAPI-SIGNATURE:
+    { $ref: "./fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE" }
+  X-FBAPI-TIMESTAMP:
+    { $ref: "./fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP" }
 
 x-schemas:
-  AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference' }
-  PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount' }
+  AssetReference:
+    { $ref: "./fb-provider-api.yaml#/components/schemas/AssetReference" }
+  PositiveAmount:
+    { $ref: "./fb-provider-api.yaml#/components/schemas/PositiveAmount" }
 
 x-responses:
-  BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
-  UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
-  ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
-
+  BadRequestResponse:
+    { $ref: "./fb-provider-api.yaml#/components/responses/BadRequestResponse" }
+  UnauthorizedResponse:
+    {
+      $ref: "./fb-provider-api.yaml#/components/responses/UnauthorizedResponse",
+    }
+  ErrorResponse:
+    { $ref: "./fb-provider-api.yaml#/components/responses/ErrorResponse" }
 
 paths:
   /capabilities/liquidity/quotes:
@@ -47,30 +71,30 @@ paths:
       description: >
         Retrieves the list of supported asset conversion pairs that can be quoted.
         Shows which assets can be converted to other assets through the liquidity service.
-      tags: [ capabilities ]
+      tags: [capabilities]
       parameters:
-        - $ref: '#/x-header-params/X-FBAPI-KEY'
-        - $ref: '#/x-header-params/X-FBAPI-NONCE'
-        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
-        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
-        - $ref: '#/x-query-params/PaginationLimit'
-        - $ref: '#/x-query-params/PaginationStartingAfter'
-        - $ref: '#/x-query-params/PaginationEndingBefore'
+        - $ref: "#/x-header-params/X-FBAPI-KEY"
+        - $ref: "#/x-header-params/X-FBAPI-NONCE"
+        - $ref: "#/x-header-params/X-FBAPI-SIGNATURE"
+        - $ref: "#/x-header-params/X-FBAPI-TIMESTAMP"
+        - $ref: "#/x-query-params/PaginationLimit"
+        - $ref: "#/x-query-params/PaginationStartingAfter"
+        - $ref: "#/x-query-params/PaginationEndingBefore"
       responses:
-        '200':
+        "200":
           description: List of possible asset conversions.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/QuoteCapabilities'
-        '400':
-          $ref: '#/x-responses/BadRequestResponse'
-        '401':
-          $ref: '#/x-responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/x-responses/ErrorResponse'
-        '5XX':
-          $ref: '#/x-responses/ErrorResponse'
+                $ref: "#/components/schemas/QuoteCapabilities"
+        "400":
+          $ref: "#/x-responses/BadRequestResponse"
+        "401":
+          $ref: "#/x-responses/UnauthorizedResponse"
+        "4XX":
+          $ref: "#/x-responses/ErrorResponse"
+        "5XX":
+          $ref: "#/x-responses/ErrorResponse"
 
   /accounts/{accountId}/liquidity/quotes:
     post:
@@ -80,72 +104,72 @@ paths:
         Either `fromAmount` or `toAmount` must be specified,
         while the unspecified amount will be populated by the server and
         returned in the response.
-      tags: [ liquidity ]
+      tags: [liquidity]
       parameters:
-        - $ref: '#/x-header-params/X-FBAPI-KEY'
-        - $ref: '#/x-header-params/X-FBAPI-NONCE'
-        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
-        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
-        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: "#/x-header-params/X-FBAPI-KEY"
+        - $ref: "#/x-header-params/X-FBAPI-NONCE"
+        - $ref: "#/x-header-params/X-FBAPI-SIGNATURE"
+        - $ref: "#/x-header-params/X-FBAPI-TIMESTAMP"
+        - $ref: "#/x-path-params/SubAccountIdPathParam"
       requestBody:
         description: Details of the quote request
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/QuoteRequest'
+              $ref: "#/components/schemas/QuoteRequest"
       responses:
-        '200':
+        "200":
           description: Quote details.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Quote'
-        '400':
-          $ref: '#/x-responses/BadRequestResponse'
-        '401':
-          $ref: '#/x-responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/x-responses/ErrorResponse'
-        '5XX':
-          $ref: '#/x-responses/ErrorResponse'
+                $ref: "#/components/schemas/Quote"
+        "400":
+          $ref: "#/x-responses/BadRequestResponse"
+        "401":
+          $ref: "#/x-responses/UnauthorizedResponse"
+        "4XX":
+          $ref: "#/x-responses/ErrorResponse"
+        "5XX":
+          $ref: "#/x-responses/ErrorResponse"
     get:
       operationId: getQuotes
       summary: Get list of quotes sorted by creation time
       description: >
         Retrieves a paginated list of all quotes for the specified account.
         Quotes are sorted by creation time and can be ordered ascending or descending.
-      tags: [ liquidity ]
+      tags: [liquidity]
       parameters:
-        - $ref: '#/x-header-params/X-FBAPI-KEY'
-        - $ref: '#/x-header-params/X-FBAPI-NONCE'
-        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
-        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
-        - $ref: '#/x-query-params/PaginationLimit'
-        - $ref: '#/x-query-params/PaginationStartingAfter'
-        - $ref: '#/x-query-params/PaginationEndingBefore'
-        - $ref: '#/x-query-params/ListOrderQueryParam'
-        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: "#/x-header-params/X-FBAPI-KEY"
+        - $ref: "#/x-header-params/X-FBAPI-NONCE"
+        - $ref: "#/x-header-params/X-FBAPI-SIGNATURE"
+        - $ref: "#/x-header-params/X-FBAPI-TIMESTAMP"
+        - $ref: "#/x-query-params/PaginationLimit"
+        - $ref: "#/x-query-params/PaginationStartingAfter"
+        - $ref: "#/x-query-params/PaginationEndingBefore"
+        - $ref: "#/x-query-params/ListOrderQueryParam"
+        - $ref: "#/x-path-params/SubAccountIdPathParam"
       responses:
-        '200':
+        "200":
           description: Quotes details.
           content:
             application/json:
               schema:
                 type: object
-                required: [ quotes ]
+                required: [quotes]
                 properties:
                   quotes:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Quote'
-        '400':
-          $ref: '#/x-responses/BadRequestResponse'
-        '401':
-          $ref: '#/x-responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/x-responses/ErrorResponse'
-        '5XX':
-          $ref: '#/x-responses/ErrorResponse'
+                      $ref: "#/components/schemas/Quote"
+        "400":
+          $ref: "#/x-responses/BadRequestResponse"
+        "401":
+          $ref: "#/x-responses/UnauthorizedResponse"
+        "4XX":
+          $ref: "#/x-responses/ErrorResponse"
+        "5XX":
+          $ref: "#/x-responses/ErrorResponse"
 
   /accounts/{accountId}/liquidity/quotes/{id}:
     get:
@@ -154,82 +178,51 @@ paths:
       description: >
         Retrieves detailed information about a specific quote, including
         conversion rates, amounts, expiration time, and current status.
-      tags: [ liquidity ]
+      tags: [liquidity]
       parameters:
-        - $ref: '#/x-header-params/X-FBAPI-KEY'
-        - $ref: '#/x-header-params/X-FBAPI-NONCE'
-        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
-        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
-        - $ref: '#/x-path-params/EntityIdPathParam'
-        - $ref: '#/x-path-params/SubAccountIdPathParam'
+        - $ref: "#/x-header-params/X-FBAPI-KEY"
+        - $ref: "#/x-header-params/X-FBAPI-NONCE"
+        - $ref: "#/x-header-params/X-FBAPI-SIGNATURE"
+        - $ref: "#/x-header-params/X-FBAPI-TIMESTAMP"
+        - $ref: "#/x-path-params/EntityIdPathParam"
+        - $ref: "#/x-path-params/SubAccountIdPathParam"
       responses:
-        '200':
+        "200":
           description: Quote details.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Quote'
-        '400':
-          $ref: '#/x-responses/BadRequestResponse'
-        '401':
-          $ref: '#/x-responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/x-responses/ErrorResponse'
-        '5XX':
-          $ref: '#/x-responses/ErrorResponse'
-
-  /accounts/{accountId}/liquidity/quotes/{id}/execute:
-    post:
-      operationId: executeQuote
-      summary: Execute quote
-      description: >
-        Executes a previously created quote, performing the actual asset conversion.
-        The quote must be valid and not expired for execution to succeed.
-      tags: [ liquidity ]
-      parameters:
-        - $ref: '#/x-header-params/X-FBAPI-KEY'
-        - $ref: '#/x-header-params/X-FBAPI-NONCE'
-        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
-        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
-        - $ref: '#/x-path-params/EntityIdPathParam'
-        - $ref: '#/x-path-params/SubAccountIdPathParam'
-      responses:
-        '200':
-          description: Quote details.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Quote'
-        '400':
-          $ref: '#/x-responses/BadRequestResponse'
-        '401':
-          $ref: '#/x-responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/x-responses/ErrorResponse'
-        '5XX':
-          $ref: '#/x-responses/ErrorResponse'
+                $ref: "#/components/schemas/Quote"
+        "400":
+          $ref: "#/x-responses/BadRequestResponse"
+        "401":
+          $ref: "#/x-responses/UnauthorizedResponse"
+        "4XX":
+          $ref: "#/x-responses/ErrorResponse"
+        "5XX":
+          $ref: "#/x-responses/ErrorResponse"
 
 components:
   schemas:
     QuoteCapability:
       type: object
-      required: [ id, fromAsset, toAsset ]
+      required: [id, fromAsset, toAsset]
       properties:
         id:
           type: string
         fromAsset:
-          $ref: '#/x-schemas/AssetReference'
+          $ref: "#/x-schemas/AssetReference"
         toAsset:
-          $ref: '#/x-schemas/AssetReference'
+          $ref: "#/x-schemas/AssetReference"
 
     QuoteCapabilities:
       type: object
-      required: [ capabilities ]
+      required: [capabilities]
       properties:
         capabilities:
           type: array
           items:
-            $ref: '#/components/schemas/QuoteCapability'
+            $ref: "#/components/schemas/QuoteCapability"
 
     QuoteStatus:
       type: string
@@ -243,23 +236,23 @@ components:
       type: object
       allOf:
         - type: object
-          required: [ fromAsset, toAsset ]
+          required: [fromAsset, toAsset]
           properties:
             fromAsset:
-              $ref: '#/x-schemas/AssetReference'
+              $ref: "#/x-schemas/AssetReference"
             toAsset:
-              $ref: '#/x-schemas/AssetReference'
+              $ref: "#/x-schemas/AssetReference"
         - oneOf:
             - type: object
-              required: [ fromAmount ]
+              required: [fromAmount]
               properties:
                 fromAmount:
-                  $ref: '#/x-schemas/PositiveAmount'
+                  $ref: "#/x-schemas/PositiveAmount"
             - type: object
-              required: [ toAmount ]
+              required: [toAmount]
               properties:
                 toAmount:
-                  $ref: '#/x-schemas/PositiveAmount'
+                  $ref: "#/x-schemas/PositiveAmount"
 
     Quote:
       type: object
@@ -277,24 +270,24 @@ components:
         id:
           type: string
         fromAsset:
-          $ref: '#/x-schemas/AssetReference'
+          $ref: "#/x-schemas/AssetReference"
         fromAmount:
-          $ref: '#/x-schemas/PositiveAmount'
+          $ref: "#/x-schemas/PositiveAmount"
         toAsset:
-          $ref: '#/x-schemas/AssetReference'
+          $ref: "#/x-schemas/AssetReference"
         toAmount:
-          $ref: '#/x-schemas/PositiveAmount'
+          $ref: "#/x-schemas/PositiveAmount"
         conversionFeeBps:
           type: integer
           description: Conversion fee in basis points. The amounts are expected to include the fee.
         conversionFeeAsset:
           allOf:
-            - $ref: '#/x-schemas/AssetReference'
+            - $ref: "#/x-schemas/AssetReference"
             - description: >
                 This is the asset that will be used to pay the conversion fee.
                 If not returned, the asset will be the same as the fromAsset.
         status:
-          $ref: '#/components/schemas/QuoteStatus'
+          $ref: "#/components/schemas/QuoteStatus"
         createdAt:
           description: Quote creation time.
           type: string
