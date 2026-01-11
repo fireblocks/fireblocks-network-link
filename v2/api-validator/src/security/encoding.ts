@@ -39,7 +39,7 @@ export class HexStr implements Encoder {
 
 export class Base32 implements Encoder {
   public encode(payload: string): string {
-    return base32.encode(new Uint8Array(Buffer.from(payload, 'utf8'))).toLowerCase();
+    return base32.encode(new Uint8Array(Buffer.from(payload, 'utf8'))).toUpperCase();
   }
   public decode(payload: string): string {
     return Buffer.from(base32.decode.asBytes(payload.toUpperCase())).toString('utf8');
