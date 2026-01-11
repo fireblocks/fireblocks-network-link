@@ -1,4 +1,11 @@
-import { createHmac, createPrivateKey, createPublicKey, createSign, createVerify, timingSafeEqual } from 'crypto';
+import {
+  createHmac,
+  createPrivateKey,
+  createPublicKey,
+  createSign,
+  createVerify,
+  timingSafeEqual,
+} from 'crypto';
 
 export class AlgorithmNotSupportedError extends Error {}
 
@@ -17,14 +24,12 @@ export class HMAC implements Signer {
     return createHmac(hashAlgorithm, key).update(data, 'utf8').digest();
   }
 
-  public verify(
-    data: string,
-    key: KeyInput,
-    recv: Buffer,
-    hashAlgorithm: HashAlgorithm
-  ): boolean {
+  public verify(data: string, key: KeyInput, recv: Buffer, hashAlgorithm: HashAlgorithm): boolean {
     const expected = this.sign(data, key, hashAlgorithm);
-    return expected.length === recv.length && timingSafeEqual(new Uint8Array(expected), new Uint8Array(recv));
+    return (
+      expected.length === recv.length &&
+      timingSafeEqual(new Uint8Array(expected), new Uint8Array(recv))
+    );
   }
 }
 

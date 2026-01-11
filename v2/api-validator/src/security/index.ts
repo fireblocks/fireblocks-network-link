@@ -57,10 +57,6 @@ function encode(payload: string, encoding: Encoding): string {
   return encoderFactory(encoding).encode(payload);
 }
 
-function decode(payload: string, encoding: Encoding): string {
-  return encoderFactory(encoding).decode(payload);
-}
-
 function encodeBytes(data: Buffer, encoding: Encoding): string {
   switch (encoding) {
     case 'base64':

@@ -40,7 +40,7 @@ const config = convict({
           );
         }
         try {
-          const url = new URL(value);
+          new URL(value);
         } catch {
           throw new Error('SERVER value is not a valid URL');
         }

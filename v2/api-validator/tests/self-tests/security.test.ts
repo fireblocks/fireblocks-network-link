@@ -184,8 +184,12 @@ describe('Signature creation and verification with real payload', () => {
     },
   };
 
-  const payloadWithUnicode = `${timestamp}${nonce}${method}${endpoint}${JSON.stringify(bodyObjWithUnicode)}`;
-  const payloadWithRegular = `${timestamp}${nonce}${method}${endpoint}${JSON.stringify(bodyObjWithRegular)}`;
+  const payloadWithUnicode = `${timestamp}${nonce}${method}${endpoint}${JSON.stringify(
+    bodyObjWithUnicode
+  )}`;
+  const payloadWithRegular = `${timestamp}${nonce}${method}${endpoint}${JSON.stringify(
+    bodyObjWithRegular
+  )}`;
 
   describe.each(makeSigningVariations())(
     '#️⃣  $index: $preEncoding ❯ $hashAlgorithm ❯ $signingAlgorithm ❯ $postEncoding',
