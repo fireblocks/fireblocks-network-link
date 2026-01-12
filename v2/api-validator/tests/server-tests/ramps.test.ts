@@ -161,10 +161,17 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
   }
 
   if (isFiatMethod(method.from) && isBlockchainMethod(method.to)) {
+    const from =
+      method.from.transferMethod === MobileMoneyCapability.transferMethod.MOMO
+        ? {
+            ...method.from,
+            ...getFiatDestinationConfig(method.from.transferMethod),
+          }
+        : method.from;
     return {
       idempotencyKey: randomUUID(),
       type: OnRampProperties.type.ON_RAMP,
-      from: method.from,
+      from,
       to: {
         ...method.to,
         ...blockchainDestinationConfig,
@@ -537,13 +544,15 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
       });
 
       it('should fail when invalid ramp method is used (asset to same asset', async () => {
-        const blockchainMethod: PublicBlockchainCapability = {
-          asset: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
-          transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-        };
         const requestBody = rampRequestFromMethod({
-          from: blockchainMethod,
-          to: blockchainMethod,
+          from: {
+            asset: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
+          to: {
+            asset: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
           id: randomUUID(),
         });
 

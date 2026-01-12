@@ -338,27 +338,27 @@ const config = convict({
       bankAddress: {
         streetName: {
           format: String,
-          default: 'Park Ave',
+          default: undefined,
           env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_STREET_NAME',
         },
         buildingNumber: {
           format: String,
-          default: '270',
+          default: undefined,
           env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_BUILDING_NUMBER',
-        },
-        city: {
-          format: String,
-          default: 'NY',
-          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_CITY',
         },
         postalCode: {
           format: String,
-          default: '10017',
+          default: undefined,
           env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_POSTAL_CODE',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_CITY',
         },
         subdivision: {
           format: String,
-          default: 'NY',
+          default: undefined,
           env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_SUBDIVISION',
         },
         district: {
@@ -368,7 +368,7 @@ const config = convict({
         },
         country: {
           format: String,
-          default: 'US',
+          default: undefined,
           env: 'WITHDRAWAL_WIRE_BANK_ADDRESS_COUNTRY',
         },
       },
@@ -462,7 +462,7 @@ const config = convict({
       },
       iban: {
         format: String,
-        default: '12345678901234567890123456789012',
+        default: 'LO16MVPcSq8',
         env: 'WITHDRAWAL_EUROPEAN_SEPA_IBAN',
       },
       bic: {
@@ -544,6 +544,11 @@ const config = convict({
         format: String,
         default: 'orange',
         env: 'WITHDRAWAL_MOBILE_MONEY_PROVIDER',
+      },
+      email: {
+        format: String,
+        default: 'john.doe@example.com',
+        env: 'WITHDRAWAL_MOBILE_MONEY_EMAIL',
       },
       beneficiaryDocumentId: {
         format: String,

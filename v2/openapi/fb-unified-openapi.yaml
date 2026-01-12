@@ -39,6 +39,8 @@ tags:
     description: Transfers to a sub account in the same account.
   - name: collateral
     description: Collateral management operations.
+  - name: collateralNotifications
+    description: Webhook notifications sent by Fireblocks to exchanges for collateral events.
   - name: ramps
     description: |-
       Beta Feature – Limited Access.
@@ -3817,14 +3819,15 @@ components:
         - $ref: '#/components/schemas/MobileMoneyCapability'
         - type: object
           required:
-            - accountHolder
             - mobilePhoneNumber
             - provider
+            - email
           properties:
-            accountHolder:
-              $ref: '#/components/schemas/AccountHolderDetails'
             mobilePhoneNumber:
               $ref: '#/components/schemas/MobilePhoneNumber'
+            email:
+              type: string
+              format: email
             provider:
               type: string
               enum:
@@ -3834,6 +3837,15 @@ components:
                 - tigo
                 - orange
               description: Mobile money provider
+    MobileMoneyAddressWithBeneficiaryInfo:
+      allOf:
+        - $ref: '#/components/schemas/MobileMoneyAddress'
+        - type: object
+          required:
+            - accountHolder
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
             beneficiaryDocumentId:
               type: string
               description: Beneficiary document identification (may be required)
@@ -3842,7 +3854,7 @@ components:
               description: Relationship to beneficiary for AML purposes
     MobileMoneyTransferDestination:
       allOf:
-        - $ref: '#/components/schemas/MobileMoneyAddress'
+        - $ref: '#/components/schemas/MobileMoneyAddressWithBeneficiaryInfo'
         - type: object
           required:
             - amount
@@ -4082,7 +4094,7 @@ components:
         - $ref: '#/components/schemas/PixAddress'
         - $ref: '#/components/schemas/EuropeanSEPAAddress'
         - $ref: '#/components/schemas/LocalBankTransferAddress'
-        - $ref: '#/components/schemas/MobileMoneyAddress'
+        - $ref: '#/components/schemas/MobileMoneyAddressWithBeneficiaryInfo'
     DepositAddressStatus:
       enum:
         - enabled
@@ -5137,6 +5149,16 @@ components:
           $ref: '#/components/schemas/PrefundedFiatCapability'
         to:
           $ref: '#/components/schemas/PublicBlockchainCapability'
+    OnRampRequestFrom:
+      oneOf:
+        - $ref: '#/components/schemas/IbanCapability'
+        - $ref: '#/components/schemas/AchCapability'
+        - $ref: '#/components/schemas/WireCapability'
+        - $ref: '#/components/schemas/SpeiCapability'
+        - $ref: '#/components/schemas/PixCapability'
+        - $ref: '#/components/schemas/EuropeanSEPACapability'
+        - $ref: '#/components/schemas/LocalBankTransferCapability'
+        - $ref: '#/components/schemas/MobileMoneyAddress'
     OnRampCapability:
       type: object
       title: Fiat to Crypto
@@ -5271,6 +5293,22 @@ components:
           $ref: '#/components/schemas/FiatCapability'
         to:
           $ref: '#/components/schemas/PublicBlockchainAddress'
+    OnRampRequestProperties:
+      type: object
+      title: On Ramp
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - OnRamp
+        from:
+          $ref: '#/components/schemas/OnRampRequestFrom'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainAddress'
     PrefundedOffRampProperties:
       type: object
       title: Off Ramp - Prefunded
@@ -5349,7 +5387,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/CommonRampRequestProperties'
         - oneOf:
-            - $ref: '#/components/schemas/OnRampProperties'
+            - $ref: '#/components/schemas/OnRampRequestProperties'
             - $ref: '#/components/schemas/PrefundedOnRampProperties'
             - $ref: '#/components/schemas/OffRampProperties'
             - $ref: '#/components/schemas/PrefundedOffRampProperties'
