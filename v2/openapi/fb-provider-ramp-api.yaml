@@ -105,6 +105,42 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ParticipantsIdentification",
     }
+  IbanCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanCapability",
+    }
+  AchCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AchCapability",
+    }
+  WireCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/WireCapability",
+    }
+  SpeiCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiCapability",
+    }
+  PixCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PixCapability",
+    }
+  EuropeanSEPACapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/EuropeanSEPACapability",
+    }
+  LocalBankTransferCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransferCapability",
+    }
+  MobileMoneyAddressWithBeneficiaryInfo:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyAddressWithBeneficiaryInfo",
+    }
+  MobileMoneyAddress:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyAddress",
+    }
 
 x-responses:
   BadRequestResponse:
@@ -550,6 +586,17 @@ components:
         to:
           $ref: "#/x-schemas/PublicBlockchainCapability"
 
+    OnRampRequestFrom:
+      oneOf:
+        - $ref: "#/x-schemas/IbanCapability"
+        - $ref: "#/x-schemas/AchCapability"
+        - $ref: "#/x-schemas/WireCapability"
+        - $ref: "#/x-schemas/SpeiCapability"
+        - $ref: "#/x-schemas/PixCapability"
+        - $ref: "#/x-schemas/EuropeanSEPACapability"
+        - $ref: "#/x-schemas/LocalBankTransferCapability"
+        - $ref: "#/x-schemas/MobileMoneyAddress"
+
     OnRampCapability:
       type: object
       title: Fiat to Crypto
@@ -684,6 +731,23 @@ components:
         to:
           $ref: "#/x-schemas/PublicBlockchainAddress"
 
+    OnRampRequestProperties:
+      type: object
+      title: On Ramp
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - OnRamp
+        from:
+          $ref: "#/components/schemas/OnRampRequestFrom"
+        to:
+          $ref: "#/x-schemas/PublicBlockchainAddress"
+
     PrefundedOffRampProperties:
       type: object
       title: Off Ramp - Prefunded
@@ -767,7 +831,7 @@ components:
       allOf:
         - $ref: "#/components/schemas/CommonRampRequestProperties"
         - oneOf:
-            - $ref: "#/components/schemas/OnRampProperties"
+            - $ref: "#/components/schemas/OnRampRequestProperties"
             - $ref: "#/components/schemas/PrefundedOnRampProperties"
             - $ref: "#/components/schemas/OffRampProperties"
             - $ref: "#/components/schemas/PrefundedOffRampProperties"

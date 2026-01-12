@@ -13,7 +13,7 @@ import {
   IbanCapability,
   LocalBankTransferAddress,
   LocalBankTransferCapability,
-  MobileMoneyAddress,
+  MobileMoneyAddressWithBeneficiaryInfo,
   MobileMoneyCapability,
   OffRampProperties,
   OnRampProperties,
@@ -197,7 +197,9 @@ function getTransferMethod(transferMethod: FiatCapability['transferMethod']): Fi
     case LocalBankTransferCapability.transferMethod.LBT:
       return fakeSchemaObject('LocalBankTransferAddress') as LocalBankTransferAddress;
     case MobileMoneyCapability.transferMethod.MOMO:
-      return fakeSchemaObject('MobileMoneyAddress') as MobileMoneyAddress;
+      return fakeSchemaObject(
+        'MobileMoneyAddressWithBeneficiaryInfo'
+      ) as MobileMoneyAddressWithBeneficiaryInfo;
     default:
       throw new XComError('Invalid transfer method', { transferMethod });
   }

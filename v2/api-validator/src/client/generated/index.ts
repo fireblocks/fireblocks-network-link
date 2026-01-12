@@ -126,6 +126,7 @@ export { LocalBankTransferCapability } from './models/LocalBankTransferCapabilit
 export type { LocalBankTransferDestination } from './models/LocalBankTransferDestination';
 export { Market } from './models/Market';
 export { MobileMoneyAddress } from './models/MobileMoneyAddress';
+export type { MobileMoneyAddressWithBeneficiaryInfo } from './models/MobileMoneyAddressWithBeneficiaryInfo';
 export { MobileMoneyCapability } from './models/MobileMoneyCapability';
 export type { MobileMoneyTransfer } from './models/MobileMoneyTransfer';
 export type { MobileMoneyTransferDestination } from './models/MobileMoneyTransferDestination';
@@ -144,6 +145,8 @@ export type { OnRampCapability } from './models/OnRampCapability';
 export { OnRampProperties } from './models/OnRampProperties';
 export type { OnRampPropertiesWithPaymentInstructions } from './models/OnRampPropertiesWithPaymentInstructions';
 export type { OnRampReceipt } from './models/OnRampReceipt';
+export type { OnRampRequestFrom } from './models/OnRampRequestFrom';
+export { OnRampRequestProperties } from './models/OnRampRequestProperties';
 export type { OrderBookPairIdQueryParam } from './models/OrderBookPairIdQueryParam';
 export { OrderQuote } from './models/OrderQuote';
 export type { OtherAssetReference } from './models/OtherAssetReference';
