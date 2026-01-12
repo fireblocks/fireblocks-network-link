@@ -10,12 +10,24 @@ export interface Encoder {
   decode(payload: string): string;
 }
 
+export interface ByteCodec {
+  encodeBytes(data: Buffer): string;
+  decodeToBytes(data: string): Buffer;
+}
+
 export class URL implements Encoder {
   public encode(payload: string): string {
     return encodeURIComponent(payload);
   }
   public decode(payload: string): string {
     return decodeURIComponent(payload);
+  }
+  public encodeBytes(data: Buffer): string {
+    // URL-encoded form is defined over a base64 string representation.
+    return encodeURIComponent(data.toString('base64'));
+  }
+  public decodeToBytes(data: string): Buffer {
+    return Buffer.from(decodeURIComponent(data), 'base64');
   }
 }
 
@@ -26,6 +38,12 @@ export class Base64 implements Encoder {
   public decode(payload: string): string {
     return Buffer.from(payload, 'base64').toString('utf8');
   }
+  public encodeBytes(data: Buffer): string {
+    return data.toString('base64');
+  }
+  public decodeToBytes(data: string): Buffer {
+    return Buffer.from(data, 'base64');
+  }
 }
 
 export class HexStr implements Encoder {
@@ -34,6 +52,12 @@ export class HexStr implements Encoder {
   }
   public decode(payload: string): string {
     return Buffer.from(payload, 'hex').toString('utf8');
+  }
+  public encodeBytes(data: Buffer): string {
+    return data.toString('hex');
+  }
+  public decodeToBytes(data: string): Buffer {
+    return Buffer.from(data, 'hex');
   }
 }
 
@@ -44,6 +68,12 @@ export class Base32 implements Encoder {
   public decode(payload: string): string {
     return Buffer.from(base32.decode.asBytes(payload.toUpperCase())).toString('utf8');
   }
+  public encodeBytes(data: Buffer): string {
+    return base32.encode(new Uint8Array(data));
+  }
+  public decodeToBytes(data: string): Buffer {
+    return Buffer.from(base32.decode.asBytes(data.toUpperCase()));
+  }
 }
 
 export class Base58 implements Encoder {
@@ -53,9 +83,15 @@ export class Base58 implements Encoder {
   public decode(payload: string): string {
     return Buffer.from(base58.decode(payload)).toString('utf8');
   }
+  public encodeBytes(data: Buffer): string {
+    return base58.encode(new Uint8Array(data));
+  }
+  public decodeToBytes(data: string): Buffer {
+    return Buffer.from(base58.decode(data));
+  }
 }
 
-export function encoderFactory(encoding: Encoding): Encoder {
+export function encoderFactory(encoding: Encoding): Encoder & ByteCodec {
   switch (encoding) {
     case 'url-encoded':
       return new URL();
@@ -67,43 +103,6 @@ export function encoderFactory(encoding: Encoding): Encoder {
       return new Base64();
     case 'hexstr':
       return new HexStr();
-    default:
-      throw new UnsupportedEncodingFormatError();
-  }
-}
-
-// Byte-level helpers for encoding signature bytes (or other binary blobs) into header-safe strings,
-// and decoding them back into bytes.
-export function encodeBytes(data: Buffer, encoding: Encoding): string {
-  switch (encoding) {
-    case 'base64':
-      return data.toString('base64');
-    case 'hexstr':
-      return data.toString('hex');
-    case 'base58':
-      return base58.encode(new Uint8Array(data));
-    case 'url-encoded':
-      // URL-encoded form is defined over a base64 string representation.
-      return encodeURIComponent(data.toString('base64'));
-    case 'base32':
-      return base32.encode(new Uint8Array(data));
-    default:
-      throw new UnsupportedEncodingFormatError();
-  }
-}
-
-export function decodeToBytes(data: string, encoding: Encoding): Buffer {
-  switch (encoding) {
-    case 'base64':
-      return Buffer.from(data, 'base64');
-    case 'hexstr':
-      return Buffer.from(data, 'hex');
-    case 'base58':
-      return Buffer.from(base58.decode(data));
-    case 'url-encoded':
-      return Buffer.from(decodeURIComponent(data), 'base64');
-    case 'base32':
-      return Buffer.from(base32.decode.asBytes(data));
     default:
       throw new UnsupportedEncodingFormatError();
   }

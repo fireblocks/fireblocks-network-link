@@ -1,11 +1,11 @@
 import config from '../config';
-import { Encoding, decodeToBytes, encodeBytes, encoderFactory } from './encoding';
+import { Encoding, encoderFactory } from './encoding';
 import { HashAlgorithm, SigningAlgorithm, getVerifyKey, signerFactory } from './signing';
 
 export function verifySignature(payload: string, signature: string): boolean {
   const signingConfig = config.get('authentication').signing;
   const encodedPayload = encode(payload, signingConfig.preEncoding);
-  const sigBytes = decodeToBytes(signature, signingConfig.postEncoding);
+  const sigBytes = encoderFactory(signingConfig.postEncoding).decodeToBytes(signature);
   return verify(
     encodedPayload,
     sigBytes,
@@ -24,7 +24,7 @@ export function buildRequestSignature(payload: string): string {
     signingConfig.privateKey,
     signingConfig.hashAlgorithm
   );
-  return encodeBytes(sigBytes, signingConfig.postEncoding);
+  return encoderFactory(signingConfig.postEncoding).encodeBytes(sigBytes);
 }
 
 function sign(
