@@ -1255,7 +1255,9 @@ components:
         asset:
           $ref: '#/x-schemas/NationalCurrency'
         transferMethod:
-          enum: [ PayId ]
+          type: string
+          enum:
+            - PayId
 
     PayId:
       type: object
@@ -1317,7 +1319,9 @@ components:
         asset:
           $ref: '#/x-schemas/NationalCurrency'
         transferMethod:
-          enum: [ Interac ]
+          type: string
+          enum:
+            - Interac
 
     RecipientTransfer:
       type: object
