@@ -6,7 +6,7 @@ const base64Encoded = 'QWxsIGluIHRoZSBnb2xkZW4gYWZ0ZXJub29uIEZ1bGwgbGVpc3VyZWx5I
 const hexEncoded =
   '416c6c20696e2074686520676f6c64656e2061667465726e6f6f6e2046756c6c206c6569737572656c7920776520676c696465';
 const base32Encoded =
-  'IFWGYIDJNYQHI2DFEBTW63DEMVXCAYLGORSXE3TPN5XCARTVNRWCA3DFNFZXK4TFNR4SA53FEBTWY2LEMU======';
+  'ifwgyidjnyqhi2dfebtw63demvxcaylgorsxe3tpn5xcartvnrwca3dfnfzxk4tfnr4sa53febtwy2lemu======';
 const base58Encoded = '4ZMy2teLGsR5CW9yw1h1pBaJuc3wEPNJZ7h2t9vnJimLJjUhvwSc3FPFQXyJ2p1BTLXdMn';
 
 describe('Encoding methods', () => {

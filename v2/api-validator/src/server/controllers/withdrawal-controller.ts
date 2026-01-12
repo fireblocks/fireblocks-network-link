@@ -84,7 +84,7 @@ export class WithdrawalController {
 
   private loadWithdrawalCapabilities() {
     const capabilities =
-      loadCapabilitiesJson(`withdrawals-${this.accountId}.json`) ??
+      loadCapabilitiesJson<WithdrawalCapability>(`withdrawals-${this.accountId}.json`) ??
       WithdrawalController.generateWithdrawalCapabilities();
 
     this.withdrawalCapabilityRepository.clear();

@@ -40,7 +40,8 @@ export class AccountsController {
       return;
     }
 
-    const accounts = loadCapabilitiesJson('accounts.json') ?? AccountsController.generateAccounts();
+    const accounts =
+      loadCapabilitiesJson<Account>('accounts.json') ?? AccountsController.generateAccounts();
 
     for (const account of accounts) {
       AccountsController.repository.create(account);

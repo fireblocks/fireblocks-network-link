@@ -80,7 +80,7 @@ export class DepositController {
 
   public loadDepositCapabilities(): void {
     const capabilities =
-      loadCapabilitiesJson(`deposits-${this.accountId}.json`) ??
+      loadCapabilitiesJson<DepositCapability>(`deposits-${this.accountId}.json`) ??
       DepositController.generateDepositCapabilities();
 
     this.depositCapabilitiesRepository.clear();

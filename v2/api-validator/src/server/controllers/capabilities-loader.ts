@@ -5,16 +5,16 @@ import logger from '../../logging';
 
 const log = logger('capabilities-loader');
 
-export function loadCapabilitiesJson(filename: string): unknown[] | undefined {
+export function loadCapabilitiesJson<T = unknown>(filename: string): T[] | undefined {
   if (!config.get('mockServerCapabilitiesDir')) {
     return undefined;
   }
 
   const filePath = path.join(config.get('mockServerCapabilitiesDir'), filename);
   if (fs.existsSync(filePath)) {
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf8')) as T[];
     log.info('Loaded capabilities from preset', { count: data.length, filePath });
-    return data as unknown[];
+    return data;
   } else {
     log.warn('Missing capabilities file. Data will be randomly generated', { filePath });
   }

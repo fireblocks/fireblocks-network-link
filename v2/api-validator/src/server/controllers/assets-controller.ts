@@ -27,7 +27,8 @@ export class AssetsController {
     }
 
     const assets =
-      loadCapabilitiesJson('assets.json') ?? AssetsController.generateAdditionalAssets();
+      loadCapabilitiesJson<AssetDefinition>('assets.json') ??
+      AssetsController.generateAdditionalAssets();
 
     for (const asset of assets) {
       AssetsController.repository.create(asset);
