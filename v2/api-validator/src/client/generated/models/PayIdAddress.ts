@@ -4,11 +4,11 @@
 /* eslint-disable */
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
-import type { Pix } from './Pix';
-import type { PixCapability } from './PixCapability';
+import type { PayId } from './PayId';
+import type { PayIdCapability } from './PayIdCapability';
 
-export type PixAddress = (PixCapability & {
+export type PayIdAddress = (PayIdCapability & {
     accountHolder: AccountHolderDetails;
-    pix: Pix;
+    payId: PayId;
 });
 

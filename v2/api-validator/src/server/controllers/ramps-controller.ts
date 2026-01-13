@@ -11,12 +11,16 @@ import {
   FiatCapability,
   IbanAddress,
   IbanCapability,
+  InteracAddress,
+  InteracCapability,
   LocalBankTransferAddress,
   LocalBankTransferCapability,
   MobileMoneyAddressWithBeneficiaryInfo,
   MobileMoneyCapability,
   OffRampProperties,
   OnRampProperties,
+  PayIdAddress,
+  PayIdCapability,
   PixAddress,
   PixCapability,
   PublicBlockchainAddress,
@@ -200,6 +204,10 @@ function getTransferMethod(transferMethod: FiatCapability['transferMethod']): Fi
       return fakeSchemaObject(
         'MobileMoneyAddressWithBeneficiaryInfo'
       ) as MobileMoneyAddressWithBeneficiaryInfo;
+    case PayIdCapability.transferMethod.PAY_ID:
+      return fakeSchemaObject('PayIdAddress') as PayIdAddress;
+    case InteracCapability.transferMethod.INTERAC:
+      return fakeSchemaObject('InteracAddress') as InteracAddress;
     default:
       throw new XComError('Invalid transfer method', { transferMethod });
   }
