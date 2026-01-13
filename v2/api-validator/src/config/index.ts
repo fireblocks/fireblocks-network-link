@@ -752,6 +752,130 @@ const config = convict({
         },
       },
     },
+    payId: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      payId: {
+        type: {
+          format: String,
+          default: 'EMAIL',
+          env: 'WITHDRAWAL_PAY_ID_TYPE',
+        },
+        value: {
+          format: String,
+          default: 'merchant@example.com',
+          env: 'WITHDRAWAL_PAY_ID_VALUE',
+        },
+        bsb: {
+          format: String,
+          default: '062000',
+          env: 'WITHDRAWAL_PAY_ID_BSB',
+        },
+        accountNumber: {
+          format: String,
+          default: '12345678901',
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_NUMBER',
+        },
+      },
+    },
+    interac: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      interacTransfer: {
+        recipientTransfer: {
+          type: {
+            format: String,
+            default: 'EMAIL',
+            env: 'WITHDRAWAL_INTERAC_RECIPIENT_TRANSFER_TYPE',
+          },
+          value: {
+            format: String,
+            default: 'merchant@example.com',
+            env: 'WITHDRAWAL_INTERAC_RECIPIENT_TRANSFER_VALUE',
+          },
+        },
+        autoDeposit: {
+          format: Boolean,
+          default: true,
+          env: 'WITHDRAWAL_INTERAC_AUTO_DEPOSIT',
+        },
+        securityQuestion: {
+          format: String,
+          default: "What is your mother's maiden name?",
+          env: 'WITHDRAWAL_INTERAC_SECURITY_QUESTION',
+        },
+        securityAnswer: {
+          format: String,
+          default: 'Smith',
+          env: 'WITHDRAWAL_INTERAC_SECURITY_ANSWER',
+        },
+        message: {
+          format: String,
+          default: 'Please enter the security answer to complete the transfer.',
+          env: 'WITHDRAWAL_INTERAC_MESSAGE',
+        },
+      },
+    },
   },
   authentication: {
     apiKey: {
