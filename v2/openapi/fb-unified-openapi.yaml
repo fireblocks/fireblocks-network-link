@@ -481,7 +481,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /accounts/{accountId}/ramps/requirements/{quoteId}:
+  /accounts/{accountId}/ramps/requirements:
     get:
       operationId: getRampCreationRequirements
       summary: Get requirements for creating a new ramp
@@ -495,7 +495,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
-        - $ref: '#/components/parameters/QuoteIdPathParam'
+        - $ref: '#/components/parameters/RampRequirementsQuoteIdQueryParam'
       responses:
         '200':
           description: Ramp creation requirements.
@@ -516,7 +516,7 @@ paths:
                         - originator.fullName
                         - originator.dateOfBirth
                         - beneficiary.fullName
-                        - beneficiary.accountNumber
+                        - beneficiary.registrationNumber
                       supportedJWEAlgorithms:
                         - RSA-OAEP-256
                       supportedJWEEncryptions:
@@ -588,12 +588,12 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /accounts/{accountId}/ramps/{id}/rfi:
+  /accounts/{accountId}/ramps/{id}/rfi/bulk:
     post:
-      operationId: submitRFI
-      summary: Submit RFI for a ramp
+      operationId: submitRFIBulk
+      summary: Submit RFI bulk for a ramp
       description: |
-        Submits the RFI details back to the provider for processing.
+        Submits the RFI bulk details back to the provider for processing.
       tags:
         - ramps
       parameters:
@@ -604,12 +604,12 @@ paths:
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/EntityIdPathParam'
       requestBody:
-        description: RFI details
+        description: RFI bulk details
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ParticipantsIdentification'
+              $ref: '#/components/schemas/RequestForInformationBulkSubmission'
       responses:
         '200':
           $ref: '#/components/responses/GetRampDetailsResponse'
@@ -748,10 +748,9 @@ components:
       description: Flag to include the account balances in the response. Balances are not returned by default for account endpoints.
       schema:
         type: boolean
-    QuoteIdPathParam:
+    RampRequirementsQuoteIdQueryParam:
       name: quoteId
-      in: path
-      required: true
+      in: query
       description: The ID of the quote for which requirements are needed.
       schema:
         type: string
@@ -3308,7 +3307,7 @@ components:
     RampStatus:
       enum:
         - Pending
-        - AdditionalInformationRequired
+        - PendingRFISubmission
         - Processing
         - Canceled
         - Completed
@@ -3539,12 +3538,7 @@ components:
       allOf:
         - $ref: '#/components/schemas/CommonRampRequestProperties'
         - oneOf:
-            - $ref: '#/components/schemas/OnRampProperties'
-            - $ref: '#/components/schemas/PrefundedOnRampProperties'
             - $ref: '#/components/schemas/OffRampProperties'
-            - $ref: '#/components/schemas/PrefundedOffRampProperties'
-            - $ref: '#/components/schemas/BridgeProperties'
-            - $ref: '#/components/schemas/PrefundedBridgeProperties'
         - type: object
           properties:
             executionDetails:
@@ -3643,7 +3637,7 @@ components:
           description: |
             List of requests for information for the ramp. When the ramp is in AdditionalInformationRequired status, each RFI must be submitted via /accounts/{accountId}/ramps/{id}/rfi.
           items:
-            $ref: '#/components/schemas/PIIEncryptionRequirement'
+            $ref: '#/components/schemas/RequestForInformation'
     OnRampPropertiesWithPaymentInstructions:
       type: object
       title: On Ramp
@@ -3721,7 +3715,6 @@ components:
         - $ref: '#/components/schemas/CommonRamp'
         - oneOf:
             - $ref: '#/components/schemas/OffRampPropertiesWithPaymentInstructions'
-            - $ref: '#/components/schemas/PrefundedOffRampProperties'
         - type: object
           properties:
             receipt:
@@ -3738,9 +3731,7 @@ components:
               $ref: '#/components/schemas/BridgeReceipt'
     Ramp:
       oneOf:
-        - $ref: '#/components/schemas/OnRamp'
         - $ref: '#/components/schemas/OffRamp'
-        - $ref: '#/components/schemas/Bridge'
     RampFiatTransfer:
       oneOf:
         - $ref: '#/components/schemas/IbanTransfer'
@@ -3871,8 +3862,14 @@ components:
     RampRequirements:
       type: object
       required:
+        - type
         - piiEncryption
       properties:
+        type:
+          type: string
+          enum:
+            - EncryptedPII
+          description: The type of ramp requirements.
         piiEncryption:
           $ref: '#/components/schemas/PIIEncryptionRequirement'
       example:
@@ -3889,6 +3886,43 @@ components:
             - RSA-OAEP-256
           supportedJWEEncryptions:
             - A128GCM
+    PIIField:
+      type: string
+      enum:
+        - originator.externalReferenceId
+        - originator.entityType
+        - originator.participantRelationshipType
+        - originator.fullName.firstName
+        - originator.fullName.lastName
+        - originator.dateOfBirth
+        - originator.postalAddress.streetName
+        - originator.postalAddress.buildingNumber
+        - originator.postalAddress.postalCode
+        - originator.postalAddress.city
+        - originator.postalAddress.subdivision
+        - originator.postalAddress.district
+        - originator.postalAddress.country
+        - originator.email
+        - originator.phone
+        - originator.businessName
+        - originator.registrationNumber
+        - beneficiary.externalReferenceId
+        - beneficiary.entityType
+        - beneficiary.participantRelationshipType
+        - beneficiary.fullName.firstName
+        - beneficiary.fullName.lastName
+        - beneficiary.dateOfBirth
+        - beneficiary.postalAddress.streetName
+        - beneficiary.postalAddress.buildingNumber
+        - beneficiary.postalAddress.postalCode
+        - beneficiary.postalAddress.city
+        - beneficiary.postalAddress.subdivision
+        - beneficiary.postalAddress.district
+        - beneficiary.postalAddress.country
+        - beneficiary.email
+        - beneficiary.phone
+        - beneficiary.businessName
+        - beneficiary.registrationNumber
     PIIEncryptionRequirement:
       type: object
       required:
@@ -3907,7 +3941,7 @@ components:
         requiredPIIFields:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/PIIField'
           description: |
             List of PII fields that must be included in the encrypted payload (e.g., "originator.fullName", "beneficiary.postalAddress").
         supportedJWEAlgorithms:
@@ -3920,6 +3954,65 @@ components:
           items:
             type: string
           description: List of supported JWE encryption methods (e.g., A128GCM).
+    RequestForInformation:
+      type: object
+      required:
+        - id
+        - type
+        - encryptedPIIRequest
+      properties:
+        id:
+          type: string
+          description: The ID of the request for information.
+        type:
+          type: string
+          enum:
+            - EncryptedPII
+          description: The type of request for information.
+        encryptedPIIRequest:
+          $ref: '#/components/schemas/PIIEncryptionRequirement'
+      example:
+        id: '123'
+        type: EncryptedPII
+        encryptedPIIRequest:
+          certificate: |-
+            -----BEGIN CERTIFICATE-----
+            ...
+            -----END CERTIFICATE-----
+          keyId: key-123
+          requiredPIIFields:
+            - fullName.firstName
+            - postalAddress.streetName
+          supportedJWEAlgorithms:
+            - RSA-OAEP-256
+          supportedJWEEncryptions:
+            - A128GCM
+    RequestForInformationSubmission:
+      type: object
+      required:
+        - rfiId
+        - type
+        - encryptedPII
+      properties:
+        rfiId:
+          type: string
+          description: The ID of the request for information.
+        type:
+          type: string
+          enum:
+            - EncryptedPII
+          description: The type of request for information.
+        encryptedPII:
+          $ref: '#/components/schemas/JweString'
+    RequestForInformationBulkSubmission:
+      type: object
+      required:
+        - rfiSubmissions
+      properties:
+        rfiSubmissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestForInformationSubmission'
     Retry:
       type: object
       required:
