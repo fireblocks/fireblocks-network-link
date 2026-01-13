@@ -1031,6 +1031,42 @@ components:
           type: string
           enum:
             - Pix
+
+    PixKey:
+      type: object
+      required:
+        - type
+        - value
+      properties:
+        type:
+          type: string
+          example: 'email'
+          enum:
+            - cpf
+            - cnpj
+            - email
+            - phone
+            - random
+        value:
+          type: string
+          description: PIX value
+          example: 'merchant@example.com'
+
+    Pix:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          $ref: '#/components/schemas/PixKey'
+        qrCode:
+          type: string
+          description: PIX QR code
+          example: '00020126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-426655440000520400005303986540510.005802BR5913ACME BRASIL6009SAO PAULO62070503***6304ABCD'
+        expirationDate:
+          type: string
+          description: Expiration for PIX Cobrança (optional, ISO 8601 format)
+          example: '2025-12-10T23:59:59Z'
    
     PixAddress:
       allOf:
@@ -1038,25 +1074,12 @@ components:
         - type: object
           required:
             - accountHolder
-            - pixKey
-            - keyType
+            - pix
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
-            pixKey:
-              type: string
-            keyType:
-              type: string
-              enum:
-                - cpf
-                - cnpj
-                - email
-                - phone
-                - random
-            bankName:
-              type: string
-            bankCode:
-              type: string
+            pix:
+              $ref: '#/components/schemas/Pix'
     
     PixTransferDestination:
       allOf:

@@ -170,8 +170,10 @@ export type { PeerAccountTransferDestination } from './models/PeerAccountTransfe
 export type { PeerAccountWithdrawal } from './models/PeerAccountWithdrawal';
 export type { PeerAccountWithdrawalRequest } from './models/PeerAccountWithdrawalRequest';
 export { PersonaIdentificationInfo } from './models/PersonaIdentificationInfo';
-export { PixAddress } from './models/PixAddress';
+export type { Pix } from './models/Pix';
+export type { PixAddress } from './models/PixAddress';
 export { PixCapability } from './models/PixCapability';
+export { PixKey } from './models/PixKey';
 export type { PixTransfer } from './models/PixTransfer';
 export type { PixTransferDestination } from './models/PixTransferDestination';
 export type { PositiveAmount } from './models/PositiveAmount';

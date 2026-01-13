@@ -406,25 +406,30 @@ const config = convict({
           env: 'WITHDRAWAL_PIX_ACCOUNT_POSTAL_CODE',
         },
       },
-      pixKey: {
-        format: String,
-        default: '12345678901234567890123456789012',
-        env: 'WITHDRAWAL_PIX_KEY',
-      },
-      keyType: {
-        format: String,
-        default: 'email',
-        env: 'WITHDRAWAL_PIX_KEY_TYPE',
-      },
-      bankName: {
-        format: String,
-        default: 'Chase',
-        env: 'WITHDRAWAL_PIX_BANK_NAME',
-      },
-      bankAccountNumber: {
-        format: String,
-        default: '12345678901',
-        env: 'WITHDRAWAL_PIX_BANK_ACCOUNT_NUMBER',
+      pix: {
+        key: {
+          type: {
+            format: String,
+            default: 'email',
+            env: 'WITHDRAWAL_PIX_KEY_TYPE',
+          },
+          value: {
+            format: String,
+            default: 'merchant@example.com',
+            env: 'WITHDRAWAL_PIX_KEY_VALUE',
+          },
+        },
+        qrCode: {
+          format: String,
+          default:
+            '00020126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-426655440000520400005303986540510.005802BR5913ACME BRASIL6009SAO PAULO62070503***6304ABCD',
+          env: 'WITHDRAWAL_PIX_QR_CODE',
+        },
+        expirationDate: {
+          format: String,
+          default: '2025-12-10T23:59:59Z',
+          env: 'WITHDRAWAL_PIX_EXPIRATION_DATE',
+        },
       },
     },
     europeanSepa: {
