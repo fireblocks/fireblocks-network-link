@@ -3857,6 +3857,7 @@ components:
                 - mtn
                 - tigo
                 - orange
+                - wave
               description: Mobile money provider
     MobileMoneyAddressWithBeneficiaryInfo:
       allOf:
@@ -3873,6 +3874,8 @@ components:
             beneficiaryRelationship:
               type: string
               description: Relationship to beneficiary for AML purposes
+            redirect:
+              $ref: '#/components/schemas/Redirect'
     MobileMoneyTransferDestination:
       allOf:
         - $ref: '#/components/schemas/MobileMoneyAddressWithBeneficiaryInfo'

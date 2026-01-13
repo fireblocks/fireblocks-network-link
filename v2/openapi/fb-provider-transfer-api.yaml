@@ -1194,6 +1194,7 @@ components:
                 - mtn
                 - tigo
                 - orange
+                - wave
               description: Mobile money provider
 
 
@@ -1212,6 +1213,8 @@ components:
             beneficiaryRelationship:
               type: string
               description: Relationship to beneficiary for AML purposes
+            redirect:
+              $ref: '#/components/schemas/Redirect'
 
     
     MobileMoneyTransferDestination:

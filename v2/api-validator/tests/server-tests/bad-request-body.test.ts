@@ -183,6 +183,7 @@ const ambiguousProperties = {
       '/to/mobilePhoneNumber',
       '/to/provider',
       '/to/accountNumber',
+      '/to/email',
       '/to/bankName',
       '/to/bankCode',
       '/to/redirect',
