@@ -731,16 +731,16 @@ const config = convict({
         },
       },
       interacTransfer: {
-        recipientTransfer: {
+        recipientHandle: {
           type: {
             format: String,
             default: 'EMAIL',
-            env: 'WITHDRAWAL_INTERAC_RECIPIENT_TRANSFER_TYPE',
+            env: 'WITHDRAWAL_INTERAC_RECIPIENT_HANDLE_TYPE',
           },
           value: {
             format: String,
             default: 'merchant@example.com',
-            env: 'WITHDRAWAL_INTERAC_RECIPIENT_TRANSFER_VALUE',
+            env: 'WITHDRAWAL_INTERAC_RECIPIENT_HANDLE_VALUE',
           },
         },
         autoDeposit: {

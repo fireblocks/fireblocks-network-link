@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { RecipientTransfer } from './RecipientTransfer';
+import type { RecipientHandle } from './RecipientHandle';
 
 export type InteracTransferDetails = {
-    recipientTransfer: RecipientTransfer;
+    recipientHandle: RecipientHandle;
     autoDeposit: boolean;
     /**
      * if autoDeposit is false, this is required

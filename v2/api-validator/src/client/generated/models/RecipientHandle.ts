@@ -3,15 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type RecipientTransfer = {
-    type: RecipientTransfer.type;
+export type RecipientHandle = {
+    type: RecipientHandle.type;
     /**
      * Recipient value
      */
     value: string;
 };
 
-export namespace RecipientTransfer {
+export namespace RecipientHandle {
 
     export enum type {
         EMAIL = 'EMAIL',

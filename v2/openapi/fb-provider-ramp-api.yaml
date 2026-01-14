@@ -149,6 +149,14 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyAddress",
     }
+  InteracCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/InteracCapability",
+    }
+  PayIdCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PayIdCapability",
+    }
 
 x-responses:
   BadRequestResponse:
@@ -604,6 +612,8 @@ components:
         - $ref: "#/x-schemas/EuropeanSEPACapability"
         - $ref: "#/x-schemas/LocalBankTransferCapability"
         - $ref: "#/x-schemas/MobileMoneyAddress"
+        - $ref: "#/x-schemas/PayIdCapability"
+        - $ref: "#/x-schemas/InteracCapability"
 
     OnRampCapability:
       type: object

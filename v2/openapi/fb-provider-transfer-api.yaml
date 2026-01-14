@@ -1376,7 +1376,7 @@ components:
           enum:
             - Interac
 
-    RecipientTransfer:
+    RecipientHandle:  
       type: object
       required:
         - type
@@ -1396,10 +1396,10 @@ components:
       type: object
       required:
         - autoDeposit
-        - recipientTransfer
+        - recipientHandle
       properties:
-        recipientTransfer:
-          $ref: '#/components/schemas/RecipientTransfer'
+        recipientHandle:
+          $ref: '#/components/schemas/RecipientHandle'
         autoDeposit:
           type: boolean
         securityQuestion:

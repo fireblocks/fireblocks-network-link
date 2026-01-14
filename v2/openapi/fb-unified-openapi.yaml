@@ -4028,7 +4028,7 @@ components:
           type: string
           enum:
             - Interac
-    RecipientTransfer:
+    RecipientHandle:
       type: object
       required:
         - type
@@ -4047,10 +4047,10 @@ components:
       type: object
       required:
         - autoDeposit
-        - recipientTransfer
+        - recipientHandle
       properties:
-        recipientTransfer:
-          $ref: '#/components/schemas/RecipientTransfer'
+        recipientHandle:
+          $ref: '#/components/schemas/RecipientHandle'
         autoDeposit:
           type: boolean
         securityQuestion:
@@ -5335,6 +5335,8 @@ components:
         - $ref: '#/components/schemas/EuropeanSEPACapability'
         - $ref: '#/components/schemas/LocalBankTransferCapability'
         - $ref: '#/components/schemas/MobileMoneyAddress'
+        - $ref: '#/components/schemas/PayIdCapability'
+        - $ref: '#/components/schemas/InteracCapability'
     OnRampCapability:
       type: object
       title: Fiat to Crypto

@@ -206,7 +206,7 @@ export type { RampRequest } from './models/RampRequest';
 export type { RampsPairIdQueryParam } from './models/RampsPairIdQueryParam';
 export { RampStatus } from './models/RampStatus';
 export type { Rate } from './models/Rate';
-export { RecipientTransfer } from './models/RecipientTransfer';
+export { RecipientHandle } from './models/RecipientHandle';
 export type { Redirect } from './models/Redirect';
 export { RequestPart } from './models/RequestPart';
 export { Retry } from './models/Retry';
