@@ -14,8 +14,7 @@ export type RecipientHandle = {
 export namespace RecipientHandle {
 
     export enum type {
-        EMAIL = 'EMAIL',
-        PHONE = 'PHONE',
+        EMAIL = 'email',
     }
 
 

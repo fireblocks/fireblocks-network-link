@@ -3972,11 +3972,12 @@ components:
       required:
         - type
         - value
+        - accountNumber
       properties:
         type:
           type: string
           enum:
-            - EMAIL
+            - email
         value:
           type: string
           description: PayId value
@@ -4037,8 +4038,7 @@ components:
         type:
           type: string
           enum:
-            - EMAIL
-            - PHONE
+            - email
         value:
           type: string
           description: Recipient value

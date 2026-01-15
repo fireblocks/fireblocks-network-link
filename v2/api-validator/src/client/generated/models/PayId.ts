@@ -16,13 +16,13 @@ export type PayId = {
     /**
      * Account number value
      */
-    accountNumber?: string;
+    accountNumber: string;
 };
 
 export namespace PayId {
 
     export enum type {
-        EMAIL = 'EMAIL',
+        EMAIL = 'email',
     }
 
 
