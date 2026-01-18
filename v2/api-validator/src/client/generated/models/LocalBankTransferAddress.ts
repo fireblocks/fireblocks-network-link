@@ -6,6 +6,7 @@
 import type { AccountHolderDetails } from './AccountHolderDetails';
 import type { BankAccountNumber } from './BankAccountNumber';
 import type { LocalBankTransferCapability } from './LocalBankTransferCapability';
+import type { Redirect } from './Redirect';
 
 export type LocalBankTransferAddress = (LocalBankTransferCapability & {
     accountHolder: AccountHolderDetails;
@@ -18,5 +19,6 @@ export type LocalBankTransferAddress = (LocalBankTransferCapability & {
      * Internal bank identifier
      */
     bankCode: string;
+    redirect?: Redirect;
 });
 

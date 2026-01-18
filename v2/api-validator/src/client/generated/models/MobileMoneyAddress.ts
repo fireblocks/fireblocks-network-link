@@ -26,6 +26,7 @@ export namespace MobileMoneyAddress {
         MTN = 'mtn',
         TIGO = 'tigo',
         ORANGE = 'orange',
+        WAVE = 'wave',
     }
 
 

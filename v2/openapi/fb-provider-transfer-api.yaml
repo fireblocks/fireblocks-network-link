@@ -1031,6 +1031,42 @@ components:
           type: string
           enum:
             - Pix
+
+    PixKey:
+      type: object
+      required:
+        - type
+        - value
+      properties:
+        type:
+          type: string
+          example: 'email'
+          enum:
+            - cpf
+            - cnpj
+            - email
+            - phone
+            - random
+        value:
+          type: string
+          description: PIX value
+          example: 'merchant@example.com'
+
+    Pix:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          $ref: '#/components/schemas/PixKey'
+        qrCode:
+          type: string
+          description: PIX QR code
+          example: '00020126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-426655440000520400005303986540510.005802BR5913ACME BRASIL6009SAO PAULO62070503***6304ABCD'
+        expirationDate:
+          type: string
+          description: Expiration for PIX Cobrança (optional, ISO 8601 format)
+          example: '2025-12-10T23:59:59Z'
    
     PixAddress:
       allOf:
@@ -1038,25 +1074,12 @@ components:
         - type: object
           required:
             - accountHolder
-            - pixKey
-            - keyType
+            - pix
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
-            pixKey:
-              type: string
-            keyType:
-              type: string
-              enum:
-                - cpf
-                - cnpj
-                - email
-                - phone
-                - random
-            bankName:
-              type: string
-            bankCode:
-              type: string
+            pix:
+              $ref: '#/components/schemas/Pix'
     
     PixTransferDestination:
       allOf:
@@ -1171,6 +1194,7 @@ components:
                 - mtn
                 - tigo
                 - orange
+                - wave
               description: Mobile money provider
 
 
@@ -1189,6 +1213,8 @@ components:
             beneficiaryRelationship:
               type: string
               description: Relationship to beneficiary for AML purposes
+            redirect:
+              $ref: '#/components/schemas/Redirect'
 
     
     MobileMoneyTransferDestination:
@@ -1241,7 +1267,21 @@ components:
             bankCode:
               type: string
               description: Internal bank identifier
-    
+            redirect:
+              $ref: '#/components/schemas/Redirect'
+
+    Redirect:
+      type: object
+      properties:
+        url:
+          type: string
+          description: URL to redirect to
+          example: 'https://yellowcard.example.com/authorize?token=abc123&transactionId=16b8b2c3-bd61-4745-9c48-3d30c2bc6907'
+        expiresAt:
+          type: string
+          description: Expiration date of the redirect
+          example: '2025-01-15T12:00:00Z'
+
     LocalBankTransferDestination:
       allOf:
         - $ref: '#/components/schemas/LocalBankTransferAddress'
@@ -1260,6 +1300,148 @@ components:
             referenceId:
               type: string
    
+    PayIdCapability:
+      description: PayId Transfer Capability
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - PayId
+
+    PayId:
+      type: object
+      required:
+        - type
+        - value
+        - accountNumber
+      properties:
+        type:
+          type: string
+          enum:
+            - email
+        value:
+          type: string
+          description: PayId value
+          example: 'merchant@example.com'
+        bsb:
+          type: string
+          description: BSB value
+          example: '062000'
+        accountNumber:
+          type: string
+          description: Account number value
+
+    PayIdAddress:
+      allOf:
+        - $ref: '#/components/schemas/PayIdCapability'
+        - type: object
+          required:
+            - accountHolder
+            - payId
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            payId:
+              $ref: '#/components/schemas/PayId'
+
+    PayIdTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/PayIdAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/x-schemas/PositiveAmount'
+
+    PayIdTransfer:
+      allOf:
+        - $ref: '#/components/schemas/PayIdTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+
+    InteracCapability:
+      type: object
+      required: [ asset, transferMethod ]
+      properties:
+        asset:
+          $ref: '#/x-schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Interac
+
+    RecipientHandle:  
+      type: object
+      required:
+        - type
+        - value
+      properties:
+        type:
+          type: string
+          enum:
+            - email
+        value:
+          type: string
+          description: Recipient value
+          example: 'merchant@example.com'
+
+    InteracTransferDetails:
+      type: object
+      required:
+        - autoDeposit
+        - recipientHandle
+      properties:
+        recipientHandle:
+          $ref: '#/components/schemas/RecipientHandle'
+        autoDeposit:
+          type: boolean
+        securityQuestion:
+          description: if autoDeposit is false, this is required
+          type: string
+        securityAnswer:
+          type: string
+          description: if autoDeposit is false, this is required
+        message:
+          type: string
+
+    InteracAddress:
+      allOf:
+        - $ref: '#/components/schemas/InteracCapability'
+        - type: object
+          required:
+            - accountHolder
+            - interacTransfer
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            interacTransfer:
+              $ref: '#/components/schemas/InteracTransferDetails'
+    
+    InteracDestination:
+      allOf:
+        - $ref: '#/components/schemas/InteracAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/x-schemas/PositiveAmount'
+
+    InteracTransfer:
+      allOf:
+        - $ref: '#/components/schemas/InteracDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+
     OtherFiatTransfer:
       type: object
       description: >-
@@ -1290,6 +1472,8 @@ components:
         - $ref: '#/components/schemas/EuropeanSEPACapability'
         - $ref: '#/components/schemas/LocalBankTransferCapability'
         - $ref: '#/components/schemas/MobileMoneyCapability'
+        - $ref: '#/components/schemas/PayIdCapability'
+        - $ref: '#/components/schemas/InteracCapability'
 
     PublicBlockchainTransactionDestination:
       type: object
@@ -1446,6 +1630,8 @@ components:
         - $ref: '#/components/schemas/EuropeanSEPAAddress'
         - $ref: '#/components/schemas/LocalBankTransferAddress'
         - $ref: '#/components/schemas/MobileMoneyAddressWithBeneficiaryInfo'
+        - $ref: '#/components/schemas/PayIdAddress'
+        - $ref: '#/components/schemas/InteracAddress'
 
     DepositAddressStatus:
       enum:
