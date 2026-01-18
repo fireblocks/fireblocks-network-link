@@ -4,11 +4,11 @@
 /* eslint-disable */
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
-import type { Pix } from './Pix';
-import type { PixCapability } from './PixCapability';
+import type { InteracCapability } from './InteracCapability';
+import type { InteracTransferDetails } from './InteracTransferDetails';
 
-export type PixAddress = (PixCapability & {
+export type InteracAddress = (InteracCapability & {
     accountHolder: AccountHolderDetails;
-    pix: Pix;
+    interacTransfer: InteracTransferDetails;
 });
 
