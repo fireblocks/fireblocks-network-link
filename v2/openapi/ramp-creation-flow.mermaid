@@ -1,0 +1,75 @@
+sequenceDiagram
+    actor Client
+    participant Provider as Provider API
+
+    %% Step 1: Fetch ramp capabilities
+    Note over Client,Provider: Step 1: Discover Available Ramp Methods
+    Client->>Provider: GET /accounts/{accountId}/capabilities/ramps
+    Provider-->>Client: RampMethods (supported conversion pairs)
+    Note right of Client: Identify which asset pairs<br/>can be converted and<br/>which have requirements
+
+    %% Step 2: Create a quote
+    Note over Client,Provider: Step 2: Create Quote for Selected Pair
+    Client->>Provider: POST /accounts/{accountId}/liquidity/quotes<br/>{fromAsset, toAsset, amount}
+    Provider-->>Client: Quote {id, rate, expiry, amounts}
+    Note right of Client: Quote contains pricing<br/>and conversion details
+
+    %% Step 3: Fetch requirements (conditional)
+    alt Pair has requirements (hasRequirements=true)
+        Note over Client,Provider: Step 3: Fetch Requirements for PII Encryption
+        Client->>Provider: GET /accounts/{accountId}/ramps/requirements?quoteId={id}
+        Provider-->>Client: RampRequirements {certificate, requiredPIIFields}
+        Note right of Client: Certificate contains<br/>public key for encrypting<br/>PII fields (JWE)
+    end
+
+    %% Step 4: Create the ramp
+    Note over Client,Provider: Step 4: Create Ramp
+    Note right of Client: Encrypt required PII fields<br/>using certificate from requirements
+    Client->>Provider: POST /accounts/{accountId}/ramps<br/>{type, from, to, amount, quoteId, participantsIdentification}
+    Provider-->>Client: Ramp {id, status, paymentInstructions, rfis?}
+
+    %% Step 5: Submit RFIs if required
+    alt Ramp status = PendingRFISubmission
+        Note over Client,Provider: Step 5: Submit Additional RFI (Request For Information)
+        Note right of Client: Ramp response contains<br/>rfis[] array with<br/>additional data requirements
+        loop For each RFI
+            Note right of Client: Encrypt PII fields using<br/>certificate from RFI
+        end
+        Client->>Provider: POST /accounts/{accountId}/ramps/{rampId}/rfi/bulk<br/>{rfiSubmissions: [{rfiId, encryptedPII}]}
+        Provider-->>Client: Ramp {updated status and paymentInstructions}
+    end
+
+    %% Step 6: Get ramp details to check payment instructions
+    Note over Client,Provider: Step 6: Retrieve Payment Instructions
+    Client->>Provider: GET /accounts/{accountId}/ramps/{rampId}
+    Provider-->>Client: Ramp {paymentInstructions}
+
+    %% Step 7: Handle payment based on instruction type
+    alt Payment Instructions = Fiat Address (IBAN/ACH/Wire/etc)
+        Note over Client,Provider: Step 7a: Fiat Payment (On-Ramp)
+        Note right of Client: Client initiates fiat<br/>payment to provided<br/>bank details
+        Client->>Client: User makes payment via<br/>banking system using<br/>provided instructions
+    else Payment Instructions = Blockchain Address
+        Note over Client,Provider: Step 7b: Blockchain Payment (Off-Ramp/Bridge)
+        Note right of Client: Client sends crypto to<br/>provided blockchain address
+        Client->>Client: Send blockchain transaction<br/>to payment address
+    else Payment Instructions = Signing Message (EIP-712/Solana)
+        Note over Client,Provider: Step 7c: Signed Payment Permit
+        Note right of Client: Client signs the message<br/>using their private key
+        Client->>Client: Sign EIP-712 message or<br/>Solana transaction
+        Client->>Provider: POST /accounts/{accountId}/ramps/{rampId}/payment<br/>{signedPaymentPermit}
+        Provider-->>Client: Ramp {updated status}
+        Note right of Provider: Provider broadcasts<br/>the signed permit
+    end
+
+    %% Step 8: Status transitions
+    Note over Client,Provider: Step 8: Ramp Processing & Completion
+    Note right of Provider: Status: Pending → Processing
+    Provider->>Provider: Process ramp transaction
+    Note right of Provider: Execute conversion,<br/>apply fees, transfer funds
+    Note right of Provider: Status: Processing → Completed
+
+    %% Final status check
+    Client->>Provider: GET /accounts/{accountId}/ramps/{rampId}
+    Provider-->>Client: Ramp {status: Completed, receipt}
+    Note right of Client: Receipt contains final<br/>amounts, fees, and<br/>transaction details

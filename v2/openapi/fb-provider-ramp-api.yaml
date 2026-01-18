@@ -979,7 +979,9 @@ components:
         - type: object
           properties:
             participantsIdentification:
-              $ref: "#/x-schemas/ParticipantsIdentification"
+              oneOf:
+                - $ref: "#/x-schemas/JweString"
+                - $ref: "#/x-schemas/ParticipantsIdentification"
 
     FixedFeeAmount:
       type: object

@@ -909,13 +909,11 @@ components:
           oneOf:
             - $ref: "#/components/schemas/PersonaIdentificationInfo"
             - $ref: "#/components/schemas/BusinessIdentificationInfo"
-            - $ref: "#/components/schemas/JweString"
         beneficiary:
           description: Information about the beneficiary of the transaction.
           oneOf:
             - $ref: "#/components/schemas/PersonaIdentificationInfo"
             - $ref: "#/components/schemas/BusinessIdentificationInfo"
-            - $ref: "#/components/schemas/JweString"
 
     WithdrawalRequestCommonProperties:
       type: object
