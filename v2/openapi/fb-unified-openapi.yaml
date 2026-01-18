@@ -507,11 +507,16 @@ paths:
                 default:
                   value:
                     piiEncryption:
-                      certificate: |-
-                        -----BEGIN CERTIFICATE-----
-                        MIIDXTCCAkSgAwIBAgIJAJ...
-                        -----END CERTIFICATE-----
-                      keyId: key-v1-2026
+                      certificate:
+                        id: c4d1da72-111e-4d52-bdbf-2e74a2d803d5
+                        domain: example.com
+                        certPEM: LS0tLS1CRUdJT...
+                        jwk:
+                          kty: EC
+                          crv: P-256
+                          kid: '263521881931753643998528753619816524468853605762'
+                          x: KnxBe8fb2mL_Ve9-tqjGSkGgE9f0yohMkAvH_InaFtE
+                          y: D41cVUpiKcey4LJKNFtUtmVHDWRmhjZapPLfryX5b1o
                       requiredPIIFields:
                         - originator.fullName
                         - originator.dateOfBirth
@@ -529,7 +534,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /accounts/{accountId}/ramps/{id}:
+  /accounts/{accountId}/ramps/{rampId}:
     get:
       operationId: getRampDetails
       summary: Get details of a specific ramp
@@ -555,7 +560,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /accounts/{accountId}/ramps/{id}/payment:
+  /accounts/{accountId}/ramps/{rampId}/payment:
     post:
       operationId: submitSignedPaymentPermit
       summary: Submit signed payment permit for a ramp
@@ -588,7 +593,7 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /accounts/{accountId}/ramps/{id}/rfi/bulk:
+  /accounts/{accountId}/ramps/{rampId}/rfi/bulk:
     post:
       operationId: submitRFIBulk
       summary: Submit RFI bulk for a ramp
@@ -3635,7 +3640,7 @@ components:
         rfis:
           type: array
           description: |
-            List of requests for information for the ramp. When the ramp is in AdditionalInformationRequired status, each RFI must be submitted via /accounts/{accountId}/ramps/{id}/rfi.
+            List of requests for information for the ramp. When the ramp is in AdditionalInformationRequired status, each RFI must be submitted via /accounts/{accountId}/ramps/{rampId}/rfi.
           items:
             $ref: '#/components/schemas/RequestForInformation'
     OnRampPropertiesWithPaymentInstructions:
@@ -3874,11 +3879,16 @@ components:
           $ref: '#/components/schemas/PIIEncryptionRequirement'
       example:
         piiEncryption:
-          certificate: |-
-            -----BEGIN CERTIFICATE-----
-            ...
-            -----END CERTIFICATE-----
-          keyId: key-123
+          certificate:
+            id: c4d1da72-111e-4d52-bdbf-2e74a2d803d5
+            domain: example.com
+            certPEM: LS0tLS1CRUdJT...
+            jwk:
+              kty: EC
+              crv: P-256
+              kid: '263521881931753643998528753619816524468853605762'
+              x: KnxBe8fb2mL_Ve9-tqjGSkGgE9f0yohMkAvH_InaFtE
+              y: D41cVUpiKcey4LJKNFtUtmVHDWRmhjZapPLfryX5b1o
           requiredPIIFields:
             - originator.fullName
             - beneficiary.postalAddress
@@ -3923,21 +3933,68 @@ components:
         - beneficiary.phone
         - beneficiary.businessName
         - beneficiary.registrationNumber
+    PIICertificate:
+      type: object
+      required:
+        - id
+        - domain
+        - certPEM
+        - jwk
+      properties:
+        id:
+          type: string
+          description: Identifier for the certificate.
+        domain:
+          type: string
+          description: Domain name which is available in the CommonName attribute of the cert.
+        certPEM:
+          type: string
+          description: Base64 encoded certificate in PEM format.
+        jwk:
+          type: object
+          description: JSON Web Key (JWK) representation of the certificate.
+          required:
+            - kty
+            - crv
+            - kid
+            - x
+            - y
+          properties:
+            kty:
+              type: string
+              description: Key type.
+            crv:
+              type: string
+              description: Curve name.
+            kid:
+              type: string
+              description: Key identifier.
+            x:
+              type: string
+              description: X coordinate of the public key.
+            y:
+              type: string
+              description: Y coordinate of the public key.
+      example:
+        id: c4d1da72-111e-4d52-bdbf-2e74a2d803d5
+        domain: example.com
+        certPEM: LS0tLS1CRUdJT...
+        jwk:
+          kty: EC
+          crv: P-256
+          kid: '263521881931753643998528753619816524468853605762'
+          x: KnxBe8fb2mL_Ve9-tqjGSkGgE9f0yohMkAvH_InaFtE
+          y: D41cVUpiKcey4LJKNFtUtmVHDWRmhjZapPLfryX5b1o
     PIIEncryptionRequirement:
       type: object
       required:
         - certificate
-        - keyId
         - requiredPIIFields
         - supportedJWEAlgorithms
         - supportedJWEEncryptions
       properties:
         certificate:
-          type: string
-          description: PEM encoded certificate (public key) for JWE encryption.
-        keyId:
-          type: string
-          description: Identifier for the public key.
+          $ref: '#/components/schemas/PIICertificate'
         requiredPIIFields:
           type: array
           items:
@@ -3954,6 +4011,30 @@ components:
           items:
             type: string
           description: List of supported JWE encryption methods (e.g., A128GCM).
+      description: |
+        Defines the encryption requirements for PII data. To construct the encrypted payload:
+        1. Create an array of objects, one for each field listed in `requiredPIIFields`
+        2. Each object should have:
+           - `name`: The field name from `requiredPIIFields` (e.g., "originator.fullName")
+           - `value`: The actual value you want to send for that field
+
+        3. Encrypt the entire array using JSON Web Encryption (JWE) with:
+           - The public key from the `certificate`
+           - One of the algorithms from `supportedJWEAlgorithms`
+           - One of the encryption methods from `supportedJWEEncryptions`
+
+        4. The result will be a JWE Compact Serialization string to be sent as the encrypted payload.
+        Example payload structure before encryption: ```json [
+          {
+            "name": "originator.fullName.firstName",
+            "value": "John"
+          },
+          {
+            "name": "beneficiary.postalAddress.streetName",
+            "value": "Main St"
+          }
+        ] ```
+        After encryption, this becomes a JWE string like: `eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMTI4R0NNIn0.xxx.yyy.zzz.aaa`
     RequestForInformation:
       type: object
       required:
@@ -3975,11 +4056,16 @@ components:
         id: '123'
         type: EncryptedPII
         encryptedPIIRequest:
-          certificate: |-
-            -----BEGIN CERTIFICATE-----
-            ...
-            -----END CERTIFICATE-----
-          keyId: key-123
+          certificate:
+            id: c4d1da72-111e-4d52-bdbf-2e74a2d803d5
+            domain: example.com
+            certPEM: LS0tLS1CRUdJT...
+            jwk:
+              kty: EC
+              crv: P-256
+              kid: '263521881931753643998528753619816524468853605762'
+              x: KnxBe8fb2mL_Ve9-tqjGSkGgE9f0yohMkAvH_InaFtE
+              y: D41cVUpiKcey4LJKNFtUtmVHDWRmhjZapPLfryX5b1o
           requiredPIIFields:
             - fullName.firstName
             - postalAddress.streetName
