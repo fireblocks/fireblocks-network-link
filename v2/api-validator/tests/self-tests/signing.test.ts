@@ -5,7 +5,7 @@ import {
   signerFactory,
 } from '../../src/security/signing';
 
-const data = 'data';
+const data = '@All in the golden afternoon Full leisurely we glide Loïc';
 
 // 78965 Used only for testing
 const ecdsaPrivateKey = `-----BEGIN EC PRIVATE KEY-----
