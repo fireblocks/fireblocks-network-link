@@ -189,10 +189,16 @@ be: `1691606624184c3d5f400-0e7e-4f94-a199-44b8cc7b6b81GET/accounts/A1234/balance
 
 #### Computing the signature
 
-The signature is computed by applying a pre-encoding function, a signing algorithm and
-a post-encoding function to the message. A server can implement one of the several
-supported options and specify the choice during the server on-boarding process. The same
-signing method will be used for all the requests.
+The signature is computed by following these steps:
+1. Encode the message using UTF-8 encoding.
+2. Apply the pre-encoding function.
+3. Apply the signing algorithm.
+4. Apply the post-encoding function.
+
+**Important:** The message string must be UTF-8 encoded before signing.
+
+A server can implement one of the several supported options and specify the choice during
+the server on-boarding process. The same signing method will be used for all the requests.
 
 These are the supported algorithms:
 
