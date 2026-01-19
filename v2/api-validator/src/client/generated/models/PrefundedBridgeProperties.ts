@@ -3,12 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { PrefundedBlockchainCapability } from './PrefundedBlockchainCapability';
+import type { PrefundedBridgeFrom } from './PrefundedBridgeFrom';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
 
 export type PrefundedBridgeProperties = {
     type: PrefundedBridgeProperties.type;
-    from: PrefundedBlockchainCapability;
+    from: PrefundedBridgeFrom;
     to: PublicBlockchainAddress;
 };
 

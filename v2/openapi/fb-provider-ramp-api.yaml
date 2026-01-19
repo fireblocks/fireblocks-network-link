@@ -697,6 +697,11 @@ components:
           enum:
             - Prefunded
 
+    PrefundedOnRampFrom:
+      allOf:
+        - $ref: "#/components/schemas/PrefundedFiatCapability"
+        - $ref: "#/components/schemas/TakeFrom"
+
     PrefundedOnRampProperties:
       type: object
       title: On Ramp - Prefunded
@@ -710,7 +715,7 @@ components:
           enum:
             - OnRamp
         from:
-          $ref: "#/components/schemas/PrefundedFiatCapability"
+          $ref: "#/components/schemas/PrefundedOnRampFrom"
         to:
           $ref: "#/x-schemas/PublicBlockchainAddress"
 
@@ -730,6 +735,11 @@ components:
           $ref: "#/x-schemas/FiatCapability"
         to:
           $ref: "#/x-schemas/PublicBlockchainAddress"
+    
+    PrefundedOffRampFrom:
+      allOf:
+        - $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        - $ref: "#/components/schemas/TakeFrom"
 
     OnRampRequestProperties:
       type: object
@@ -761,7 +771,7 @@ components:
           enum:
             - OffRamp
         from:
-          $ref: "#/components/schemas/PrefundedBlockchainCapability"
+          $ref: "#/components/schemas/PrefundedOffRampFrom"
         to:
           $ref: "#/x-schemas/FiatAddress"
 
@@ -782,6 +792,11 @@ components:
         to:
           $ref: "#/x-schemas/FiatAddress"
 
+    PrefundedBridgeFrom:
+      allOf:
+        - $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        - $ref: "#/components/schemas/TakeFrom"
+
     PrefundedBridgeProperties:
       type: object
       title: Bridge - Prefunded
@@ -795,7 +810,7 @@ components:
           enum:
             - Bridge
         from:
-          $ref: "#/components/schemas/PrefundedBlockchainCapability"
+          $ref: "#/components/schemas/PrefundedBridgeFrom"
         to:
           $ref: "#/x-schemas/PublicBlockchainAddress"
 
@@ -1050,6 +1065,13 @@ components:
         - $ref: "#/x-schemas/EuropeanSEPATransfer"
         - $ref: "#/x-schemas/LocalBankTransfer"
         - $ref: "#/x-schemas/MobileMoneyTransfer"
+
+    TakeFrom:
+      type: object
+      properties:
+        takeFrom:
+          description: Instructs the provider which prefunded source sub-account to debit for this ramp's settlement. If omitted, the provider debits the prefunded balance from the ramps's accountId by default.
+          type: string
 
     OrderQuote:
       type: object
