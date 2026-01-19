@@ -1,5 +1,5 @@
 import { buildRequestSignature, verifySignature } from '../../src/security';
-import config, { encodingTypes } from '../../src/config';
+import config, { preEncodingTypes, postEncodingTypes } from '../../src/config';
 
 // 78965 Used only for testing
 const ecdsaPrivateKey = `-----BEGIN EC PRIVATE KEY-----
@@ -93,8 +93,8 @@ function makeSigningVariations(): SigningVariation[] {
 
   let index = 0;
   for (const [signingAlgorithm, hashAlgorithm] of algorithmVariations) {
-    for (const preEncoding of encodingTypes) {
-      for (const postEncoding of encodingTypes) {
+    for (const preEncoding of preEncodingTypes) {
+      for (const postEncoding of postEncodingTypes) {
         index++;
         variations.push({
           index,

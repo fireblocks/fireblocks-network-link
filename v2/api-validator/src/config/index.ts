@@ -11,7 +11,8 @@ import {
 
 dotenvConfig();
 
-export const encodingTypes = ['url-encoded', 'base64', 'hexstr', 'base58', 'base32'];
+export const preEncodingTypes = ['url-encoded', 'base64', 'hexstr', 'base58', 'base32'] as const;
+export const postEncodingTypes = ['base64', 'hexstr', 'base58', 'base32'] as const;
 
 const config = convict({
   env: {
@@ -639,7 +640,7 @@ const config = convict({
       },
       preEncoding: {
         doc: 'Encoding to be applied to the data before it is signed',
-        format: encodingTypes,
+        format: preEncodingTypes,
         default: 'url-encoded',
         env: 'SIGNING_PRE_ENCODING',
       },
@@ -657,7 +658,7 @@ const config = convict({
       },
       postEncoding: {
         doc: 'Encoding to be applied to the signature',
-        format: encodingTypes,
+        format: postEncodingTypes,
         default: 'base64',
         env: 'SIGNING_POST_ENCODING',
       },
