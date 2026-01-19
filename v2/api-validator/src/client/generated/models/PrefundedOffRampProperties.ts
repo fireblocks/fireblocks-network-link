@@ -4,11 +4,11 @@
 /* eslint-disable */
 
 import type { FiatAddress } from './FiatAddress';
-import type { PrefundedBlockchainCapability } from './PrefundedBlockchainCapability';
+import type { PrefundedOffRampFrom } from './PrefundedOffRampFrom';
 
 export type PrefundedOffRampProperties = {
     type: PrefundedOffRampProperties.type;
-    from: PrefundedBlockchainCapability;
+    from: PrefundedOffRampFrom;
     to: FiatAddress;
 };
 
