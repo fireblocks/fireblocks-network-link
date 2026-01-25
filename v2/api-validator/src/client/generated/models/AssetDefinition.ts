@@ -9,6 +9,7 @@ import type { ContractBasedToken } from './ContractBasedToken';
 import type { Erc20Token } from './Erc20Token';
 import type { SolanaToken } from './SolanaToken';
 import type { StellarToken } from './StellarToken';
+import type { VirtualAsset } from './VirtualAsset';
 
-export type AssetDefinition = (BucketAsset | Erc20Token | Bep20Token | StellarToken | ContractBasedToken | SolanaToken);
+export type AssetDefinition = (BucketAsset | VirtualAsset | Erc20Token | Bep20Token | StellarToken | ContractBasedToken | SolanaToken);
 
