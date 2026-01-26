@@ -1571,6 +1571,20 @@ components:
         lastName:
           type: string
 
+    VaspInformation:
+      type: object
+      properties:
+        vaspName: 
+          type: string
+        vaspCountry: 
+          type: string
+        vaspCode:
+          type: string
+        vaspWebsite: 
+          type: string
+        vaspRegion: 
+          type: string
+
     PersonaIdentificationInfo:
       type: object
       description: Individual information about the beneficiary of the transaction.
@@ -1646,6 +1660,10 @@ components:
           oneOf:
             - $ref: '#/components/schemas/PersonaIdentificationInfo'
             - $ref: '#/components/schemas/BusinessIdentificationInfo'
+        originatingVasp:
+          $ref: '#/components/schemas/VaspInformation'
+        beneficiaryVasp:
+          $ref: '#/components/schemas/VaspInformation'
 
     WithdrawalRequestCommonProperties:
       type: object
