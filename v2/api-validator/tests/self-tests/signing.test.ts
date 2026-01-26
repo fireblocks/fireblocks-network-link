@@ -148,7 +148,7 @@ describe('Signing methods', () => {
           signerFactory(signingAlgo).sign(data, privateKey, hashAlgo);
         }).toThrow(AlgorithmNotSupportedError);
         expect(() => {
-          signerFactory(signingAlgo).verify(data, publicKey, 'signature', hashAlgo);
+          signerFactory(signingAlgo).verify(data, publicKey, Buffer.from('signature'), hashAlgo);
         }).toThrow(AlgorithmNotSupportedError);
       });
     }
