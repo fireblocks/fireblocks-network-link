@@ -106,6 +106,19 @@ paths:
                       transfersFiat:
                         - 6cd2fe1e-d0bc-4fad-a9ba-9384e0fdfdc0
                         - 7885a47b-0719-4448-b59e-3b8497cd1685
+                capabilitiesWithRequirements:
+                  summary: Capabilities with requirements
+                  value:
+                    version: 1.2.0
+                    components:
+                      accounts: '*'
+                      balances: '*'
+                      transfersBlockchain: '*'
+                    requirements:
+                      transfersBlockchain:
+                        withdrawalAddressPolicy:
+                          type: WithdrawalAddressPolicy
+                          value: ApprovedAddressesOnly
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -2635,6 +2648,28 @@ components:
           example: 1.0.37
         components:
           $ref: '#/components/schemas/ApiComponents'
+        requirements:
+          $ref: '#/components/schemas/CapabilitiesWithRequirements'
+    WithdrawalAddressPolicyRequirement:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          enum:
+            - ApprovedAddressesOnly
+            - AllAddresses
+    CapabilityRequirements:
+      type: object
+      properties:
+        withdrawalAddressPolicy:
+          $ref: '#/components/schemas/WithdrawalAddressPolicyRequirement'
+    CapabilitiesWithRequirements:
+      type: object
+      properties:
+        transfersBlockchain:
+          $ref: '#/components/schemas/CapabilityRequirements'
     ApiComponents:
       description: Lists supported API components and which sub-accounts support the component.
       type: object
@@ -4220,6 +4255,19 @@ components:
           type: string
         lastName:
           type: string
+    VaspInformation:
+      type: object
+      properties:
+        vaspName:
+          type: string
+        vaspCountry:
+          type: string
+        vaspCode:
+          type: string
+        vaspWebsite:
+          type: string
+        vaspRegion:
+          type: string
     PersonaIdentificationInfo:
       type: object
       description: Individual information about the beneficiary of the transaction.
@@ -4289,6 +4337,10 @@ components:
           oneOf:
             - $ref: '#/components/schemas/PersonaIdentificationInfo'
             - $ref: '#/components/schemas/BusinessIdentificationInfo'
+        originatingVasp:
+          $ref: '#/components/schemas/VaspInformation'
+        beneficiaryVasp:
+          $ref: '#/components/schemas/VaspInformation'
     WithdrawalRequestCommonProperties:
       type: object
       required:
