@@ -4,7 +4,7 @@ servers:
     url: http://0.0.0.0:8000
 info:
   title: Fireblocks Provider Connectivity API v2
-  version: 0.4.1
+  version: 0.5.0
   x-logo:
     url: doc-assets/fireblocks-logo-lockup-network-navy.png
     altText: Fireblocks logo
