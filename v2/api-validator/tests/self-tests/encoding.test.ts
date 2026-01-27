@@ -1,6 +1,6 @@
 import { encoderFactory } from '../../src/security/encoding';
 
-const data = '@All in the golden afternoon Full leisurely we glide Loïc';
+const data = Buffer.from('@All in the golden afternoon Full leisurely we glide Loïc', 'utf8');
 const urlEncoded =
   '%40All%20in%20the%20golden%20afternoon%20Full%20leisurely%20we%20glide%20Lo%C3%AFc';
 const base64Encoded =
@@ -13,7 +13,7 @@ const base58Encoded =
   'auE4EbJzZ5ve1ToCpfjPUfjQyvktEqzu4drHFs8UemGV6yRrdNkvDAZpnqgSLUBFJuDAcRuFPt58Tqc';
 
 describe('Encoding methods', () => {
-  describe('Encoding utf-8 payload', () => {
+  describe('Encoding payload', () => {
     it('should match encoding examples', () => {
       expect(encoderFactory('url-encoded').encode(data)).toBe(urlEncoded);
       expect(encoderFactory('base32').encode(data)).toBe(base32Encoded);
@@ -23,13 +23,15 @@ describe('Encoding methods', () => {
     });
   });
 
-  describe('Decoding encoded utf-8 examples', () => {
+  describe('Decoding encoded examples', () => {
     it('should match payload', () => {
-      expect(encoderFactory('url-encoded').decode(urlEncoded)).toBe(data);
-      expect(encoderFactory('base32').decode(base32Encoded)).toBe(data);
-      expect(encoderFactory('base58').decode(base58Encoded)).toBe(data);
-      expect(encoderFactory('base64').decode(base64Encoded)).toBe(data);
-      expect(encoderFactory('hexstr').decode(hexEncoded)).toBe(data);
+      const dataArr = Uint8Array.from(data);
+
+      expect(encoderFactory('url-encoded').decode(urlEncoded).equals(dataArr)).toBeTrue();
+      expect(encoderFactory('base32').decode(base32Encoded).equals(dataArr)).toBeTrue();
+      expect(encoderFactory('base58').decode(base58Encoded).equals(dataArr)).toBeTrue();
+      expect(encoderFactory('base64').decode(base64Encoded).equals(dataArr)).toBeTrue();
+      expect(encoderFactory('hexstr').decode(hexEncoded).equals(dataArr)).toBeTrue();
     });
   });
 });
