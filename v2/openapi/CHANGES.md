@@ -51,6 +51,20 @@
 - Validation tool stability improvements.
   
 -----
+## 0.5.0 - 2026-01-27
+
+### Non-breaking improvements
+
+- Documentation improvements.
+- Supporting "requirements" as part of the server capabilities.
+- Supporting first "requirement" - withdrawalAddressPolicy.
+- Extended the ParticipantsIdentification with VASP data for both originators and beneficiary.
+- Added email to Participants data.
+
+### Bug fixes
+
+-----
+
 ## 0.3.1 - 2023-11-21
 
 ### Non-breaking improvements
