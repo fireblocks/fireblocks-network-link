@@ -5,7 +5,7 @@
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
 import type { MobileMoneyAddress } from './MobileMoneyAddress';
-import type { Redirect } from './Redirect';
+import type { PaymentRedirect } from './PaymentRedirect';
 
 export type MobileMoneyAddressWithBeneficiaryInfo = (MobileMoneyAddress & {
     accountHolder: AccountHolderDetails;
@@ -17,6 +17,6 @@ export type MobileMoneyAddressWithBeneficiaryInfo = (MobileMoneyAddress & {
      * Relationship to beneficiary for AML purposes
      */
     beneficiaryRelationship?: string;
-    redirect?: Redirect;
+    paymentRedirect?: PaymentRedirect;
 });
 

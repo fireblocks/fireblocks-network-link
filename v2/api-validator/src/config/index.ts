@@ -555,17 +555,22 @@ const config = convict({
         default: 'john.doe@example.com',
         env: 'WITHDRAWAL_MOBILE_MONEY_EMAIL',
       },
-      redirect: {
+      successRedirectUrl: {
+        format: String,
+        default: 'https://yellowcard.example.com/authorize?token=abc123&transactionId=16b8b2c3-bd61-4745-9c48-3d30c2bc6907',
+        env: 'WITHDRAWAL_MOBILE_MONEY_SUCCESS_REDIRECT_URL',
+      },
+      paymentRedirect: {
         url: {
           format: String,
           default:
             'https://yellowcard.example.com/authorize?token=abc123&transactionId=16b8b2c3-bd61-4745-9c48-3d30c2bc6907',
-          env: 'WITHDRAWAL_MOBILE_MONEY_REDIRECT_URL',
+          env: 'WITHDRAWAL_MOBILE_MONEY_PAYMENT_REDIRECT_URL',
         },
         expiresAt: {
           format: String,
           default: '2025-01-15T12:00:00Z',
-          env: 'WITHDRAWAL_MOBILE_MONEY_REDIRECT_EXPIRES_AT',
+          env: 'WITHDRAWAL_MOBILE_MONEY_PAYMENT_REDIRECT_EXPIRES_AT',
         },
       },
       beneficiaryDocumentId: {
@@ -627,17 +632,22 @@ const config = convict({
         default: '123456789',
         env: 'WITHDRAWAL_LOCAL_BANK_TRANSFER_BANK_CODE',
       },
-      redirect: {
+      successRedirectUrl: {
+        format: String,
+        default: 'https://yellowcard.example.com/authorize?token=abc123&transactionId=16b8b2c3-bd61-4745-9c48-3d30c2bc6907',
+        env: 'WITHDRAWAL_LOCAL_BANK_TRANSFER_SUCCESS_REDIRECT_URL',
+      },
+      paymentRedirect: {
         url: {
           format: String,
           default:
             'https://yellowcard.example.com/authorize?token=abc123&transactionId=16b8b2c3-bd61-4745-9c48-3d30c2bc6907',
-          env: 'WITHDRAWAL_LOCAL_BANK_TRANSFER_REDIRECT_URL',
+          env: 'WITHDRAWAL_LOCAL_BANK_TRANSFER_PAYMENT_REDIRECT_URL',
         },
         expiresAt: {
           format: String,
           default: '2025-01-15T12:00:00Z',
-          env: 'WITHDRAWAL_LOCAL_BANK_TRANSFER_REDIRECT_EXPIRES_AT',
+          env: 'WITHDRAWAL_LOCAL_BANK_TRANSFER_PAYMENT_REDIRECT_EXPIRES_AT',
         },
       },
     },

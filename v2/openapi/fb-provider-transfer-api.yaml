@@ -1186,6 +1186,9 @@ components:
             email:
               type: string
               format: email
+            successRedirectUrl:
+              type: string
+              description: URL to redirect to after successful payment
             provider:
               type: string
               enum:
@@ -1213,8 +1216,8 @@ components:
             beneficiaryRelationship:
               type: string
               description: Relationship to beneficiary for AML purposes
-            redirect:
-              $ref: '#/components/schemas/Redirect'
+            paymentRedirect:
+              $ref: '#/components/schemas/PaymentRedirect'
 
     
     MobileMoneyTransferDestination:
@@ -1267,10 +1270,13 @@ components:
             bankCode:
               type: string
               description: Internal bank identifier
-            redirect:
-              $ref: '#/components/schemas/Redirect'
+            successRedirectUrl:
+              type: string
+              description: URL to redirect to after successful payment
+            paymentRedirect:
+              $ref: '#/components/schemas/PaymentRedirect'
 
-    Redirect:
+    PaymentRedirect:
       type: object
       properties:
         url:

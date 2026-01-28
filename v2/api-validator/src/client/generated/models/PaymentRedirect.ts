@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export type Redirect = {
+export type PaymentRedirect = {
     /**
      * URL to redirect to
      */

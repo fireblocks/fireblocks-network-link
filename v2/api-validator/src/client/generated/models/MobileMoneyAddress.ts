@@ -10,6 +10,10 @@ export type MobileMoneyAddress = (MobileMoneyCapability & {
     mobilePhoneNumber: MobilePhoneNumber;
     email: string;
     /**
+     * URL to redirect to after successful payment
+     */
+    successRedirectUrl?: string;
+    /**
      * Mobile money provider
      */
     provider: MobileMoneyAddress.provider;
