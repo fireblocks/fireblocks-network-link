@@ -517,13 +517,29 @@ paths:
                           kid: '263521881931753643998528753619816524468853605762'
                           x: KnxBe8fb2mL_Ve9-tqjGSkGgE9f0yohMkAvH_InaFtE
                           y: D41cVUpiKcey4LJKNFtUtmVHDWRmhjZapPLfryX5b1o
-                      requiredPIIFields:
-                        - originator.fullName
-                        - originator.dateOfBirth
-                        - beneficiary.fullName
-                        - beneficiary.registrationNumber
+                      fieldRequirements:
+                        type: object
+                        required:
+                          - originator.fullName
+                          - originator.dateOfBirth
+                          - beneficiary.fullName
+                          - beneficiary.registrationNumber
+                        properties:
+                          originator.fullName:
+                            type: string
+                          originator.dateOfBirth:
+                            type: string
+                            format: date
+                          beneficiary.fullName:
+                            type: string
+                          beneficiary.registrationNumber:
+                            type: string
+                      fileRequirements:
+                        - ID_DOCUMENT
+                        - PROOF_OF_ADDRESS_DOCUMENT
                       supportedJWEAlgorithms:
                         - RSA-OAEP-256
+                        - ECDH-ES+A128KW
                       supportedJWEEncryptions:
                         - A128GCM
         '400':
@@ -622,6 +638,48 @@ paths:
           $ref: '#/components/responses/BadRequestResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/ramps/{rampId}/rfi/{rfiId}/files:
+    post:
+      operationId: uploadRfiFile
+      summary: Upload encrypted RFI file
+      description: |
+        Upload an encrypted file for a specific RFI. Files must be encrypted using AES-128-GCM, with the AES key encrypted using JWE (ECDH-ES+A128KW algorithm with A128GCM encryption).
+        The request must be sent as multipart/form-data with three parts: - fileMetadata: JSON object with file details - encryption: JSON object with encrypted AES key and IV - encryptedFile: The encrypted binary file data
+      tags:
+        - ramps
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/EntityIdPathParam'
+        - name: rfiId
+          in: path
+          description: The ID of the RFI for which the file is being uploaded.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Encrypted file upload with metadata and encryption details
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UploadRfiFileRequest'
+      responses:
+        '204':
+          description: RFI file uploaded successfully.
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '404':
+          description: Ramp or RFI not found.
         4XX:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
@@ -3889,50 +3947,191 @@ components:
               kid: '263521881931753643998528753619816524468853605762'
               x: KnxBe8fb2mL_Ve9-tqjGSkGgE9f0yohMkAvH_InaFtE
               y: D41cVUpiKcey4LJKNFtUtmVHDWRmhjZapPLfryX5b1o
-          requiredPIIFields:
-            - originator.fullName
-            - beneficiary.postalAddress
+          fieldRequirements:
+            type: object
+            required:
+              - originator.fullName
+              - beneficiary.postalAddress
+            properties:
+              originator.fullName:
+                type: string
+              beneficiary.postalAddress:
+                type: object
+                properties:
+                  street:
+                    type: string
+                  city:
+                    type: string
+                  country:
+                    type: string
+          fileRequirements:
+            - ID_DOCUMENT
+            - PROOF_OF_ADDRESS_DOCUMENT
           supportedJWEAlgorithms:
             - RSA-OAEP-256
+            - ECDH-ES+A128KW
           supportedJWEEncryptions:
             - A128GCM
-    PIIField:
-      type: string
-      enum:
-        - originator.externalReferenceId
-        - originator.entityType
-        - originator.participantRelationshipType
-        - originator.fullName.firstName
-        - originator.fullName.lastName
-        - originator.dateOfBirth
-        - originator.postalAddress.streetName
-        - originator.postalAddress.buildingNumber
-        - originator.postalAddress.postalCode
-        - originator.postalAddress.city
-        - originator.postalAddress.subdivision
-        - originator.postalAddress.district
-        - originator.postalAddress.country
-        - originator.email
-        - originator.phone
-        - originator.businessName
-        - originator.registrationNumber
-        - beneficiary.externalReferenceId
-        - beneficiary.entityType
-        - beneficiary.participantRelationshipType
-        - beneficiary.fullName.firstName
-        - beneficiary.fullName.lastName
-        - beneficiary.dateOfBirth
-        - beneficiary.postalAddress.streetName
-        - beneficiary.postalAddress.buildingNumber
-        - beneficiary.postalAddress.postalCode
-        - beneficiary.postalAddress.city
-        - beneficiary.postalAddress.subdivision
-        - beneficiary.postalAddress.district
-        - beneficiary.postalAddress.country
-        - beneficiary.email
-        - beneficiary.phone
-        - beneficiary.businessName
-        - beneficiary.registrationNumber
+    FieldRequirements:
+      type: object
+      description: JSON schema for the RFI requirements. Note that references use 'ref' instead of '$ref' to avoid YAML parsing issues.
+      example:
+        type: object
+        $defs:
+          address:
+            type: object
+            required:
+              - street
+              - city
+              - country
+            properties:
+              city:
+                type: string
+                description: City name
+              street:
+                type: string
+                description: Street address
+              country:
+                type: string
+                pattern: ^[A-Z]{2}$
+                description: Country code (e.g., US, GB)
+              postalCode:
+                type: string
+                description: Postal or ZIP code
+              stateProvince:
+                type: string
+                description: State or province
+            description: Full address
+          individual:
+            type: object
+            required:
+              - name
+              - address
+              - dateOfBirth
+            properties:
+              name:
+                type: string
+                description: Individual's full name
+              address:
+                ref: '#/$defs/address'
+              dateOfBirth:
+                type: string
+                format: date
+                description: Individual's date of birth (YYYY-MM-DD)
+            description: Individual's RFI data
+          beneficiaryOwner:
+            type: object
+            required:
+              - name
+              - address
+              - dateOfBirth
+              - percentage
+            properties:
+              name:
+                type: string
+                description: Individual's full name
+              address:
+                ref: '#/$defs/address'
+              percentage:
+                type: number
+                description: Company ownership percentage
+              dateOfBirth:
+                type: string
+                format: date
+                description: Individual's date of birth (YYYY-MM-DD)
+            description: Beneficiary owner's RFI data
+          intermediaryBeneficiaryOwner:
+            type: object
+            required:
+              - name
+              - address
+              - dateOfFormation
+              - countryOfFormation
+              - percentage
+            properties:
+              name:
+                type: string
+                description: Business legal name
+              address:
+                ref: '#/$defs/address'
+              percentage:
+                type: number
+                description: Company ownership percentage
+              dateOfFormation:
+                type: string
+                format: date
+                description: Company formation date (YYYY-MM-DD)
+              countryOfFormation:
+                type: string
+                pattern: ^[A-Z]{2}$
+                description: Entity formation country
+            description: Intermediary beneficiary owner's RFI data
+        title: RFI Requirements
+        $schema: https://json-schema.org/draft/2020-12/schema
+        required:
+          - SOURCE_OF_FUNDS
+          - METHOD_OF_VERIFICATION
+          - NAME
+          - TRADE_NAME
+          - NATIONAL_IDENTIFICATION_NUMBER
+          - DATE_OF_FORMATION
+          - COUNTRY_OF_FORMATION
+          - ENTITY_TYPE
+          - INDUSTRY_TYPE
+          - ADDRESS
+          - AUTHORIZED_SIGNATORIES
+          - BENEFICIARY_OWNERSHIP
+        properties:
+          NAME:
+            type: string
+            description: Business legal registered name
+          EMAIL:
+            type: string
+            description: Business contact email address
+          PHONE:
+            type: string
+            description: Business contact phone number
+          ADDRESS:
+            ref: '#/$defs/address'
+          WEBSITE:
+            type: string
+            description: Business website URL
+          TRADE_NAME:
+            type: string
+            description: Business trade name or DBA (Doing Business As)
+          ENTITY_TYPE:
+            type: string
+            description: Business structure type (Corporation, LLC, Partnership, etc.)
+          INDUSTRY_TYPE:
+            type: string
+            description: Business activity classification
+          SOURCE_OF_FUNDS:
+            type: string
+            description: Transaction source of funds
+          DATE_OF_FORMATION:
+            type: string
+            format: date
+            description: Company formation date (YYYY-MM-DD)
+          BENEFICIARY_OWNERS:
+            ref: '#/$defs/beneficiaryOwner'
+          COUNTRY_OF_FORMATION:
+            type: string
+            pattern: ^[A-Z]{2}$
+            description: Entity formation country
+          BENEFICIARY_OWNERSHIP:
+            type: boolean
+            description: Whether any individuals or intermediaries own 25% or more of the company
+          AUTHORIZED_SIGNATORIES:
+            ref: '#/$defs/individual'
+          METHOD_OF_VERIFICATION:
+            type: string
+            description: Verification method used
+          NATIONAL_IDENTIFICATION_NUMBER:
+            type: string
+            description: Business identification number (e.g., Tax ID)
+          INTERMEDIARY_BENEFICIARY_OWNERS:
+            ref: '#/$defs/intermediaryBeneficiaryOwner'
+        description: RFI Data Requirements
     PIICertificate:
       type: object
       required:
@@ -3985,56 +4184,149 @@ components:
           kid: '263521881931753643998528753619816524468853605762'
           x: KnxBe8fb2mL_Ve9-tqjGSkGgE9f0yohMkAvH_InaFtE
           y: D41cVUpiKcey4LJKNFtUtmVHDWRmhjZapPLfryX5b1o
+    RfiFileKey:
+      type: string
+      description: File key identifier for RFI document types.
+      enum:
+        - FORMATION_DOCUMENT
+        - ORG_STRUCTURE
+        - INVOICE
+        - BENEFICIARY_OWNERS_DOCUMENT
+        - ID_DOCUMENT
+        - PROOF_OF_ADDRESS_DOCUMENT
+        - ADDITIONAL_DOCUMENTS
+      example: ID_DOCUMENT
+    RfiFileType:
+      type: string
+      description: Supported MIME types for RFI file uploads.
+      enum:
+        - application/pdf
+        - application/postscript
+        - application/msword
+        - application/x-msi
+        - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+        - application/vnd.ms-excel
+        - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+        - image/jpeg
+        - image/jp2
+        - image/png
+        - image/apng
+        - image/heic
+        - image/heif
+        - text/csv
+      example: application/pdf
+    FileMetadata:
+      type: object
+      required:
+        - fileName
+        - fileType
+        - fileKey
+      properties:
+        fileName:
+          type: string
+          description: Name of the file being submitted.
+          example: identity_document.pdf
+        fileType:
+          $ref: '#/components/schemas/RfiFileType'
+        fileKey:
+          $ref: '#/components/schemas/RfiFileKey'
+      description: Metadata about the file being uploaded.
+    FileEncryption:
+      type: object
+      required:
+        - encryptedAesKey
+        - iv
+      properties:
+        encryptedAesKey:
+          type: string
+          format: jwe
+          description: A JSON Web Encryption (JWE) compact string containing the encrypted AES key. The AES key should be encrypted using the certificate's public key with algorithm ECDH-ES+A128KW and encryption method A128GCM.
+          example: eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhHQ00iLCJlcGsiOnsiY3J2IjoiUC0yNTYiLCJrdHkiOiJFQyIsIngiOiI1TEtTbUtsNmVYV0dQNHlGb2tVaks4RGppU0l5YWpQdzJ6UUp1YVhFbEZzIiwieSI6IlRVT29MTV8wc294b0UzYVFmSExlUzRlRkZ3RU9tZ1VDRUh1eDVRMXdVYTQifX0...
+        iv:
+          type: string
+          format: base64
+          description: A Base64-encoded, 12-byte Initialization Vector (IV) used for AES-128-GCM encryption of the file contents.
+          example: a1b2c3d4e5f6g7h8i9j0
+      description: Encryption details required to decrypt the file.
+    UploadRfiFileRequest:
+      type: object
+      required:
+        - fileMetadata
+        - encryption
+        - encryptedFile
+      properties:
+        fileMetadata:
+          $ref: '#/components/schemas/FileMetadata'
+        encryption:
+          $ref: '#/components/schemas/FileEncryption'
+        encryptedFile:
+          type: string
+          format: binary
+          description: The binary file content, encrypted using AES-128-GCM. The corresponding 'encryptedAesKey' and 'iv' must be used for decryption.
+      description: Request body for uploading an encrypted RFI file.
     PIIEncryptionRequirement:
       type: object
       required:
         - certificate
-        - requiredPIIFields
+        - fieldRequirements
         - supportedJWEAlgorithms
         - supportedJWEEncryptions
       properties:
         certificate:
           $ref: '#/components/schemas/PIICertificate'
-        requiredPIIFields:
+        fieldRequirements:
+          $ref: '#/components/schemas/FieldRequirements'
+        fileRequirements:
           type: array
           items:
-            $ref: '#/components/schemas/PIIField'
-          description: |
-            List of PII fields that must be included in the encrypted payload (e.g., "originator.fullName", "beneficiary.postalAddress").
+            $ref: '#/components/schemas/RfiFileKey'
+          description: List of required file types that must be encrypted and uploaded.
         supportedJWEAlgorithms:
           type: array
           items:
             type: string
-          description: List of supported JWE algorithms (e.g., RSA-OAEP-256).
+          description: List of supported JWE algorithms (e.g., RSA-OAEP-256, ECDH-ES+A128KW).
         supportedJWEEncryptions:
           type: array
           items:
             type: string
           description: List of supported JWE encryption methods (e.g., A128GCM).
       description: |
-        Defines the encryption requirements for PII data. To construct the encrypted payload:
-        1. Create an array of objects, one for each field listed in `requiredPIIFields`
-        2. Each object should have:
-           - `name`: The field name from `requiredPIIFields` (e.g., "originator.fullName")
-           - `value`: The actual value you want to send for that field
+        Defines the encryption requirements for PII data and supporting documents.
 
-        3. Encrypt the entire array using JSON Web Encryption (JWE) with:
+        **Field Data Encryption:**
+        To construct the encrypted field data payload:
+        1. Create a JSON object with the required fields from `fieldRequirements` JSON schema
+        2. Encrypt the entire object using JSON Web Encryption (JWE) with:
            - The public key from the `certificate`
            - One of the algorithms from `supportedJWEAlgorithms`
            - One of the encryption methods from `supportedJWEEncryptions`
 
-        4. The result will be a JWE Compact Serialization string to be sent as the encrypted payload.
-        Example payload structure before encryption: ```json [
-          {
-            "name": "originator.fullName.firstName",
-            "value": "John"
-          },
-          {
-            "name": "beneficiary.postalAddress.streetName",
-            "value": "Main St"
+        3. The result will be a JWE Compact Serialization string to be sent as the encrypted payload.
+        Example payload structure before encryption: ```json {
+          "FULL_NAME": "John Doe",
+          "DATE_OF_BIRTH": "1990-01-01",
+          "ADDRESS": {
+            "street": "123 Main St",
+            "city": "New York",
+            "country": "US"
           }
-        ] ```
+        } ```
         After encryption, this becomes a JWE string like: `eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMTI4R0NNIn0.xxx.yyy.zzz.aaa`
+
+        **File Encryption:**
+        If `fileRequirements` is present, encrypt and upload files for each required document type:
+        1. Generate a random 128-bit AES key for AES-128-GCM encryption
+        2. Generate a random 12-byte Initialization Vector (IV)
+        3. Encrypt the file contents using AES-128-GCM with the generated key and IV
+        4. Encrypt the AES key using JWE with the certificate's public key:
+           - Algorithm: ECDH-ES+A128KW
+           - Encryption method: A128GCM
+
+        5. Upload via multipart/form-data with:
+           - `fileMetadata`: JSON object with `fileName`, `fileType`, `fileKey`
+           - `encryption`: JSON object with `encryptedAesKey` (JWE string), `iv` (base64)
+           - `encryptedFile`: The AES-encrypted file binary data
     RequestForInformation:
       type: object
       required:
@@ -4066,11 +4358,22 @@ components:
               kid: '263521881931753643998528753619816524468853605762'
               x: KnxBe8fb2mL_Ve9-tqjGSkGgE9f0yohMkAvH_InaFtE
               y: D41cVUpiKcey4LJKNFtUtmVHDWRmhjZapPLfryX5b1o
-          requiredPIIFields:
-            - fullName.firstName
-            - postalAddress.streetName
+          fieldRequirements:
+            type: object
+            required:
+              - fullName.firstName
+              - postalAddress.streetName
+            properties:
+              fullName.firstName:
+                type: string
+              postalAddress.streetName:
+                type: string
+          fileRequirements:
+            - ID_DOCUMENT
+            - PROOF_OF_ADDRESS_DOCUMENT
           supportedJWEAlgorithms:
             - RSA-OAEP-256
+            - ECDH-ES+A128KW
           supportedJWEEncryptions:
             - A128GCM
     RequestForInformationSubmission:
