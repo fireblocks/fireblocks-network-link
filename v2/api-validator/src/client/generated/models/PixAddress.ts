@@ -4,11 +4,26 @@
 /* eslint-disable */
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
-import type { Pix } from './Pix';
 import type { PixCapability } from './PixCapability';
 
 export type PixAddress = (PixCapability & {
     accountHolder: AccountHolderDetails;
-    pix: Pix;
+    pixKey: string;
+    keyType: PixAddress.keyType;
+    bankName?: string;
+    bankCode?: string;
 });
+
+export namespace PixAddress {
+
+    export enum keyType {
+        CPF = 'cpf',
+        CNPJ = 'cnpj',
+        EMAIL = 'email',
+        PHONE = 'phone',
+        RANDOM = 'random',
+    }
+
+
+}
 

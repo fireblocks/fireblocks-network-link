@@ -75,6 +75,8 @@ x-schemas:
     { $ref: "./fb-provider-api.yaml#/components/schemas/AssetReference" }
   FiatAddress:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatAddress" }
+  FiatPaymentInstruction:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatPaymentInstruction" }
   IbanTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanTransfer" }
   AchTransfer:
@@ -104,6 +106,10 @@ x-schemas:
   InteracTransfer:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/InteracTransfer",
+    }
+  ChapsTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ChapsTransfer",
     }
   PublicBlockchainTransaction:
     {
@@ -137,18 +143,15 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/EuropeanSEPACapability",
     }
-  LocalBankTransferCapability:
+  LocalBankTransferAddressOnRamp:
     {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransferCapability",
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransferAddressOnRamp",
     }
-  MobileMoneyAddressWithBeneficiaryInfo:
+  MobileMoneyAddressOnRamp:
     {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyAddressWithBeneficiaryInfo",
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyAddressOnRamp",
     }
-  MobileMoneyAddress:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyAddress",
-    }
+    
   InteracCapability:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/InteracCapability",
@@ -156,6 +159,14 @@ x-schemas:
   PayIdCapability:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PayIdCapability",
+    }
+  InternalLedgerCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/InternalLedgerCapability",
+    }
+  ChapsCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ChapsCapability",
     }
 
 x-responses:
@@ -610,10 +621,12 @@ components:
         - $ref: "#/x-schemas/SpeiCapability"
         - $ref: "#/x-schemas/PixCapability"
         - $ref: "#/x-schemas/EuropeanSEPACapability"
-        - $ref: "#/x-schemas/LocalBankTransferCapability"
-        - $ref: "#/x-schemas/MobileMoneyAddress"
+        - $ref: "#/x-schemas/LocalBankTransferAddressOnRamp"
+        - $ref: "#/x-schemas/MobileMoneyAddressOnRamp"
         - $ref: "#/x-schemas/PayIdCapability"
         - $ref: "#/x-schemas/InteracCapability"
+        - $ref: "#/x-schemas/ChapsCapability"
+        - $ref: "#/x-schemas/InternalLedgerCapability"
 
     OnRampCapability:
       type: object
@@ -963,7 +976,7 @@ components:
           properties:
             paymentInstructions:
               allOf:
-                - $ref: "#/x-schemas/FiatAddress"
+                - $ref: "#/x-schemas/FiatPaymentInstruction"
                 - type: object
                   properties:
                     referenceId:
@@ -1070,7 +1083,7 @@ components:
         - $ref: "#/x-schemas/MobileMoneyTransfer"
         - $ref: "#/x-schemas/PayIdTransfer"
         - $ref: "#/x-schemas/InteracTransfer"
-
+        - $ref: "#/x-schemas/ChapsTransfer"
     OrderQuote:
       type: object
       required:

@@ -5,9 +5,9 @@
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
 import type { InteracCapability } from './InteracCapability';
-import type { InteractTransferDetailsOffRamp } from './InteractTransferDetailsOffRamp';
+import type { InteractTransferDetailsOnRamp } from './InteractTransferDetailsOnRamp';
 
-export type InteracAddress = (InteracCapability & InteractTransferDetailsOffRamp & {
+export type InteracAddressPaymentInstruction = (InteracCapability & InteractTransferDetailsOnRamp & {
     accountHolder: AccountHolderDetails;
 });
 

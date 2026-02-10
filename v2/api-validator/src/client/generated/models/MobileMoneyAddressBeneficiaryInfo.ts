@@ -4,10 +4,8 @@
 /* eslint-disable */
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
-import type { MobileMoneyAddress } from './MobileMoneyAddress';
-import type { PaymentRedirect } from './PaymentRedirect';
 
-export type MobileMoneyAddressWithBeneficiaryInfo = (MobileMoneyAddress & {
+export type MobileMoneyAddressBeneficiaryInfo = {
     accountHolder: AccountHolderDetails;
     /**
      * Beneficiary document identification (may be required)
@@ -17,6 +15,5 @@ export type MobileMoneyAddressWithBeneficiaryInfo = (MobileMoneyAddress & {
      * Relationship to beneficiary for AML purposes
      */
     beneficiaryRelationship?: string;
-    paymentRedirect?: PaymentRedirect;
-});
+};
 

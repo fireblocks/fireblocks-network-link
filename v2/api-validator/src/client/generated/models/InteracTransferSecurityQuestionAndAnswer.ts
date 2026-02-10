@@ -3,11 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { RecipientHandle } from './RecipientHandle';
-
-export type InteracTransferDetails = {
-    recipientHandle: RecipientHandle;
-    autoDeposit: boolean;
+export type InteracTransferSecurityQuestionAndAnswer = {
     /**
      * if autoDeposit is false, this is required
      */
@@ -16,6 +12,5 @@ export type InteracTransferDetails = {
      * if autoDeposit is false, this is required
      */
     securityAnswer?: string;
-    message?: string;
 };
 

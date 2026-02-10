@@ -4,10 +4,10 @@
 /* eslint-disable */
 
 import type { AccountHolderDetails } from './AccountHolderDetails';
-import type { InteracCapability } from './InteracCapability';
-import type { InteractTransferDetailsOffRamp } from './InteractTransferDetailsOffRamp';
+import type { InternalLedgerCapability } from './InternalLedgerCapability';
 
-export type InteracAddress = (InteracCapability & InteractTransferDetailsOffRamp & {
+export type InternalLedgerAddressRamp = (InternalLedgerCapability & {
     accountHolder: AccountHolderDetails;
+    externalSubAccountId: string;
 });
 

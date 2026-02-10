@@ -3,10 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { PixKey } from './PixKey';
+import type { PixAddress } from './PixAddress';
 
-export type Pix = {
-    key: PixKey;
+export type PixAddressPaymentInstruction = (PixAddress & {
     /**
      * PIX QR code
      */
@@ -15,5 +14,5 @@ export type Pix = {
      * Expiration for PIX Cobrança (optional, ISO 8601 format)
      */
     expirationDate?: string;
-};
+});
 

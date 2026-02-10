@@ -4,6 +4,7 @@
 /* eslint-disable */
 
 import type { AchTransfer } from './AchTransfer';
+import type { ChapsTransfer } from './ChapsTransfer';
 import type { EuropeanSEPATransfer } from './EuropeanSEPATransfer';
 import type { IbanTransfer } from './IbanTransfer';
 import type { InteracTransfer } from './InteracTransfer';
@@ -14,5 +15,5 @@ import type { PixTransfer } from './PixTransfer';
 import type { SpeiTransfer } from './SpeiTransfer';
 import type { WireTransfer } from './WireTransfer';
 
-export type RampFiatTransfer = (IbanTransfer | AchTransfer | WireTransfer | SpeiTransfer | PixTransfer | EuropeanSEPATransfer | LocalBankTransfer | MobileMoneyTransfer | PayIdTransfer | InteracTransfer);
+export type RampFiatTransfer = (IbanTransfer | AchTransfer | WireTransfer | SpeiTransfer | PixTransfer | EuropeanSEPATransfer | LocalBankTransfer | MobileMoneyTransfer | PayIdTransfer | InteracTransfer | ChapsTransfer);
 

@@ -6,8 +6,9 @@
 import type { AccountHolderDetails } from './AccountHolderDetails';
 import type { BankAccountNumber } from './BankAccountNumber';
 import type { LocalBankTransferCapability } from './LocalBankTransferCapability';
+import type { PaymentRedirect } from './PaymentRedirect';
 
-export type LocalBankTransferAddress = (LocalBankTransferCapability & {
+export type LocalBankTransferAddressPaymentInstruction = (LocalBankTransferCapability & {
     accountHolder: AccountHolderDetails;
     accountNumber: BankAccountNumber;
     /**
@@ -18,5 +19,7 @@ export type LocalBankTransferAddress = (LocalBankTransferCapability & {
      * Internal bank identifier
      */
     bankCode: string;
+    successPaymentInstructionRedirect?: string;
+    paymentRedirect?: PaymentRedirect;
 });
 
