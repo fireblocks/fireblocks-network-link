@@ -1279,7 +1279,7 @@ components:
         - $ref: '#/components/schemas/MobileMoneyAddressBeneficiaryInfo'
         - type: object
           properties:
-            successPaymentInstructionRedirect:
+            successPaymentInstructionRedirectUrl:
               type: string
             paymentRedirect:
               $ref: '#/components/schemas/PaymentRedirect'
@@ -1376,7 +1376,7 @@ components:
             bankCode:
               type: string
               description: Internal bank identifier
-            successPaymentInstructionRedirect:
+            successPaymentInstructionRedirectUrl:
               type: string
             paymentRedirect:
               $ref: '#/components/schemas/PaymentRedirect'
@@ -1533,7 +1533,6 @@ components:
         - type: object
           properties:
             autoDeposit:
-              default: true
               type: boolean
 
     InteractTransferDetailsOnRamp:

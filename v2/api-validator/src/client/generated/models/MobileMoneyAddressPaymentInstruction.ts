@@ -8,7 +8,7 @@ import type { MobileMoneyAddressBeneficiaryInfo } from './MobileMoneyAddressBene
 import type { PaymentRedirect } from './PaymentRedirect';
 
 export type MobileMoneyAddressPaymentInstruction = (MobileMoneyAddressBase & MobileMoneyAddressBeneficiaryInfo & {
-    successPaymentInstructionRedirect?: string;
+    successPaymentInstructionRedirectUrl?: string;
     paymentRedirect?: PaymentRedirect;
 });
 
