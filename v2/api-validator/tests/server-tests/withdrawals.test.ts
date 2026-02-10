@@ -29,6 +29,7 @@ import {
   PostalAddress,
   FullName,
   BlockchainWithdrawalRequest,
+  VaspInformation,
 } from '../../src/client/generated';
 import { fakeSchemaObject } from '../../src/schemas';
 import _ from 'lodash';
@@ -432,6 +433,226 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
 
               expect(response).toBeDefined();
               expect(response.status).toBe('pending');
+            }
+          }
+        });
+      });
+
+      describe('Blockchain withdrawal with VASP information', () => {
+        const originatingVasp: VaspInformation = {
+          vaspName: 'Originating VASP Inc',
+          vaspCountry: 'US',
+          vaspCode: 'VASP001',
+          vaspWebsite: 'https://originating-vasp.example.com',
+          vaspRegion: 'North America',
+        };
+
+        const beneficiaryVasp: VaspInformation = {
+          vaspName: 'Beneficiary VASP Ltd',
+          vaspCountry: 'GB',
+          vaspCode: 'VASP002',
+          vaspWebsite: 'https://beneficiary-vasp.example.com',
+          vaspRegion: 'Europe',
+        };
+
+        it('should succeed with originating VASP information', async () => {
+          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+            const transferMethodSpecificCapabilities = capabilities.filter(
+              (capability) =>
+                capability.withdrawal.transferMethod ===
+                PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            );
+
+            for (const capability of transferMethodSpecificCapabilities) {
+              const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
+              const assetBalance = await getCapabilityAssetBalance(accountId, capability);
+
+              if (
+                !assetBalance ||
+                Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
+              ) {
+                continue;
+              }
+
+              const participantsIdentification: ParticipantsIdentification = {
+                originator: personaIdentificationInfo,
+                beneficiary: personaIdentificationInfo,
+                originatingVasp,
+              };
+
+              const requestBody: BlockchainWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: minWithdrawalAmount,
+                balanceAsset: capability.balanceAsset,
+                destination: {
+                  ...blockchainDestinationConfig,
+                  amount: minWithdrawalAmount,
+                  ...capability.withdrawal,
+                },
+                participantsIdentification,
+              };
+
+              const response = await client.transfersBlockchain.createBlockchainWithdrawal({
+                accountId,
+                requestBody,
+              });
+
+              expect(response).toBeDefined();
+              expect(response.status).toBe('pending');
+              return; // Test passed, exit early
+            }
+          }
+        });
+
+        it('should succeed with beneficiary VASP information', async () => {
+          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+            const transferMethodSpecificCapabilities = capabilities.filter(
+              (capability) =>
+                capability.withdrawal.transferMethod ===
+                PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            );
+
+            for (const capability of transferMethodSpecificCapabilities) {
+              const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
+              const assetBalance = await getCapabilityAssetBalance(accountId, capability);
+
+              if (
+                !assetBalance ||
+                Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
+              ) {
+                continue;
+              }
+
+              const participantsIdentification: ParticipantsIdentification = {
+                originator: personaIdentificationInfo,
+                beneficiary: personaIdentificationInfo,
+                beneficiaryVasp,
+              };
+
+              const requestBody: BlockchainWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: minWithdrawalAmount,
+                balanceAsset: capability.balanceAsset,
+                destination: {
+                  ...blockchainDestinationConfig,
+                  amount: minWithdrawalAmount,
+                  ...capability.withdrawal,
+                },
+                participantsIdentification,
+              };
+
+              const response = await client.transfersBlockchain.createBlockchainWithdrawal({
+                accountId,
+                requestBody,
+              });
+
+              expect(response).toBeDefined();
+              expect(response.status).toBe('pending');
+              return; // Test passed, exit early
+            }
+          }
+        });
+
+        it('should succeed with both originating and beneficiary VASP information', async () => {
+          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+            const transferMethodSpecificCapabilities = capabilities.filter(
+              (capability) =>
+                capability.withdrawal.transferMethod ===
+                PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            );
+
+            for (const capability of transferMethodSpecificCapabilities) {
+              const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
+              const assetBalance = await getCapabilityAssetBalance(accountId, capability);
+
+              if (
+                !assetBalance ||
+                Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
+              ) {
+                continue;
+              }
+
+              const participantsIdentification: ParticipantsIdentification = {
+                originator: personaIdentificationInfo,
+                beneficiary: personaIdentificationInfo,
+                originatingVasp,
+                beneficiaryVasp,
+              };
+
+              const requestBody: BlockchainWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: minWithdrawalAmount,
+                balanceAsset: capability.balanceAsset,
+                destination: {
+                  ...blockchainDestinationConfig,
+                  amount: minWithdrawalAmount,
+                  ...capability.withdrawal,
+                },
+                participantsIdentification,
+              };
+
+              const response = await client.transfersBlockchain.createBlockchainWithdrawal({
+                accountId,
+                requestBody,
+              });
+
+              expect(response).toBeDefined();
+              expect(response.status).toBe('pending');
+              return; // Test passed, exit early
+            }
+          }
+        });
+
+        it('should succeed with partial VASP information', async () => {
+          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+            const transferMethodSpecificCapabilities = capabilities.filter(
+              (capability) =>
+                capability.withdrawal.transferMethod ===
+                PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            );
+
+            for (const capability of transferMethodSpecificCapabilities) {
+              const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
+              const assetBalance = await getCapabilityAssetBalance(accountId, capability);
+
+              if (
+                !assetBalance ||
+                Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
+              ) {
+                continue;
+              }
+
+              const partialVasp: VaspInformation = {
+                vaspName: 'Partial VASP',
+                vaspCountry: 'US',
+              };
+
+              const participantsIdentification: ParticipantsIdentification = {
+                originator: personaIdentificationInfo,
+                beneficiary: personaIdentificationInfo,
+                originatingVasp: partialVasp,
+              };
+
+              const requestBody: BlockchainWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: minWithdrawalAmount,
+                balanceAsset: capability.balanceAsset,
+                destination: {
+                  ...blockchainDestinationConfig,
+                  amount: minWithdrawalAmount,
+                  ...capability.withdrawal,
+                },
+                participantsIdentification,
+              };
+
+              const response = await client.transfersBlockchain.createBlockchainWithdrawal({
+                accountId,
+                requestBody,
+              });
+
+              expect(response).toBeDefined();
+              expect(response.status).toBe('pending');
+              return; // Test passed, exit early
             }
           }
         });

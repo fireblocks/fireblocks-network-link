@@ -6,52 +6,52 @@ export class UnsupportedEncodingFormatError extends Error {}
 export type Encoding = 'url-encoded' | 'base64' | 'hexstr' | 'base32' | 'base58';
 
 export interface Encoder {
-  encode(payload: string): string;
-  decode(payload: string): string;
+  encode(payload: Buffer): string;
+  decode(payload: string): Buffer;
 }
 
 export class URL implements Encoder {
-  public encode(payload: string): string {
-    return encodeURIComponent(payload);
+  public encode(payload: Buffer): string {
+    return encodeURIComponent(payload.toString('utf8'));
   }
-  public decode(payload: string): string {
-    return decodeURIComponent(payload);
+  public decode(payload: string): Buffer {
+    return Buffer.from(decodeURIComponent(payload), 'utf8');
   }
 }
 
 export class Base64 implements Encoder {
-  public encode(payload: string): string {
-    return Buffer.from(payload, 'binary').toString('base64');
+  public encode(payload: Buffer): string {
+    return payload.toString('base64');
   }
-  public decode(payload: string): string {
-    return Buffer.from(payload, 'base64').toString('binary');
+  public decode(payload: string): Buffer {
+    return Buffer.from(payload, 'base64');
   }
 }
 
 export class HexStr implements Encoder {
-  public encode(payload: string): string {
-    return Buffer.from(payload, 'binary').toString('hex');
+  public encode(payload: Buffer): string {
+    return payload.toString('hex');
   }
-  public decode(payload: string): string {
-    return Buffer.from(payload, 'hex').toString('binary');
+  public decode(payload: string): Buffer {
+    return Buffer.from(payload, 'hex');
   }
 }
 
 export class Base32 implements Encoder {
-  public encode(payload: string): string {
-    return base32.encode(Buffer.from(payload, 'binary'));
+  public encode(payload: Buffer): string {
+    return base32.encode(new Uint8Array(payload)).toLowerCase();
   }
-  public decode(payload: string): string {
-    return Buffer.from(base32.decode.asBytes(payload)).toString('binary');
+  public decode(payload: string): Buffer {
+    return Buffer.from(base32.decode.asBytes(payload.toUpperCase()));
   }
 }
 
 export class Base58 implements Encoder {
-  public encode(payload: string): string {
-    return base58.encode(Buffer.from(payload, 'binary'));
+  public encode(payload: Buffer): string {
+    return base58.encode(new Uint8Array(payload));
   }
-  public decode(payload: string): string {
-    return Buffer.from(base58.decode(payload)).toString('binary');
+  public decode(payload: string): Buffer {
+    return Buffer.from(base58.decode(payload));
   }
 }
 

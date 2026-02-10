@@ -1,4 +1,4 @@
-import { createHmac, createPrivateKey, createPublicKey, createSign, createVerify } from 'crypto';
+import { createHmac, createPrivateKey, createPublicKey, createSign, createVerify, timingSafeEqual } from 'crypto';
 
 export class AlgorithmNotSupportedError extends Error {}
 
@@ -6,45 +6,44 @@ export type HashAlgorithm = 'sha256' | 'sha512' | 'sha3-256';
 export type SigningAlgorithm = 'hmac' | 'rsa' | 'ecdsa';
 
 export interface Signer {
-  sign(payload: string, key: string, hashAlgorithm: HashAlgorithm): string;
-  verify(payload: string, key: string, signature: string, hashAlgorithm: HashAlgorithm): boolean;
+  sign(payload: string, key: string, hashAlgorithm: HashAlgorithm): Buffer;
+  verify(payload: string, key: string, signature: Buffer, hashAlgorithm: HashAlgorithm): boolean;
 }
 
 export class HMAC implements Signer {
-  public sign(data: string, key: string, hashAlgorithm: HashAlgorithm): string {
-    return createHmac(hashAlgorithm, key).update(data).digest().toString('binary');
+  public sign(data: string, key: string, hashAlgorithm: HashAlgorithm): Buffer {
+    return createHmac(hashAlgorithm, key).update(data).digest();
   }
 
   public verify(
-    data: string,
+    payload: string,
     key: string,
-    recv_signature: string,
+    signature: Buffer,
     hashAlgorithm: HashAlgorithm
   ): boolean {
-    const signature = this.sign(data, key, hashAlgorithm);
-    return signature === recv_signature;
+    const expectedSignature = this.sign(payload, key, hashAlgorithm);
+    return timingSafeEqual(Uint8Array.from(expectedSignature), Uint8Array.from(signature));
   }
 }
 
 export class RSA implements Signer {
-  public sign(data: string, privateKey: string, hashAlgorithm: HashAlgorithm): string {
+  public sign(data: string, privateKey: string, hashAlgorithm: HashAlgorithm): Buffer {
     const priv = createPrivateKey({ key: pemToDer(privateKey), format: 'der', type: 'pkcs1' });
     const sign = createSign(`rsa-${hashAlgorithm}`);
     sign.update(data);
-    const sigBuffer = sign.sign(priv);
-    return sigBuffer.toString('binary');
+    return sign.sign(priv);
   }
 
   public verify(
     data: string,
     publicKey: string,
-    signature: string,
+    signature: Buffer,
     hashAlgorithm: HashAlgorithm
   ): boolean {
     const pub = createPublicKey({ key: pemToDer(publicKey), format: 'der', type: 'spki' });
     const verify = createVerify(`rsa-${hashAlgorithm}`);
     verify.update(data);
-    return verify.verify(pub, Buffer.from(signature, 'binary'));
+    return verify.verify(pub, Uint8Array.from(signature));
   }
 }
 
@@ -55,26 +54,25 @@ export class ECDSA implements Signer {
     }
   }
 
-  public sign(data: string, privateKey: string, hashAlgorithm: HashAlgorithm): string {
+  public sign(data: string, privateKey: string, hashAlgorithm: HashAlgorithm): Buffer {
     this.validateHashAlgorithm(hashAlgorithm);
     const priv = createPrivateKey({ key: pemToDer(privateKey), format: 'der', type: 'sec1' });
     const sign = createSign('sha256');
     sign.update(data);
-    const sigBuffer = sign.sign(priv);
-    return sigBuffer.toString('binary');
+    return sign.sign(priv);
   }
 
   public verify(
     data: string,
     publicKey: string,
-    signature: string,
+    signature: Buffer,
     hashAlgorithm: HashAlgorithm
   ): boolean {
     this.validateHashAlgorithm(hashAlgorithm);
     const pub = createPublicKey({ key: pemToDer(publicKey), format: 'der', type: 'spki' });
     const verify = createVerify('sha256');
     verify.update(data);
-    return verify.verify(pub, Buffer.from(signature, 'binary'));
+    return verify.verify(pub, Uint8Array.from(signature));
   }
 }
 

@@ -4,6 +4,7 @@
 /* eslint-disable */
 
 import type { ApiComponents } from './ApiComponents';
+import type { CapabilitiesWithRequirements } from './CapabilitiesWithRequirements';
 
 export type Capabilities = {
     /**
@@ -11,5 +12,6 @@ export type Capabilities = {
      */
     version: string;
     components: ApiComponents;
+    requirements?: CapabilitiesWithRequirements;
 };
 

@@ -57,5 +57,38 @@ describe('Capabilities', () => {
         }
       );
     });
+
+    describe('requirements validation', () => {
+      it('should have valid structure when requirements are present', () => {
+        if (capabilities.requirements) {
+          expect(capabilities.requirements).toBeDefined();
+          expect(typeof capabilities.requirements).toBe('object');
+        }
+      });
+
+      it('should have valid transfersBlockchain requirements when present', () => {
+        if (capabilities.requirements?.transfersBlockchain) {
+          const blockchainReqs = capabilities.requirements.transfersBlockchain;
+          expect(blockchainReqs).toBeDefined();
+          expect(typeof blockchainReqs).toBe('object');
+        }
+      });
+
+      it('should have valid withdrawalAddressPolicy when present', () => {
+        if (capabilities.requirements?.transfersBlockchain?.withdrawalAddressPolicy) {
+          const policy = capabilities.requirements.transfersBlockchain.withdrawalAddressPolicy;
+          expect(policy).toBeDefined();
+          expect(policy.value).toBeDefined();
+          expect(['ApprovedAddressesOnly', 'AllAddresses']).toContain(policy.value);
+        }
+      });
+
+      it('should only have requirements for components that exist', () => {
+        if (capabilities.requirements?.transfersBlockchain) {
+          // If transfersBlockchain requirements exist, the component should also exist
+          expect(capabilities.components.transfersBlockchain).toBeDefined();
+        }
+      });
+    });
   });
 });

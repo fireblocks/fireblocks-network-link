@@ -4,7 +4,7 @@ servers:
     url: http://0.0.0.0:8000
 info:
   title: Fireblocks Provider Connectivity API v2
-  version: 0.4.1
+  version: 0.5.0
   x-logo:
     url: doc-assets/fireblocks-logo-lockup-network-navy.png
     altText: Fireblocks logo
@@ -106,6 +106,19 @@ paths:
                       transfersFiat:
                         - 6cd2fe1e-d0bc-4fad-a9ba-9384e0fdfdc0
                         - 7885a47b-0719-4448-b59e-3b8497cd1685
+                capabilitiesWithRequirements:
+                  summary: Capabilities with requirements
+                  value:
+                    version: 1.2.0
+                    components:
+                      accounts: '*'
+                      balances: '*'
+                      transfersBlockchain: '*'
+                    requirements:
+                      transfersBlockchain:
+                        withdrawalAddressPolicy:
+                          type: WithdrawalAddressPolicy
+                          value: ApprovedAddressesOnly
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -2635,6 +2648,28 @@ components:
           example: 1.0.37
         components:
           $ref: '#/components/schemas/ApiComponents'
+        requirements:
+          $ref: '#/components/schemas/CapabilitiesWithRequirements'
+    WithdrawalAddressPolicyRequirement:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          enum:
+            - ApprovedAddressesOnly
+            - AllAddresses
+    CapabilityRequirements:
+      type: object
+      properties:
+        withdrawalAddressPolicy:
+          $ref: '#/components/schemas/WithdrawalAddressPolicyRequirement'
+    CapabilitiesWithRequirements:
+      type: object
+      properties:
+        transfersBlockchain:
+          $ref: '#/components/schemas/CapabilityRequirements'
     ApiComponents:
       description: Lists supported API components and which sub-accounts support the component.
       type: object
@@ -4575,6 +4610,19 @@ components:
           type: string
         lastName:
           type: string
+    VaspInformation:
+      type: object
+      properties:
+        vaspName:
+          type: string
+        vaspCountry:
+          type: string
+        vaspCode:
+          type: string
+        vaspWebsite:
+          type: string
+        vaspRegion:
+          type: string
     PersonaIdentificationInfo:
       type: object
       description: Individual information about the beneficiary of the transaction.
@@ -4644,6 +4692,10 @@ components:
           oneOf:
             - $ref: '#/components/schemas/PersonaIdentificationInfo'
             - $ref: '#/components/schemas/BusinessIdentificationInfo'
+        originatingVasp:
+          $ref: '#/components/schemas/VaspInformation'
+        beneficiaryVasp:
+          $ref: '#/components/schemas/VaspInformation'
     WithdrawalRequestCommonProperties:
       type: object
       required:
@@ -5623,6 +5675,10 @@ components:
           type: string
           enum:
             - Prefunded
+    PrefundedOnRampFrom:
+      allOf:
+        - $ref: '#/components/schemas/PrefundedFiatCapability'
+        - $ref: '#/components/schemas/TakeFrom'
     PrefundedOnRampProperties:
       type: object
       title: On Ramp - Prefunded
@@ -5636,7 +5692,7 @@ components:
           enum:
             - OnRamp
         from:
-          $ref: '#/components/schemas/PrefundedFiatCapability'
+          $ref: '#/components/schemas/PrefundedOnRampFrom'
         to:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     OnRampProperties:
@@ -5655,6 +5711,10 @@ components:
           $ref: '#/components/schemas/FiatCapability'
         to:
           $ref: '#/components/schemas/PublicBlockchainAddress'
+    PrefundedOffRampFrom:
+      allOf:
+        - $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        - $ref: '#/components/schemas/TakeFrom'
     OnRampRequestProperties:
       type: object
       title: On Ramp
@@ -5684,7 +5744,7 @@ components:
           enum:
             - OffRamp
         from:
-          $ref: '#/components/schemas/PrefundedBlockchainCapability'
+          $ref: '#/components/schemas/PrefundedOffRampFrom'
         to:
           $ref: '#/components/schemas/FiatAddress'
     OffRampProperties:
@@ -5703,6 +5763,10 @@ components:
           $ref: '#/components/schemas/BlockchainCapabilityWithOptionalAddress'
         to:
           $ref: '#/components/schemas/FiatAddress'
+    PrefundedBridgeFrom:
+      allOf:
+        - $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        - $ref: '#/components/schemas/TakeFrom'
     PrefundedBridgeProperties:
       type: object
       title: Bridge - Prefunded
@@ -5716,7 +5780,7 @@ components:
           enum:
             - Bridge
         from:
-          $ref: '#/components/schemas/PrefundedBlockchainCapability'
+          $ref: '#/components/schemas/PrefundedBridgeFrom'
         to:
           $ref: '#/components/schemas/PublicBlockchainAddress'
     BridgeProperties:
@@ -5956,6 +6020,12 @@ components:
         - $ref: '#/components/schemas/PayIdTransfer'
         - $ref: '#/components/schemas/InteracTransfer'
         - $ref: '#/components/schemas/ChapsTransfer'
+    TakeFrom:
+      type: object
+      properties:
+        takeFrom:
+          description: Instructs the provider which prefunded source sub-account to debit for this ramp's settlement. If omitted, the provider debits the prefunded balance from the ramps's accountId by default.
+          type: string
     OrderQuote:
       type: object
       required:

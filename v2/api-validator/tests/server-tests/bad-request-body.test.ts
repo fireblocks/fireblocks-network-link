@@ -182,6 +182,7 @@ const ambiguousProperties = {
       '/to/pix/expirationDate',
       '/to/mobilePhoneNumber',
       '/to/provider',
+      '/to/email',
       '/to/accountNumber',
       '/to/email',
       '/to/bankName',
