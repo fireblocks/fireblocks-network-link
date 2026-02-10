@@ -190,8 +190,12 @@ _Note_ that not all error codes need to be in use!
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+### v0.9.11
+> 10 February 2026
+* Supporting Canton on Mainnet and Testnet.
+
 ### v0.9.10
-> 32 March 2025
+> 1 April 2025
 * Supporting Kaia and Sonic networks on Mainnet.
 
 ### v0.9.9
