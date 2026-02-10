@@ -28,6 +28,8 @@ tags:
       Beta Feature – Limited Access.
 
       On-ramp, off-ramp and bridging operations.
+  - name: subscriptions
+    description: Web hook subscription operations.
 paths:
   /capabilities:
     get:
@@ -684,6 +686,56 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
+  /ramps/requests-for-information/subscriptions:
+    post:
+      summary: Subscribe to all request for information events
+      description: The subscription will cause a PUT request to the specified subscription URL each time a request for information is submitted.
+      tags:
+        - ramps
+        - subscriptions
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+      responses:
+        '200':
+          description: Successful subscription.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
+      callbacks:
+        onRequestForInformation:
+          '{$request.body#/subscriberUrl}':
+            put:
+              requestBody:
+                description: Details of the request for information that was submitted.
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/RequestForInformation'
+              responses:
+                '200':
+                  description: Successful update.
+                4XX:
+                  $ref: '#/components/responses/ErrorResponse'
+                5XX:
+                  $ref: '#/components/responses/ErrorResponse'
 components:
   parameters:
     X-FB-PLATFORM-SIGNATURE:
@@ -4446,5 +4498,5 @@ components:
           description: Path on which the subscription was registered.
           type: string
           readOnly: true
-          example: /withdrawals/subscriptions/finalized
+          example: /ramps/requests-for-information/subscriptions
   securitySchemes: {}

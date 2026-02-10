@@ -1,0 +1,106 @@
+openapi: 3.0.0
+info:
+  title: 'Fireblocks Provider Subscription API'
+  version: 0.0.1
+
+  contact:
+    name: Fireblocks
+    url: https://fireblocks.com
+
+tags:
+  - name: subscriptions
+    description: Web hook subscription operations.
+
+x-path-params:
+  EntityIdPathParam: { $ref: './fb-provider-api.yaml#/components/parameters/EntityIdPathParam' }
+
+x-query-params:
+  PaginationLimit: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationLimit' }
+  PaginationStartingAfter: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationStartingAfter' }
+  PaginationEndingBefore: { $ref: './fb-provider-api.yaml#/components/parameters/PaginationEndingBefore' }
+  ListOrderQueryParam: { $ref: './fb-provider-api.yaml#/components/parameters/ListOrderQueryParam' }
+
+x-header-params:
+  X-FBAPI-KEY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-KEY' }
+  X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
+  X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
+  X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
+
+x-schemas:
+  Withdrawal: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/Withdrawal'}
+  Deposit: { $ref: './fb-provider-transfer-api.yaml#/components/schemas/Deposit'}
+  RequestForInformation: { $ref: './fb-provider-ramp-api.yaml#/components/schemas/RequestForInformation'}
+
+x-responses:
+  BadRequestResponse: { $ref: './fb-provider-api.yaml#/components/responses/BadRequestResponse' }
+  UnauthorizedResponse: { $ref: './fb-provider-api.yaml#/components/responses/UnauthorizedResponse' }
+  ErrorResponse: { $ref: './fb-provider-api.yaml#/components/responses/ErrorResponse' }
+
+
+paths:
+  /ramps/requests-for-information/subscriptions:
+    post:
+      summary: Subscribe to all request for information events
+      description: >-
+        The subscription will cause a PUT request to the specified subscription
+        URL each time a request for information is submitted.
+      tags: [ ramps, subscriptions ]
+      parameters:
+        - $ref: '#/x-header-params/X-FBAPI-KEY'
+        - $ref: '#/x-header-params/X-FBAPI-NONCE'
+        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
+        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Subscription'
+      responses:
+        '200':
+          description: Successful subscription.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Subscription'
+        '400':
+          $ref: '#/x-responses/BadRequestResponse'
+        '401':
+          $ref: '#/x-responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/x-responses/ErrorResponse'
+        '5XX':
+          $ref: '#/x-responses/ErrorResponse'
+      callbacks:
+        onRequestForInformation:
+          '{$request.body#/subscriberUrl}':
+            put:
+              requestBody:
+                description: Details of the request for information that was submitted.
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/x-schemas/RequestForInformation'
+              responses:
+                '200':
+                  description: Successful update.
+                '4XX':
+                  $ref: '#/x-responses/ErrorResponse'
+                '5XX':
+                  $ref: '#/x-responses/ErrorResponse'
+
+components:
+  schemas:
+    Subscription:
+      type: object
+      properties:
+        id: { type: string, format: uuid, readOnly: true }
+        subscriberUrl:
+          description: URL that will be notified when the target event occurs.
+          type: string
+          format: uri
+        subscriptionPath:
+          description: Path on which the subscription was registered.
+          type: string
+          readOnly: true
+          example: /ramps/requests-for-information/subscriptions

@@ -674,6 +674,7 @@ const config = convict({
         'fb-provider-transfer-api.yaml',
         // 'fb-provider-collateral-api.yaml',
         'fb-provider-ramp-api.yaml',
+        'fb-provider-subscription-api.yaml',
       ],
     },
     unifiedFilename: {
