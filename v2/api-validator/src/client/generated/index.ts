@@ -131,8 +131,6 @@ export type { InteracTransferDetailsBase } from './models/InteracTransferDetails
 export type { InteracTransferSecurityQuestionAndAnswer } from './models/InteracTransferSecurityQuestionAndAnswer';
 export type { InteractTransferDetailsOffRamp } from './models/InteractTransferDetailsOffRamp';
 export type { InteractTransferDetailsOnRamp } from './models/InteractTransferDetailsOnRamp';
-export type { InternalLedgerAddressRamp } from './models/InternalLedgerAddressRamp';
-export { InternalLedgerCapability } from './models/InternalLedgerCapability';
 export type { InternalTransfer } from './models/InternalTransfer';
 export type { InternalTransferAddress } from './models/InternalTransferAddress';
 export type { InternalTransferCapability } from './models/InternalTransferCapability';

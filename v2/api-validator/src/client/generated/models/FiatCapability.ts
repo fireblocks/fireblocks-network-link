@@ -8,7 +8,7 @@ import type { ChapsCapability } from './ChapsCapability';
 import type { EuropeanSEPACapability } from './EuropeanSEPACapability';
 import type { IbanCapability } from './IbanCapability';
 import type { InteracCapability } from './InteracCapability';
-import type { InternalLedgerCapability } from './InternalLedgerCapability';
+import type { InternalTransferMethod } from './InternalTransferMethod';
 import type { LocalBankTransferCapability } from './LocalBankTransferCapability';
 import type { MobileMoneyCapability } from './MobileMoneyCapability';
 import type { PayIdCapability } from './PayIdCapability';
@@ -16,5 +16,5 @@ import type { PixCapability } from './PixCapability';
 import type { SpeiCapability } from './SpeiCapability';
 import type { WireCapability } from './WireCapability';
 
-export type FiatCapability = (IbanCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | EuropeanSEPACapability | LocalBankTransferCapability | MobileMoneyCapability | PayIdCapability | InteracCapability | ChapsCapability | InternalLedgerCapability);
+export type FiatCapability = (IbanCapability | AchCapability | WireCapability | SpeiCapability | PixCapability | EuropeanSEPACapability | LocalBankTransferCapability | MobileMoneyCapability | PayIdCapability | InteracCapability | ChapsCapability | InternalTransferMethod);
 

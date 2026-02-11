@@ -160,9 +160,9 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PayIdCapability",
     }
-  InternalLedgerCapability:
+  InternalTransferMethod:
     {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/InternalLedgerCapability",
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/InternalTransferMethod",
     }
   ChapsCapability:
     {
@@ -626,7 +626,7 @@ components:
         - $ref: "#/x-schemas/PayIdCapability"
         - $ref: "#/x-schemas/InteracCapability"
         - $ref: "#/x-schemas/ChapsCapability"
-        - $ref: "#/x-schemas/InternalLedgerCapability"
+        - $ref: "#/x-schemas/InternalTransferMethod"
 
     OnRampCapability:
       type: object

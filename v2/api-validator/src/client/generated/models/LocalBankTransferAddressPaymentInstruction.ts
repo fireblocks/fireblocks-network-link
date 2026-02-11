@@ -19,7 +19,7 @@ export type LocalBankTransferAddressPaymentInstruction = (LocalBankTransferCapab
      * Internal bank identifier
      */
     bankCode: string;
-    successPaymentInstructionRedirectUrl?: string;
+    successPaymentInstructionRedirect?: string;
     paymentRedirect?: PaymentRedirect;
 });
 

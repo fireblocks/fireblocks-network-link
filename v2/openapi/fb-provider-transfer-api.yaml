@@ -1279,7 +1279,7 @@ components:
         - $ref: '#/components/schemas/MobileMoneyAddressBeneficiaryInfo'
         - type: object
           properties:
-            successPaymentInstructionRedirectUrl:
+            successPaymentInstructionRedirect:
               type: string
             paymentRedirect:
               $ref: '#/components/schemas/PaymentRedirect'
@@ -1376,7 +1376,7 @@ components:
             bankCode:
               type: string
               description: Internal bank identifier
-            successPaymentInstructionRedirectUrl:
+            successPaymentInstructionRedirect:
               type: string
             paymentRedirect:
               $ref: '#/components/schemas/PaymentRedirect'
@@ -1422,17 +1422,6 @@ components:
           type: string
           enum:
             - PayId
-
-    InternalLedgerCapability:
-      type: object
-      required: [ asset, transferMethod ]
-      properties:
-        asset:
-          $ref: '#/x-schemas/NationalCurrency'
-        transferMethod:
-          type: string
-          enum:
-            - InternalLedger
 
     PayIdAddress:
       allOf:
@@ -1533,6 +1522,7 @@ components:
         - type: object
           properties:
             autoDeposit:
+              default: true
               type: boolean
 
     InteractTransferDetailsOnRamp:
@@ -1622,7 +1612,7 @@ components:
         - $ref: '#/components/schemas/PayIdCapability'
         - $ref: '#/components/schemas/InteracCapability'
         - $ref: '#/components/schemas/ChapsCapability'
-        - $ref: '#/components/schemas/InternalLedgerCapability'
+        - $ref: '#/components/schemas/InternalTransferMethod'
     PublicBlockchainTransactionDestination:
       type: object
       allOf:
@@ -1659,6 +1649,7 @@ components:
         asset:
           $ref: '#/x-schemas/AssetReference'
         transferMethod:
+          type: string
           enum:
             - InternalTransfer
 
@@ -1709,18 +1700,6 @@ components:
           required: [ accountId ]
           properties:
             accountId:
-              type: string
-
-    InternalLedgerAddressRamp:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/InternalLedgerCapability'
-        - type: object
-          required: [ accountHolder, externalSubAccountId ]
-          properties:
-            accountHolder:
-              $ref: '#/components/schemas/AccountHolderDetails'
-            externalSubAccountId:
               type: string
 
     InternalTransferDestination:
@@ -1794,7 +1773,7 @@ components:
         - $ref: '#/components/schemas/MobileMoneyAddressPaymentInstruction'
         - $ref: '#/components/schemas/PayIdAddress'
         - $ref: '#/components/schemas/InteracAddressPaymentInstruction'
-        - $ref: '#/components/schemas/InternalLedgerAddressRamp'
+        - $ref: '#/components/schemas/InternalTransferAddress'
 
 
     FiatAddress:

@@ -8,7 +8,7 @@ import type { ChapsAddress } from './ChapsAddress';
 import type { EuropeanSEPAAddress } from './EuropeanSEPAAddress';
 import type { IbanAddress } from './IbanAddress';
 import type { InteracAddressPaymentInstruction } from './InteracAddressPaymentInstruction';
-import type { InternalLedgerAddressRamp } from './InternalLedgerAddressRamp';
+import type { InternalTransferAddress } from './InternalTransferAddress';
 import type { LocalBankTransferAddressPaymentInstruction } from './LocalBankTransferAddressPaymentInstruction';
 import type { MobileMoneyAddressPaymentInstruction } from './MobileMoneyAddressPaymentInstruction';
 import type { PayIdAddress } from './PayIdAddress';
@@ -19,5 +19,5 @@ import type { WireAddress } from './WireAddress';
 /**
  * Fiat payment instruction for on-ramp
  */
-export type FiatPaymentInstruction = (IbanAddress | AchAddress | WireAddress | SpeiAddress | PixAddressPaymentInstruction | ChapsAddress | EuropeanSEPAAddress | LocalBankTransferAddressPaymentInstruction | MobileMoneyAddressPaymentInstruction | PayIdAddress | InteracAddressPaymentInstruction | InternalLedgerAddressRamp);
+export type FiatPaymentInstruction = (IbanAddress | AchAddress | WireAddress | SpeiAddress | PixAddressPaymentInstruction | ChapsAddress | EuropeanSEPAAddress | LocalBankTransferAddressPaymentInstruction | MobileMoneyAddressPaymentInstruction | PayIdAddress | InteracAddressPaymentInstruction | InternalTransferAddress);
 
