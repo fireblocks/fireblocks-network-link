@@ -5,7 +5,5 @@
 
 import type { InteracTransferDetailsBase } from './InteracTransferDetailsBase';
 
-export type InteractTransferDetailsOffRamp = (InteracTransferDetailsBase & {
-    autoDeposit?: boolean;
-});
+export type InteractTransferDetailsOffRamp = InteracTransferDetailsBase;
 

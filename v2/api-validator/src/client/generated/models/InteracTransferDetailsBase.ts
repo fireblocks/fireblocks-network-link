@@ -7,7 +7,6 @@ import type { RecipientHandle } from './RecipientHandle';
 
 export type InteracTransferDetailsBase = {
     recipientHandle: RecipientHandle;
-    autoDeposit?: boolean;
     message?: string;
 };
 

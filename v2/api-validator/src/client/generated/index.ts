@@ -128,7 +128,6 @@ export { InteracCapability } from './models/InteracCapability';
 export type { InteracDestination } from './models/InteracDestination';
 export type { InteracTransfer } from './models/InteracTransfer';
 export type { InteracTransferDetailsBase } from './models/InteracTransferDetailsBase';
-export type { InteracTransferSecurityQuestionAndAnswer } from './models/InteracTransferSecurityQuestionAndAnswer';
 export type { InteractTransferDetailsOffRamp } from './models/InteractTransferDetailsOffRamp';
 export type { InteractTransferDetailsOnRamp } from './models/InteractTransferDetailsOnRamp';
 export type { InternalTransfer } from './models/InternalTransfer';

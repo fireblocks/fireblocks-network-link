@@ -4,9 +4,6 @@
 /* eslint-disable */
 
 import type { InteracTransferDetailsBase } from './InteracTransferDetailsBase';
-import type { InteracTransferSecurityQuestionAndAnswer } from './InteracTransferSecurityQuestionAndAnswer';
 
-export type InteractTransferDetailsOnRamp = (InteracTransferDetailsBase & InteracTransferSecurityQuestionAndAnswer & {
-    autoDeposit: boolean;
-});
+export type InteractTransferDetailsOnRamp = InteracTransferDetailsBase;
 

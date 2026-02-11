@@ -1502,39 +1502,16 @@ components:
       properties:
         recipientHandle:
           $ref: '#/components/schemas/RecipientHandle'
-        autoDeposit:
-          type: boolean
         message:
           type: string
 
-    InteracTransferSecurityQuestionAndAnswer:
-      type: object
-      properties:
-        securityQuestion:
-          description: if autoDeposit is false, this is required
-          type: string
-        securityAnswer:
-          type: string
-          description: if autoDeposit is false, this is required
     InteractTransferDetailsOffRamp:
       allOf:
         - $ref: '#/components/schemas/InteracTransferDetailsBase'
-        - type: object
-          properties:
-            autoDeposit:
-              default: true
-              type: boolean
 
     InteractTransferDetailsOnRamp:
       allOf:
         - $ref: '#/components/schemas/InteracTransferDetailsBase'
-        - $ref: '#/components/schemas/InteracTransferSecurityQuestionAndAnswer'
-        - type: object
-          required:
-            - autoDeposit
-          properties:
-            autoDeposit:
-              type: boolean
 
     InteracAddress:
       allOf:
