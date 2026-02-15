@@ -35,6 +35,8 @@ import {
   EuropeanSEPACapability,
   LocalBankTransferCapability,
   CryptocurrencySymbol,
+  InteracCapability,
+  PayIdCapability,
 } from '../../src/client/generated';
 import config from '../../src/config';
 import { AssetsDirectory } from '../utils/assets-directory';
@@ -53,6 +55,8 @@ const pixDestinationConfig = config.get('withdrawal.pix');
 const europeanSepaDestinationConfig = config.get('withdrawal.europeanSepa');
 const mobileMoneyDestinationConfig = config.get('withdrawal.mobileMoney');
 const lbtDestinationConfig = config.get('withdrawal.localBankTransfer');
+const payIdDestinationConfig = config.get('withdrawal.payId');
+const interacDestinationConfig = config.get('withdrawal.interac');
 
 const rampsAmount = config.get('ramps.amount');
 
@@ -85,7 +89,9 @@ function isFiatMethod(
       capability.transferMethod === PixCapability.transferMethod.PIX ||
       capability.transferMethod === EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA ||
       capability.transferMethod === MobileMoneyCapability.transferMethod.MOMO ||
-      capability.transferMethod === LocalBankTransferCapability.transferMethod.LBT)
+      capability.transferMethod === LocalBankTransferCapability.transferMethod.LBT ||
+      capability.transferMethod === PayIdCapability.transferMethod.PAY_ID ||
+      capability.transferMethod === InteracCapability.transferMethod.INTERAC)
   );
 }
 
@@ -140,6 +146,16 @@ function getFiatDestinationConfig(transferMethod: string) {
       return {
         ...lbtDestinationConfig,
         transferMethod: LocalBankTransferCapability.transferMethod.LBT,
+      };
+    case PayIdCapability.transferMethod.PAY_ID:
+      return {
+        ...payIdDestinationConfig,
+        transferMethod: PayIdCapability.transferMethod.PAY_ID,
+      };
+    case InteracCapability.transferMethod.INTERAC:
+      return {
+        ...interacDestinationConfig,
+        transferMethod: InteracCapability.transferMethod.INTERAC,
       };
     default:
       throw new Error('Unsupported transfer method');

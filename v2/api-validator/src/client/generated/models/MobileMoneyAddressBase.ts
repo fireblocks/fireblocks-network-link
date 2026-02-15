@@ -6,16 +6,19 @@
 import type { MobileMoneyCapability } from './MobileMoneyCapability';
 import type { MobilePhoneNumber } from './MobilePhoneNumber';
 
-export type MobileMoneyAddress = (MobileMoneyCapability & {
+/**
+ * Base mobile money address with beneficiary info (without redirect URLs)
+ */
+export type MobileMoneyAddressBase = (MobileMoneyCapability & {
     mobilePhoneNumber: MobilePhoneNumber;
     email: string;
     /**
      * Mobile money provider
      */
-    provider: MobileMoneyAddress.provider;
+    provider: MobileMoneyAddressBase.provider;
 });
 
-export namespace MobileMoneyAddress {
+export namespace MobileMoneyAddressBase {
 
     /**
      * Mobile money provider
@@ -26,6 +29,7 @@ export namespace MobileMoneyAddress {
         MTN = 'mtn',
         TIGO = 'tigo',
         ORANGE = 'orange',
+        WAVE = 'wave',
     }
 
 

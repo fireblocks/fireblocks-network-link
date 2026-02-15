@@ -4,13 +4,16 @@
 /* eslint-disable */
 
 import type { AchTransfer } from './AchTransfer';
+import type { ChapsTransfer } from './ChapsTransfer';
 import type { EuropeanSEPATransfer } from './EuropeanSEPATransfer';
 import type { IbanTransfer } from './IbanTransfer';
+import type { InteracTransfer } from './InteracTransfer';
 import type { LocalBankTransfer } from './LocalBankTransfer';
 import type { MobileMoneyTransfer } from './MobileMoneyTransfer';
+import type { PayIdTransfer } from './PayIdTransfer';
 import type { PixTransfer } from './PixTransfer';
 import type { SpeiTransfer } from './SpeiTransfer';
 import type { WireTransfer } from './WireTransfer';
 
-export type RampFiatTransfer = (IbanTransfer | AchTransfer | WireTransfer | SpeiTransfer | PixTransfer | EuropeanSEPATransfer | LocalBankTransfer | MobileMoneyTransfer);
+export type RampFiatTransfer = (IbanTransfer | AchTransfer | WireTransfer | SpeiTransfer | PixTransfer | EuropeanSEPATransfer | LocalBankTransfer | MobileMoneyTransfer | PayIdTransfer | InteracTransfer | ChapsTransfer);
 

@@ -3,11 +3,11 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { FiatAddress } from './FiatAddress';
+import type { FiatPaymentInstruction } from './FiatPaymentInstruction';
 import type { OnRampProperties } from './OnRampProperties';
 
 export type OnRampPropertiesWithPaymentInstructions = ({
-    paymentInstructions: (FiatAddress & {
+    paymentInstructions: (FiatPaymentInstruction & {
         referenceId?: string;
     });
 } & OnRampProperties);

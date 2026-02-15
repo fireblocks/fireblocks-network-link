@@ -3,10 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { MobileMoneyAddressOffRamp } from './MobileMoneyAddressOffRamp';
+import type { ChapsAddress } from './ChapsAddress';
 import type { PositiveAmount } from './PositiveAmount';
 
-export type MobileMoneyTransferDestination = (MobileMoneyAddressOffRamp & {
+export type ChapsTransferDestination = (ChapsAddress & {
     amount: PositiveAmount;
 });
 

@@ -427,7 +427,19 @@ const config = convict({
         default: '12345678901',
         env: 'WITHDRAWAL_PIX_BANK_ACCOUNT_NUMBER',
       },
+      qrCode: {
+        format: String,
+        default:
+          '00020126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-426655440000520400005303986540510.005802BR5913ACME BRASIL6009SAO PAULO62070503***6304ABCD',
+        env: 'WITHDRAWAL_PIX_QR_CODE',
+      },
+      expirationDate: {
+        format: String,
+        default: '2025-12-10T23:59:59Z',
+        env: 'WITHDRAWAL_PIX_EXPIRATION_DATE',
+      },
     },
+
     europeanSepa: {
       accountHolder: {
         name: {
@@ -497,6 +509,55 @@ const config = convict({
         env: 'WITHDRAWAL_EUROPEAN_SEPA_TAX_ID',
       },
     },
+    chaps: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_CHAPS_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_CHAPS_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_CHAPS_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_CHAPS_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_CHAPS_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_CHAPS_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      accountNumber: {
+        format: String,
+        default: '12345678',
+        env: 'WITHDRAWAL_CHAPS_ACCOUNT_NUMBER',
+      },
+      sortCode: {
+        format: String,
+        default: '123456',
+        env: 'WITHDRAWAL_CHAPS_SORT_CODE',
+      },
+      bankName: {
+        format: String,
+        default: 'Barclays Bank',
+        env: 'WITHDRAWAL_CHAPS_BANK_NAME',
+      },
+    },
     mobileMoney: {
       accountHolder: {
         name: {
@@ -550,6 +611,25 @@ const config = convict({
         format: String,
         default: 'john.doe@example.com',
         env: 'WITHDRAWAL_MOBILE_MONEY_EMAIL',
+      },
+      successRedirectUrl: {
+        format: String,
+        default:
+          'https://yellowcard.example.com/authorize?token=abc123&transactionId=16b8b2c3-bd61-4745-9c48-3d30c2bc6907',
+        env: 'WITHDRAWAL_MOBILE_MONEY_SUCCESS_REDIRECT_URL',
+      },
+      paymentRedirect: {
+        url: {
+          format: String,
+          default:
+            'https://yellowcard.example.com/authorize?token=abc123&transactionId=16b8b2c3-bd61-4745-9c48-3d30c2bc6907',
+          env: 'WITHDRAWAL_MOBILE_MONEY_PAYMENT_REDIRECT_URL',
+        },
+        expiresAt: {
+          format: String,
+          default: '2025-01-15T12:00:00Z',
+          env: 'WITHDRAWAL_MOBILE_MONEY_PAYMENT_REDIRECT_EXPIRES_AT',
+        },
       },
       beneficiaryDocumentId: {
         format: String,
@@ -609,6 +689,189 @@ const config = convict({
         format: String,
         default: '123456789',
         env: 'WITHDRAWAL_LOCAL_BANK_TRANSFER_BANK_CODE',
+      },
+      successRedirectUrl: {
+        format: String,
+        default:
+          'https://yellowcard.example.com/authorize?token=abc123&transactionId=16b8b2c3-bd61-4745-9c48-3d30c2bc6907',
+        env: 'WITHDRAWAL_LOCAL_BANK_TRANSFER_SUCCESS_REDIRECT_URL',
+      },
+      paymentRedirect: {
+        url: {
+          format: String,
+          default:
+            'https://yellowcard.example.com/authorize?token=abc123&transactionId=16b8b2c3-bd61-4745-9c48-3d30c2bc6907',
+          env: 'WITHDRAWAL_LOCAL_BANK_TRANSFER_PAYMENT_REDIRECT_URL',
+        },
+        expiresAt: {
+          format: String,
+          default: '2025-01-15T12:00:00Z',
+          env: 'WITHDRAWAL_LOCAL_BANK_TRANSFER_PAYMENT_REDIRECT_EXPIRES_AT',
+        },
+      },
+    },
+    payId: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_PAY_ID_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      type: {
+        format: String,
+        default: 'EMAIL',
+        env: 'WITHDRAWAL_PAY_ID_TYPE',
+      },
+      value: {
+        format: String,
+        default: 'merchant@example.com',
+        env: 'WITHDRAWAL_PAY_ID_VALUE',
+      },
+      bsb: {
+        format: String,
+        default: '062000',
+        env: 'WITHDRAWAL_PAY_ID_BSB',
+      },
+      accountNumber: {
+        format: String,
+        default: '12345678901',
+        env: 'WITHDRAWAL_PAY_ID_ACCOUNT_NUMBER',
+      },
+    },
+    interac: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      recipientHandle: {
+        type: {
+          format: String,
+          default: 'EMAIL',
+          env: 'WITHDRAWAL_INTERAC_RECIPIENT_HANDLE_TYPE',
+        },
+        value: {
+          format: String,
+          default: 'merchant@example.com',
+          env: 'WITHDRAWAL_INTERAC_RECIPIENT_HANDLE_VALUE',
+        },
+      },
+      autoDeposit: {
+        format: Boolean,
+        default: true,
+        env: 'WITHDRAWAL_INTERAC_AUTO_DEPOSIT',
+      },
+      securityQuestion: {
+        format: String,
+        default: "What is your mother's maiden name?",
+        env: 'WITHDRAWAL_INTERAC_SECURITY_QUESTION',
+      },
+      securityAnswer: {
+        format: String,
+        default: 'Smith',
+        env: 'WITHDRAWAL_INTERAC_SECURITY_ANSWER',
+      },
+      message: {
+        format: String,
+        default: 'Please enter the security answer to complete the transfer.',
+        env: 'WITHDRAWAL_INTERAC_MESSAGE',
+      },
+    },
+    internalLedger: {
+      accountHolder: {
+        name: {
+          format: String,
+          default: 'John Doe',
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_NAME',
+        },
+        city: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_CITY',
+        },
+        country: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_COUNTRY',
+        },
+        subdivision: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_SUBDIVISION',
+        },
+        address: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_ADDRESS',
+        },
+        postalCode: {
+          format: String,
+          default: undefined,
+          env: 'WITHDRAWAL_INTERAC_ACCOUNT_POSTAL_CODE',
+        },
+      },
+      accountId: {
+        format: String,
+        default: '12345678901',
+        env: 'WITHDRAWAL_INTERNAL_LEDGER_ACCOUNT_ID',
+      },
+      externalAccountProviderId: {
+        format: String,
+        default: '12345678901',
+        env: 'WITHDRAWAL_INTERNAL_LEDGER_EXTERNAL_ACCOUNT_PROVIDER_ID',
       },
     },
   },

@@ -5,19 +5,32 @@ import {
   AchAddress,
   AchCapability,
   BridgeProperties,
+  ChapsAddress,
+  ChapsCapability,
   EuropeanSEPAAddress,
   EuropeanSEPACapability,
   FiatAddress,
   FiatCapability,
+  FiatPaymentInstruction,
   IbanAddress,
   IbanCapability,
+  InteracAddress,
+  InteracAddressPaymentInstruction,
+  InteracCapability,
+  InternalLedgerAddressRamp,
+  InternalLedgerCapability,
   LocalBankTransferAddress,
+  LocalBankTransferAddressPaymentInstruction,
   LocalBankTransferCapability,
-  MobileMoneyAddressWithBeneficiaryInfo,
+  MobileMoneyAddressOffRamp,
+  MobileMoneyAddressPaymentInstruction,
   MobileMoneyCapability,
   OffRampProperties,
   OnRampProperties,
+  PayIdAddress,
+  PayIdCapability,
   PixAddress,
+  PixAddressPaymentInstruction,
   PixCapability,
   PublicBlockchainAddress,
   Ramp,
@@ -180,7 +193,7 @@ export class RampsController {
   }
 }
 
-function getTransferMethod(transferMethod: FiatCapability['transferMethod']): FiatAddress {
+function getTransferMethod(transferMethod: FiatCapability['transferMethod']): FiatPaymentInstruction {
   switch (transferMethod) {
     case IbanCapability.transferMethod.IBAN:
       return fakeSchemaObject('IbanAddress') as IbanAddress;
@@ -191,15 +204,23 @@ function getTransferMethod(transferMethod: FiatCapability['transferMethod']): Fi
     case SpeiCapability.transferMethod.SPEI:
       return fakeSchemaObject('SpeiAddress') as SpeiAddress;
     case PixCapability.transferMethod.PIX:
-      return fakeSchemaObject('PixAddress') as PixAddress;
+      return fakeSchemaObject('PixAddressPaymentInstruction') as PixAddressPaymentInstruction;
+    case ChapsCapability.transferMethod.CHAPS:
+      return fakeSchemaObject('ChapsAddress') as ChapsAddress;
     case EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA:
       return fakeSchemaObject('EuropeanSEPAAddress') as EuropeanSEPAAddress;
     case LocalBankTransferCapability.transferMethod.LBT:
-      return fakeSchemaObject('LocalBankTransferAddress') as LocalBankTransferAddress;
+      return fakeSchemaObject('LocalBankTransferAddressPaymentInstruction') as LocalBankTransferAddressPaymentInstruction;
     case MobileMoneyCapability.transferMethod.MOMO:
       return fakeSchemaObject(
-        'MobileMoneyAddressWithBeneficiaryInfo'
-      ) as MobileMoneyAddressWithBeneficiaryInfo;
+        'MobileMoneyAddressPaymentInstruction'
+      ) as MobileMoneyAddressPaymentInstruction;
+    case PayIdCapability.transferMethod.PAY_ID:
+      return fakeSchemaObject('PayIdAddress') as PayIdAddress;
+    case InteracCapability.transferMethod.INTERAC:
+      return fakeSchemaObject('InteracAddressPaymentInstruction') as InteracAddressPaymentInstruction;
+    case InternalLedgerCapability.transferMethod.INTERNAL_LEDGER:
+      return fakeSchemaObject('InternalLedgerAddressRamp') as InternalLedgerAddressRamp;
     default:
       throw new XComError('Invalid transfer method', { transferMethod });
   }
