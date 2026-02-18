@@ -1523,3 +1523,26 @@ components:
         - ZWL
         - ZWN
         - ZWR
+
+    PersonalIdentificationType:
+      type: string
+      description: The type of identification document issued to the individual.
+      enum:
+        - NIN Slip/Card
+        - BVN
+        - ID Card
+        - ID Book
+        - National ID
+        - Alien Card
+        - Passport
+        - Ecowas Card
+        - Rwanda Card
+        - Drivers License
+        - Resident Card
+        - Voter ID
+        - Health Insurance ID
+        - Ghana Card
+        - Refugee ID
+        - SSNIT
+        - Non Citizen ID
+        - National Registration Card

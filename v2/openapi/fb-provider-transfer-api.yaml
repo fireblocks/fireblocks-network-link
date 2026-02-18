@@ -40,6 +40,7 @@ x-header-params:
 x-schemas:
   PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
   AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference'}
+  PersonalIdentificationType: { $ref: './fb-provider-api.yaml#/components/schemas/PersonalIdentificationType'}
   CryptocurrencyReference: { $ref: './fb-provider-api.yaml#/components/schemas/CryptocurrencyReference'}
   PublicBlockchainCapability: { $ref: './fb-provider-api.yaml#/components/schemas/PublicBlockchainCapability'}
   PublicBlockchainAddress: { $ref: './fb-provider-api.yaml#/components/schemas/PublicBlockchainAddress'}
@@ -1934,7 +1935,17 @@ components:
             'john.doe@example.com'
         phone:
           $ref: '#/components/schemas/MobilePhoneNumber'
-
+        idNumber:
+          type: string
+          description: A unique identifier assigned to the individual by the relevant regulatory authority.
+        idType:
+          $ref: '#/x-schemas/PersonalIdentificationType'
+        additionalIdNumber:
+          type: string
+          description: An additional unique identifier assigned to the individual by the relevant regulatory authority.
+        additionalIdType:
+          $ref: '#/x-schemas/PersonalIdentificationType'
+ 
     BusinessIdentificationInfo:
       type: object
       description: Information related to the business entity acting as the beneficiary of the transaction.
