@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Account Linking Partners
-  version: "0.9.10"
+  version: "0.9.11"
   contact:
     email: support@fireblocks.com
   license:
@@ -1194,6 +1194,7 @@ components:
       - Etherlink
       - NEM
       - Centrifuge
+      - Canton
       example:
         Ethereum
     Testnet_Networks:
@@ -1248,6 +1249,7 @@ components:
         - Astar
         - Berachain
         - Sui
+        - Canton
       example:
         Westend
     Coin_Class:

@@ -10,5 +10,9 @@ import type { WithdrawalRequestCommonProperties } from './WithdrawalRequestCommo
 export type InternalWithdrawalRequest = (WithdrawalRequestCommonProperties & {
     balanceAsset: AssetReference;
     destination: InternalTransferDestination;
+    /**
+     * A unique identifier assigned by an external system to track the transaction or entity across different platforms.
+     */
+    referenceId?: string;
 });
 
