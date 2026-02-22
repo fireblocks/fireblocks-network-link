@@ -226,5 +226,15 @@
     "decimalPlaces": 6,
     "testAsset": true,
     "contractAddress": "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "type": "Trc20Token",
+    "blockchain": "TRON",
+    "name": "Tether USD",
+    "symbol": "USDT",
+    "decimalPlaces": 6,
+    "testAsset": true,
+    "contractAddress": "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
   }
 ]

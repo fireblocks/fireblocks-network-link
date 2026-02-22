@@ -16,6 +16,7 @@ export namespace ContractBasedToken {
 
     export enum type {
         JETTON = 'Jetton',
+        TRC20TOKEN = 'Trc20Token',
     }
 
 

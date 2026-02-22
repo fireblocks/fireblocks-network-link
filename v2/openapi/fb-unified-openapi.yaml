@@ -2873,6 +2873,7 @@ components:
             type:
               enum:
                 - Jetton
+                - Trc20Token
             blockchain:
               $ref: '#/components/schemas/Blockchain'
             contractAddress:
