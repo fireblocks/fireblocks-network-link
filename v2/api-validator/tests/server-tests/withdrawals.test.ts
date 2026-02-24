@@ -235,7 +235,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           expect(withdrawalDetails.id).toBe(withdrawal.id);
         }
       }
-    }, 120000); // Increased timeout to 120 seconds
+    });
 
     it('should find every listed sub account withdrawal in list sub account withdrawals', () => {
       for (const [accountId, withdrawals] of accountWithdrawalsMap.entries()) {
@@ -796,28 +796,6 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
 
         const skipKnownAsset = (asset: AssetReference) => !skipUnknownAsset(asset);
 
-        const skipInvalidAssetTypeForTransferMethod = (
-          withdrawal: TransferCapability,
-          transferMethod: string
-        ) => {
-          // Skip if InternalTransfer or PeerAccount with cryptocurrency (requires fiat)
-          if (
-            (transferMethod === InternalTransferMethod.transferMethod.INTERNAL_TRANSFER ||
-              transferMethod === PeerAccountTransferCapability.transferMethod.PEER_ACCOUNT_TRANSFER) &&
-            'cryptocurrencySymbol' in withdrawal.asset
-          ) {
-            return true;
-          }
-          // Skip if PublicBlockchain with fiat currency (requires crypto)
-          if (
-            transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN &&
-            'nationalCurrencyCode' in withdrawal.asset
-          ) {
-            return true;
-          }
-          return false;
-        };
-
         it.skipIf(noRelevantCapability).each([
           {
             skip: (
@@ -827,8 +805,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
             ) =>
               skipKnownAsset(withdrawal.asset) ||
               skipKnownAsset(assetReference) ||
-              skipSupportedTransferMethod(withdrawal, capabilities, assetReference) ||
-              skipInvalidAssetTypeForTransferMethod(withdrawal, transferMethod),
+              skipSupportedTransferMethod(withdrawal, capabilities, assetReference),
             testCase: 'the transfer capability not exists AND asset is unknown',
             errorTypes: [
               BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD,
@@ -843,8 +820,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
             ) =>
               skipUnknownAsset(withdrawal.asset) ||
               skipUnknownAsset(assetReference) ||
-              skipSupportedTransferMethod(withdrawal, capabilities, withdrawal.asset) ||
-              skipInvalidAssetTypeForTransferMethod(withdrawal, transferMethod),
+              skipSupportedTransferMethod(withdrawal, capabilities, withdrawal.asset),
             testCase: 'the transfer capability not exists',
             errorTypes: [BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD],
           },
@@ -856,8 +832,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
             ) =>
               skipKnownAsset(withdrawal.asset) ||
               skipUnknownAsset(assetReference) ||
-              skipNotSupportedTransferMethod(withdrawal, capabilities, withdrawal.asset) ||
-              skipInvalidAssetTypeForTransferMethod(withdrawal, transferMethod),
+              skipNotSupportedTransferMethod(withdrawal, capabilities, withdrawal.asset),
             testCase: 'destination asset is unknown',
             errorTypes: [BadRequestError.errorType.UNKNOWN_ASSET],
           },
@@ -869,8 +844,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
             ) =>
               skipUnknownAsset(withdrawal.asset) ||
               skipKnownAsset(assetReference) ||
-              skipNotSupportedTransferMethod(withdrawal, capabilities, assetReference) ||
-              skipInvalidAssetTypeForTransferMethod(withdrawal, transferMethod),
+              skipNotSupportedTransferMethod(withdrawal, capabilities, assetReference),
             testCase: 'balance asset is unknown',
             errorTypes: [BadRequestError.errorType.UNKNOWN_ASSET],
           },
