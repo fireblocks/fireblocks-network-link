@@ -45,7 +45,7 @@
     "bignumber.js": "^9.1.1",
     "bs58": "^5.0.0",
     "convict": "^6.2.4",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.5.0",
     "fastify": "^4.19.2",
     "fastify-openapi-glue": "^2.8.0",
     "form-data": "^4.0.0",
