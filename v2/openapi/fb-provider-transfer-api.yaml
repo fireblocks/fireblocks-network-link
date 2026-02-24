@@ -2150,6 +2150,9 @@ components:
         - pending
         - succeeded
         - failed
+        - rejected
+        - cancelled
+        - processing
 
     DepositAddressCreationPolicy:
       enum:
