@@ -3076,6 +3076,7 @@ components:
         - BASE
         - BCH
         - BCHA
+        - BERA
         - BITKUB
         - BNB
         - BSV
@@ -4841,6 +4842,9 @@ components:
         - pending
         - succeeded
         - failed
+        - rejected
+        - cancelled
+        - processing
     DepositAddressCreationPolicy:
       enum:
         - CanCreate

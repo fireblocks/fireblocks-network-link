@@ -15,6 +15,7 @@ export enum CryptocurrencySymbol {
     BASE = 'BASE',
     BCH = 'BCH',
     BCHA = 'BCHA',
+    BERA = 'BERA',
     BITKUB = 'BITKUB',
     BNB = 'BNB',
     BSV = 'BSV',
