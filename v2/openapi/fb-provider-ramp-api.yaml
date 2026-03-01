@@ -872,6 +872,9 @@ components:
           type: string
         amount:
           $ref: "#/x-schemas/PositiveAmount"
+        customerReferenceId:
+          type: string
+          description: Optional customer reference identifier for tracking purposes
 
     RampRequest:
       allOf:
