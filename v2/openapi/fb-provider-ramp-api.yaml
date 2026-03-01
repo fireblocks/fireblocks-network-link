@@ -974,9 +974,6 @@ components:
           $ref: "#/components/schemas/RampStatus"
         amount:
           $ref: "#/x-schemas/PositiveAmount"
-        customerReferenceId:
-          type: string
-          description: Optional customer reference identifier for tracking purposes
         estimatedFees:
           $ref: "#/components/schemas/RampFees"
         executionDetails:
