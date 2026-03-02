@@ -413,7 +413,7 @@ paths:
     post:
       operationId: createFiatWithdrawal
       summary: Create new fiat withdrawal
-      description: Should reject any non fiat withdrawal request.
+      description: Should reject any non fiat withdrawal request. Only IbanAddress is currently supported. SwiftAddress is not yet a valid destination object. 
       tags: [ transfersFiat ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
