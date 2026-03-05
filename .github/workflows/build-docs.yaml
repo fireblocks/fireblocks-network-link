@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - name: Wire README into v2 OpenAPI spec
+      run: perl -i -pe 's/Placeholder for automatic documentation injection from README\.md/\n    \$ref: README.md/' v2/openapi/fb-unified-openapi.yaml
     - name: Build redoc for v1
       run: npx @redocly/cli build-docs openapi.yaml --output index.html
     - name: Build redoc for v2
