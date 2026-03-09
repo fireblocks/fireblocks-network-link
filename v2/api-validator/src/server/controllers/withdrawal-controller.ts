@@ -73,6 +73,8 @@ export class WithdrawalController {
     const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
 
     injectKnownAssetIdsToWithdrawals(knownAssetIds, this.withdrawalRepository);
+    ensureReferenceIdForFinalizedWithdrawals(this.withdrawalRepository);
+    ensureBlockchainTxIdForSucceededWithdrawals(this.withdrawalRepository);
     injectKnownAssetIdsToWithdrawalCapabilities(knownAssetIds, this.withdrawalCapabilityRepository);
     this.withdrawalCapabilityRepository.removeDuplicatesBy((dc) => {
       return {
@@ -255,6 +257,47 @@ function injectKnownAssetIdsToWithdrawals(
 
     if ('assetId' in withdrawal.destination.asset) {
       withdrawal.destination.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+  }
+}
+
+function ensureReferenceIdForFinalizedWithdrawals(
+  withdrawalRepository: Repository<Withdrawal>
+): void {
+  const finalized = [WithdrawalStatus.SUCCEEDED, WithdrawalStatus.FAILED];
+  for (const { id } of withdrawalRepository.list()) {
+    const withdrawal = withdrawalRepository.find(id);
+    if (!withdrawal || !finalized.includes(withdrawal.status)) continue;
+    const tm = withdrawal.destination.transferMethod;
+    if (
+      tm === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN ||
+      tm === InternalTransferMethod.transferMethod.INTERNAL_TRANSFER
+    ) {
+      continue;
+    }
+    const dest = withdrawal.destination as { referenceId?: string };
+    if (!dest.referenceId || dest.referenceId.trim() === '') {
+      dest.referenceId = randomUUID();
+    }
+  }
+}
+
+function ensureBlockchainTxIdForSucceededWithdrawals(
+  withdrawalRepository: Repository<Withdrawal>
+): void {
+  for (const { id } of withdrawalRepository.list()) {
+    const withdrawal = withdrawalRepository.find(id);
+    if (
+      !withdrawal ||
+      withdrawal.status !== WithdrawalStatus.SUCCEEDED ||
+      withdrawal.destination.transferMethod !==
+        PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+    ) {
+      continue;
+    }
+    const dest = withdrawal.destination as { blockchainTxId?: string };
+    if (!dest.blockchainTxId || dest.blockchainTxId.trim() === '') {
+      dest.blockchainTxId = '0x' + randomUUID().replace(/-/g, '').slice(0, 64);
     }
   }
 }
