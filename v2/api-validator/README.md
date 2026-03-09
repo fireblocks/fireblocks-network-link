@@ -79,9 +79,6 @@ to learn more about OpenAPI:
    `fb-unified-openapi.yaml` – it will be generated automatically.
 3. `npm run make-unified-openapi`
 4. `npm run generate-openapi-client`
-
-   Both commands (3 and 4) automatically update the repository root `CHANGELOG.md`
-   with recent git commits under the *Unreleased* section (see `npm run update-changelog`).
 5. Restart the mock server.
 6. Run all the tests.
 
