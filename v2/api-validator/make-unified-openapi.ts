@@ -6,6 +6,7 @@ import { dump as dumpYaml, load as loadYaml } from 'js-yaml';
 
 const TARGET_OPENAPI_PATH = config.getUnifiedOpenApiPathname();
 const IGNORE_PATH_LABEL = 'Private';
+const README_PLACEHOLDER = 'Placeholder for automatic documentation injection from README.md';
 
 interface OpenAPI {
   openapi: string;
@@ -95,6 +96,12 @@ async function makeUnifiedOpenApi() {
     }
 
     console.log(`📦 Component [\x1b[33m ${extractServiceName(openApiPath)} \x1b[0m] added`);
+  }
+
+  // Replace placeholder with README reference (same dir as unified spec)
+  const description = completeOpenAPI.info?.description;
+  if (typeof description === 'string' && description.trim() === README_PLACEHOLDER) {
+    completeOpenAPI.info.description = { $ref: 'README.md' };
   }
 
   let resultYaml: string = dumpYaml(completeOpenAPI, {
