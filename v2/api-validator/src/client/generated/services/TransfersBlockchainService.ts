@@ -27,6 +27,7 @@ export class TransfersBlockchainService {
         xFbapiSignature,
         xFbapiTimestamp,
         accountId,
+        xFbapiInitiatedBy,
         limit = 10,
         startingAfter,
         endingBefore,
@@ -53,6 +54,10 @@ export class TransfersBlockchainService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
         /**
          * Maximum number of returned items.
          */
@@ -83,6 +88,7 @@ export class TransfersBlockchainService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             query: {
                 'limit': limit,
@@ -110,6 +116,9 @@ export class TransfersBlockchainService {
         xFbapiTimestamp,
         accountId,
         requestBody,
+        xFbapiInitiatedBy,
+        xFbapiApprovedBy,
+        xFbapiSignedBy,
     }: {
         /**
          * API authentication key.
@@ -136,6 +145,18 @@ export class TransfersBlockchainService {
          * Withdrawal details
          */
         requestBody: BlockchainWithdrawalRequest,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiApprovedBy?: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiSignedBy?: string,
     }): CancelablePromise<BlockchainWithdrawal> {
         return this.httpRequest.request({
             method: 'POST',
@@ -148,6 +169,9 @@ export class TransfersBlockchainService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
+                'X-FBAPI-APPROVED-BY': xFbapiApprovedBy,
+                'X-FBAPI-SIGNED-BY': xFbapiSignedBy,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -172,6 +196,7 @@ export class TransfersBlockchainService {
         xFbapiTimestamp,
         accountId,
         requestBody,
+        xFbapiInitiatedBy,
     }: {
         /**
          * API authentication key.
@@ -198,6 +223,10 @@ export class TransfersBlockchainService {
          * Deposit address details
          */
         requestBody: DepositAddressCreationRequest,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
     }): CancelablePromise<DepositAddress> {
         return this.httpRequest.request({
             method: 'POST',
@@ -210,6 +239,7 @@ export class TransfersBlockchainService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -233,6 +263,7 @@ export class TransfersBlockchainService {
         xFbapiSignature,
         xFbapiTimestamp,
         accountId,
+        xFbapiInitiatedBy,
         limit = 10,
         startingAfter,
         endingBefore,
@@ -259,6 +290,10 @@ export class TransfersBlockchainService {
          */
         accountId: string,
         /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
+        /**
          * Maximum number of returned items.
          */
         limit?: number,
@@ -284,6 +319,7 @@ export class TransfersBlockchainService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             query: {
                 'limit': limit,
@@ -311,6 +347,7 @@ export class TransfersBlockchainService {
         xFbapiTimestamp,
         id,
         accountId,
+        xFbapiInitiatedBy,
     }: {
         /**
          * API authentication key.
@@ -337,6 +374,10 @@ export class TransfersBlockchainService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
     }): CancelablePromise<DepositAddress> {
         return this.httpRequest.request({
             method: 'GET',
@@ -350,6 +391,7 @@ export class TransfersBlockchainService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
@@ -372,6 +414,7 @@ export class TransfersBlockchainService {
         xFbapiTimestamp,
         id,
         accountId,
+        xFbapiInitiatedBy,
     }: {
         /**
          * API authentication key.
@@ -398,6 +441,10 @@ export class TransfersBlockchainService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
     }): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'DELETE',
@@ -411,6 +458,7 @@ export class TransfersBlockchainService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,

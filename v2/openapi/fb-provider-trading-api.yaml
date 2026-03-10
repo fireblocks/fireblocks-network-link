@@ -28,6 +28,7 @@ x-header-params:
   X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
   X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
   X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
+  X-FBAPI-INITIATED-BY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-INITIATED-BY' }
 
 x-schemas:
   PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
@@ -113,6 +114,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
         '200':
@@ -169,6 +171,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
@@ -250,6 +253,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
@@ -329,6 +333,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
@@ -366,6 +371,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         description: Order details
@@ -451,6 +457,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
@@ -480,6 +487,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:

@@ -22,6 +22,7 @@ export class RatesService {
         xFbapiTimestamp,
         xFbapiSignature,
         accountId,
+        xFbapiInitiatedBy,
         conversionPairId,
         rampsPairId,
         orderBookPairId,
@@ -48,6 +49,10 @@ export class RatesService {
          */
         accountId: string,
         /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
+        /**
          * Conversion pair to get the rate for.
          */
         conversionPairId?: string,
@@ -71,6 +76,7 @@ export class RatesService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             query: {
                 'conversionPairId': conversionPairId,
