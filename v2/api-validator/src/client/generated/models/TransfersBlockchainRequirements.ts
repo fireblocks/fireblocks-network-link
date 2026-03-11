@@ -3,9 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { CommonCapabilityRequirements } from './CommonCapabilityRequirements';
 import type { WithdrawalAddressPolicyRequirement } from './WithdrawalAddressPolicyRequirement';
 
-export type CapabilityRequirements = {
+export type TransfersBlockchainRequirements = (CommonCapabilityRequirements & {
     withdrawalAddressPolicy?: WithdrawalAddressPolicyRequirement;
-};
+});
 
