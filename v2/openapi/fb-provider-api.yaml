@@ -246,6 +246,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -285,6 +286,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/AccountBalancesQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -313,6 +315,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/ConversionPairIdQueryParam'
         - $ref: '#/components/parameters/RampsPairIdQueryParam'
@@ -380,6 +383,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -502,6 +506,33 @@ components:
         - HTTP request method in upper case
         - Endpoint path, including the query parameters
         - Request body
+      schema:
+        type: string
+
+    X-FBAPI-INITIATED-BY:
+      name: X-FBAPI-INITIATED-BY
+      in: header
+      required: false
+      description: >-
+        Conditional. This header is provided only when the corresponding capability requirement is enabled.
+      schema:
+        type: string
+
+    X-FBAPI-APPROVED-BY:
+      name: X-FBAPI-APPROVED-BY
+      in: header
+      required: false
+      description: >-
+        Conditional. This header is provided only when the corresponding capability requirement is enabled.
+      schema:
+        type: string
+
+    X-FBAPI-SIGNED-BY:
+      name: X-FBAPI-SIGNED-BY
+      in: header
+      required: false
+      description: >-
+        Conditional. This header is provided only when the corresponding capability requirement is enabled.
       schema:
         type: string
 

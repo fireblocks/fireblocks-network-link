@@ -25,6 +25,7 @@ export class RampsService {
         xFbapiSignature,
         xFbapiTimestamp,
         accountId,
+        xFbapiInitiatedBy,
         limit = 10,
         startingAfter,
         endingBefore,
@@ -51,6 +52,10 @@ export class RampsService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
         /**
          * Maximum number of returned items.
          */
@@ -81,6 +86,7 @@ export class RampsService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             query: {
                 'limit': limit,
@@ -108,6 +114,7 @@ export class RampsService {
         xFbapiTimestamp,
         accountId,
         requestBody,
+        xFbapiInitiatedBy,
     }: {
         /**
          * API authentication key.
@@ -134,6 +141,10 @@ export class RampsService {
          * Ramp details
          */
         requestBody: RampRequest,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
     }): CancelablePromise<Ramp> {
         return this.httpRequest.request({
             method: 'POST',
@@ -146,6 +157,7 @@ export class RampsService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             body: requestBody,
             mediaType: 'application/json',
@@ -170,6 +182,7 @@ export class RampsService {
         xFbapiTimestamp,
         accountId,
         id,
+        xFbapiInitiatedBy,
     }: {
         /**
          * API authentication key.
@@ -196,6 +209,10 @@ export class RampsService {
          * Entity unique identifier.
          */
         id: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
     }): CancelablePromise<Ramp> {
         return this.httpRequest.request({
             method: 'GET',
@@ -209,6 +226,7 @@ export class RampsService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,

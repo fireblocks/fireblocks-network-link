@@ -265,9 +265,12 @@ export type { WithdrawalEvent } from './models/WithdrawalEvent';
 export type { WithdrawalRequestCommonProperties } from './models/WithdrawalRequestCommonProperties';
 export { WithdrawalStatus } from './models/WithdrawalStatus';
 export type { X_FB_PLATFORM_SIGNATURE } from './models/X_FB_PLATFORM_SIGNATURE';
+export type { X_FBAPI_APPROVED_BY } from './models/X_FBAPI_APPROVED_BY';
+export type { X_FBAPI_INITIATED_BY } from './models/X_FBAPI_INITIATED_BY';
 export type { X_FBAPI_KEY } from './models/X_FBAPI_KEY';
 export type { X_FBAPI_NONCE } from './models/X_FBAPI_NONCE';
 export type { X_FBAPI_SIGNATURE } from './models/X_FBAPI_SIGNATURE';
+export type { X_FBAPI_SIGNED_BY } from './models/X_FBAPI_SIGNED_BY';
 export type { X_FBAPI_TIMESTAMP } from './models/X_FBAPI_TIMESTAMP';
 
 export { AccountsService } from './services/AccountsService';

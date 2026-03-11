@@ -26,6 +26,7 @@ export class BalancesService {
         xFbapiTimestamp,
         xFbapiSignature,
         accountId,
+        xFbapiInitiatedBy,
         limit = 10,
         startingAfter,
         endingBefore,
@@ -54,6 +55,10 @@ export class BalancesService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
         /**
          * Maximum number of returned items.
          */
@@ -92,6 +97,7 @@ export class BalancesService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             query: {
                 'limit': limit,

@@ -25,6 +25,7 @@ export class TransfersService {
         xFbapiSignature,
         xFbapiTimestamp,
         accountId,
+        xFbapiInitiatedBy,
         limit = 10,
         startingAfter,
         endingBefore,
@@ -51,6 +52,10 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
         /**
          * Maximum number of returned items.
          */
@@ -81,6 +86,7 @@ export class TransfersService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             query: {
                 'limit': limit,
@@ -109,6 +115,7 @@ export class TransfersService {
         xFbapiTimestamp,
         id,
         accountId,
+        xFbapiInitiatedBy,
     }: {
         /**
          * API authentication key.
@@ -135,6 +142,10 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
     }): CancelablePromise<Withdrawal> {
         return this.httpRequest.request({
             method: 'GET',
@@ -148,6 +159,7 @@ export class TransfersService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
@@ -169,6 +181,7 @@ export class TransfersService {
         xFbapiSignature,
         xFbapiTimestamp,
         accountId,
+        xFbapiInitiatedBy,
         limit = 10,
         startingAfter,
         endingBefore,
@@ -195,6 +208,10 @@ export class TransfersService {
          */
         accountId: string,
         /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
+        /**
          * Maximum number of returned items.
          */
         limit?: number,
@@ -220,6 +237,7 @@ export class TransfersService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             query: {
                 'limit': limit,
@@ -247,6 +265,7 @@ export class TransfersService {
         xFbapiTimestamp,
         id,
         accountId,
+        xFbapiInitiatedBy,
     }: {
         /**
          * API authentication key.
@@ -273,6 +292,10 @@ export class TransfersService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
     }): CancelablePromise<Deposit> {
         return this.httpRequest.request({
             method: 'GET',
@@ -286,6 +309,7 @@ export class TransfersService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             errors: {
                 400: `Request could not be processed due to a client error.`,
