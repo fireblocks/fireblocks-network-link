@@ -100,11 +100,15 @@ paths:
                       accounts: '*'
                       balances: '*'
                       transfersBlockchain: '*'
+                      transfersFiat: '*'
                     requirements:
                       transfersBlockchain:
+                        userIdentification: {}
                         withdrawalAddressPolicy:
                           type: WithdrawalAddressPolicy
                           value: ApprovedAddressesOnly
+                      transfersFiat:
+                        userIdentification: {}
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -786,6 +790,19 @@ components:
           $ref: '#/components/schemas/ApiComponents'
         requirements:
           $ref: '#/components/schemas/CapabilitiesWithRequirements'
+    
+    UserIdentificationRequirement:
+      description: >-
+        No properties. Specifying an empty object will cause the user identification headers
+        (X-FBAPI-INITIATED-BY, X-FBAPI-APPROVED-BY, X-FBAPI-SIGNED-BY) to be included in requests.
+      type: object
+
+    CommonCapabilityRequirements:
+      description: Capability requirements shared by all the capabilities.
+      type: object
+      properties:
+        userIdentification:
+          $ref: '#/components/schemas/UserIdentificationRequirement'
 
     WithdrawalAddressPolicyRequirement:
       type: object
@@ -798,17 +815,37 @@ components:
             - ApprovedAddressesOnly
             - AllAddresses
 
-    CapabilityRequirements:
-      type: object
-      properties:
-        withdrawalAddressPolicy:
-          $ref: '#/components/schemas/WithdrawalAddressPolicyRequirement'
+    TransfersBlockchainRequirements:
+      allOf:
+        - $ref: '#/components/schemas/CommonCapabilityRequirements'
+        - type: object
+          properties:
+            withdrawalAddressPolicy:
+              $ref: '#/components/schemas/WithdrawalAddressPolicyRequirement'
 
     CapabilitiesWithRequirements:
       type: object
       properties:
+        accounts:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        balances:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        transfers:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
         transfersBlockchain:
-          $ref: '#/components/schemas/CapabilityRequirements'
+          $ref: '#/components/schemas/TransfersBlockchainRequirements'
+        transfersFiat:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        transfersPeerAccounts:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        transfersInternal:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        liquidity:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        ramps:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        rates:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
 
     ApiComponents:
       description: >-

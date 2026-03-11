@@ -3,9 +3,19 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { CapabilityRequirements } from './CapabilityRequirements';
+import type { CommonCapabilityRequirements } from './CommonCapabilityRequirements';
+import type { TransfersBlockchainRequirements } from './TransfersBlockchainRequirements';
 
 export type CapabilitiesWithRequirements = {
-    transfersBlockchain?: CapabilityRequirements;
+    accounts?: CommonCapabilityRequirements;
+    balances?: CommonCapabilityRequirements;
+    transfers?: CommonCapabilityRequirements;
+    transfersBlockchain?: TransfersBlockchainRequirements;
+    transfersFiat?: CommonCapabilityRequirements;
+    transfersPeerAccounts?: CommonCapabilityRequirements;
+    transfersInternal?: CommonCapabilityRequirements;
+    liquidity?: CommonCapabilityRequirements;
+    ramps?: CommonCapabilityRequirements;
+    rates?: CommonCapabilityRequirements;
 };
 
