@@ -1549,8 +1549,6 @@ components:
       allOf:
         - $ref: '#/components/schemas/InteracTransferDetailsBase'
         - type: object
-          required:
-            - autoDeposit
           properties:
             autoDeposit:
               default: true
@@ -1574,7 +1572,6 @@ components:
         - type: object
           required:
             - accountHolder
-            - interacTransfer
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
