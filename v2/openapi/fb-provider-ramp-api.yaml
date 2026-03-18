@@ -896,6 +896,7 @@ components:
             executionDetails:
               oneOf:
                 - $ref: "#/components/schemas/OrderQuote"
+                - $ref: "#/components/schemas/OrderLimit"
         - type: object
           properties:
             participantsIdentification:
@@ -984,6 +985,7 @@ components:
         executionDetails:
           oneOf:
             - $ref: "#/components/schemas/OrderQuote"
+            - $ref: "#/components/schemas/OrderLimit"
         expiresAt:
           description: Ramp expiration time.
           type: string
@@ -1131,6 +1133,24 @@ components:
           oneOf:
             - $ref: "#/components/schemas/Retry"
             - $ref: "#/components/schemas/Market"
+
+    OrderLimit:
+      type: object
+      required:
+        - type
+        - price
+        - slippage
+      properties:
+        type:
+          type: string
+          enum:
+            - Limit
+        price:
+          $ref: '#/x-schemas/PositiveAmount'
+          description: Limit price in quote asset per unit of base asset. The order will not execute at a worse price than this.
+        slippage:
+          type: number
+          description: Slippage tolerance in basis points (bps) — 1 is 0.01% and 10000 is 100%. Defines acceptable deviation from the limit price.
 
     Retry:
       type: object
