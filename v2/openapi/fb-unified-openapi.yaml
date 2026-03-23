@@ -14,8 +14,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: 
-    $ref: README.md
+  description: Placeholder for automatic documentation injection from README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -4306,12 +4305,26 @@ components:
           $ref: '#/components/schemas/RecipientHandle'
         message:
           type: string
+    InteracTransferSecurityQuestionAndAnswer:
+      type: object
+      required:
+        - autoDeposit
+      properties:
+        autoDeposit:
+          type: boolean
+        securityQuestion:
+          description: if autoDeposit is false, this is required
+          type: string
+        securityAnswer:
+          type: string
+          description: if autoDeposit is false, this is required
     InteractTransferDetailsOffRamp:
       allOf:
         - $ref: '#/components/schemas/InteracTransferDetailsBase'
     InteractTransferDetailsOnRamp:
       allOf:
         - $ref: '#/components/schemas/InteracTransferDetailsBase'
+        - $ref: '#/components/schemas/InteracTransferSecurityQuestionAndAnswer'
     InteracAddress:
       allOf:
         - $ref: '#/components/schemas/InteracCapability'
@@ -4319,18 +4332,19 @@ components:
         - type: object
           required:
             - accountHolder
-            - interacTransfer
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
     InteracAddressPaymentInstruction:
+      description: |-
+        When true, funds are deposited directly into the recipient's bank account without a security question.
+         When false, a security question and answer are required to complete the transfer
       allOf:
         - $ref: '#/components/schemas/InteracCapability'
         - $ref: '#/components/schemas/InteractTransferDetailsOnRamp'
         - type: object
           required:
             - accountHolder
-            - interacTransfer
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
