@@ -17,8 +17,8 @@ import {
   InteracAddress,
   InteracAddressPaymentInstruction,
   InteracCapability,
-  InternalLedgerAddressRamp,
-  InternalLedgerCapability,
+  InternalTransferAddress,
+  InternalTransferMethod,
   LocalBankTransferAddress,
   LocalBankTransferAddressPaymentInstruction,
   LocalBankTransferCapability,
@@ -219,8 +219,8 @@ function getTransferMethod(transferMethod: FiatCapability['transferMethod']): Fi
       return fakeSchemaObject('PayIdAddress') as PayIdAddress;
     case InteracCapability.transferMethod.INTERAC:
       return fakeSchemaObject('InteracAddressPaymentInstruction') as InteracAddressPaymentInstruction;
-    case InternalLedgerCapability.transferMethod.INTERNAL_LEDGER:
-      return fakeSchemaObject('InternalLedgerAddressRamp') as InternalLedgerAddressRamp;
+    case InternalTransferMethod.transferMethod.INTERNAL_TRANSFER:
+      return fakeSchemaObject('InternalTransferAddress') as InternalTransferAddress;
     default:
       throw new XComError('Invalid transfer method', { transferMethod });
   }

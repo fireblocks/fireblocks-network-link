@@ -4319,7 +4319,6 @@ components:
         - type: object
           required:
             - accountHolder
-            - interacTransfer
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
@@ -4330,7 +4329,6 @@ components:
         - type: object
           required:
             - accountHolder
-            - interacTransfer
           properties:
             accountHolder:
               $ref: '#/components/schemas/AccountHolderDetails'
