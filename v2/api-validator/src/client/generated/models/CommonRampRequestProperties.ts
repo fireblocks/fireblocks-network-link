@@ -8,5 +8,9 @@ import type { PositiveAmount } from './PositiveAmount';
 export type CommonRampRequestProperties = {
     idempotencyKey: string;
     amount: PositiveAmount;
+    /**
+     * Optional customer reference identifier for tracking purposes
+     */
+    customerReferenceId?: string;
 };
 
