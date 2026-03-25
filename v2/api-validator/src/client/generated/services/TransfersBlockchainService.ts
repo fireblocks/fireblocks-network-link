@@ -16,7 +16,7 @@ export class TransfersBlockchainService {
 
     /**
      * Get list of withdrawals over public blockchains sorted by creation time
-     * Retrieves a paginated list of withdrawal transactions sent over public blockchains. Includes cryptocurrency transfers to external blockchain addresses, sorted by creation time.
+     * Retrieves a paginated list of withdrawal transactions sent over public blockchains. Includes cryptocurrency transfers to external blockchain addresses, sorted by creation time. On success (status succeeded), the destination `blockchainTxId` (transaction hash) is required and must be non-empty.
      *
      * @returns any List of withdrawals.
      * @throws ApiError
@@ -99,7 +99,8 @@ export class TransfersBlockchainService {
 
     /**
      * Create new withdrawal over public blockchain
-     * Should reject any non blockchain withdrawal request.
+     * Should reject any non blockchain withdrawal request. In the response, when the transaction has succeeded, `blockchainTxId` (transaction hash) on the destination is required and must be non-empty.
+     *
      * @returns BlockchainWithdrawal New withdrawal has been successfully created.
      * @throws ApiError
      */

@@ -245,9 +245,13 @@ paths:
         Retrieves a paginated list of all withdrawal transactions for the specified account.
         Withdrawals are sorted by creation time and include all types of withdrawal operations.
 
-        For Peer, Fiat and other transfer methods that define a `referenceId` on the destination,
-        this property is expected to become mandatory (non-empty) when the transaction is in a
-        finalized state (succeeded or failed), although it is currently indicated as optional in the schema.
+        If a withdrawal is in a terminal state (succeeded or failed), and it has an optional
+        destination.referenceId property (not all transfer methods have this property), then this
+        property MUST contain a valid value, despite it being defined as optional in the schema.
+
+        Blockchain withdrawals in status succeeded, MUST contain destination.blockchainTxId property
+        with a valid value (e.g., transaction hash), despite it being defined as optional in the
+        schema.
       tags: [ transfers ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'

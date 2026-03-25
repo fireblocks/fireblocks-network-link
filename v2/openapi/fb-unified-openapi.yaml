@@ -4,7 +4,7 @@ servers:
     url: http://0.0.0.0:8000
 info:
   title: Fireblocks Provider Connectivity API v2
-  version: 0.5.0
+  version: 0.5.1
   x-logo:
     url: doc-assets/fireblocks-logo-lockup-network-navy.png
     altText: Fireblocks logo
@@ -14,7 +14,8 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: Placeholder for automatic documentation injection from README.md
+  description: 
+    $ref: README.md
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
@@ -781,6 +782,8 @@ paths:
       summary: Get list of withdrawals sorted by creation time
       description: |
         Retrieves a paginated list of all withdrawal transactions for the specified account. Withdrawals are sorted by creation time and include all types of withdrawal operations.
+        If a withdrawal is in a terminal state (succeeded or failed), and it has an optional destination.referenceId property (not all transfer methods have this property), then this property MUST contain a valid value, despite it being defined as optional in the schema.
+        Blockchain withdrawals in status succeeded, MUST contain destination.blockchainTxId property with a valid value (e.g., transaction hash), despite it being defined as optional in the schema.
       tags:
         - transfers
       parameters:
@@ -810,6 +813,7 @@ paths:
       summary: Get withdrawal details
       description: |
         Retrieves detailed information about a specific withdrawal transaction, including status, amounts, fees, destination details, and processing information.
+        For Peer, Fiat and other transfer methods that define a `referenceId` on the destination, this property is expected to become mandatory (non-empty) when the transaction is in a finalized state (succeeded or failed), although it is currently indicated as optional in the schema. For blockchain withdrawals, when the transaction has succeeded, `blockchainTxId` (transaction hash) on the destination is required and must be non-empty.
       tags:
         - transfers
       parameters:
@@ -839,7 +843,7 @@ paths:
       operationId: getBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
       description: |
-        Retrieves a paginated list of withdrawal transactions sent over public blockchains. Includes cryptocurrency transfers to external blockchain addresses, sorted by creation time.
+        Retrieves a paginated list of withdrawal transactions sent over public blockchains. Includes cryptocurrency transfers to external blockchain addresses, sorted by creation time. On success (status succeeded), the destination `blockchainTxId` (transaction hash) is required and must be non-empty.
       tags:
         - transfersBlockchain
       parameters:
@@ -877,7 +881,8 @@ paths:
     post:
       operationId: createBlockchainWithdrawal
       summary: Create new withdrawal over public blockchain
-      description: Should reject any non blockchain withdrawal request.
+      description: |
+        Should reject any non blockchain withdrawal request. In the response, when the transaction has succeeded, `blockchainTxId` (transaction hash) on the destination is required and must be non-empty.
       tags:
         - transfersBlockchain
       parameters:
@@ -914,6 +919,7 @@ paths:
       summary: Get list of fiat withdrawals sorted by creation time
       description: |
         Retrieves a paginated list of fiat currency withdrawal transactions. Includes traditional banking transfers and wire transfers, sorted by creation time.
+        The `referenceId` on the destination is expected to become mandatory (non-empty) when the transaction is in a finalized state (succeeded or failed), although it is optional in the schema.
       tags:
         - transfersFiat
       parameters:
@@ -951,7 +957,8 @@ paths:
     post:
       operationId: createFiatWithdrawal
       summary: Create new fiat withdrawal
-      description: Should reject any non fiat withdrawal request.
+      description: |
+        Should reject any non fiat withdrawal request. In the response, `referenceId` on the destination is expected to become mandatory (non-empty) when the transaction reaches a finalized state (succeeded or failed), although optional in the schema.
       tags:
         - transfersFiat
       parameters:
@@ -988,6 +995,7 @@ paths:
       summary: Get list of withdrawals to peer accounts, sorted by creation time
       description: |
         Retrieves a paginated list of withdrawal transactions sent to peer accounts. Includes transfers to other accounts within the same provider ecosystem, sorted by creation time.
+        The `referenceId` on the destination is expected to become mandatory (non-empty) when the transaction is in a finalized state (succeeded or failed), although it is optional in the schema.
       tags:
         - transfersPeerAccounts
       parameters:
@@ -1025,7 +1033,8 @@ paths:
     post:
       operationId: createPeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
-      description: Should reject any non peer acount withdrawal request.
+      description: |
+        Should reject any non peer acount withdrawal request. In the response, `referenceId` on the destination is expected to become mandatory (non-empty) when the transaction reaches a finalized state (succeeded or failed), although optional in the schema.
       tags:
         - transfersPeerAccounts
       parameters:
@@ -1136,6 +1145,7 @@ paths:
       summary: Get list of deposits sorted by creation time in a descending order
       description: |
         Retrieves a paginated list of all deposit transactions for the specified account. Deposits are sorted by creation time in descending order and include all types of deposit operations.
+        For Peer, Fiat and other transfer methods that define a `referenceId` on the source, this property is expected to become mandatory (non-empty) when the transaction is in a finalized state (succeeded or failed), although it is currently indicated as optional in the schema. For deposits with a blockchain source, when the transaction has succeeded, `blockchainTxId` (transaction hash) on the source is required and must be non-empty.
       tags:
         - transfers
       parameters:
@@ -1175,6 +1185,7 @@ paths:
       summary: Get deposit details
       description: |
         Retrieves detailed information about a specific deposit transaction, including status, amounts, source details, confirmation information, and processing details.
+        For Peer, Fiat and other transfer methods that define a `referenceId` on the source, this property is expected to become mandatory (non-empty) when the transaction is in a finalized state (succeeded or failed), although it is currently indicated as optional in the schema. For deposits with a blockchain source, when the transaction has succeeded, `blockchainTxId` (transaction hash) on the source is required and must be non-empty.
       tags:
         - transfers
       parameters:
@@ -4307,12 +4318,14 @@ components:
               $ref: '#/components/schemas/PositiveAmount'
     PublicBlockchainTransaction:
       type: object
+      description: Blockchain transaction details. When the withdrawal or deposit has succeeded, `blockchainTxId` (transaction hash) is required and must be non-empty, although it is indicated as optional in the schema.
       allOf:
         - $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
         - type: object
           properties:
             blockchainTxId:
               type: string
+              description: Transaction hash on the blockchain. Required (non-empty) when the transaction has succeeded.
     PeerAccountTransferCapability:
       type: object
       required:
