@@ -5,7 +5,7 @@ import {
   IdempotentRequestAlreadyExists,
   NoPreviousIdempotentRequest,
 } from '../../src/server/controllers/idempotency-handler';
-import { BadRequestError } from '../../src/client/generated';
+import { BadRequestError, BadRequestErrorType } from '../../src/client/generated';
 
 type Payload = { data: string };
 
@@ -85,7 +85,7 @@ describe('IdempotencyHandler', () => {
       expect(reply.code).toHaveBeenCalledWith(400);
       expect(reply.send).toHaveBeenCalledWith({
         message: 'Idempotency key has already been used for a different request',
-        errorType: BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE,
+        errorType: BadRequestErrorType.IDEMPOTENCY_KEY_REUSE,
       });
     });
   });

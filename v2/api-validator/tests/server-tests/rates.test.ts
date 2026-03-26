@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 import Client from '../../src/client';
-import { ApiError, BadRequestError } from '../../src/client/generated';
+import { ApiError, BadRequestError, BadRequestErrorType } from '../../src/client/generated';
 import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
 
 const noRatesCapability = !hasCapability('rates');
@@ -83,7 +83,7 @@ describe.skipIf(noRatesCapability)('Rates', () => {
         } catch (err) {
           if (err instanceof ApiError) {
             expect(err.status).toBe(400);
-            expect(err.body.errorType).toBe(BadRequestError.errorType.BAD_REQUEST);
+            expect(err.body.errorType).toBe(BadRequestErrorType.BAD_REQUEST);
           } else {
             throw err;
           }

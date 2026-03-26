@@ -6,7 +6,7 @@ import { JSONSchemaFaker, Schema } from 'json-schema-faker';
 import { EndpointSchema, getAllEndpointSchemas } from '../../src/schemas';
 import { deleteDeepProperty, getPropertyPaths } from '../property-extraction';
 import { getCapableAccountId, hasCapability } from '../utils/capable-accounts';
-import { ApiComponents, ApiError, BadRequestError, RequestPart } from '../../src/client/generated';
+import { ApiComponents, ApiError, BadRequestError, BadRequestErrorType, RequestPart } from '../../src/client/generated';
 
 JSONSchemaFaker.option('requiredOnly', true);
 
@@ -66,7 +66,7 @@ describe('Test request bodies missing one required property', () => {
             expect(apiError.body.requestPart).toEqual(RequestPart.BODY);
             expect(getExpectedVariants(url, propertyPath)).toContain(apiError.body.propertyName);
             expect(apiError.body.errorType).toEqual(
-              BadRequestError.errorType.SCHEMA_PROPERTY_ERROR
+              BadRequestErrorType.SCHEMA_PROPERTY_ERROR
             );
           });
         });

@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
+import type { BadRequestErrorType } from './BadRequestErrorType';
 import type { OrderQuote } from './OrderQuote';
 import type { PositiveAmount } from './PositiveAmount';
 import type { RampFees } from './RampFees';
@@ -20,5 +21,9 @@ export type CommonRamp = {
      * Ramp expiration time.
      */
     expiresAt: string;
+    /**
+     * Reason for ramp failure. Present when status is Failed.
+     */
+    failureReason?: BadRequestErrorType;
 };
 

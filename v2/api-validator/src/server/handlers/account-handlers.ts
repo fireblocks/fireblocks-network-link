@@ -15,6 +15,7 @@ import {
   RampsPairIdQueryParam,
   Rate,
   BadRequestError,
+  BadRequestErrorType,
 } from '../../client/generated';
 
 type AccountsResponse = { accounts: Account[] };
@@ -110,7 +111,7 @@ export async function getRateByAccountAndPairId(
     } else {
       const errorData: BadRequestError = {
         message: 'One of conversionPairId, rampsPairId, or orderBookPairId must be provided',
-        errorType: BadRequestError.errorType.BAD_REQUEST,
+        errorType: BadRequestErrorType.BAD_REQUEST,
       };
       return ErrorFactory.badRequest(reply, errorData);
     }
@@ -124,7 +125,7 @@ export async function getRateByAccountAndPairId(
     if (error instanceof RateBadRequestError) {
       const errorData: BadRequestError = {
         message: 'Rate pair id is required',
-        errorType: BadRequestError.errorType.BAD_REQUEST,
+        errorType: BadRequestErrorType.BAD_REQUEST,
       };
       return ErrorFactory.badRequest(reply, errorData);
     }

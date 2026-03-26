@@ -7,6 +7,7 @@ import { AssetsController, UnknownAdditionalAssetError } from '../controllers/as
 import { AccountIdPathParam, EntityIdPathParam, PaginationQuerystring } from './request-types';
 import {
   BadRequestError,
+  BadRequestErrorType,
   Deposit,
   DepositAddress,
   DepositAddressCreationRequest,
@@ -84,7 +85,7 @@ export async function createDepositAddress(
     if (err instanceof UnknownAdditionalAssetError) {
       const response = {
         message: err.message,
-        errorType: BadRequestError.errorType.UNKNOWN_ASSET,
+        errorType: BadRequestErrorType.UNKNOWN_ASSET,
         requestPart: RequestPart.BODY,
         propertyName: '/transferMethod/asset/assetId',
       };
@@ -100,12 +101,12 @@ export async function createDepositAddress(
     if (err instanceof UnsupportedTransferMethodError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD,
+        errorType: BadRequestErrorType.UNSUPPORTED_TRANSFER_METHOD,
       });
     } else if (err instanceof DepositAddressCreationImpossibleError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestError.errorType.DEPOSIT_ADDRESS_CREATION_NOT_ALLOWED,
+        errorType: BadRequestErrorType.DEPOSIT_ADDRESS_CREATION_NOT_ALLOWED,
       });
     }
   }
@@ -181,7 +182,7 @@ export async function disableDepositAddress(
     if (err instanceof DepositAddressDisabledError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestError.errorType.DEPOSIT_ADDRESS_DISABLED,
+        errorType: BadRequestErrorType.DEPOSIT_ADDRESS_DISABLED,
       });
     }
     throw err;

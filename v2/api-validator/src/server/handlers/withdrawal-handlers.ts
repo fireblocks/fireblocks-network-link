@@ -19,6 +19,7 @@ import {
 } from './request-types';
 import {
   BadRequestError,
+  BadRequestErrorType,
   BlockchainWithdrawalRequest,
   FiatWithdrawalRequest,
   InternalWithdrawalRequest,
@@ -233,7 +234,7 @@ async function createWithdrawal<R extends IdempotentRequest & WithdrawalRequest>
     if (err instanceof UnknownAssetError) {
       const response = {
         message: err.message,
-        errorType: BadRequestError.errorType.UNKNOWN_ASSET,
+        errorType: BadRequestErrorType.UNKNOWN_ASSET,
       };
       idempotencyHandlerAdder(body, 400, response);
       return ErrorFactory.badRequest(reply, response);
@@ -241,14 +242,14 @@ async function createWithdrawal<R extends IdempotentRequest & WithdrawalRequest>
     if (err instanceof TransferNotSupportedError) {
       const response = {
         message: err.message,
-        errorType: BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD,
+        errorType: BadRequestErrorType.UNSUPPORTED_TRANSFER_METHOD,
       };
       idempotencyHandlerAdder(body, 400, response);
       return ErrorFactory.badRequest(reply, response);
     } else if (err instanceof TransferDestinationNotAllowed) {
       const response = {
         message: err.message,
-        errorType: BadRequestError.errorType.TRANSFER_DESTINATION_NOT_ALLOWED,
+        errorType: BadRequestErrorType.TRANSFER_DESTINATION_NOT_ALLOWED,
       };
       idempotencyHandlerAdder(body, 400, response);
       return ErrorFactory.badRequest(reply, response);

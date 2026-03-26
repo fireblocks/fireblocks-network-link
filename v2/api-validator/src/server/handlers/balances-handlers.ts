@@ -9,6 +9,7 @@ import {
 import {
   AssetIdQueryParam,
   BadRequestError,
+  BadRequestErrorType,
   Balances,
   CryptocurrencySymbolQueryParam,
   NationalCurrencyCodeQueryParam,
@@ -55,14 +56,14 @@ export async function getBalances(
     if (err instanceof InvalidAssetQueryCombinationError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestError.errorType.SCHEMA_ERROR,
+        errorType: BadRequestErrorType.SCHEMA_ERROR,
         requestPart: RequestPart.QUERYSTRING,
       });
     }
     if (err instanceof UnknownAdditionalAssetError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestError.errorType.UNKNOWN_ASSET,
+        errorType: BadRequestErrorType.UNKNOWN_ASSET,
         requestPart: RequestPart.QUERYSTRING,
       });
     }

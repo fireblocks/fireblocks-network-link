@@ -1,11 +1,11 @@
 import { IncomingHttpHeaders } from 'http';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import config from '../../config';
-import { BadRequestError, RequestPart } from '../../client/generated';
+import { BadRequestError, BadRequestErrorType, RequestPart } from '../../client/generated';
 
 const EXPIRED_REQUEST_ERROR: BadRequestError = {
   message: 'Request timestamp header is too old',
-  errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
+  errorType: BadRequestErrorType.SCHEMA_PROPERTY_ERROR,
   requestPart: RequestPart.HEADERS,
   propertyName: 'X-FBAPI-TIMESTAMP',
 };

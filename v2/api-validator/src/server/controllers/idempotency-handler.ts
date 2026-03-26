@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { XComError } from '../../error';
-import { BadRequestError } from '../../client/generated';
+import { BadRequestError, BadRequestErrorType } from '../../client/generated';
 
 type IdempotencyKey = string;
 export type IdempotentRequest = {
@@ -31,7 +31,7 @@ export class IdempotencyHandler<RequestBody extends IdempotentRequest, ResponseB
     if (!_.isEqual(request, previousRequest.request)) {
       const errorData: BadRequestError = {
         message: 'Idempotency key has already been used for a different request',
-        errorType: BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE,
+        errorType: BadRequestErrorType.IDEMPOTENCY_KEY_REUSE,
       };
       return reply.code(400).send(errorData);
     }

@@ -10,6 +10,7 @@ import {
   AssetCreditBalance,
   AssetReference,
   BadRequestError,
+  BadRequestErrorType,
   Balances,
   CryptocurrencySymbol,
   NationalCurrencyCode,
@@ -130,7 +131,7 @@ describe('Balances', () => {
         for (const accountId of accountBalancesMap.keys()) {
           const error = await getFailedBalancesResult(accountId, randomUUID());
           expect(error.status).toBe(400);
-          expect(error.body.errorType).toBe(BadRequestError.errorType.UNKNOWN_ASSET);
+          expect(error.body.errorType).toBe(BadRequestErrorType.UNKNOWN_ASSET);
           expect(error.body.requestPart).toBe(RequestPart.QUERYSTRING);
         }
       });
@@ -146,7 +147,7 @@ describe('Balances', () => {
               cryptocurrencySymbol
             );
             expect(error.status).toBe(400);
-            expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_ERROR);
+            expect(error.body.errorType).toBe(BadRequestErrorType.SCHEMA_ERROR);
             expect(error.body.requestPart).toBe(RequestPart.QUERYSTRING);
           }
         }
