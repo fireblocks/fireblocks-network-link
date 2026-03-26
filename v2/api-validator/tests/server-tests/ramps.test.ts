@@ -43,8 +43,8 @@ import { AssetsDirectory } from '../utils/assets-directory';
 import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
 import {
-  SENTINEL_UNSUPPORTED_BASE_ASSET_ID,
-  SENTINEL_UNSUPPORTED_QUOTE_ASSET_ID,
+  SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID,
+  SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID,
 } from '../../src/server/controllers/ramps-controller';
 
 const noRampsCapability = !hasCapability('ramps');
@@ -583,11 +583,11 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
 
-      it('should fail with unsupported-base-asset when from asset is not supported', async () => {
+      it('should fail with unsupported-source-asset when from asset is not supported', async () => {
         const requestBody = rampRequestFromMethod({
           id: randomUUID(),
           from: {
-            asset: { assetId: SENTINEL_UNSUPPORTED_BASE_ASSET_ID },
+            asset: { assetId: SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID },
             transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
           },
           to: {
@@ -599,11 +599,11 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         const error = await getCreateRampFailureResult(requestBody);
 
         expect(error.status).toBe(400);
-        expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_BASE_ASSET);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_SOURCE_ASSET);
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
 
-      it('should fail with unsupported-quote-asset when to asset is not supported', async () => {
+      it('should fail with unsupported-destination-asset when to asset is not supported', async () => {
         const requestBody = rampRequestFromMethod({
           id: randomUUID(),
           from: {
@@ -611,7 +611,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
             transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
           },
           to: {
-            asset: { assetId: SENTINEL_UNSUPPORTED_QUOTE_ASSET_ID },
+            asset: { assetId: SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID },
             transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
           },
         });
@@ -619,7 +619,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         const error = await getCreateRampFailureResult(requestBody);
 
         expect(error.status).toBe(400);
-        expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_QUOTE_ASSET);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_DESTINATION_ASSET);
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
 

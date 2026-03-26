@@ -81,8 +81,8 @@ export class AmountBelowMinimumError extends XComError {
 }
 
 // Sentinel asset IDs used by tests to trigger specific error responses
-export const SENTINEL_UNSUPPORTED_BASE_ASSET_ID = 'unsupported-base-asset-sentinel';
-export const SENTINEL_UNSUPPORTED_QUOTE_ASSET_ID = 'unsupported-quote-asset-sentinel';
+export const SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID = 'unsupported-source-asset-sentinel';
+export const SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID = 'unsupported-destination-asset-sentinel';
 
 export class RampsController {
   private readonly rampsRepository = new Repository<Ramp>();
@@ -122,11 +122,11 @@ export class RampsController {
   }
 
   private validateRampRequest(ramp: RampRequest) {
-    if ('assetId' in ramp.from.asset && ramp.from.asset.assetId === SENTINEL_UNSUPPORTED_BASE_ASSET_ID) {
+    if ('assetId' in ramp.from.asset && ramp.from.asset.assetId === SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID) {
       throw new UnsupportedBaseAssetError();
     }
 
-    if ('assetId' in ramp.to.asset && ramp.to.asset.assetId === SENTINEL_UNSUPPORTED_QUOTE_ASSET_ID) {
+    if ('assetId' in ramp.to.asset && ramp.to.asset.assetId === SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID) {
       throw new UnsupportedQuoteAssetError();
     }
 

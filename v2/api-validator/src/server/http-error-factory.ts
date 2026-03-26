@@ -32,7 +32,7 @@ export function idempotencyKeyReuse(reply: FastifyReply): FastifyReply {
 export function unsupportedBaseAsset(reply: FastifyReply): FastifyReply {
   const errorData: BadRequestError = {
     message: 'The base asset is not supported by the provider',
-    errorType: BadRequestError.errorType.UNSUPPORTED_BASE_ASSET,
+    errorType: BadRequestError.errorType.UNSUPPORTED_SOURCE_ASSET,
   };
   return reply.code(400).send(errorData);
 }
@@ -40,7 +40,7 @@ export function unsupportedBaseAsset(reply: FastifyReply): FastifyReply {
 export function unsupportedQuoteAsset(reply: FastifyReply): FastifyReply {
   const errorData: BadRequestError = {
     message: 'The quote asset is not supported by the provider',
-    errorType: BadRequestError.errorType.UNSUPPORTED_QUOTE_ASSET,
+    errorType: BadRequestError.errorType.UNSUPPORTED_DESTINATION_ASSET,
   };
   return reply.code(400).send(errorData);
 }

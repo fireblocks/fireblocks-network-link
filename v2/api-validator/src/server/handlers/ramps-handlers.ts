@@ -138,7 +138,7 @@ export async function createRamp(
     if (err instanceof UnsupportedBaseAssetError) {
       const response = {
         message: err.message,
-        errorType: BadRequestError.errorType.UNSUPPORTED_BASE_ASSET,
+        errorType: BadRequestError.errorType.UNSUPPORTED_SOURCE_ASSET,
         requestPart: RequestPart.BODY,
       };
       createRampIdempotencyHandler.add(body, 400, response);
@@ -147,7 +147,7 @@ export async function createRamp(
     if (err instanceof UnsupportedQuoteAssetError) {
       const response = {
         message: err.message,
-        errorType: BadRequestError.errorType.UNSUPPORTED_QUOTE_ASSET,
+        errorType: BadRequestError.errorType.UNSUPPORTED_DESTINATION_ASSET,
         requestPart: RequestPart.BODY,
       };
       createRampIdempotencyHandler.add(body, 400, response);
