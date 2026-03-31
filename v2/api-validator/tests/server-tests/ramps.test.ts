@@ -5,7 +5,6 @@ import {
   ApiError,
   AssetReference,
   BadRequestError,
-  BadRequestErrorType,
   BridgeProperties,
   CountryAlpha2Code,
   FiatCapability,
@@ -560,7 +559,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         const error = await getCreateRampFailureResult(requestBody);
 
         expect(error.status).toBe(400);
-        expect(error.body.errorType).toBe(BadRequestErrorType.UNKNOWN_ASSET);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.UNKNOWN_ASSET);
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
 
@@ -580,7 +579,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         const error = await getCreateRampFailureResult(requestBody);
 
         expect(error.status).toBe(400);
-        expect(error.body.errorType).toBe(BadRequestErrorType.UNSUPPORTED_RAMP_METHOD);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_RAMP_METHOD);
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
 
@@ -600,7 +599,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         const error = await getCreateRampFailureResult(requestBody);
 
         expect(error.status).toBe(400);
-        expect(error.body.errorType).toBe(BadRequestErrorType.UNSUPPORTED_SOURCE_ASSET);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_SOURCE_ASSET);
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
 
@@ -620,7 +619,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         const error = await getCreateRampFailureResult(requestBody);
 
         expect(error.status).toBe(400);
-        expect(error.body.errorType).toBe(BadRequestErrorType.UNSUPPORTED_DESTINATION_ASSET);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_DESTINATION_ASSET);
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
 
@@ -630,7 +629,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         const error = await getCreateRampFailureResult(requestBody);
 
         expect(error.status).toBe(400);
-        expect(error.body.errorType).toBe(BadRequestErrorType.AMOUNT_BELOW_MINIMUM);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.AMOUNT_BELOW_MINIMUM);
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
     });
@@ -657,7 +656,7 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
 
         expect(idempotencyKeyReuseResponse.status).toBe(400);
         expect(idempotencyKeyReuseResponse.body.errorType).toBe(
-          BadRequestErrorType.IDEMPOTENCY_KEY_REUSE
+          BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE
         );
       });
     });

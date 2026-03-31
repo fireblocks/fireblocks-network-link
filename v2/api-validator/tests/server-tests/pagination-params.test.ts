@@ -6,7 +6,6 @@ import {
   ApiComponents,
   ApiError,
   BadRequestError,
-  BadRequestErrorType,
   PaginationEndingBefore,
   PaginationLimit,
   PaginationStartingAfter,
@@ -57,7 +56,7 @@ describe('Pagination params tests', () => {
       });
 
       it('should properly describe the error in the response body', () => {
-        expect(apiError.body.errorType).toEqual(BadRequestErrorType.SCHEMA_PROPERTY_ERROR);
+        expect(apiError.body.errorType).toEqual(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
         expect(apiError.body.requestPart).toEqual(RequestPart.QUERYSTRING);
         expect(apiError.body.propertyName).toEqual('/limit');
       });
@@ -73,7 +72,7 @@ describe('Pagination params tests', () => {
       });
 
       it('should properly describe the error in the response body', () => {
-        expect(apiError.body.errorType).toEqual(BadRequestErrorType.SCHEMA_ERROR);
+        expect(apiError.body.errorType).toEqual(BadRequestError.errorType.SCHEMA_ERROR);
         expect(apiError.body.requestPart).toEqual(RequestPart.QUERYSTRING);
       });
     });

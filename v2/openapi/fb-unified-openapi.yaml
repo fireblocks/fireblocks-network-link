@@ -2632,29 +2632,6 @@ components:
           enum:
             - internal-error
             - not-found
-    BadRequestErrorType:
-      type: string
-      enum:
-        - schema-error
-        - schema-property-error
-        - bad-request
-        - unknown-asset
-        - unsupported-conversion
-        - quote-not-ready
-        - deposit-address-disabled
-        - order-not-trading
-        - idempotency-key-reuse
-        - deposit-address-creation-not-allowed
-        - unsupported-transfer-method
-        - transfer-destination-not-allowed
-        - unsupported-ramp-method
-        - unsupported-source-asset
-        - unsupported-destination-asset
-        - amount-below-minimum
-        - pii-missing
-        - unsupported-external-source
-        - unsupported-region
-        - destination-not-whitelisted
     BadRequestError:
       description: |-
         Request could not be processed due to a client error.
@@ -2668,7 +2645,27 @@ components:
           description: Description of the error.
           type: string
         errorType:
-          $ref: '#/components/schemas/BadRequestErrorType'
+          enum:
+            - schema-error
+            - schema-property-error
+            - bad-request
+            - unknown-asset
+            - unsupported-conversion
+            - quote-not-ready
+            - deposit-address-disabled
+            - order-not-trading
+            - idempotency-key-reuse
+            - deposit-address-creation-not-allowed
+            - unsupported-transfer-method
+            - transfer-destination-not-allowed
+            - unsupported-ramp-method
+            - unsupported-source-asset
+            - unsupported-destination-asset
+            - amount-below-minimum
+            - pii-missing
+            - unsupported-external-source
+            - unsupported-region
+            - destination-not-whitelisted
         propertyName:
           description: |-
             Name of property that caused the error. By convention, should always start with a slash ("/"). If the property is nested, the path should be separated by slashes.
@@ -6017,9 +6014,15 @@ components:
           type: string
           format: date-time
         failureReason:
-          allOf:
-            - $ref: '#/components/schemas/BadRequestErrorType'
-          description: Reason for ramp failure. Present when status is Failed.
+          enum:
+            - unsupported-ramp-method
+            - unsupported-source-asset
+            - unsupported-destination-asset
+            - amount-below-minimum
+            - pii-missing
+            - unsupported-external-source
+            - unsupported-region
+            - destination-not-whitelisted
     OnRampPropertiesWithPaymentInstructions:
       type: object
       title: On Ramp

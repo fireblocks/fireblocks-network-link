@@ -1,4 +1,4 @@
-import { BadRequestError, BadRequestErrorType, RequestPart } from '../../client/generated';
+import { BadRequestError, RequestPart } from '../../client/generated';
 import { XComError } from '../../error';
 
 export type PaginationParams = {
@@ -9,7 +9,7 @@ export type PaginationParams = {
 
 export const ENDING_STARTING_COMBINATION_ERROR: BadRequestError = {
   message: 'Cannot use startingAfter with endingBefore',
-  errorType: BadRequestErrorType.SCHEMA_ERROR,
+  errorType: BadRequestError.errorType.SCHEMA_ERROR,
   requestPart: RequestPart.QUERYSTRING,
 };
 

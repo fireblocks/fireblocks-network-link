@@ -1,19 +1,19 @@
 import { IncomingHttpHeaders } from 'http';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
-import { BadRequestError, BadRequestErrorType, RequestPart } from '../../client/generated';
+import { BadRequestError, RequestPart } from '../../client/generated';
 
 const usedNoncesForApiKeyMap = new Map<string, Set<string>>();
 
 const NONCE_USED_ERROR: BadRequestError = {
   message: 'Provided nonce was already used',
-  errorType: BadRequestErrorType.SCHEMA_PROPERTY_ERROR,
+  errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
   propertyName: 'X-FBAPI-NONCE',
   requestPart: RequestPart.HEADERS,
 };
 
 const INVALID_NONCE_ERROR: BadRequestError = {
   message: 'Nonce must be a non empty string',
-  errorType: BadRequestErrorType.SCHEMA_PROPERTY_ERROR,
+  errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
   propertyName: 'X-FBAPI-NONCE',
   requestPart: RequestPart.HEADERS,
 };

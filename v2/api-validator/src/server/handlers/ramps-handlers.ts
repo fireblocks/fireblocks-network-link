@@ -2,7 +2,6 @@ import * as ErrorFactory from '../http-error-factory';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import {
   BadRequestError,
-  BadRequestErrorType,
   Ramp,
   RampMethod,
   RampRequest,
@@ -121,7 +120,7 @@ export async function createRamp(
     if (err instanceof UnknownAssetError) {
       const response = {
         message: err.message,
-        errorType: BadRequestErrorType.UNKNOWN_ASSET,
+        errorType: BadRequestError.errorType.UNKNOWN_ASSET,
         requestPart: RequestPart.BODY,
       };
       createRampIdempotencyHandler.add(body, 400, response);
@@ -130,7 +129,7 @@ export async function createRamp(
     if (err instanceof UnsupportedRampMethod) {
       const response = {
         message: err.message,
-        errorType: BadRequestErrorType.UNSUPPORTED_RAMP_METHOD,
+        errorType: BadRequestError.errorType.UNSUPPORTED_RAMP_METHOD,
         requestPart: RequestPart.BODY,
       };
       createRampIdempotencyHandler.add(body, 400, response);
@@ -139,7 +138,7 @@ export async function createRamp(
     if (err instanceof UnsupportedBaseAssetError) {
       const response = {
         message: err.message,
-        errorType: BadRequestErrorType.UNSUPPORTED_SOURCE_ASSET,
+        errorType: BadRequestError.errorType.UNSUPPORTED_SOURCE_ASSET,
         requestPart: RequestPart.BODY,
       };
       createRampIdempotencyHandler.add(body, 400, response);
@@ -148,7 +147,7 @@ export async function createRamp(
     if (err instanceof UnsupportedQuoteAssetError) {
       const response = {
         message: err.message,
-        errorType: BadRequestErrorType.UNSUPPORTED_DESTINATION_ASSET,
+        errorType: BadRequestError.errorType.UNSUPPORTED_DESTINATION_ASSET,
         requestPart: RequestPart.BODY,
       };
       createRampIdempotencyHandler.add(body, 400, response);
@@ -157,7 +156,7 @@ export async function createRamp(
     if (err instanceof AmountBelowMinimumError) {
       const response = {
         message: err.message,
-        errorType: BadRequestErrorType.AMOUNT_BELOW_MINIMUM,
+        errorType: BadRequestError.errorType.AMOUNT_BELOW_MINIMUM,
         requestPart: RequestPart.BODY,
       };
       createRampIdempotencyHandler.add(body, 400, response);

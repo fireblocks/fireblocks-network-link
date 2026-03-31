@@ -6,7 +6,6 @@ import { AssetsDirectory } from '../utils/assets-directory';
 import {
   ApiError,
   BadRequestError,
-  BadRequestErrorType,
   NationalCurrencyCode,
   Quote,
   QuoteCapabilities,
@@ -97,7 +96,7 @@ describe.skipIf(noLiquidityCapability)('Liquidity', () => {
       });
 
       expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestErrorType.SCHEMA_ERROR);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.SCHEMA_ERROR);
       expect(error.body.requestPart).toBe(RequestPart.BODY);
     });
 
@@ -109,7 +108,7 @@ describe.skipIf(noLiquidityCapability)('Liquidity', () => {
       });
 
       expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestErrorType.UNKNOWN_ASSET);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.UNKNOWN_ASSET);
       expect(error.body.requestPart).toBe(RequestPart.BODY);
       expect(error.body.propertyName).toBe('fromAsset');
     });
@@ -122,7 +121,7 @@ describe.skipIf(noLiquidityCapability)('Liquidity', () => {
       });
 
       expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestErrorType.UNKNOWN_ASSET);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.UNKNOWN_ASSET);
       expect(error.body.requestPart).toBe(RequestPart.BODY);
       expect(error.body.propertyName).toBe('toAsset');
     });
@@ -140,7 +139,7 @@ describe.skipIf(noLiquidityCapability)('Liquidity', () => {
       });
 
       expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestErrorType.UNSUPPORTED_CONVERSION);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_CONVERSION);
       expect(error.body.requestPart).toBe(RequestPart.BODY);
     });
   });
@@ -191,7 +190,7 @@ describe.skipIf(noLiquidityCapability)('Liquidity', () => {
     it('should fail executing quote with non ready status', async () => {
       const error = await getExecuteQuoteFailureResult(accountId, executedQuote.id);
       expect(error.status).toBe(400);
-      expect(error.body.errorType).toBe(BadRequestErrorType.QUOTE_NOT_READY);
+      expect(error.body.errorType).toBe(BadRequestError.errorType.QUOTE_NOT_READY);
     });
   });
 

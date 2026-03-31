@@ -170,10 +170,6 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ChapsCapability",
     }
-  BadRequestErrorType:
-    { 
-      $ref: "./fb-provider-api.yaml#/components/schemas/BadRequestErrorType" 
-    }
 
 x-responses:
   BadRequestResponse:
@@ -993,9 +989,15 @@ components:
           type: string
           format: date-time
         failureReason:
-          allOf:
-            - $ref: "#/x-schemas/BadRequestErrorType"
-          description: Reason for ramp failure. Present when status is Failed.
+          enum:
+            - unsupported-ramp-method
+            - unsupported-source-asset
+            - unsupported-destination-asset
+            - amount-below-minimum
+            - pii-missing
+            - unsupported-external-source
+            - unsupported-region
+            - destination-not-whitelisted
 
     OnRampPropertiesWithPaymentInstructions:
       type: object

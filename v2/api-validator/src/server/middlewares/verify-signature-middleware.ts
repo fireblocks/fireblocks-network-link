@@ -3,12 +3,12 @@ import { JsonValue } from 'type-fest';
 import { IncomingHttpHeaders } from 'http';
 import { verifySignature } from '../../security';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
-import { BadRequestError, BadRequestErrorType, RequestPart } from '../../client/generated';
+import { BadRequestError, RequestPart } from '../../client/generated';
 import { removeServerPathPrefixFromRelativeUrl } from '../../url-helpers';
 
 const INVALID_SIGNATURE_ERROR: BadRequestError = {
   message: 'Provided signature is invalid',
-  errorType: BadRequestErrorType.SCHEMA_PROPERTY_ERROR,
+  errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
   propertyName: 'X-FBAPI-SIGNATURE',
   requestPart: RequestPart.HEADERS,
 };

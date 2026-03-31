@@ -7,7 +7,7 @@ import { loadOpenApiSchemas } from '../schemas';
 import { fbNetworkLinkFastifyPlugin } from './routes';
 import { getServerUrlPathPrefix } from '../url-helpers';
 import { FastifyBaseLogger } from 'fastify/types/logger';
-import { BadRequestError, BadRequestErrorType, GeneralError, RequestPart } from '../client/generated';
+import { BadRequestError, GeneralError, RequestPart } from '../client/generated';
 import { ResponseSchemaValidationFailed, SchemaCompilationError, XComError } from '../error';
 import Fastify, { FastifyInstance, FastifyReply, FastifyRequest, FastifySchema } from 'fastify';
 import { ContentTypeParserDoneFunction } from 'fastify/types/content-type-parser';
@@ -160,14 +160,14 @@ function sendValidationError(error: FastifyError, reply: FastifyReply) {
       message,
       propertyName: erroneousProperty,
       requestPart: RequestPart[error.validationContext.toUpperCase()],
-      errorType: BadRequestErrorType.SCHEMA_PROPERTY_ERROR,
+      errorType: BadRequestError.errorType.SCHEMA_PROPERTY_ERROR,
     };
     reply.status(400).send(badRequest);
   } else {
     const badRequest: BadRequestError = {
       message,
       requestPart: RequestPart[error.validationContext.toUpperCase()],
-      errorType: BadRequestErrorType.SCHEMA_ERROR,
+      errorType: BadRequestError.errorType.SCHEMA_ERROR,
     };
     reply.status(400).send(badRequest);
   }
@@ -185,7 +185,7 @@ async function clientErrorLogger(request: FastifyRequest, reply: FastifyReply, p
 
 class ContentTypeError extends XComError implements BadRequestError {
   public readonly name = 'ContentTypeError';
-  public readonly errorType = BadRequestErrorType.SCHEMA_ERROR;
+  public readonly errorType = BadRequestError.errorType.SCHEMA_ERROR;
   public readonly requestPart = RequestPart.HEADERS;
 
   constructor(contentType: string) {

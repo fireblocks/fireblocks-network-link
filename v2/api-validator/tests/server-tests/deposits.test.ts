@@ -7,7 +7,6 @@ import {
   ApiError,
   AssetReference,
   BadRequestError,
-  BadRequestErrorType,
   Deposit,
   DepositAddress,
   DepositAddressCreationPolicy,
@@ -171,7 +170,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
 
             expect(error.status).toBe(400);
             expect(error.body.errorType).toBe(
-              BadRequestErrorType.DEPOSIT_ADDRESS_CREATION_NOT_ALLOWED
+              BadRequestError.errorType.DEPOSIT_ADDRESS_CREATION_NOT_ALLOWED
             );
           }
         }
@@ -189,7 +188,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
           const error = await getCreateDepositAddressFailureResult(accountId, requestBody);
 
           expect(error.status).toBe(400);
-          expect(error.body.errorType).toBe(BadRequestErrorType.UNKNOWN_ASSET);
+          expect(error.body.errorType).toBe(BadRequestError.errorType.UNKNOWN_ASSET);
           expect(error.body.requestPart).toBe(RequestPart.BODY);
           expect(error.body.propertyName).toBe('/transferMethod/asset/assetId');
         }
@@ -221,7 +220,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
 
                 expect(error.status).toBe(400);
                 expect(error.body.errorType).toBe(
-                  BadRequestErrorType.UNSUPPORTED_TRANSFER_METHOD
+                  BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD
                 );
               }
             }
@@ -307,7 +306,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
           });
 
           expect(error.status).toBe(400);
-          expect(error.body.errorType).toBe(BadRequestErrorType.IDEMPOTENCY_KEY_REUSE);
+          expect(error.body.errorType).toBe(BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE);
         });
       });
     });
@@ -488,7 +487,7 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
           transferMethodType
         );
         expect(error.status).toBe(400);
-        expect(error.body.errorType).toBe(BadRequestErrorType.DEPOSIT_ADDRESS_DISABLED);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.DEPOSIT_ADDRESS_DISABLED);
       });
     });
   });

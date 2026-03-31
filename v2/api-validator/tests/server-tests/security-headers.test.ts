@@ -9,7 +9,6 @@ import {
   ApiComponents,
   ApiError,
   BadRequestError,
-  BadRequestErrorType,
   RequestPart,
   UnauthorizedError,
 } from '../../src/client/generated';
@@ -77,7 +76,7 @@ describe('Security header tests', () => {
         expect(apiError.status).toEqual(400);
       });
       it('should properly describe the error in the response body', () => {
-        expect(apiError.body.errorType).toEqual(BadRequestErrorType.SCHEMA_PROPERTY_ERROR);
+        expect(apiError.body.errorType).toEqual(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
         expect(apiError.body.requestPart).toEqual(RequestPart.HEADERS);
         expect(apiError.body.propertyName).toEqual('X-FBAPI-SIGNATURE');
       });
@@ -111,7 +110,7 @@ describe('Security header tests', () => {
         expect(apiError.status).toEqual(400);
       });
       it('should properly describe the error in the response body', () => {
-        expect(apiError.body.errorType).toEqual(BadRequestErrorType.SCHEMA_PROPERTY_ERROR);
+        expect(apiError.body.errorType).toEqual(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
         expect(apiError.body.requestPart).toEqual(RequestPart.HEADERS);
         expect(apiError.body.propertyName).toEqual('X-FBAPI-NONCE');
       });
@@ -128,7 +127,7 @@ describe('Security header tests', () => {
         expect(apiError.status).toEqual(400);
       });
       it('should properly describe the error in the response body', () => {
-        expect(apiError.body.errorType).toEqual(BadRequestErrorType.SCHEMA_PROPERTY_ERROR);
+        expect(apiError.body.errorType).toEqual(BadRequestError.errorType.SCHEMA_PROPERTY_ERROR);
         expect(apiError.body.requestPart).toEqual(RequestPart.HEADERS);
         expect(apiError.body.propertyName).toEqual('X-FBAPI-TIMESTAMP');
       });

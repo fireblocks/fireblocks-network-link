@@ -5,7 +5,6 @@ import { ControllersContainer } from '../controllers/controllers-container';
 import { AccountIdPathParam, EntityIdPathParam, PaginationQuerystring } from './request-types';
 import {
   BadRequestError,
-  BadRequestErrorType,
   Quote,
   QuoteCapability,
   QuoteRequest,
@@ -65,7 +64,7 @@ export async function createQuote(
     if (err instanceof UnknownFromAssetError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestErrorType.UNKNOWN_ASSET,
+        errorType: BadRequestError.errorType.UNKNOWN_ASSET,
         requestPart: RequestPart.BODY,
         propertyName: 'fromAsset',
       });
@@ -73,7 +72,7 @@ export async function createQuote(
     if (err instanceof UnknownToAssetError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestErrorType.UNKNOWN_ASSET,
+        errorType: BadRequestError.errorType.UNKNOWN_ASSET,
         requestPart: RequestPart.BODY,
         propertyName: 'toAsset',
       });
@@ -81,7 +80,7 @@ export async function createQuote(
     if (err instanceof UnknownQuoteCapabilityError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestErrorType.UNSUPPORTED_CONVERSION,
+        errorType: BadRequestError.errorType.UNSUPPORTED_CONVERSION,
         requestPart: RequestPart.BODY,
       });
     }
@@ -137,7 +136,7 @@ export async function executeQuote(
     if (err instanceof QuoteNotReadyError) {
       return ErrorFactory.badRequest(reply, {
         message: err.message,
-        errorType: BadRequestErrorType.QUOTE_NOT_READY,
+        errorType: BadRequestError.errorType.QUOTE_NOT_READY,
       });
     }
     throw err;

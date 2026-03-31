@@ -30,8 +30,7 @@ export type { AssetCreditBalance } from './models/AssetCreditBalance';
 export type { AssetDefinition } from './models/AssetDefinition';
 export type { AssetIdQueryParam } from './models/AssetIdQueryParam';
 export type { AssetReference } from './models/AssetReference';
-export type { BadRequestError } from './models/BadRequestError';
-export { BadRequestErrorType } from './models/BadRequestErrorType';
+export { BadRequestError } from './models/BadRequestError';
 export type { Balances } from './models/Balances';
 export type { BankAccountNumber } from './models/BankAccountNumber';
 export { BasisPointsFeeAmount } from './models/BasisPointsFeeAmount';
@@ -83,7 +82,7 @@ export type { CollateralWithdrawalTransactionRequest } from './models/Collateral
 export type { CollateralWithdrawalTransactions } from './models/CollateralWithdrawalTransactions';
 export { CollateralWithdrawalTransactionStatus } from './models/CollateralWithdrawalTransactionStatus';
 export type { CommonCapabilityRequirements } from './models/CommonCapabilityRequirements';
-export type { CommonRamp } from './models/CommonRamp';
+export { CommonRamp } from './models/CommonRamp';
 export type { CommonRampRequestProperties } from './models/CommonRampRequestProperties';
 export { ContractBasedToken } from './models/ContractBasedToken';
 export type { ConversionPairIdQueryParam } from './models/ConversionPairIdQueryParam';

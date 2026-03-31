@@ -10,7 +10,6 @@ import {
   AssetBalance,
   AssetReference,
   BadRequestError,
-  BadRequestErrorType,
   CryptocurrencySymbol,
   IbanCapability,
   InternalTransferCapability,
@@ -809,8 +808,8 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
               skipSupportedTransferMethod(withdrawal, capabilities, assetReference),
             testCase: 'the transfer capability not exists AND asset is unknown',
             errorTypes: [
-              BadRequestErrorType.UNSUPPORTED_TRANSFER_METHOD,
-              BadRequestErrorType.UNKNOWN_ASSET,
+              BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD,
+              BadRequestError.errorType.UNKNOWN_ASSET,
             ],
           },
           {
@@ -823,7 +822,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
               skipUnknownAsset(assetReference) ||
               skipSupportedTransferMethod(withdrawal, capabilities, withdrawal.asset),
             testCase: 'the transfer capability not exists',
-            errorTypes: [BadRequestErrorType.UNSUPPORTED_TRANSFER_METHOD],
+            errorTypes: [BadRequestError.errorType.UNSUPPORTED_TRANSFER_METHOD],
           },
           {
             skip: (
@@ -835,7 +834,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
               skipUnknownAsset(assetReference) ||
               skipNotSupportedTransferMethod(withdrawal, capabilities, withdrawal.asset),
             testCase: 'destination asset is unknown',
-            errorTypes: [BadRequestErrorType.UNKNOWN_ASSET],
+            errorTypes: [BadRequestError.errorType.UNKNOWN_ASSET],
           },
           {
             skip: (
@@ -847,7 +846,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
               skipKnownAsset(assetReference) ||
               skipNotSupportedTransferMethod(withdrawal, capabilities, assetReference),
             testCase: 'balance asset is unknown',
-            errorTypes: [BadRequestErrorType.UNKNOWN_ASSET],
+            errorTypes: [BadRequestError.errorType.UNKNOWN_ASSET],
           },
         ])(
           'should fail making withdrawal when $testCase - should throw one of relevant errors',
@@ -963,7 +962,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
             }
             expect(idempotencyKeyReuseResponse.status).toBe(400);
             expect(idempotencyKeyReuseResponse.body.errorType).toBe(
-              BadRequestErrorType.IDEMPOTENCY_KEY_REUSE
+              BadRequestError.errorType.IDEMPOTENCY_KEY_REUSE
             );
           });
         });
@@ -1075,7 +1074,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                   client.transfersInternal.createSubAccountWithdrawal({ accountId, requestBody })
                 ).rejects.toMatchObject({
                   status: 400,
-                  body: { errorType: BadRequestErrorType.TRANSFER_DESTINATION_NOT_ALLOWED },
+                  body: { errorType: BadRequestError.errorType.TRANSFER_DESTINATION_NOT_ALLOWED },
                 });
               }
             }

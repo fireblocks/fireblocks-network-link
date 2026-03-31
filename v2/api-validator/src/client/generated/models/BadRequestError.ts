@@ -3,7 +3,6 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { BadRequestErrorType } from './BadRequestErrorType';
 import type { RequestPart } from './RequestPart';
 
 /**
@@ -15,7 +14,7 @@ export type BadRequestError = {
      * Description of the error.
      */
     message: string;
-    errorType: BadRequestErrorType;
+    errorType: BadRequestError.errorType;
     /**
      * Name of property that caused the error. By convention, should always start with a slash ("/"). If the property is nested, the path should be separated by slashes.
      * This property is required if the error type is caused by a missing or wrong property in the request.
@@ -23,4 +22,32 @@ export type BadRequestError = {
     propertyName?: string;
     requestPart?: RequestPart;
 };
+
+export namespace BadRequestError {
+
+    export enum errorType {
+        SCHEMA_ERROR = 'schema-error',
+        SCHEMA_PROPERTY_ERROR = 'schema-property-error',
+        BAD_REQUEST = 'bad-request',
+        UNKNOWN_ASSET = 'unknown-asset',
+        UNSUPPORTED_CONVERSION = 'unsupported-conversion',
+        QUOTE_NOT_READY = 'quote-not-ready',
+        DEPOSIT_ADDRESS_DISABLED = 'deposit-address-disabled',
+        ORDER_NOT_TRADING = 'order-not-trading',
+        IDEMPOTENCY_KEY_REUSE = 'idempotency-key-reuse',
+        DEPOSIT_ADDRESS_CREATION_NOT_ALLOWED = 'deposit-address-creation-not-allowed',
+        UNSUPPORTED_TRANSFER_METHOD = 'unsupported-transfer-method',
+        TRANSFER_DESTINATION_NOT_ALLOWED = 'transfer-destination-not-allowed',
+        UNSUPPORTED_RAMP_METHOD = 'unsupported-ramp-method',
+        UNSUPPORTED_SOURCE_ASSET = 'unsupported-source-asset',
+        UNSUPPORTED_DESTINATION_ASSET = 'unsupported-destination-asset',
+        AMOUNT_BELOW_MINIMUM = 'amount-below-minimum',
+        PII_MISSING = 'pii-missing',
+        UNSUPPORTED_EXTERNAL_SOURCE = 'unsupported-external-source',
+        UNSUPPORTED_REGION = 'unsupported-region',
+        DESTINATION_NOT_WHITELISTED = 'destination-not-whitelisted',
+    }
+
+
+}
 
