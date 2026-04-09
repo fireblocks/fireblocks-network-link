@@ -988,6 +988,16 @@ components:
           description: Ramp expiration time.
           type: string
           format: date-time
+        failureReason:
+          enum:
+            - unsupported-ramp-method
+            - unsupported-source-asset
+            - unsupported-destination-asset
+            - amount-below-minimum
+            - pii-missing
+            - unsupported-external-source
+            - unsupported-region
+            - destination-not-whitelisted
 
     OnRampPropertiesWithPaymentInstructions:
       type: object

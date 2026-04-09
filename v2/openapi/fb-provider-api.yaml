@@ -735,6 +735,13 @@ components:
             - unsupported-transfer-method
             - transfer-destination-not-allowed
             - unsupported-ramp-method
+            - unsupported-source-asset
+            - unsupported-destination-asset
+            - amount-below-minimum
+            - pii-missing
+            - unsupported-external-source
+            - unsupported-region
+            - destination-not-whitelisted
         propertyName:
           description: >-
             Name of property that caused the error.

@@ -2659,6 +2659,13 @@ components:
             - unsupported-transfer-method
             - transfer-destination-not-allowed
             - unsupported-ramp-method
+            - unsupported-source-asset
+            - unsupported-destination-asset
+            - amount-below-minimum
+            - pii-missing
+            - unsupported-external-source
+            - unsupported-region
+            - destination-not-whitelisted
         propertyName:
           description: |-
             Name of property that caused the error. By convention, should always start with a slash ("/"). If the property is nested, the path should be separated by slashes.
@@ -6006,6 +6013,16 @@ components:
           description: Ramp expiration time.
           type: string
           format: date-time
+        failureReason:
+          enum:
+            - unsupported-ramp-method
+            - unsupported-source-asset
+            - unsupported-destination-asset
+            - amount-below-minimum
+            - pii-missing
+            - unsupported-external-source
+            - unsupported-region
+            - destination-not-whitelisted
     OnRampPropertiesWithPaymentInstructions:
       type: object
       title: On Ramp

@@ -17,8 +17,6 @@ import {
   InteracAddress,
   InteracAddressPaymentInstruction,
   InteracCapability,
-  InternalLedgerAddressRamp,
-  InternalLedgerCapability,
   LocalBankTransferAddress,
   LocalBankTransferAddressPaymentInstruction,
   LocalBankTransferCapability,
@@ -64,6 +62,28 @@ export class UnsupportedRampMethod extends XComError {
   }
 }
 
+export class UnsupportedBaseAssetError extends XComError {
+  constructor() {
+    super('The base asset is not supported by the provider');
+  }
+}
+
+export class UnsupportedQuoteAssetError extends XComError {
+  constructor() {
+    super('The quote asset is not supported by the provider');
+  }
+}
+
+export class AmountBelowMinimumError extends XComError {
+  constructor() {
+    super('The requested amount is below the provider minimum');
+  }
+}
+
+// Sentinel asset IDs used by tests to trigger specific error responses
+export const SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID = 'unsupported-source-asset-sentinel';
+export const SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID = 'unsupported-destination-asset-sentinel';
+
 export class RampsController {
   private readonly rampsRepository = new Repository<Ramp>();
   private readonly rampMethodRepository = new Repository<RampMethod>();
@@ -102,6 +122,18 @@ export class RampsController {
   }
 
   private validateRampRequest(ramp: RampRequest) {
+    if ('assetId' in ramp.from.asset && ramp.from.asset.assetId === SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID) {
+      throw new UnsupportedBaseAssetError();
+    }
+
+    if ('assetId' in ramp.to.asset && ramp.to.asset.assetId === SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID) {
+      throw new UnsupportedQuoteAssetError();
+    }
+
+    if (parseFloat(ramp.amount) <= 0) {
+      throw new AmountBelowMinimumError();
+    }
+
     if (
       !AssetsController.isKnownAsset(ramp.from.asset) ||
       !AssetsController.isKnownAsset(ramp.to.asset)
@@ -219,8 +251,6 @@ function getTransferMethod(transferMethod: FiatCapability['transferMethod']): Fi
       return fakeSchemaObject('PayIdAddress') as PayIdAddress;
     case InteracCapability.transferMethod.INTERAC:
       return fakeSchemaObject('InteracAddressPaymentInstruction') as InteracAddressPaymentInstruction;
-    case InternalLedgerCapability.transferMethod.INTERNAL_LEDGER:
-      return fakeSchemaObject('InternalLedgerAddressRamp') as InternalLedgerAddressRamp;
     default:
       throw new XComError('Invalid transfer method', { transferMethod });
   }

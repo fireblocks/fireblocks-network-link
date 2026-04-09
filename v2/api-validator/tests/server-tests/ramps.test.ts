@@ -42,6 +42,10 @@ import config from '../../src/config';
 import { AssetsDirectory } from '../utils/assets-directory';
 import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
 import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
+import {
+  SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID,
+  SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID,
+} from '../../src/server/controllers/ramps-controller';
 
 const noRampsCapability = !hasCapability('ramps');
 const accountIds = getAllCapableAccountIds('ramps');
@@ -576,6 +580,56 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
 
         expect(error.status).toBe(400);
         expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_RAMP_METHOD);
+        expect(error.body.requestPart).toBe(RequestPart.BODY);
+      });
+
+      it('should fail with unsupported-source-asset when from asset is not supported', async () => {
+        const requestBody = rampRequestFromMethod({
+          id: randomUUID(),
+          from: {
+            asset: { assetId: SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
+          to: {
+            asset: { cryptocurrencySymbol: CryptocurrencySymbol.ETH },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
+        });
+
+        const error = await getCreateRampFailureResult(requestBody);
+
+        expect(error.status).toBe(400);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_SOURCE_ASSET);
+        expect(error.body.requestPart).toBe(RequestPart.BODY);
+      });
+
+      it('should fail with unsupported-destination-asset when to asset is not supported', async () => {
+        const requestBody = rampRequestFromMethod({
+          id: randomUUID(),
+          from: {
+            asset: { cryptocurrencySymbol: CryptocurrencySymbol.ETH },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
+          to: {
+            asset: { assetId: SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
+        });
+
+        const error = await getCreateRampFailureResult(requestBody);
+
+        expect(error.status).toBe(400);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_DESTINATION_ASSET);
+        expect(error.body.requestPart).toBe(RequestPart.BODY);
+      });
+
+      it('should fail with amount-below-minimum when amount is zero', async () => {
+        const requestBody = { ...rampRequestFromMethod(capability), amount: '0' };
+
+        const error = await getCreateRampFailureResult(requestBody);
+
+        expect(error.status).toBe(400);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.AMOUNT_BELOW_MINIMUM);
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
     });

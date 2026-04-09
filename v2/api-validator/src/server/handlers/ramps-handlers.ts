@@ -9,8 +9,11 @@ import {
 } from '../../client/generated';
 import { ControllersContainer } from '../controllers/controllers-container';
 import {
+  AmountBelowMinimumError,
   RampNotFoundError,
   RampsController,
+  UnsupportedBaseAssetError,
+  UnsupportedQuoteAssetError,
   UnsupportedRampMethod,
 } from '../controllers/ramps-controller';
 import {
@@ -127,6 +130,33 @@ export async function createRamp(
       const response = {
         message: err.message,
         errorType: BadRequestError.errorType.UNSUPPORTED_RAMP_METHOD,
+        requestPart: RequestPart.BODY,
+      };
+      createRampIdempotencyHandler.add(body, 400, response);
+      return ErrorFactory.badRequest(reply, response);
+    }
+    if (err instanceof UnsupportedBaseAssetError) {
+      const response = {
+        message: err.message,
+        errorType: BadRequestError.errorType.UNSUPPORTED_SOURCE_ASSET,
+        requestPart: RequestPart.BODY,
+      };
+      createRampIdempotencyHandler.add(body, 400, response);
+      return ErrorFactory.badRequest(reply, response);
+    }
+    if (err instanceof UnsupportedQuoteAssetError) {
+      const response = {
+        message: err.message,
+        errorType: BadRequestError.errorType.UNSUPPORTED_DESTINATION_ASSET,
+        requestPart: RequestPart.BODY,
+      };
+      createRampIdempotencyHandler.add(body, 400, response);
+      return ErrorFactory.badRequest(reply, response);
+    }
+    if (err instanceof AmountBelowMinimumError) {
+      const response = {
+        message: err.message,
+        errorType: BadRequestError.errorType.AMOUNT_BELOW_MINIMUM,
         requestPart: RequestPart.BODY,
       };
       createRampIdempotencyHandler.add(body, 400, response);
