@@ -42,6 +42,7 @@ export enum CryptocurrencySymbol {
     HT = 'HT',
     KAVA = 'KAVA',
     KSM = 'KSM',
+    FRAX = 'FRAX',
     LTC = 'LTC',
     LUNA = 'LUNA',
     LUNA2 = 'LUNA2',
