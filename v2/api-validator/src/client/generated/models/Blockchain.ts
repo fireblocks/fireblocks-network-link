@@ -41,6 +41,7 @@ export enum Blockchain {
     HT_CHAIN = 'HT Chain',
     KAVA = 'KAVA',
     KUSAMA = 'Kusama',
+    FRAXTAL = 'Fraxtal',
     LITECOIN = 'Litecoin',
     MOONBEAM = 'Moonbeam',
     MOONRIVER = 'Moonriver',

@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Account Linking Partners
-  version: "0.9.11"
+  version: "0.9.12"
   contact:
     email: support@fireblocks.com
   license:
@@ -1160,6 +1160,7 @@ components:
       - Hedera
       - Bitkub Chain
       - Kusama
+      - Fraxtal
       - Litecoin
       - Luna Classic
       - Luna 2.0

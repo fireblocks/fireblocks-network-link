@@ -4,7 +4,7 @@ servers:
     url: http://0.0.0.0:8000
 info:
   title: 'Fireblocks Provider Connectivity API v2'
-  version: 0.5.0
+  version: 0.5.1
   x-logo:
     url: 'doc-assets/fireblocks-logo-lockup-network-navy.png'
     altText: 'Fireblocks logo'
@@ -1207,6 +1207,7 @@ components:
         - HT Chain
         - KAVA
         - Kusama
+        - Fraxtal
         - Litecoin
         - Moonbeam
         - Moonriver
@@ -1279,6 +1280,7 @@ components:
         - HT
         - KAVA
         - KSM
+        - FRAX
         - LTC
         - LUNA
         - LUNA2

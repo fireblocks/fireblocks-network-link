@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1 - 2026-04-19
+
+### Specification changes
+
+- Added support for Fraxtal.
+ 
 ## 0.4.2 - 2025-12-07
 
 ### Specification changes
