@@ -21,6 +21,7 @@ import {
   type TransferCapability,
   Withdrawal,
   WithdrawalCapability,
+  WithdrawalStatus,
   ParticipantRelationshipType,
   CountryAlpha2Code,
   ParticipantsIdentification,
@@ -309,6 +310,98 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           } else {
             expect(withdrawal).not.toSatisfy(existsInPeerAccountWithdrawals);
           }
+        }
+      }
+    });
+
+    const isFinalizedWithdrawal = (w: Withdrawal) =>
+      w.status === WithdrawalStatus.SUCCEEDED || w.status === WithdrawalStatus.FAILED;
+
+    const transferMethodHasReferenceId = (transferMethod: string) =>
+      transferMethod !== PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN &&
+      transferMethod !== InternalTransferMethod.transferMethod.INTERNAL_TRANSFER;
+
+    it('should return non-empty referenceId for finalized withdrawals (Get Withdrawals) when transfer method defines it', () => {
+      for (const withdrawals of accountWithdrawalsMap.values()) {
+        for (const w of withdrawals.filter(isFinalizedWithdrawal)) {
+          if (!transferMethodHasReferenceId(w.destination.transferMethod)) continue;
+          const destination = w.destination as { referenceId?: string };
+          expect(
+            destination.referenceId,
+            `Withdrawal ${w.id} (${w.destination.transferMethod}) in finalized state must have non-empty referenceId`
+          ).toBeDefined();
+          expect(
+            typeof destination.referenceId === 'string' && destination.referenceId.trim().length > 0,
+            `Withdrawal ${w.id} referenceId must be non-empty`
+          ).toBe(true);
+        }
+      }
+    });
+
+    it('should return non-empty referenceId for finalized fiat withdrawals (Get Fiat Withdrawals)', () => {
+      for (const withdrawals of accountFiatWithdrawalsMap.values()) {
+        for (const w of withdrawals.filter(isFinalizedWithdrawal)) {
+          const destination = w.destination as { referenceId?: string };
+          expect(
+            destination.referenceId,
+            `Fiat withdrawal ${w.id} in finalized state must have non-empty referenceId`
+          ).toBeDefined();
+          expect(
+            typeof destination.referenceId === 'string' && destination.referenceId.trim().length > 0,
+            `Fiat withdrawal ${w.id} referenceId must be non-empty`
+          ).toBe(true);
+        }
+      }
+    });
+
+    it('should return non-empty referenceId for finalized peer account withdrawals (Get Peer Account Withdrawals)', () => {
+      for (const withdrawals of accountPeerAccountWithdrawalsMap.values()) {
+        for (const w of withdrawals.filter(isFinalizedWithdrawal)) {
+          const destination = w.destination as { referenceId?: string };
+          expect(
+            destination.referenceId,
+            `Peer account withdrawal ${w.id} in finalized state must have non-empty referenceId`
+          ).toBeDefined();
+          expect(
+            typeof destination.referenceId === 'string' && destination.referenceId.trim().length > 0,
+            `Peer account withdrawal ${w.id} referenceId must be non-empty`
+          ).toBe(true);
+        }
+      }
+    });
+
+    it('should return non-empty blockchainTxId for succeeded blockchain withdrawals (Get Withdrawals)', () => {
+      for (const withdrawals of accountWithdrawalsMap.values()) {
+        for (const w of withdrawals.filter((x) => x.status === WithdrawalStatus.SUCCEEDED)) {
+          if (w.destination.transferMethod !== PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN)
+            continue;
+          const destination = w.destination as { blockchainTxId?: string };
+          expect(
+            destination.blockchainTxId,
+            `Succeeded blockchain withdrawal ${w.id} must have non-empty blockchainTxId (transaction hash)`
+          ).toBeDefined();
+          expect(
+            typeof destination.blockchainTxId === 'string' &&
+              destination.blockchainTxId.trim().length > 0,
+            `Blockchain withdrawal ${w.id} blockchainTxId must be non-empty`
+          ).toBe(true);
+        }
+      }
+    });
+
+    it('should return non-empty blockchainTxId for succeeded blockchain withdrawals (Get Blockchain Withdrawals)', () => {
+      for (const withdrawals of accountBlockchainWithdrawalsMap.values()) {
+        for (const w of withdrawals.filter((x) => x.status === WithdrawalStatus.SUCCEEDED)) {
+          const destination = w.destination as { blockchainTxId?: string };
+          expect(
+            destination.blockchainTxId,
+            `Succeeded blockchain withdrawal ${w.id} must have non-empty blockchainTxId (transaction hash)`
+          ).toBeDefined();
+          expect(
+            typeof destination.blockchainTxId === 'string' &&
+              destination.blockchainTxId.trim().length > 0,
+            `Blockchain withdrawal ${w.id} blockchainTxId must be non-empty`
+          ).toBe(true);
         }
       }
     });

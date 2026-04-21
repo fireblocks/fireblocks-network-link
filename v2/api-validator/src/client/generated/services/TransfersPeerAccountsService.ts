@@ -15,6 +15,7 @@ export class TransfersPeerAccountsService {
     /**
      * Get list of withdrawals to peer accounts, sorted by creation time
      * Retrieves a paginated list of withdrawal transactions sent to peer accounts. Includes transfers to other accounts within the same provider ecosystem, sorted by creation time.
+     * The `referenceId` on the destination is expected to become mandatory (non-empty) when the transaction is in a finalized state (succeeded or failed), although it is optional in the schema.
      *
      * @returns any List of withdrawals.
      * @throws ApiError
@@ -103,7 +104,8 @@ export class TransfersPeerAccountsService {
 
     /**
      * Create new withdrawal to a peer account
-     * Should reject any non peer acount withdrawal request.
+     * Should reject any non peer acount withdrawal request. In the response, `referenceId` on the destination is expected to become mandatory (non-empty) when the transaction reaches a finalized state (succeeded or failed), although optional in the schema.
+     *
      * @returns PeerAccountWithdrawal New withdrawal has been successfully created.
      * @throws ApiError
      */

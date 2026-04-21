@@ -15,6 +15,8 @@ export class TransfersService {
     /**
      * Get list of withdrawals sorted by creation time
      * Retrieves a paginated list of all withdrawal transactions for the specified account. Withdrawals are sorted by creation time and include all types of withdrawal operations.
+     * If a withdrawal is in a terminal state (succeeded or failed), and it has an optional destination.referenceId property (not all transfer methods have this property), then this property MUST contain a valid value, despite it being defined as optional in the schema.
+     * Blockchain withdrawals in status succeeded, MUST contain destination.blockchainTxId property with a valid value (e.g., transaction hash), despite it being defined as optional in the schema.
      *
      * @returns any List of withdrawals.
      * @throws ApiError
@@ -104,6 +106,7 @@ export class TransfersService {
     /**
      * Get withdrawal details
      * Retrieves detailed information about a specific withdrawal transaction, including status, amounts, fees, destination details, and processing information.
+     * For Peer, Fiat and other transfer methods that define a `referenceId` on the destination, this property is expected to become mandatory (non-empty) when the transaction is in a finalized state (succeeded or failed), although it is currently indicated as optional in the schema. For blockchain withdrawals, when the transaction has succeeded, `blockchainTxId` (transaction hash) on the destination is required and must be non-empty.
      *
      * @returns Withdrawal Withdrawals details.
      * @throws ApiError
@@ -171,6 +174,7 @@ export class TransfersService {
     /**
      * Get list of deposits sorted by creation time in a descending order
      * Retrieves a paginated list of all deposit transactions for the specified account. Deposits are sorted by creation time in descending order and include all types of deposit operations.
+     * For Peer, Fiat and other transfer methods that define a `referenceId` on the source, this property is expected to become mandatory (non-empty) when the transaction is in a finalized state (succeeded or failed), although it is currently indicated as optional in the schema. For deposits with a blockchain source, when the transaction has succeeded, `blockchainTxId` (transaction hash) on the source is required and must be non-empty.
      *
      * @returns any Deposits details.
      * @throws ApiError
@@ -254,6 +258,7 @@ export class TransfersService {
     /**
      * Get deposit details
      * Retrieves detailed information about a specific deposit transaction, including status, amounts, source details, confirmation information, and processing details.
+     * For Peer, Fiat and other transfer methods that define a `referenceId` on the source, this property is expected to become mandatory (non-empty) when the transaction is in a finalized state (succeeded or failed), although it is currently indicated as optional in the schema. For deposits with a blockchain source, when the transaction has succeeded, `blockchainTxId` (transaction hash) on the source is required and must be non-empty.
      *
      * @returns Deposit List of deposits.
      * @throws ApiError
