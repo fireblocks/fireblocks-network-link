@@ -39,6 +39,7 @@ export namespace BadRequestError {
         UNSUPPORTED_TRANSFER_METHOD = 'unsupported-transfer-method',
         TRANSFER_DESTINATION_NOT_ALLOWED = 'transfer-destination-not-allowed',
         UNSUPPORTED_RAMP_METHOD = 'unsupported-ramp-method',
+        AMOUNT_ABOVE_MAXIMUM = 'amount-above-maximum',
         UNSUPPORTED_SOURCE_ASSET = 'unsupported-source-asset',
         UNSUPPORTED_DESTINATION_ASSET = 'unsupported-destination-asset',
         AMOUNT_BELOW_MINIMUM = 'amount-below-minimum',

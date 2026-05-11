@@ -991,6 +991,7 @@ components:
         failureReason:
           enum:
             - unsupported-ramp-method
+            - amount-above-maximum
             - unsupported-source-asset
             - unsupported-destination-asset
             - amount-below-minimum
