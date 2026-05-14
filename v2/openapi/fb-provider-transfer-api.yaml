@@ -1771,6 +1771,7 @@ components:
         - $ref: '#/components/schemas/InternalTransfer'
         - $ref: '#/components/schemas/PublicBlockchainTransaction'
         - $ref: '#/components/schemas/IbanTransfer'
+        - $ref: '#/components/schemas/WireTransfer'
         - $ref: '#/components/schemas/OtherFiatTransfer'
 
     DepositDestination:
