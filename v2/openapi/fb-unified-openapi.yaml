@@ -1049,7 +1049,9 @@ paths:
     post:
       operationId: createPeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
-      description: Should reject any non peer acount withdrawal request.
+      description: |
+        Withdrawal to a peer account is enabled for fiat or tokenized assets only.
+        Should reject any non peer acount withdrawal request.
       tags:
         - transfersPeerAccounts
       parameters:
@@ -4842,7 +4844,11 @@ components:
             - destination
           properties:
             balanceAsset:
-              $ref: '#/components/schemas/AssetReference'
+              description: |
+                Balance asset for peer account withdrawals. Native cryptocurrencies are not supported; only fiat assets and other (e.g., tokenized) assets are allowed.
+              oneOf:
+                - $ref: '#/components/schemas/NationalCurrency'
+                - $ref: '#/components/schemas/OtherAssetReference'
             destination:
               $ref: '#/components/schemas/PeerAccountTransferDestination'
     InternalWithdrawalRequest:

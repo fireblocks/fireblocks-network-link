@@ -43,6 +43,7 @@ x-header-params:
 x-schemas:
   PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
   AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference'}
+  OtherAssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/OtherAssetReference'}
   PersonalIdentificationType: { $ref: './fb-provider-api.yaml#/components/schemas/PersonalIdentificationType'}
   CryptocurrencyReference: { $ref: './fb-provider-api.yaml#/components/schemas/CryptocurrencyReference'}
   PublicBlockchainCapability: { $ref: './fb-provider-api.yaml#/components/schemas/PublicBlockchainCapability'}
@@ -501,7 +502,9 @@ paths:
     post:
       operationId: createPeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
-      description: Should reject any non peer acount withdrawal request.
+      description: |
+        Withdrawal to a peer account is enabled for fiat or tokenized assets only.
+        Should reject any non peer acount withdrawal request.
       tags: [ transfersPeerAccounts ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -2080,7 +2083,13 @@ components:
           required: [ balanceAsset, destination ]
           properties:
             balanceAsset:
-              $ref: '#/x-schemas/AssetReference'
+              description: >
+                Balance asset for peer account withdrawals. Native cryptocurrencies
+                are not supported; only fiat assets and other (e.g., tokenized) assets
+                are allowed.
+              oneOf:
+                - $ref: '#/x-schemas/NationalCurrency'
+                - $ref: '#/x-schemas/OtherAssetReference'
             destination:
               $ref: '#/components/schemas/PeerAccountTransferDestination'
 
