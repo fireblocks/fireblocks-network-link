@@ -13,6 +13,7 @@ import {
   DepositAddressCreationRequest,
   DepositAddressStatus,
   DepositCapability,
+  DepositStatus,
   IbanCapability,
   InternalTransferCapability,
   InternalTransferMethod,
@@ -539,6 +540,48 @@ describe.skipIf(noTransfersCapability)('Deposits', () => {
       for (const deposits of accountDepositsMap.values()) {
         for (const { balanceAsset } of deposits) {
           expect(balanceAsset).toSatisfy(isKnownAsset);
+        }
+      }
+    });
+
+    const isFinalizedDeposit = (d: Deposit) =>
+      d.status === DepositStatus.SUCCEEDED || d.status === DepositStatus.FAILED;
+
+    const depositSourceTransferMethodHasReferenceId = (transferMethod: string) =>
+      transferMethod !== PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN &&
+      transferMethod !== InternalTransferMethod.transferMethod.INTERNAL_TRANSFER;
+
+    it('should return non-empty referenceId for finalized deposits (Get Deposits) when transfer method defines it', () => {
+      for (const deposits of accountDepositsMap.values()) {
+        for (const d of deposits.filter(isFinalizedDeposit)) {
+          if (!depositSourceTransferMethodHasReferenceId(d.source.transferMethod)) continue;
+          const source = d.source as { referenceId?: string };
+          expect(
+            source.referenceId,
+            `Deposit ${d.id} (${d.source.transferMethod}) in finalized state must have non-empty referenceId`
+          ).toBeDefined();
+          expect(
+            typeof source.referenceId === 'string' && source.referenceId.trim().length > 0,
+            `Deposit ${d.id} source referenceId must be non-empty`
+          ).toBe(true);
+        }
+      }
+    });
+
+    it('should return non-empty blockchainTxId for succeeded deposits with blockchain source (Get Deposits)', () => {
+      for (const deposits of accountDepositsMap.values()) {
+        for (const d of deposits.filter((x) => x.status === DepositStatus.SUCCEEDED)) {
+          if (d.source.transferMethod !== PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN)
+            continue;
+          const source = d.source as { blockchainTxId?: string };
+          expect(
+            source.blockchainTxId,
+            `Succeeded deposit ${d.id} with blockchain source must have non-empty blockchainTxId (transaction hash)`
+          ).toBeDefined();
+          expect(
+            typeof source.blockchainTxId === 'string' && source.blockchainTxId.trim().length > 0,
+            `Deposit ${d.id} source blockchainTxId must be non-empty`
+          ).toBe(true);
         }
       }
     });

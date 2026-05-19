@@ -17,6 +17,7 @@ export class TransfersFiatService {
     /**
      * Get list of fiat withdrawals sorted by creation time
      * Retrieves a paginated list of fiat currency withdrawal transactions. Includes traditional banking transfers and wire transfers, sorted by creation time.
+     * The `referenceId` on the destination is expected to become mandatory (non-empty) when the transaction is in a finalized state (succeeded or failed), although it is optional in the schema.
      *
      * @returns any List of withdrawals.
      * @throws ApiError
@@ -105,7 +106,8 @@ export class TransfersFiatService {
 
     /**
      * Create new fiat withdrawal
-     * Should reject any non fiat withdrawal request.
+     * Should reject any non fiat withdrawal request. In the response, `referenceId` on the destination is expected to become mandatory (non-empty) when the transaction reaches a finalized state (succeeded or failed), although optional in the schema.
+     *
      * @returns FiatWithdrawal New withdrawal has been successfully created.
      * @throws ApiError
      */

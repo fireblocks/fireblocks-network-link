@@ -370,6 +370,15 @@ There are four objects, extending one another, that define the IBAN transfer met
    reference ID property to help correlate a withdrawal to a specific transaction on the
    transaction recipient side.
 
+   For Peer, Fiat and other transfer methods that define a `referenceId` on the destination
+   (withdrawals) or source (deposits), this property is expected to become **mandatory (non-empty)**
+   when the transaction is in a finalized state (succeeded or failed), although it is currently
+   indicated as optional in the schema. The same expectation applies to GET and POST transfer
+   endpoints that return withdrawal or deposit payloads.
+
+   For blockchain withdrawals and for deposits with a blockchain source, when the transaction
+   has **succeeded**, `blockchainTxId` (transaction hash) is required and must be non-empty.
+
 ![IBAN objects hierarchy](doc-assets/network-link-iban.png "IBAN objects hierarchy")
 
 When a client retrieves a withdrawal details, an `IbanTransfer` object is returned in the

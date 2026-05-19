@@ -10,7 +10,9 @@ import {
   DepositAddressStatus,
   DepositCapability,
   DepositDestination,
+  DepositStatus,
   IbanCapability,
+  InternalTransferMethod,
   PublicBlockchainCapability,
 } from '../../client/generated';
 import { Repository } from './repository';
@@ -73,6 +75,8 @@ export class DepositController {
     const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
 
     injectKnownAssetIdsToDeposits(knownAssetIds, this.depositRepository);
+    ensureReferenceIdForFinalizedDeposits(this.depositRepository);
+    ensureBlockchainTxIdForSucceededDeposits(this.depositRepository);
     injectKnownAssetIdsToDepositAddresses(knownAssetIds, this.depositAddressRepository);
     injectKnownAssetIdsToDepositCapabilities(knownAssetIds, this.depositCapabilitiesRepository);
     this.depositCapabilitiesRepository.removeDuplicatesBy((dc) => dc.deposit);
@@ -212,6 +216,43 @@ function injectKnownAssetIdsToDeposits(
 
     if ('assetId' in deposit.source.asset) {
       deposit.source.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+  }
+}
+
+function ensureReferenceIdForFinalizedDeposits(depositRepository: Repository<Deposit>): void {
+  const finalized = [DepositStatus.SUCCEEDED, DepositStatus.FAILED];
+  for (const { id } of depositRepository.list()) {
+    const deposit = depositRepository.find(id);
+    if (!deposit || !finalized.includes(deposit.status)) continue;
+    const tm = deposit.source.transferMethod;
+    if (
+      tm === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN ||
+      tm === InternalTransferMethod.transferMethod.INTERNAL_TRANSFER
+    ) {
+      continue;
+    }
+    const source = deposit.source as { referenceId?: string };
+    if (!source.referenceId || source.referenceId.trim() === '') {
+      source.referenceId = randomUUID();
+    }
+  }
+}
+
+function ensureBlockchainTxIdForSucceededDeposits(depositRepository: Repository<Deposit>): void {
+  for (const { id } of depositRepository.list()) {
+    const deposit = depositRepository.find(id);
+    if (
+      !deposit ||
+      deposit.status !== DepositStatus.SUCCEEDED ||
+      deposit.source.transferMethod !==
+        PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+    ) {
+      continue;
+    }
+    const source = deposit.source as { blockchainTxId?: string };
+    if (!source.blockchainTxId || source.blockchainTxId.trim() === '') {
+      source.blockchainTxId = '0x' + randomUUID().replace(/-/g, '').slice(0, 64);
     }
   }
 }
