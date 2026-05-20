@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Breaking changes
+
+- `createPeerAccountWithdrawal` (POST `/accounts/{accountId}/transfers/withdrawals/peeraccount`):
+  the `balanceAsset` of `PeerAccountWithdrawalRequest` no longer accepts
+  `NativeCryptocurrency`. Peer account withdrawals are supported for fiat
+  (`NationalCurrency`) and other (`OtherAssetReference`, e.g. tokenized) assets only.
+  The operation description was updated to reflect this restriction.
+
 ## 0.5.1 - 2026-04-19
 
 ### Specification changes

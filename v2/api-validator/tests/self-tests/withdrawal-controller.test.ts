@@ -39,7 +39,12 @@ describe('Withdrawal controller', () => {
         );
       if (capability !== undefined) {
         withdrawalRequest.destination.asset = capability.withdrawal.asset;
-        withdrawalRequest.balanceAsset = capability.balanceAsset;
+        if (
+          'nationalCurrencyCode' in capability.balanceAsset ||
+          'assetId' in capability.balanceAsset
+        ) {
+          withdrawalRequest.balanceAsset = capability.balanceAsset;
+        }
         withdrawal = controller.createWithdrawal(withdrawalRequest);
         expect(controller.getWithdrawal(withdrawal.id)).toBeDefined();
       }
