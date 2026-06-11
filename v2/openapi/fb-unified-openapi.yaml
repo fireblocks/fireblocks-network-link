@@ -3167,7 +3167,6 @@ components:
       enum:
         - ADA
         - ALGO
-        - ARB
         - ASTR
         - ATOM
         - AURORA
@@ -3211,7 +3210,6 @@ components:
         - MOVR
         - NEAR
         - OAS
-        - OPT
         - OSMO
         - PALM
         - RON
