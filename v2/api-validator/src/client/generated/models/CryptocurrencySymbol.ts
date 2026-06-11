@@ -6,7 +6,6 @@
 export enum CryptocurrencySymbol {
     ADA = 'ADA',
     ALGO = 'ALGO',
-    ARB = 'ARB',
     ASTR = 'ASTR',
     ATOM = 'ATOM',
     AURORA = 'AURORA',
@@ -50,7 +49,6 @@ export enum CryptocurrencySymbol {
     MOVR = 'MOVR',
     NEAR = 'NEAR',
     OAS = 'OAS',
-    OPT = 'OPT',
     OSMO = 'OSMO',
     PALM = 'PALM',
     RON = 'RON',
