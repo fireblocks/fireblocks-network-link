@@ -3,32 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { AccountHolderDetails } from './AccountHolderDetails';
 import type { PayIdCapability } from './PayIdCapability';
+import type { PayIdDetailsBase } from './PayIdDetailsBase';
+import type { PayIdDetailsOffRamp } from './PayIdDetailsOffRamp';
 
-export type PayIdAddress = (PayIdCapability & {
-    accountHolder: AccountHolderDetails;
-    type: PayIdAddress.type;
-    /**
-     * PayId value
-     */
-    value: string;
-    /**
-     * BSB value
-     */
-    bsb?: string;
-    /**
-     * Account number value
-     */
-    accountNumber: string;
-});
-
-export namespace PayIdAddress {
-
-    export enum type {
-        EMAIL = 'email',
-    }
-
-
-}
+export type PayIdAddress = (PayIdCapability & PayIdDetailsBase & PayIdDetailsOffRamp);
 

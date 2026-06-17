@@ -4237,18 +4237,45 @@ components:
           type: string
           enum:
             - PayId
-    PayIdAddress:
+    PayIdDetailsBase:
+      type: object
+      required:
+        - accountHolder
+      properties:
+        accountHolder:
+          $ref: '#/components/schemas/AccountHolderDetails'
+    PayIdDetailsOnRamp:
       allOf:
-        - $ref: '#/components/schemas/PayIdCapability'
+        - $ref: '#/components/schemas/PayIdDetailsBase'
         - type: object
           required:
-            - accountHolder
             - type
             - value
-            - accountNumber
           properties:
-            accountHolder:
-              $ref: '#/components/schemas/AccountHolderDetails'
+            type:
+              type: string
+              enum:
+                - email
+            value:
+              type: string
+              description: PayId value
+              example: merchant@example.com
+            bsb:
+              type: string
+              description: BSB value
+              example: '062000'
+            accountNumber:
+              type: string
+              example: '12345678901'
+              description: Account number value
+    PayIdDetailsOffRamp:
+      allOf:
+        - $ref: '#/components/schemas/PayIdDetailsBase'
+        - type: object
+          required:
+            - accountNumber
+            - bsb
+          properties:
             type:
               type: string
               enum:
@@ -4264,6 +4291,15 @@ components:
             accountNumber:
               type: string
               description: Account number value
+    PayIdAddress:
+      allOf:
+        - $ref: '#/components/schemas/PayIdCapability'
+        - $ref: '#/components/schemas/PayIdDetailsBase'
+        - $ref: '#/components/schemas/PayIdDetailsOffRamp'
+    PayIdPaymentInstruction:
+      allOf:
+        - $ref: '#/components/schemas/PayIdCapability'
+        - $ref: '#/components/schemas/PayIdDetailsOnRamp'
     PayIdTransferDestination:
       allOf:
         - $ref: '#/components/schemas/PayIdAddress'
@@ -4560,7 +4596,7 @@ components:
         - $ref: '#/components/schemas/EuropeanSEPAAddress'
         - $ref: '#/components/schemas/LocalBankTransferAddressPaymentInstruction'
         - $ref: '#/components/schemas/MobileMoneyAddressPaymentInstruction'
-        - $ref: '#/components/schemas/PayIdAddress'
+        - $ref: '#/components/schemas/PayIdPaymentInstruction'
         - $ref: '#/components/schemas/InteracAddressPaymentInstruction'
         - $ref: '#/components/schemas/InternalTransferAddress'
     FiatAddress:
