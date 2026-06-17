@@ -382,7 +382,7 @@
     },
     "balanceAsset": {
       "blockchain": "TRON",
-      "cryptocurrencySymbol": "ARB",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": true
     },
     "minWithdrawalAmount": "950155"

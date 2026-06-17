@@ -3031,6 +3031,7 @@ components:
     NativeCryptocurrency:
       type: object
       required:
+        - blockchain
         - cryptocurrencySymbol
       properties:
         blockchain:
@@ -3167,13 +3168,11 @@ components:
       enum:
         - ADA
         - ALGO
-        - ARB
         - ASTR
         - ATOM
         - AURORA
         - AVAX
         - AXL
-        - BASE
         - BCH
         - BCHA
         - BERA
@@ -3211,7 +3210,6 @@ components:
         - MOVR
         - NEAR
         - OAS
-        - OPT
         - OSMO
         - PALM
         - RON

@@ -313,7 +313,7 @@
     },
     "balanceAsset": {
       "blockchain": "Evmos",
-      "cryptocurrencySymbol": "OPT",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": true
     },
     "addressCreationPolicy": "CannotCreate"

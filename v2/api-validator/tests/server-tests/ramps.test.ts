@@ -34,6 +34,7 @@ import {
   PixCapability,
   EuropeanSEPACapability,
   LocalBankTransferCapability,
+  Blockchain,
   CryptocurrencySymbol,
   InteracCapability,
   PayIdCapability,
@@ -566,11 +567,17 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
       it('should fail when invalid ramp method is used (asset to same asset', async () => {
         const requestBody = rampRequestFromMethod({
           from: {
-            asset: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
+            asset: {
+              blockchain: Blockchain.BITCOIN,
+              cryptocurrencySymbol: CryptocurrencySymbol.BTC,
+            },
             transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
           },
           to: {
-            asset: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
+            asset: {
+              blockchain: Blockchain.BITCOIN,
+              cryptocurrencySymbol: CryptocurrencySymbol.BTC,
+            },
             transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
           },
           id: randomUUID(),
@@ -591,7 +598,10 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
             transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
           },
           to: {
-            asset: { cryptocurrencySymbol: CryptocurrencySymbol.ETH },
+            asset: {
+              blockchain: Blockchain.ETHEREUM,
+              cryptocurrencySymbol: CryptocurrencySymbol.ETH,
+            },
             transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
           },
         });
@@ -607,7 +617,10 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         const requestBody = rampRequestFromMethod({
           id: randomUUID(),
           from: {
-            asset: { cryptocurrencySymbol: CryptocurrencySymbol.ETH },
+            asset: {
+              blockchain: Blockchain.ETHEREUM,
+              cryptocurrencySymbol: CryptocurrencySymbol.ETH,
+            },
             transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
           },
           to: {

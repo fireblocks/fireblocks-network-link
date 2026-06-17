@@ -140,7 +140,7 @@
     "deposit": {
       "asset": {
         "blockchain": "TRON",
-        "cryptocurrencySymbol": "BASE",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": false
       },
       "transferMethod": "PeerAccountTransfer"
@@ -307,7 +307,7 @@
     "deposit": {
       "asset": {
         "blockchain": "TRON",
-        "cryptocurrencySymbol": "ARB",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": false
       },
       "transferMethod": "PeerAccountTransfer"
@@ -572,7 +572,7 @@
     "deposit": {
       "asset": {
         "blockchain": "Moonbeam",
-        "cryptocurrencySymbol": "OPT",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": true
       },
       "transferMethod": "PublicBlockchain"

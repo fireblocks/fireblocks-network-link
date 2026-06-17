@@ -10,6 +10,7 @@ import {
   AssetBalance,
   AssetReference,
   BadRequestError,
+  Blockchain,
   CryptocurrencySymbol,
   IbanCapability,
   InternalTransferCapability,
@@ -37,6 +38,10 @@ import { WithdrawalRequest } from '../../src/server/controllers/withdrawal-contr
 import { arrayFromAsyncGenerator, paginated } from '../utils/pagination';
 import { isParentAccount } from '../../src/utils/account-helper';
 import { InternalTransferDestinationPolicy } from '../../src/client/generated/models/InternalTransferDestinationPolicy';
+
+function isNativeCryptocurrency(asset: AssetReference): boolean {
+  return 'cryptocurrencySymbol' in asset && !('assetId' in asset);
+}
 
 const noTransfersCapability = !hasCapability('transfers');
 const noTransfersBlockchainCapability = !hasCapability('transfersBlockchain');
@@ -687,13 +692,17 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         assetExample: { nationalCurrencyCode: NationalCurrencyCode.USD },
         noRelevantCapability: noTransfersPeerAccountsCapability,
         withdrawalCapabilityName: 'PeerAccountTransferCapability',
+        isSupportedBalanceAsset: (asset: AssetReference) => !isNativeCryptocurrency(asset),
       },
       {
         transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
         config: blockchainDestinationConfig,
         createWithdrawal: (client: Client, { accountId, requestBody }) =>
           client.transfersBlockchain.createBlockchainWithdrawal({ accountId, requestBody }),
-        assetExample: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
+        assetExample: {
+          blockchain: Blockchain.BITCOIN,
+          cryptocurrencySymbol: CryptocurrencySymbol.BTC,
+        },
         noRelevantCapability: noTransfersBlockchainCapability,
         withdrawalCapabilityName: 'PublicBlockchainCapability',
       },
@@ -717,7 +726,11 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         additionalFilters,
         specialDestinationFieldsForErrorTests,
         withdrawalCapabilityName,
+        isSupportedBalanceAsset,
       }) => {
+        const passesBalanceAssetFilter = (asset: AssetReference): boolean =>
+          isSupportedBalanceAsset === undefined ? true : isSupportedBalanceAsset(asset);
+
         it.skipIf(noRelevantCapability)(
           'should succeed making withdrawal for every capability that the account has sufficient balance for',
           async () => {
@@ -725,6 +738,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
               const transferMethodSpecificCapabilities = capabilities.filter(
                 (capability) =>
                   capability.withdrawal.transferMethod === transferMethod &&
+                  passesBalanceAssetFilter(capability.balanceAsset) &&
                   (additionalFilters === undefined ||
                     additionalFilters.map((f) => f(capability)).every((v) => v === true))
               );
@@ -853,7 +867,9 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           async ({ skip, errorTypes }) => {
             for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
               const transferMethodSpecificCapabilities = capabilities.filter(
-                (capability) => capability.withdrawal.transferMethod === transferMethod
+                (capability) =>
+                  capability.withdrawal.transferMethod === transferMethod &&
+                  passesBalanceAssetFilter(capability.balanceAsset)
               );
 
               for (const capability of transferMethodSpecificCapabilities) {
@@ -881,6 +897,10 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                 }
 
                 if (skip(withdrawal, capabilities, fakeAssetReference)) {
+                  continue;
+                }
+
+                if (!passesBalanceAssetFilter(fakeAssetReference)) {
                   continue;
                 }
 

@@ -41,7 +41,7 @@
     },
     "balanceAsset": {
       "blockchain": "EthereumPoW",
-      "cryptocurrencySymbol": "OPT",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": false
     },
     "addressCreationPolicy": "CannotCreate"
@@ -193,7 +193,7 @@
     },
     "balanceAsset": {
       "blockchain": "eCash",
-      "cryptocurrencySymbol": "ARB",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": true
     },
     "addressCreationPolicy": "CanCreate"
@@ -508,7 +508,7 @@
     "deposit": {
       "asset": {
         "blockchain": "Bitcoin Cash",
-        "cryptocurrencySymbol": "ARB",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": true
       },
       "transferMethod": "InternalTransfer",

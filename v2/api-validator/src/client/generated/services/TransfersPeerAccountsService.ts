@@ -103,7 +103,7 @@ export class TransfersPeerAccountsService {
 
     /**
      * Create new withdrawal to a peer account
-     * Withdrawal to a peer account is enabled for fiat assets only.
+     * Withdrawal to a peer account is enabled for fiat or tokenized assets only.
      * Should reject any non peer acount withdrawal request.
      *
      * @returns PeerAccountWithdrawal New withdrawal has been successfully created.

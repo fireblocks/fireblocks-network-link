@@ -1,4 +1,5 @@
 import {
+  Blockchain,
   CryptocurrencySymbol,
   DepositAddress,
   DepositAddressStatus,
@@ -17,7 +18,7 @@ describe('Deposit controller', () => {
       status: DepositAddressStatus.ENABLED,
       destination: {
         transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
-        asset: { cryptocurrencySymbol: CryptocurrencySymbol.ETH },
+        asset: { blockchain: Blockchain.ETHEREUM, cryptocurrencySymbol: CryptocurrencySymbol.ETH },
         address: 'address1',
       },
     };

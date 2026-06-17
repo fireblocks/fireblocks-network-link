@@ -136,7 +136,7 @@
     "withdrawal": {
       "asset": {
         "blockchain": "Dash",
-        "cryptocurrencySymbol": "ARB",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": true
       },
       "transferMethod": "PublicBlockchain"
@@ -170,7 +170,7 @@
     "withdrawal": {
       "asset": {
         "blockchain": "Palm",
-        "cryptocurrencySymbol": "BASE",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": false
       },
       "transferMethod": "PeerAccountTransfer"

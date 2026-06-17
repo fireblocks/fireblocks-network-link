@@ -125,7 +125,7 @@
     "withdrawal": {
       "asset": {
         "blockchain": "TRON",
-        "cryptocurrencySymbol": "ARB",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": true
       },
       "transferMethod": "PublicBlockchain"
@@ -282,7 +282,7 @@
     },
     "balanceAsset": {
       "blockchain": "Stellar",
-      "cryptocurrencySymbol": "BASE",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": false
     },
     "minWithdrawalAmount": "59134742.49636203"
@@ -481,7 +481,7 @@
     },
     "balanceAsset": {
       "blockchain": "Ronin",
-      "cryptocurrencySymbol": "ARB",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": false
     },
     "minWithdrawalAmount": "55170507"
@@ -524,7 +524,7 @@
     "withdrawal": {
       "asset": {
         "blockchain": "Moonriver",
-        "cryptocurrencySymbol": "BASE",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": false
       },
       "transferMethod": "InternalTransfer",

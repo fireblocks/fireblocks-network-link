@@ -126,7 +126,7 @@
     "withdrawal": {
       "asset": {
         "blockchain": "Dash",
-        "cryptocurrencySymbol": "OPT",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": false
       },
       "transferMethod": "PeerAccountTransfer"
@@ -263,7 +263,7 @@
     "withdrawal": {
       "asset": {
         "blockchain": "Ethereum Classic",
-        "cryptocurrencySymbol": "ARB",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": false
       },
       "transferMethod": "InternalTransfer",
@@ -478,7 +478,7 @@
     },
     "balanceAsset": {
       "blockchain": "EthereumPoW",
-      "cryptocurrencySymbol": "ARB",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": true
     },
     "minWithdrawalAmount": "68498201"
