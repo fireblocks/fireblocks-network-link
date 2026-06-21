@@ -369,7 +369,7 @@
     },
     "balanceAsset": {
       "blockchain": "Celestia",
-      "cryptocurrencySymbol": "ARB",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": true
     },
     "minWithdrawalAmount": "62128.540308"
@@ -501,7 +501,7 @@
     "withdrawal": {
       "asset": {
         "blockchain": "Polygon PoS",
-        "cryptocurrencySymbol": "ARB",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": false
       },
       "transferMethod": "PeerAccountTransfer"

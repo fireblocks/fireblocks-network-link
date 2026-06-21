@@ -11,7 +11,6 @@ export enum CryptocurrencySymbol {
     AURORA = 'AURORA',
     AVAX = 'AVAX',
     AXL = 'AXL',
-    BASE = 'BASE',
     BCH = 'BCH',
     BCHA = 'BCHA',
     BERA = 'BERA',

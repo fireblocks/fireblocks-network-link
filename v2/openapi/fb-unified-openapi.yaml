@@ -3031,6 +3031,7 @@ components:
     NativeCryptocurrency:
       type: object
       required:
+        - blockchain
         - cryptocurrencySymbol
       properties:
         blockchain:
@@ -3172,7 +3173,6 @@ components:
         - AURORA
         - AVAX
         - AXL
-        - BASE
         - BCH
         - BCHA
         - BERA

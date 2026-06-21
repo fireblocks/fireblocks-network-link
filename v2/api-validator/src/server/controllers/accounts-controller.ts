@@ -3,10 +3,12 @@ import {
   AssetBalance,
   AssetCreditBalance,
   Balances,
+  Blockchain,
   CryptocurrencySymbol,
   NationalCurrencyCode,
   Rate,
 } from '../../client/generated';
+import { CRYPTOCURRENCY_SYMBOL_TO_BLOCKCHAINS } from './cryptocurrency-blockchain-map';
 import { fakeSchemaObject } from '../../schemas';
 import { Repository } from './repository';
 import { AssetsController } from './assets-controller';
@@ -157,8 +159,13 @@ function getEveryAssetBalances(knownAdditionalAssetIds: string[]) {
   }
 
   for (const cryptocurrencySymbol of Object.values(CryptocurrencySymbol)) {
-    balance.asset = { cryptocurrencySymbol };
-    balances.push(balance);
+    const blockchains = CRYPTOCURRENCY_SYMBOL_TO_BLOCKCHAINS[cryptocurrencySymbol] ?? [
+      Blockchain.BITCOIN,
+    ];
+    for (const blockchain of blockchains) {
+      balance.asset = { blockchain, cryptocurrencySymbol };
+      balances.push(balance);
+    }
   }
 
   for (const nationalCurrencyCode of Object.values(NationalCurrencyCode)) {

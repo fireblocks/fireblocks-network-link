@@ -49,7 +49,7 @@
     "deposit": {
       "asset": {
         "blockchain": "Cortex",
-        "cryptocurrencySymbol": "ARB",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": true
       },
       "transferMethod": "PublicBlockchain"
@@ -332,7 +332,7 @@
     },
     "balanceAsset": {
       "blockchain": "NEAR Protocol",
-      "cryptocurrencySymbol": "BASE",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": false
     },
     "addressCreationPolicy": "CannotCreate"
@@ -422,7 +422,7 @@
     "deposit": {
       "asset": {
         "blockchain": "Terra Classic",
-        "cryptocurrencySymbol": "ARB",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": false
       },
       "transferMethod": "PublicBlockchain"

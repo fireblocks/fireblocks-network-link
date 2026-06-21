@@ -284,7 +284,7 @@
     "deposit": {
       "asset": {
         "blockchain": "EthereumPoW",
-        "cryptocurrencySymbol": "BASE",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": false
       },
       "transferMethod": "PublicBlockchain"
@@ -373,7 +373,7 @@
     },
     "balanceAsset": {
       "blockchain": "TRON",
-      "cryptocurrencySymbol": "BASE",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": false
     },
     "addressCreationPolicy": "CanCreate"

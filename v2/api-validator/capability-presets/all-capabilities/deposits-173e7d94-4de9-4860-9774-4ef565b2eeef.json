@@ -117,7 +117,7 @@
     },
     "balanceAsset": {
       "blockchain": "Stellar",
-      "cryptocurrencySymbol": "ARB",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": false
     },
     "addressCreationPolicy": "CanCreate"
@@ -157,7 +157,7 @@
     "deposit": {
       "asset": {
         "blockchain": "Cardano",
-        "cryptocurrencySymbol": "ARB",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": false
       },
       "transferMethod": "PeerAccountTransfer"
@@ -395,7 +395,7 @@
     "deposit": {
       "asset": {
         "blockchain": "Polygon PoS",
-        "cryptocurrencySymbol": "BASE",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": true
       },
       "transferMethod": "PublicBlockchain"

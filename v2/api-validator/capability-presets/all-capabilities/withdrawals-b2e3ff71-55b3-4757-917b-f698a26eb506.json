@@ -411,7 +411,7 @@
     "withdrawal": {
       "asset": {
         "blockchain": "Terra 2.0",
-        "cryptocurrencySymbol": "BASE",
+        "cryptocurrencySymbol": "ETH",
         "testAsset": true
       },
       "transferMethod": "PublicBlockchain"

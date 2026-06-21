@@ -455,7 +455,7 @@
     },
     "balanceAsset": {
       "blockchain": "NEM NIS1",
-      "cryptocurrencySymbol": "OPT",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": false
     },
     "addressCreationPolicy": "CannotCreate"
@@ -501,7 +501,7 @@
     },
     "balanceAsset": {
       "blockchain": "EOS",
-      "cryptocurrencySymbol": "BASE",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": true
     },
     "addressCreationPolicy": "CannotCreate"

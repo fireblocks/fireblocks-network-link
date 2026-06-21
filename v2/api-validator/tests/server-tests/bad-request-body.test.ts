@@ -81,22 +81,38 @@ describe('Test request bodies missing one required property', () => {
 const ambiguousProperties = {
   '/accounts/:accountId/liquidity/quotes': [
     ['/toAmount', '/fromAmount'],
-    ['/toAsset/nationalCurrencyCode', '/toAsset/cryptocurrencySymbol', '/toAsset/assetId'],
-    ['/fromAsset/nationalCurrencyCode', '/fromAsset/cryptocurrencySymbol', '/fromAsset/assetId'],
+    [
+      '/toAsset/nationalCurrencyCode',
+      '/toAsset/cryptocurrencySymbol',
+      '/toAsset/assetId',
+      '/toAsset/blockchain',
+    ],
+    [
+      '/fromAsset/nationalCurrencyCode',
+      '/fromAsset/cryptocurrencySymbol',
+      '/fromAsset/assetId',
+      '/fromAsset/blockchain',
+    ],
   ],
   '/accounts/:accountId/transfers/withdrawals/blockchain': [
     [
       '/balanceAsset/nationalCurrencyCode',
       '/balanceAsset/cryptocurrencySymbol',
       '/balanceAsset/assetId',
+      '/balanceAsset/blockchain',
     ],
-    ['/destination/asset/cryptocurrencySymbol', '/destination/asset/assetId'],
+    [
+      '/destination/asset/cryptocurrencySymbol',
+      '/destination/asset/assetId',
+      '/destination/asset/blockchain',
+    ],
   ],
   '/accounts/:accountId/transfers/withdrawals/fiat': [
     [
       '/balanceAsset/nationalCurrencyCode',
       '/balanceAsset/cryptocurrencySymbol',
       '/balanceAsset/assetId',
+      '/balanceAsset/blockchain',
     ],
     [
       '/destination/transferMethod',
@@ -117,6 +133,7 @@ const ambiguousProperties = {
       '/destination/asset/nationalCurrencyCode',
       '/destination/asset/cryptocurrencySymbol',
       '/destination/asset/assetId',
+      '/destination/asset/blockchain',
     ],
   ],
   '/accounts/:accountId/transfers/withdrawals/subaccount': [
@@ -124,11 +141,13 @@ const ambiguousProperties = {
       '/balanceAsset/nationalCurrencyCode',
       '/balanceAsset/cryptocurrencySymbol',
       '/balanceAsset/assetId',
+      '/balanceAsset/blockchain',
     ],
     [
       '/destination/asset/nationalCurrencyCode',
       '/destination/asset/cryptocurrencySymbol',
       '/destination/asset/assetId',
+      '/destination/asset/blockchain',
     ],
   ],
   '/accounts/:accountId/transfers/deposits/addresses': [
@@ -136,28 +155,33 @@ const ambiguousProperties = {
       '/transferMethod/asset/nationalCurrencyCode',
       '/transferMethod/asset/cryptocurrencySymbol',
       '/transferMethod/asset/assetId',
+      '/transferMethod/asset/blockchain',
     ],
   ],
   '/accounts/:accountId/collateral/:collateralId/addresses': [
-    ['/address/asset/assetId', '/address/asset/cryptocurrencySymbol'],
+    ['/address/asset/assetId', '/address/asset/cryptocurrencySymbol', '/address/asset/blockchain'],
   ],
   '/accounts/:accountId/collateral/:collateralId/addresses/:id': [
-    ['/address/asset/assetId', '/address/asset/cryptocurrencySymbol'],
+    ['/address/asset/assetId', '/address/asset/cryptocurrencySymbol', '/address/asset/blockchain'],
   ],
   '/accounts/:accountId/collateral/:collateralId/intents/deposits': [
     [
       '/destinationAddress/asset/cryptocurrencySymbol',
       '/destinationAddress/asset/assetId',
+      '/destinationAddress/asset/blockchain',
       '/asset/cryptocurrencySymbol',
       '/asset/assetId',
+      '/asset/blockchain',
     ],
   ],
   '/accounts/:accountId/collateral/:collateralId/intents/withdrawals': [
     [
       '/destinationAddress/asset/cryptocurrencySymbol',
       '/destinationAddress/asset/assetId',
+      '/destinationAddress/asset/blockchain',
       '/asset/cryptocurrencySymbol',
       '/asset/assetId',
+      '/asset/blockchain',
     ],
   ],
   '/accounts/:accountId/ramps': [
@@ -167,6 +191,7 @@ const ambiguousProperties = {
       '/to/asset/cryptocurrencySymbol',
       '/to/asset/assetId',
       '/to/asset/nationalCurrencyCode',
+      '/to/asset/blockchain',
       '/to/address',
       '/to/accountHolder',
       '/to/accountHolder/name',
@@ -187,12 +212,12 @@ const ambiguousProperties = {
       '/to/email',
       '/to/bankName',
       '/to/bankCode',
-      "/to/bankAccountCountry",
-      "/to/bankAccountHolderName",
-      "/to/recipientHandle",
-      "/to/recipientHandle/type",
-      "/to/recipientHandle/value",
-      "/to/sortCode",
+      '/to/bankAccountCountry',
+      '/to/bankAccountHolderName',
+      '/to/recipientHandle',
+      '/to/recipientHandle/type',
+      '/to/recipientHandle/value',
+      '/to/sortCode',
       '/to/paymentRedirect',
       '/to/paymentRedirect/url',
       '/to/paymentRedirect/expiresAt',
@@ -214,6 +239,7 @@ const ambiguousProperties = {
       '/from/asset/cryptocurrencySymbol',
       '/from/asset/assetId',
       '/from/asset/nationalCurrencyCode',
+      '/from/asset/blockchain',
       '/from/type',
       '/from/mobilePhoneNumber',
       '/from/provider',

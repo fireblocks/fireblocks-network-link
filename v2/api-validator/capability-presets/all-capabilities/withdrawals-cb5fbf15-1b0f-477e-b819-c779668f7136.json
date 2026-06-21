@@ -473,7 +473,7 @@
     },
     "balanceAsset": {
       "blockchain": "Moonriver",
-      "cryptocurrencySymbol": "OPT",
+      "cryptocurrencySymbol": "ETH",
       "testAsset": false
     },
     "minWithdrawalAmount": "5"
