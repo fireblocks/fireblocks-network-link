@@ -14,8 +14,9 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: 
-    $ref: README.md
+externalDocs:
+  description: Read the API documentation.
+  url: https://developers.fireblocks.com/reference/network-link-v2-api-endpoints-overview
 tags:
   - name: capabilities
     description: Server capabilities discovery operations.
