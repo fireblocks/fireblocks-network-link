@@ -4,12 +4,6 @@
 
 ### Breaking changes
 
-- `NativeCryptocurrency`: the `blockchain` property is now **required**. Previously it was
-  optional. Any payload using a native cryptocurrency asset (e.g. in capabilities, deposit
-  addresses, withdrawal/transfer destinations, balances, etc.) must now include the
-  `blockchain` field alongside `cryptocurrencySymbol`. This removes ambiguity for symbols
-  that exist on multiple blockchains.
-
 - `createPeerAccountWithdrawal` (POST `/accounts/{accountId}/transfers/withdrawals/peeraccount`):
   the `balanceAsset` of `PeerAccountWithdrawalRequest` no longer accepts
   `NativeCryptocurrency`. Peer account withdrawals are supported for fiat
