@@ -53,6 +53,14 @@ export function amountBelowMinimum(reply: FastifyReply): FastifyReply {
   return reply.code(400).send(errorData);
 }
 
+export function amountAboveMaximum(reply: FastifyReply): FastifyReply {
+  const errorData: BadRequestError = {
+    message: 'The requested amount is above the provider maximum',
+    errorType: BadRequestError.errorType.AMOUNT_ABOVE_MAXIMUM,
+  };
+  return reply.code(400).send(errorData);
+}
+
 export function piiMissing(reply: FastifyReply): FastifyReply {
   const errorData: BadRequestError = {
     message: 'Required KYC / PII information is missing',

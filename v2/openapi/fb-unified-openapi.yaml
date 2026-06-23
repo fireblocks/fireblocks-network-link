@@ -2661,6 +2661,7 @@ components:
             - unsupported-transfer-method
             - transfer-destination-not-allowed
             - unsupported-ramp-method
+            - amount-above-maximum
             - unsupported-source-asset
             - unsupported-destination-asset
             - amount-below-minimum
@@ -6023,6 +6024,7 @@ components:
         failureReason:
           enum:
             - unsupported-ramp-method
+            - amount-above-maximum
             - unsupported-source-asset
             - unsupported-destination-asset
             - amount-below-minimum

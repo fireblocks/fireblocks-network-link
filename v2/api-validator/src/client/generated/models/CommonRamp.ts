@@ -27,6 +27,7 @@ export namespace CommonRamp {
 
     export enum failureReason {
         UNSUPPORTED_RAMP_METHOD = 'unsupported-ramp-method',
+        AMOUNT_ABOVE_MAXIMUM = 'amount-above-maximum',
         UNSUPPORTED_SOURCE_ASSET = 'unsupported-source-asset',
         UNSUPPORTED_DESTINATION_ASSET = 'unsupported-destination-asset',
         AMOUNT_BELOW_MINIMUM = 'amount-below-minimum',
