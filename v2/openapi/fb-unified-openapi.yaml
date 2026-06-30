@@ -3163,6 +3163,9 @@ components:
         - XinFin Network
         - XRP
         - ZCash
+        - Linea
+        - Babylon
+        - Canton
     CryptocurrencySymbol:
       type: string
       enum:
@@ -3230,6 +3233,9 @@ components:
         - XRP
         - XTZ
         - ZEC
+        - GRAM
+        - BABY
+        - CANTON
     NationalCurrencyCode:
       type: string
       description: National currency codes as defined in ISO 4217.

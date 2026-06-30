@@ -1196,6 +1196,18 @@ components:
       - NEM
       - Centrifuge
       - Canton
+      - ZIGChain
+      - Axelar
+      - zkSync Era
+      - Filecoin
+      - Scroll
+      - Plasma
+      - Codex
+      - World Chain
+      - Sei
+      - Monad
+      - The Open Network
+      - Gram
       example:
         Ethereum
     Testnet_Networks:
@@ -1251,6 +1263,13 @@ components:
         - Berachain
         - Sui
         - Canton
+        - Axelar
+        - Celestia
+        - Plasma
+        - World Chain
+        - Monad
+        - The Open Network
+        - Gram
       example:
         Westend
     Coin_Class:

@@ -72,4 +72,7 @@ export enum Blockchain {
     XIN_FIN_NETWORK = 'XinFin Network',
     XRP = 'XRP',
     ZCASH = 'ZCash',
+    LINEA = 'Linea',
+    BABYLON = 'Babylon',
+    CANTON = 'Canton',
 }
