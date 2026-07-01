@@ -68,4 +68,7 @@ export enum CryptocurrencySymbol {
     XRP = 'XRP',
     XTZ = 'XTZ',
     ZEC = 'ZEC',
+    GRAM = 'GRAM',
+    BABY = 'BABY',
+    CANTON = 'CANTON',
 }
