@@ -122,11 +122,17 @@ export class RampsController {
   }
 
   private validateRampRequest(ramp: RampRequest) {
-    if ('assetId' in ramp.from.asset && ramp.from.asset.assetId === SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID) {
+    if (
+      'assetId' in ramp.from.asset &&
+      ramp.from.asset.assetId === SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID
+    ) {
       throw new UnsupportedBaseAssetError();
     }
 
-    if ('assetId' in ramp.to.asset && ramp.to.asset.assetId === SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID) {
+    if (
+      'assetId' in ramp.to.asset &&
+      ramp.to.asset.assetId === SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID
+    ) {
       throw new UnsupportedQuoteAssetError();
     }
 
@@ -225,7 +231,9 @@ export class RampsController {
   }
 }
 
-function getTransferMethod(transferMethod: FiatCapability['transferMethod']): FiatPaymentInstruction {
+function getTransferMethod(
+  transferMethod: FiatCapability['transferMethod']
+): FiatPaymentInstruction {
   switch (transferMethod) {
     case IbanCapability.transferMethod.IBAN:
       return fakeSchemaObject('IbanAddress') as IbanAddress;
@@ -242,7 +250,9 @@ function getTransferMethod(transferMethod: FiatCapability['transferMethod']): Fi
     case EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA:
       return fakeSchemaObject('EuropeanSEPAAddress') as EuropeanSEPAAddress;
     case LocalBankTransferCapability.transferMethod.LBT:
-      return fakeSchemaObject('LocalBankTransferAddressPaymentInstruction') as LocalBankTransferAddressPaymentInstruction;
+      return fakeSchemaObject(
+        'LocalBankTransferAddressPaymentInstruction'
+      ) as LocalBankTransferAddressPaymentInstruction;
     case MobileMoneyCapability.transferMethod.MOMO:
       return fakeSchemaObject(
         'MobileMoneyAddressPaymentInstruction'
@@ -250,7 +260,9 @@ function getTransferMethod(transferMethod: FiatCapability['transferMethod']): Fi
     case PayIdCapability.transferMethod.PAY_ID:
       return fakeSchemaObject('PayIdAddress') as PayIdAddress;
     case InteracCapability.transferMethod.INTERAC:
-      return fakeSchemaObject('InteracAddressPaymentInstruction') as InteracAddressPaymentInstruction;
+      return fakeSchemaObject(
+        'InteracAddressPaymentInstruction'
+      ) as InteracAddressPaymentInstruction;
     default:
       throw new XComError('Invalid transfer method', { transferMethod });
   }

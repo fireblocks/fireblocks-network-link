@@ -3167,6 +3167,7 @@ components:
         - Babylon
         - Canton
         - BNB Smart Chain
+        - HyperEVM
     CryptocurrencySymbol:
       type: string
       enum:
@@ -3237,6 +3238,7 @@ components:
         - GRAM
         - BABY
         - CANTON
+        - HYPE
     NationalCurrencyCode:
       type: string
       description: National currency codes as defined in ISO 4217.
