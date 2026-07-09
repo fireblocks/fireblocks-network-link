@@ -70,4 +70,8 @@ export const CRYPTOCURRENCY_SYMBOL_TO_BLOCKCHAINS: Record<CryptocurrencySymbol, 
   [CryptocurrencySymbol.XRP]: [Blockchain.XRP],
   [CryptocurrencySymbol.XTZ]: [Blockchain.TEZOS],
   [CryptocurrencySymbol.ZEC]: [Blockchain.ZCASH],
+  [CryptocurrencySymbol.GRAM]: [Blockchain.TON],
+  [CryptocurrencySymbol.BABY]: [Blockchain.BABYLON],
+  [CryptocurrencySymbol.CANTON]: [Blockchain.CANTON],
+  [CryptocurrencySymbol.HYPE]: [Blockchain.HYPER_EVM],
 };

@@ -93,7 +93,8 @@ describe.skipIf(noTransfersBlockchainCapability)('VASP Information Validation', 
       for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
         const blockchainCapabilities = capabilities.filter(
           (c) =>
-            c.withdrawal.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            c.withdrawal.transferMethod ===
+            PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
         );
 
         for (const capability of blockchainCapabilities) {
@@ -142,7 +143,8 @@ describe.skipIf(noTransfersBlockchainCapability)('VASP Information Validation', 
       for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
         const blockchainCapabilities = capabilities.filter(
           (c) =>
-            c.withdrawal.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            c.withdrawal.transferMethod ===
+            PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
         );
 
         for (const capability of blockchainCapabilities) {
@@ -189,7 +191,8 @@ describe.skipIf(noTransfersBlockchainCapability)('VASP Information Validation', 
       for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
         const blockchainCapabilities = capabilities.filter(
           (c) =>
-            c.withdrawal.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            c.withdrawal.transferMethod ===
+            PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
         );
 
         for (const capability of blockchainCapabilities) {
@@ -242,7 +245,8 @@ describe.skipIf(noTransfersBlockchainCapability)('VASP Information Validation', 
       for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
         const blockchainCapabilities = capabilities.filter(
           (c) =>
-            c.withdrawal.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            c.withdrawal.transferMethod ===
+            PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
         );
 
         for (const capability of blockchainCapabilities) {
@@ -293,7 +297,8 @@ describe.skipIf(noTransfersBlockchainCapability)('VASP Information Validation', 
       for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
         const blockchainCapabilities = capabilities.filter(
           (c) =>
-            c.withdrawal.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            c.withdrawal.transferMethod ===
+            PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
         );
 
         for (const capability of blockchainCapabilities) {
@@ -352,7 +357,8 @@ describe.skipIf(noTransfersBlockchainCapability)('VASP Information Validation', 
       for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
         const blockchainCapabilities = capabilities.filter(
           (c) =>
-            c.withdrawal.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            c.withdrawal.transferMethod ===
+            PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
         );
 
         for (const capability of blockchainCapabilities) {

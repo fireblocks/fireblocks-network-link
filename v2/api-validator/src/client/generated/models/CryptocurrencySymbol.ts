@@ -71,4 +71,5 @@ export enum CryptocurrencySymbol {
     GRAM = 'GRAM',
     BABY = 'BABY',
     CANTON = 'CANTON',
+    HYPE = 'HYPE',
 }

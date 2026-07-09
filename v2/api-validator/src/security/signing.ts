@@ -1,4 +1,11 @@
-import { createHmac, createPrivateKey, createPublicKey, createSign, createVerify, timingSafeEqual } from 'crypto';
+import {
+  createHmac,
+  createPrivateKey,
+  createPublicKey,
+  createSign,
+  createVerify,
+  timingSafeEqual,
+} from 'crypto';
 
 export class AlgorithmNotSupportedError extends Error {}
 
