@@ -75,4 +75,5 @@ export enum Blockchain {
     LINEA = 'Linea',
     BABYLON = 'Babylon',
     CANTON = 'Canton',
+    BNB_SMART_CHAIN = 'BNB Smart Chain',
 }
