@@ -5750,6 +5750,7 @@ components:
         - $ref: '#/components/schemas/PayIdCapability'
         - $ref: '#/components/schemas/InteracCapability'
         - $ref: '#/components/schemas/ChapsCapability'
+        - $ref: '#/components/schemas/FpsUkCapability'
         - $ref: '#/components/schemas/InternalTransferMethod'
     OnRampCapability:
       type: object
