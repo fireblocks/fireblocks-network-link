@@ -7,6 +7,8 @@ import {
   BridgeProperties,
   ChapsAddress,
   ChapsCapability,
+  FpsUkAddress,
+  FpsUkCapability,
   EuropeanSEPAAddress,
   EuropeanSEPACapability,
   FiatAddress,
@@ -247,6 +249,8 @@ function getTransferMethod(
       return fakeSchemaObject('PixAddressPaymentInstruction') as PixAddressPaymentInstruction;
     case ChapsCapability.transferMethod.CHAPS:
       return fakeSchemaObject('ChapsAddress') as ChapsAddress;
+    case FpsUkCapability.transferMethod.FPS_UK:
+      return fakeSchemaObject('FpsUkAddress') as FpsUkAddress;
     case EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA:
       return fakeSchemaObject('EuropeanSEPAAddress') as EuropeanSEPAAddress;
     case LocalBankTransferCapability.transferMethod.LBT:
