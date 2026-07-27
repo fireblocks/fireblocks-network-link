@@ -170,6 +170,10 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ChapsCapability",
     }
+  FpsUkCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FpsUkCapability",
+    }
 
 x-responses:
   BadRequestResponse:
