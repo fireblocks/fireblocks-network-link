@@ -113,6 +113,10 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ChapsTransfer",
     }
+  FpsUkTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FpsUkTransfer",
+    }
   PublicBlockchainTransaction:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
@@ -1122,6 +1126,7 @@ components:
         - $ref: "#/x-schemas/PayIdTransfer"
         - $ref: "#/x-schemas/InteracTransfer"
         - $ref: "#/x-schemas/ChapsTransfer"
+        - $ref: "#/x-schemas/FpsUkTransfer"
 
     TakeFrom:
       type: object

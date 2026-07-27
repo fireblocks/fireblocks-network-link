@@ -6212,6 +6212,7 @@ components:
         - $ref: '#/components/schemas/PayIdTransfer'
         - $ref: '#/components/schemas/InteracTransfer'
         - $ref: '#/components/schemas/ChapsTransfer'
+        - $ref: '#/components/schemas/FpsUkTransfer'
     TakeFrom:
       type: object
       properties:
