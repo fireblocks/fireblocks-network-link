@@ -635,6 +635,7 @@ components:
         - $ref: "#/x-schemas/PayIdCapability"
         - $ref: "#/x-schemas/InteracCapability"
         - $ref: "#/x-schemas/ChapsCapability"
+        - $ref: "#/x-schemas/FpsUkCapability"
         - $ref: "#/x-schemas/InternalTransferMethod"
 
     OnRampCapability:
