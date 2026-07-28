@@ -77,4 +77,5 @@ export enum Blockchain {
     CANTON = 'Canton',
     BNB_SMART_CHAIN = 'BNB Smart Chain',
     HYPER_EVM = 'HyperEVM',
+    SUI = 'Sui',
 }

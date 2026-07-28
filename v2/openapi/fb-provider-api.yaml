@@ -1244,6 +1244,7 @@ components:
         - Canton
         - BNB Smart Chain
         - HyperEVM
+        - Sui
     CryptocurrencySymbol:
       type: string
       enum:
@@ -1315,6 +1316,7 @@ components:
         - BABY
         - CANTON
         - HYPE
+        - SUI
 
     NationalCurrencyCode:
       type: string
