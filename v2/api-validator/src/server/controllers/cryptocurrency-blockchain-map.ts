@@ -74,4 +74,5 @@ export const CRYPTOCURRENCY_SYMBOL_TO_BLOCKCHAINS: Record<CryptocurrencySymbol, 
   [CryptocurrencySymbol.BABY]: [Blockchain.BABYLON],
   [CryptocurrencySymbol.CANTON]: [Blockchain.CANTON],
   [CryptocurrencySymbol.HYPE]: [Blockchain.HYPER_EVM],
+  [CryptocurrencySymbol.SUI]: [Blockchain.SUI],
 };

@@ -3168,6 +3168,7 @@ components:
         - Canton
         - BNB Smart Chain
         - HyperEVM
+        - Sui
     CryptocurrencySymbol:
       type: string
       enum:
@@ -3239,6 +3240,7 @@ components:
         - BABY
         - CANTON
         - HYPE
+        - SUI
     NationalCurrencyCode:
       type: string
       description: National currency codes as defined in ISO 4217.
