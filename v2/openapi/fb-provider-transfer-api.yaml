@@ -884,6 +884,9 @@ components:
               $ref: '#/components/schemas/AccountHolderDetails'
             iban:
               $ref: '#/components/schemas/Iban'
+            bic:
+              type: string
+              description: Bank Identifier Code (SWIFT/BIC)
 
     IbanTransferDestination:
       allOf:
