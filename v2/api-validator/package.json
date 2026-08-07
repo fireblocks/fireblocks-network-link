@@ -26,6 +26,7 @@
     "test:self:watch": "npm run test:self -- --watch",
     "test:server": "npm run _test -- tests/server-tests",
     "test:server:watch": "npm run test:server -- --watch",
+    "test:server:skip-post": "npm run test -- tests/server-tests --testPathIgnorePatterns='bad-request-body.test.ts",
     "generate-rsa-key-pair": "ts-node generate-signing-keys.ts rsa",
     "generate-ecdsa-secp256k1-key-pair": "ts-node generate-signing-keys.ts ecdsa-secp256k1",
     "generate-ecdsa-prime256v1-key-pair": "ts-node generate-signing-keys.ts ecdsa-prime256v1",
