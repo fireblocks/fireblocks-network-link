@@ -82,6 +82,21 @@ to learn more about OpenAPI:
 5. Restart the mock server.
 6. Run all the tests.
 
+## Error Handling
+Error handling for APIs should be consistent and meaningful to allow consumers to respond appropriately. APIs should define error types for HTTP status codes in the 4xx (client errors) and 5xx (server errors) ranges. Examples include:
+
+- 4xx: Bad requests, unauthorized access, or other client-side issues.
+- 5xx: Server errors or unexpected failures.
+
+To implement effective error handling:
+
+- Adhere to the follow schema for all error responses to ensure clarity and consistency.
+- Make sure to select the correct error type as suggested by schema (for example: `unknown-asset`, `unsupported-conversion`)
+- Include sufficient details in error responses to allow consumers to diagnose issues effectively.
+- Handle errors based on their type and status code to provide meaningful feedback to users.
+
+Clear and consistent error handling ensures better collaboration with API consumers and enhances the user experience.
+
 ## Troubleshooting
 
 If the tests fail catastrophically, it is possible to run the tests in three separate
