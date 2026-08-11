@@ -26,6 +26,7 @@ import {
   RampMethod,
   RampRequest,
   RampStatus,
+  ReasonForPayment,
   RequestPart,
   SpeiCapability,
   WireCapability,
@@ -539,6 +540,35 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
           id: createdRamp.id,
         });
         expect(response.expiresAt).toBeDefined();
+      });
+
+      it('should accept ramp request carrying reasonForPayment', async () => {
+        const requestWithReasonForPayment: RampRequest = {
+          ...rampRequestFromMethod(capability),
+          idempotencyKey: randomUUID(),
+          reasonForPayment: ReasonForPayment.SERVICES_PAYMENT,
+        };
+
+        const response = await client.ramps.createRamp({
+          accountId,
+          requestBody: requestWithReasonForPayment,
+        });
+
+        expect(response).toBeDefined();
+      });
+
+      it('should accept ramp request without reasonForPayment', async () => {
+        const requestWithoutReasonForPayment: RampRequest = {
+          ...rampRequestFromMethod(capability),
+          idempotencyKey: randomUUID(),
+        };
+
+        const response = await client.ramps.createRamp({
+          accountId,
+          requestBody: requestWithoutReasonForPayment,
+        });
+
+        expect(response).toBeDefined();
       });
     });
 

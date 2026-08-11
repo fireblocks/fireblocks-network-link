@@ -229,6 +229,7 @@ export type { RampRequest } from './models/RampRequest';
 export type { RampsPairIdQueryParam } from './models/RampsPairIdQueryParam';
 export { RampStatus } from './models/RampStatus';
 export type { Rate } from './models/Rate';
+export { ReasonForPayment } from './models/ReasonForPayment';
 export { RecipientHandle } from './models/RecipientHandle';
 export { RequestPart } from './models/RequestPart';
 export { Retry } from './models/Retry';

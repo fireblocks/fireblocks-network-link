@@ -10,6 +10,15 @@
   (`NationalCurrency`) and other (`OtherAssetReference`, e.g. tokenized) assets only.
   The operation description was updated to reflect this restriction.
 
+### Specification changes
+
+- Added optional `reasonForPayment` to `CommonRampRequestProperties`, shared by all
+  ramp request variants (`OnRampRequestProperties`, `PrefundedOnRampProperties`,
+  `OffRampProperties`, `PrefundedOffRampProperties`, `BridgeProperties`,
+  `PrefundedBridgeProperties`). New `ReasonForPayment` enum schema. Sent when the
+  provider requires a categorical reason for cross-border payment compliance and
+  reporting.
+
 ## 0.5.1 - 2026-04-19
 
 ### Specification changes
