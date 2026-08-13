@@ -5915,6 +5915,44 @@ components:
           $ref: '#/components/schemas/BlockchainCapabilityWithOptionalAddress'
         to:
           $ref: '#/components/schemas/PublicBlockchainAddress'
+    ReasonForPayment:
+      type: string
+      description: |
+        The reason or purpose of the payment. Sent when the provider requires a categorical reason for cross-border payment compliance and reporting.
+      enum:
+        - InvoicePayment
+        - ServicesPayment
+        - SoftwarePayment
+        - ImportedGoodsPayment
+        - TravelServices
+        - TransferToOwnAccount
+        - LoanRepayment
+        - Payroll
+        - PropertyRental
+        - InformationServiceCharges
+        - AdvertisingAndPublicRelations
+        - IntellectualPropertyFees
+        - FinancialServiceFees
+        - AdvisoryAndTechnicalFees
+        - RepresentativeOfficeExpenses
+        - TaxPayment
+        - GoodsTransportationFees
+        - ConstructionExpenses
+        - InsurancePremium
+        - GeneralGoodsTrade
+        - InsuranceClaimsPayment
+        - FamilyRemittance
+        - EducationExpenses
+        - MedicalTreatment
+        - Donations
+        - MutualFundInvestment
+        - CurrencyExchange
+        - AdvanceGoodsPayment
+        - MerchantSettlement
+        - RepatriationFundSettlement
+        - CorporateInvestment
+        - InterCompanyTransfer
+        - OfficeOperatingExpenses
     CommonRampRequestProperties:
       type: object
       required:
@@ -5928,6 +5966,8 @@ components:
         customerReferenceId:
           type: string
           description: Optional customer reference identifier for tracking purposes
+        reasonForPayment:
+          $ref: '#/components/schemas/ReasonForPayment'
     RampRequest:
       allOf:
         - $ref: '#/components/schemas/CommonRampRequestProperties'

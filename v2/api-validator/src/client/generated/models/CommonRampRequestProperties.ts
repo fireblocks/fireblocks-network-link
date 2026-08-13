@@ -4,6 +4,7 @@
 /* eslint-disable */
 
 import type { PositiveAmount } from './PositiveAmount';
+import type { ReasonForPayment } from './ReasonForPayment';
 
 export type CommonRampRequestProperties = {
     idempotencyKey: string;
@@ -12,5 +13,6 @@ export type CommonRampRequestProperties = {
      * Optional customer reference identifier for tracking purposes
      */
     customerReferenceId?: string;
+    reasonForPayment?: ReasonForPayment;
 };
 
