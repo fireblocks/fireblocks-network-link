@@ -190,10 +190,6 @@ _Note_ that not all error codes need to be in use!
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
-### v0.9.13
-> 17 August 2026
-* Added optional `uid` on the `/v1/accounts` response. This is the provider's native account identifier; Fireblocks persists it from the fundable account.
-
 ### v0.9.12
 > 19 April 2026
 * Supporting Fraxtal on Mainnet.
