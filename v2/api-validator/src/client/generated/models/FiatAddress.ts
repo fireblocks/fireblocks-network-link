@@ -6,6 +6,7 @@
 import type { AchAddress } from './AchAddress';
 import type { ChapsAddress } from './ChapsAddress';
 import type { EuropeanSEPAAddress } from './EuropeanSEPAAddress';
+import type { FpsUkAddress } from './FpsUkAddress';
 import type { IbanAddress } from './IbanAddress';
 import type { InteracAddress } from './InteracAddress';
 import type { LocalBankTransferAddress } from './LocalBankTransferAddress';
@@ -15,5 +16,5 @@ import type { PixAddress } from './PixAddress';
 import type { SpeiAddress } from './SpeiAddress';
 import type { WireAddress } from './WireAddress';
 
-export type FiatAddress = (IbanAddress | AchAddress | WireAddress | SpeiAddress | PixAddress | EuropeanSEPAAddress | LocalBankTransferAddress | MobileMoneyAddressOffRamp | PayIdAddress | InteracAddress | ChapsAddress);
+export type FiatAddress = (IbanAddress | AchAddress | WireAddress | SpeiAddress | PixAddress | EuropeanSEPAAddress | LocalBankTransferAddress | MobileMoneyAddressOffRamp | PayIdAddress | InteracAddress | ChapsAddress | FpsUkAddress);
 
