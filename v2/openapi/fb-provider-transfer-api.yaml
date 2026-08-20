@@ -884,6 +884,9 @@ components:
               $ref: '#/components/schemas/AccountHolderDetails'
             iban:
               $ref: '#/components/schemas/Iban'
+            bic:
+              type: string
+              description: Bank Identifier Code (SWIFT/BIC)
 
     IbanTransferDestination:
       allOf:
@@ -2139,6 +2142,8 @@ components:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
             participantsIdentification:
               $ref: '#/components/schemas/ParticipantsIdentification'
+            reasonForPayment:
+              $ref: '#/components/schemas/ReasonForPayment'
 
     PeerAccountWithdrawalRequest:
       allOf:
