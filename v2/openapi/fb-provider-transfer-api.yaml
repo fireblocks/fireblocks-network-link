@@ -2142,6 +2142,8 @@ components:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
             participantsIdentification:
               $ref: '#/components/schemas/ParticipantsIdentification'
+            reasonForPayment:
+              $ref: '#/components/schemas/ReasonForPayment'
 
     PeerAccountWithdrawalRequest:
       allOf:
