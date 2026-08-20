@@ -14,7 +14,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description:
+  description: 
     $ref: README.md
 tags:
   - name: capabilities
@@ -3696,6 +3696,9 @@ components:
               $ref: '#/components/schemas/AccountHolderDetails'
             iban:
               $ref: '#/components/schemas/Iban'
+            bic:
+              type: string
+              description: Bank Identifier Code (SWIFT/BIC)
     IbanTransferDestination:
       allOf:
         - $ref: '#/components/schemas/IbanAddress'
@@ -4907,6 +4910,8 @@ components:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
             participantsIdentification:
               $ref: '#/components/schemas/ParticipantsIdentification'
+            reasonForPayment:
+              $ref: '#/components/schemas/ReasonForPayment'
     PeerAccountWithdrawalRequest:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
