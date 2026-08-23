@@ -1045,6 +1045,7 @@ components:
             - unsupported-source-asset
             - unsupported-destination-asset
             - amount-below-minimum
+            - amount-above-maximum
             - pii-missing
             - unsupported-external-source
             - unsupported-region
