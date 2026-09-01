@@ -715,6 +715,8 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         ramps:
           $ref: '#/components/schemas/AccountsSet'
+        custom:
+          $ref: '#/components/schemas/AccountsSet'
 
     AccountsSet:
       description: >-
