@@ -1,9 +1,4 @@
-import {
-  AssetReference,
-  Balances,
-  CryptocurrencySymbol,
-  NationalCurrencyCode,
-} from '../../client/generated';
+import { Balances, CryptocurrencySymbol, NationalCurrencyCode } from '../../client/generated';
 import { AssetsController, UnknownAdditionalAssetError } from './assets-controller';
 import { XComError } from '../../error';
 import _ from 'lodash';
@@ -15,6 +10,12 @@ export class InvalidAssetQueryCombinationError extends XComError {
   }
 }
 
+export type AssetBalanceFilter = {
+  assetId?: string;
+  nationalCurrencyCode?: NationalCurrencyCode;
+  cryptocurrencySymbol?: CryptocurrencySymbol;
+};
+
 export class BalancesController {
   constructor(private accountId: string) {}
 
@@ -22,7 +23,7 @@ export class BalancesController {
     return AccountsController.getSubAccount(this.accountId)?.balances ?? [];
   }
 
-  public getSingleAssetBalance(asset: AssetReference): Balances {
+  public getSingleAssetBalance(asset: AssetBalanceFilter): Balances {
     const accountBalances = this.getSubAccountBalances();
 
     const assetBalance = accountBalances.find((balance) => _.isMatch(balance.asset, asset));

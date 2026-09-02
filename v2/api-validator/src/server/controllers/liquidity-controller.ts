@@ -44,7 +44,7 @@ type QuoteCapabilityAssets = {
   toAsset: AssetReference;
 };
 
-const QUOTE_EXPIRATION_IN_MS = 1000;
+const QUOTE_EXPIRATION_IN_MS = 30000;
 const QUOTES_COUNT = 5;
 const QUOTE_CAPABILITIES_COUNT = 5;
 
@@ -105,6 +105,7 @@ export class LiquidityController {
       fromAsset,
       toAsset,
       conversionFeeBps: 1,
+      conversionFeeAsset: fromAsset,
       createdAt: new Date(Date.now()).toISOString(),
       expiresAt: new Date(Date.now() + QUOTE_EXPIRATION_IN_MS).toISOString(),
       id: randomUUID(),

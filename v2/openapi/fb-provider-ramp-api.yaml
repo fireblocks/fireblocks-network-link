@@ -49,6 +49,8 @@ x-header-params:
     { $ref: "./fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE" }
   X-FBAPI-TIMESTAMP:
     { $ref: "./fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP" }
+  X-FBAPI-INITIATED-BY:
+    { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-INITIATED-BY' }
 
 x-schemas:
   PositiveAmount:
@@ -65,23 +67,116 @@ x-schemas:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatCapability",
     }
+  NationalCurrency:
+    { $ref: "./fb-provider-api.yaml#/components/schemas/NationalCurrency" }
+  CryptocurrencyReference:
+    {
+      $ref: "./fb-provider-api.yaml#/components/schemas/CryptocurrencyReference",
+    }
+  AssetReference:
+    { $ref: "./fb-provider-api.yaml#/components/schemas/AssetReference" }
   FiatAddress:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatAddress" }
+  FiatPaymentInstruction:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FiatPaymentInstruction" }
   IbanTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanTransfer" }
-  SwiftTransfer:
-    {
-      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SwiftTransfer",
-    }
   AchTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AchTransfer" }
   WireTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/WireTransfer" }
   SpeiTransfer:
     { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiTransfer" }
+  PixTransfer:
+    { $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PixTransfer" }
+  EuropeanSEPATransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/EuropeanSEPATransfer",
+    }
+  MobileMoneyTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyTransfer",
+    }
+  LocalBankTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransfer",
+    }
+  PayIdTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PayIdTransfer",
+    }
+  InteracTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/InteracTransfer",
+    }
+  ChapsTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ChapsTransfer",
+    }
+  FpsUkTransfer:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FpsUkTransfer",
+    }
   PublicBlockchainTransaction:
     {
       $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PublicBlockchainTransaction",
+    }
+  ParticipantsIdentification:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ParticipantsIdentification",
+    }
+  IbanCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/IbanCapability",
+    }
+  AchCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/AchCapability",
+    }
+  WireCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/WireCapability",
+    }
+  SpeiCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/SpeiCapability",
+    }
+  PixCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PixCapability",
+    }
+  EuropeanSEPACapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/EuropeanSEPACapability",
+    }
+  LocalBankTransferAddressOnRamp:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/LocalBankTransferAddressOnRamp",
+    }
+  MobileMoneyAddressOnRamp:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/MobileMoneyAddressOnRamp",
+    }
+    
+  InteracCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/InteracCapability",
+    }
+  PayIdCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/PayIdCapability",
+    }
+  InternalTransferMethod:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/InternalTransferMethod",
+    }
+  ChapsCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/ChapsCapability",
+    }
+  FpsUkCapability:
+    {
+      $ref: "./fb-provider-transfer-api.yaml#/components/schemas/FpsUkCapability",
     }
 
 x-responses:
@@ -99,6 +194,9 @@ paths:
     get:
       operationId: getRampMethods
       summary: Get list of supported ramp methods
+      description: >
+        Retrieves the list of supported on-ramp and off-ramp methods available for the specified account.
+        Shows which payment methods and currencies are supported for fiat-to-crypto and crypto-to-fiat conversions.
       tags: [capabilities]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
@@ -125,12 +223,16 @@ paths:
     get:
       operationId: getRamps
       summary: Get list of ramps sorted by creation time
+      description: >
+        Retrieves a paginated list of all ramp transactions for the specified account.
+        Ramps are sorted by creation time and include both on-ramp and off-ramp operations.
       tags: [ramps]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
         - $ref: "#/x-header-params/X-FBAPI-NONCE"
         - $ref: "#/x-header-params/X-FBAPI-SIGNATURE"
         - $ref: "#/x-header-params/X-FBAPI-TIMESTAMP"
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: "#/x-query-params/PaginationLimit"
         - $ref: "#/x-query-params/PaginationStartingAfter"
         - $ref: "#/x-query-params/PaginationEndingBefore"
@@ -159,6 +261,7 @@ paths:
         - $ref: "#/x-header-params/X-FBAPI-NONCE"
         - $ref: "#/x-header-params/X-FBAPI-SIGNATURE"
         - $ref: "#/x-header-params/X-FBAPI-TIMESTAMP"
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: "#/x-path-params/SubAccountIdPathParam"
       requestBody:
         description: Ramp details
@@ -183,12 +286,16 @@ paths:
     get:
       operationId: getRampDetails
       summary: Get details of a specific ramp
+      description: >
+        Retrieves detailed information about a specific ramp transaction, including
+        payment instructions, status, amounts, and processing details.
       tags: [ramps]
       parameters:
         - $ref: "#/x-header-params/X-FBAPI-KEY"
         - $ref: "#/x-header-params/X-FBAPI-NONCE"
         - $ref: "#/x-header-params/X-FBAPI-SIGNATURE"
         - $ref: "#/x-header-params/X-FBAPI-TIMESTAMP"
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: "#/x-path-params/SubAccountIdPathParam"
         - $ref: "#/x-path-params/EntityIdPathParam"
       responses:
@@ -265,6 +372,84 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Ramp"
+          examples:
+            onRamp:
+              summary: OnRamp
+              description: A standard fiat to crypto on-ramp without additional features.
+              value:
+                id: "16b8b2c3-bd61-4745-9c48-3d30c2bc6907"
+                createdAt: "2021-09-01T12:00:00Z"
+                updatedAt: "2021-09-01T12:00:00Z"
+                status: "Pending"
+                amount: "1000.00"
+                type: "OnRamp"
+                expiresAt: "2021-09-01T12:00:00Z"
+                from:
+                  asset:
+                    nationalCurrencyCode: "USD"
+                  transferMethod: "Iban"
+                to:
+                  asset:
+                    assetId: "360de0ad-9ba1-45d5-8074-22453f193d65"
+                  transferMethod: "PublicBlockchain"
+                  address: "0x1234567890abcdef1234567890abcdef12345678"
+                paymentInstructions:
+                  asset:
+                    nationalCurrencyCode: "USD"
+                  transferMethod: "Iban"
+                  accountHolder:
+                    name: "John Doe"
+                    address: "123 Main St, New York, NY 10001"
+                  iban: "US1234567890"
+                estimatedFees:
+                  - feeType: "ORDER"
+                    feeAsset:
+                      nationalCurrencyCode: "USD"
+                    fee:
+                      amountType: "FIXED"
+                      amount: "100.00"
+            onRampWithQuote:
+              summary: OnRamp with Quote
+              description: An on-ramp that includes quote information for price execution.
+              value:
+                id: "69fa4f38-c1fd-4215-a310-82272225c4ef"
+                createdAt: "2021-09-01T12:00:00Z"
+                updatedAt: "2021-09-01T12:00:00Z"
+                status: "Pending"
+                amount: "500.00"
+                type: "OnRamp"
+                expiresAt: "2021-09-01T12:00:00Z"
+                from:
+                  asset:
+                    nationalCurrencyCode: "USD"
+                  transferMethod: "Iban"
+                to:
+                  asset:
+                    assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff"
+                  transferMethod: "PublicBlockchain"
+                  address: "0xabcdef1234567890abcdef1234567890abcdef12"
+                paymentInstructions:
+                  asset:
+                    nationalCurrencyCode: "USD"
+                  transferMethod: "Iban"
+                  accountHolder:
+                    name: "Jane Smith"
+                    address: "456 Oak Street, London, UK"
+                  iban: "US1234567890"
+                executionDetails:
+                  type: "Quote"
+                  quoteId: "quote-123456789"
+                  reQuote:
+                    type: "Retry"
+                    slippage: 0.02
+                    count: 3
+                estimatedFees:
+                  - feeType: "ORDER"
+                    feeAsset:
+                      nationalCurrencyCode: "USD"
+                    fee:
+                      amountType: "FIXED"
+                      amount: "100.00"
 
     GetRampDetailsResponse:
       description: Ramp details.
@@ -304,8 +489,10 @@ components:
                       transferMethod: "Iban"
                     to:
                       asset:
-                        assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
+                        assetId: "360de0ad-9ba1-45d5-8074-22453f193d65"
                       transferMethod: "PublicBlockchain"
+                      address: "0x1234567890abcdef1234567890abcdef12345678"
+                      tag: "1234567890abcdef"
                     paymentInstructions:
                       asset:
                         nationalCurrencyCode: "USD"
@@ -314,15 +501,14 @@ components:
                         name: "John Doe"
                         address: "123 Main St, New York, NY 10001"
                       iban: "US1234567890"
-                    recipient:
-                      asset:
-                        assetId: "360de0ad-9ba1-45d5-8074-22453f193d65"
-                      transferMethod: "PublicBlockchain"
-                      address: "0x1234567890abcdef1234567890abcdef12345678"
-                      tag: "1234567890abcdef"
-                    fees:
-                      subAccount: 100
-                      provider: 200
+                    estimatedFees:
+                      - feeType: "ORDER"
+                        feeAsset:
+                          nationalCurrencyCode: "USD"
+                        fee:
+                          amountType: "FIXED"
+                          amount: "100.00"
+                    expiresAt: "2021-09-01T12:00:00Z"
                   - id: "69fa4f38-c1fd-4215-a310-82272225c4ef"
                     createdAt: "2021-09-01T12:00:00Z"
                     updatedAt: "2021-09-01T12:00:00Z"
@@ -337,19 +523,15 @@ components:
                       asset:
                         nationalCurrencyCode: "USD"
                       transferMethod: "Iban"
+                      accountHolder:
+                        name: "John Doe"
+                        address: "123 Main St, New York, NY 10001"
+                      iban: "US1234567890"
                     paymentInstructions:
                       asset:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
                       address: "0x1234567890abcdef1234567890abcdef12345678"
-                    recipient:
-                      asset:
-                        nationalCurrencyCode: "USD"
-                      transferMethod: "Iban"
-                      accountHolder:
-                        name: "John Doe"
-                        address: "123 Main St, New York, NY 10001"
-                      iban: "US1234567890"
                     payment:
                       blockchainTxId: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
                       amount: "1231.45"
@@ -366,8 +548,14 @@ components:
                         address: "123 Main St, New York, NY 10001"
                       iban: "US1234567890"
                       amount: "1231.45"
-                    fees:
-                      subAccount: 100
+                      actualFees:
+                        - feeType: "ORDER"
+                          feeAsset:
+                            nationalCurrencyCode: "USD"
+                          fee:
+                            amountType: "FIXED"
+                            amount: "100.00"
+                    expiresAt: "2021-09-01T12:00:00Z"
                   - id: "afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea"
                     createdAt: "2021-09-01T12:00:00Z"
                     updatedAt: "2021-09-01T12:00:00Z"
@@ -380,19 +568,15 @@ components:
                       transferMethod: "PublicBlockchain"
                     to:
                       asset:
-                        assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" # USDC on Polygon
+                        assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff"
                       transferMethod: "PublicBlockchain"
+                      address: "0x1234567890abcdef1234567890abcdef12345678"
+                      tag: "1234567890abcdef"
                     paymentInstructions:
                       asset:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
                       address: "0x1234567890abcdef1234567890abcdef12355678"
-                    recipient:
-                      asset:
-                        assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff"
-                      transferMethod: "PublicBlockchain"
-                      address: "0x1234567890abcdef1234567890abcdef12345678"
-                      tag: "1234567890abcdef"
                     payment:
                       blockchainTxId: "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
                       amount: "1231.45"
@@ -401,15 +585,27 @@ components:
                         assetId: "360de0ad-9ba1-45d5-8074-22453f193d65" # USDC on Ethereum
                       transferMethod: "PublicBlockchain"
                     receipt:
+                      actualFees:
+                        - feeType: "ORDER"
+                          feeAsset:
+                            nationalCurrencyCode: "USD"
+                          fee:
+                            amountType: "FIXED"
+                            amount: "100.00"
                       blockchainTxId: "0x1234567890abcdef1234567899abcdef1234567890abcdef1234567890abcdef"
                       amount: "1231.45"
                       address: "0x1234567890abcdef1234567890abcdef12345678"
                       asset:
                         assetId: "606bce6b-ff15-4704-9390-b9e32a6cfcff" # USDC on Polygon
                       transferMethod: "PublicBlockchain"
-                    fees:
-                      subAccount: 100
-
+                    estimatedFees:
+                      - feeType: "ORDER"
+                        feeAsset:
+                          nationalCurrencyCode: "USD"
+                        fee:
+                          amountType: "FIXED"
+                          amount: "100.00"
+                    expiresAt: "2021-09-01T12:00:00Z"
   schemas:
     RampStatus:
       enum:
@@ -419,6 +615,32 @@ components:
         - Completed
         - Failed
         - Refunded
+
+    PrefundedOnRampCapability:
+      type: object
+      title: Prefunded Fiat to Crypto
+      required: [from, to]
+      properties:
+        from:
+          $ref: "#/components/schemas/PrefundedFiatCapability"
+        to:
+          $ref: "#/x-schemas/PublicBlockchainCapability"
+
+    OnRampRequestFrom:
+      oneOf:
+        - $ref: "#/x-schemas/IbanCapability"
+        - $ref: "#/x-schemas/AchCapability"
+        - $ref: "#/x-schemas/WireCapability"
+        - $ref: "#/x-schemas/SpeiCapability"
+        - $ref: "#/x-schemas/PixCapability"
+        - $ref: "#/x-schemas/EuropeanSEPACapability"
+        - $ref: "#/x-schemas/LocalBankTransferAddressOnRamp"
+        - $ref: "#/x-schemas/MobileMoneyAddressOnRamp"
+        - $ref: "#/x-schemas/PayIdCapability"
+        - $ref: "#/x-schemas/InteracCapability"
+        - $ref: "#/x-schemas/ChapsCapability"
+        - $ref: "#/x-schemas/FpsUkCapability"
+        - $ref: "#/x-schemas/InternalTransferMethod"
 
     OnRampCapability:
       type: object
@@ -430,6 +652,16 @@ components:
         to:
           $ref: "#/x-schemas/PublicBlockchainCapability"
 
+    PrefundedOffRampCapability:
+      type: object
+      title: Prefunded Crypto to Fiat
+      required: [from, to]
+      properties:
+        from:
+          $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        to:
+          $ref: "#/x-schemas/FiatCapability"
+
     OffRampCapability:
       type: object
       title: Crypto to Fiat
@@ -439,6 +671,16 @@ components:
           $ref: "#/x-schemas/PublicBlockchainCapability"
         to:
           $ref: "#/x-schemas/FiatCapability"
+
+    PrefundedBridgeCapability:
+      type: object
+      title: Prefunded Crypto to Crypto
+      required: [from, to]
+      properties:
+        from:
+          $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        to:
+          $ref: "#/x-schemas/PublicBlockchainCapability"
 
     BridgeCapability:
       type: object
@@ -459,8 +701,68 @@ components:
               type: string
         - oneOf:
             - $ref: "#/components/schemas/OnRampCapability"
+            - $ref: "#/components/schemas/PrefundedOnRampCapability"
             - $ref: "#/components/schemas/OffRampCapability"
+            - $ref: "#/components/schemas/PrefundedOffRampCapability"
             - $ref: "#/components/schemas/BridgeCapability"
+            - $ref: "#/components/schemas/PrefundedBridgeCapability"
+
+    BlockchainCapabilityWithOptionalAddress:
+      title: Blockchain Capability With Address
+      allOf:
+        - $ref: "#/x-schemas/PublicBlockchainCapability"
+        - type: object
+          properties:
+            address:
+              type: string
+
+    PrefundedFiatCapability:
+      type: object
+      required:
+        - asset
+        - type
+      properties:
+        asset:
+          $ref: "#/x-schemas/NationalCurrency"
+        type:
+          type: string
+          enum:
+            - Prefunded
+
+    PrefundedBlockchainCapability:
+      type: object
+      required:
+        - asset
+        - type
+      properties:
+        asset:
+          $ref: "#/x-schemas/CryptocurrencyReference"
+        type:
+          type: string
+          enum:
+            - Prefunded
+
+    PrefundedOnRampFrom:
+      allOf:
+        - $ref: "#/components/schemas/PrefundedFiatCapability"
+        - $ref: "#/components/schemas/TakeFrom"
+
+    PrefundedOnRampProperties:
+      type: object
+      title: On Ramp - Prefunded
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - OnRamp
+        from:
+          $ref: "#/components/schemas/PrefundedOnRampFrom"
+        to:
+          $ref: "#/x-schemas/PublicBlockchainAddress"
 
     OnRampProperties:
       type: object
@@ -469,7 +771,6 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
@@ -478,9 +779,46 @@ components:
         from:
           $ref: "#/x-schemas/FiatCapability"
         to:
-          $ref: "#/x-schemas/PublicBlockchainCapability"
-        recipient:
           $ref: "#/x-schemas/PublicBlockchainAddress"
+    
+    PrefundedOffRampFrom:
+      allOf:
+        - $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        - $ref: "#/components/schemas/TakeFrom"
+
+    OnRampRequestProperties:
+      type: object
+      title: On Ramp
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - OnRamp
+        from:
+          $ref: "#/components/schemas/OnRampRequestFrom"
+        to:
+          $ref: "#/x-schemas/PublicBlockchainAddress"
+
+    PrefundedOffRampProperties:
+      type: object
+      title: Off Ramp - Prefunded
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - OffRamp
+        from:
+          $ref: "#/components/schemas/PrefundedOffRampFrom"
+        to:
+          $ref: "#/x-schemas/FiatAddress"
 
     OffRampProperties:
       type: object
@@ -489,18 +827,37 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
           enum:
             - OffRamp
         from:
-          $ref: "#/x-schemas/PublicBlockchainCapability"
+          $ref: "#/components/schemas/BlockchainCapabilityWithOptionalAddress"
         to:
-          $ref: "#/x-schemas/FiatCapability"
-        recipient:
           $ref: "#/x-schemas/FiatAddress"
+
+    PrefundedBridgeFrom:
+      allOf:
+        - $ref: "#/components/schemas/PrefundedBlockchainCapability"
+        - $ref: "#/components/schemas/TakeFrom"
+
+    PrefundedBridgeProperties:
+      type: object
+      title: Bridge - Prefunded
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - Bridge
+        from:
+          $ref: "#/components/schemas/PrefundedBridgeFrom"
+        to:
+          $ref: "#/x-schemas/PublicBlockchainAddress"
 
     BridgeProperties:
       type: object
@@ -509,18 +866,55 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
           enum:
             - Bridge
         from:
-          $ref: "#/x-schemas/PublicBlockchainCapability"
+          $ref: "#/components/schemas/BlockchainCapabilityWithOptionalAddress"
         to:
-          $ref: "#/x-schemas/PublicBlockchainCapability"
-        recipient:
           $ref: "#/x-schemas/PublicBlockchainAddress"
+
+    ReasonForPayment:
+      type: string
+      description: >
+        The reason or purpose of the payment. Sent when the provider requires a
+        categorical reason for cross-border payment compliance and reporting.
+      enum:
+        - InvoicePayment
+        - ServicesPayment
+        - SoftwarePayment
+        - ImportedGoodsPayment
+        - TravelServices
+        - TransferToOwnAccount
+        - LoanRepayment
+        - Payroll
+        - PropertyRental
+        - InformationServiceCharges
+        - AdvertisingAndPublicRelations
+        - IntellectualPropertyFees
+        - FinancialServiceFees
+        - AdvisoryAndTechnicalFees
+        - RepresentativeOfficeExpenses
+        - TaxPayment
+        - GoodsTransportationFees
+        - ConstructionExpenses
+        - InsurancePremium
+        - GeneralGoodsTrade
+        - InsuranceClaimsPayment
+        - FamilyRemittance
+        - EducationExpenses
+        - MedicalTreatment
+        - Donations
+        - MutualFundInvestment
+        - CurrencyExchange
+        - AdvanceGoodsPayment
+        - MerchantSettlement
+        - RepatriationFundSettlement
+        - CorporateInvestment
+        - InterCompanyTransfer
+        - OfficeOperatingExpenses
 
     CommonRampRequestProperties:
       type: object
@@ -532,29 +926,97 @@ components:
           type: string
         amount:
           $ref: "#/x-schemas/PositiveAmount"
+        customerReferenceId:
+          type: string
+          description: Optional customer reference identifier for tracking purposes
+        reasonForPayment:
+          $ref: "#/components/schemas/ReasonForPayment"
 
     RampRequest:
       allOf:
         - $ref: "#/components/schemas/CommonRampRequestProperties"
         - oneOf:
-            - $ref: "#/components/schemas/OnRampProperties"
+            - $ref: "#/components/schemas/OnRampRequestProperties"
+            - $ref: "#/components/schemas/PrefundedOnRampProperties"
             - $ref: "#/components/schemas/OffRampProperties"
+            - $ref: "#/components/schemas/PrefundedOffRampProperties"
             - $ref: "#/components/schemas/BridgeProperties"
+            - $ref: "#/components/schemas/PrefundedBridgeProperties"
+        - type: object
+          properties:
+            executionDetails:
+              oneOf:
+                - $ref: "#/components/schemas/OrderQuote"
+        - type: object
+          properties:
+            participantsIdentification:
+              $ref: "#/x-schemas/ParticipantsIdentification"
+
+    FixedFeeAmount:
+      type: object
+      required:
+        - amountType
+        - amount
+      properties:
+        amountType:
+          type: string
+          enum:
+            - FIXED
+        amount:
+          $ref: "#/x-schemas/PositiveAmount"
+
+    BasisPointsFeeAmount:
+      type: object
+      required:
+        - amountType
+        - amount
+      properties:
+        amountType:
+          type: string
+          enum:
+            - BASIS_POINTS
+        amount:
+          type: number
+          description: Basis points (bps) - 1 is 0.01% and 10000 is 100%
+
+    FeeAmount:
+      oneOf:
+        - $ref: "#/components/schemas/FixedFeeAmount"
+        - $ref: "#/components/schemas/BasisPointsFeeAmount"
+
+    Fee:
+      type: object
+      required:
+        - feeType
+        - feeAsset
+        - fee
+      properties:
+        feeType:
+          type: string
+          description: >
+            Specifies the category of fee applied to the transaction.
+            - ORDER - Fee charged by the platform for executing the trade.
+            - NETWORK - Blockchain network fee paid to validators/miners.
+            - SPREAD - Implicit cost built into the price difference between quotes.
+            - REBATE - Negative fee returned to the user as a reward or incentive.
+          enum:
+            - ORDER
+            - NETWORK
+            - SPREAD
+            - REBATE
+        feeAsset:
+          $ref: "#/x-schemas/AssetReference"
+        fee:
+          $ref: "#/components/schemas/FeeAmount"
 
     RampFees:
-      type: object
-      description: Fees associated with the ramp transfer.
-      properties:
-        subAccount:
-          type: integer
-          description: Fees charged from the sub-account in basis points.
-        provider:
-          type: integer
-          description: Fees charged by the provider for the ramp service in basis points.
+      type: array
+      items:
+        $ref: "#/components/schemas/Fee"
 
     CommonRamp:
       type: object
-      required: [id, status, createdAt, updatedAt, amount]
+      required: [id, status, createdAt, updatedAt, amount, expiresAt]
       properties:
         id:
           type: string
@@ -568,69 +1030,194 @@ components:
           $ref: "#/components/schemas/RampStatus"
         amount:
           $ref: "#/x-schemas/PositiveAmount"
-        fees:
+        estimatedFees:
           $ref: "#/components/schemas/RampFees"
+        executionDetails:
+          oneOf:
+            - $ref: "#/components/schemas/OrderQuote"
+        expiresAt:
+          description: Ramp expiration time.
+          type: string
+          format: date-time
+        failureReason:
+          enum:
+            - unsupported-ramp-method
+            - unsupported-source-asset
+            - unsupported-destination-asset
+            - amount-below-minimum
+            - amount-above-maximum
+            - pii-missing
+            - unsupported-external-source
+            - unsupported-region
+            - destination-not-whitelisted
 
-    OnRampTransfer:
+    OnRampPropertiesWithPaymentInstructions:
+      type: object
+      title: On Ramp
       allOf:
-        - $ref: "#/components/schemas/CommonRamp"
-        - $ref: "#/components/schemas/OnRampProperties"
         - type: object
           required:
             - paymentInstructions
           properties:
             paymentInstructions:
               allOf:
-                - $ref: "#/x-schemas/FiatAddress"
+                - $ref: "#/x-schemas/FiatPaymentInstruction"
                 - type: object
                   properties:
                     referenceId:
                       type: string
-            payment:
-              $ref: "#/components/schemas/RampFiatTransfer"
-            receipt:
-              $ref: "#/x-schemas/PublicBlockchainTransaction"
+        - $ref: "#/components/schemas/OnRampProperties"
 
-    OffRampTransfer:
+    OffRampPropertiesWithPaymentInstructions:
+      type: object
+      title: Off Ramp
       allOf:
-        - $ref: "#/components/schemas/CommonRamp"
+        - type: object
+          required:
+            - paymentInstructions
+          properties:
+            paymentInstructions:
+              $ref: "#/x-schemas/PublicBlockchainAddress"
         - $ref: "#/components/schemas/OffRampProperties"
+
+    BridgePropertiesWithPaymentInstructions:
+      type: object
+      title: Bridge
+      allOf:
         - type: object
           required:
             - paymentInstructions
           properties:
             paymentInstructions:
               $ref: "#/x-schemas/PublicBlockchainAddress"
-            payment:
-              $ref: "#/x-schemas/PublicBlockchainTransaction"
-            receipt:
-              $ref: "#/components/schemas/RampFiatTransfer"
+        - $ref: "#/components/schemas/BridgeProperties"
 
-    BridgeTransfer:
+    OnRampReceipt:
+      allOf:
+        - $ref: "#/x-schemas/PublicBlockchainTransaction"
+        - type: object
+          properties:
+            actualFees:
+              $ref: "#/components/schemas/RampFees"
+
+    OffRampReceipt:
+      allOf:
+        - $ref: "#/components/schemas/RampFiatTransfer"
+        - type: object
+          properties:
+            actualFees:
+              $ref: "#/components/schemas/RampFees"
+
+    BridgeReceipt:
+      allOf:
+        - $ref: "#/x-schemas/PublicBlockchainTransaction"
+        - type: object
+          properties:
+            actualFees:
+              $ref: "#/components/schemas/RampFees"
+
+    OnRamp:
+      title: On Ramp
       allOf:
         - $ref: "#/components/schemas/CommonRamp"
-        - $ref: "#/components/schemas/BridgeProperties"
+        - oneOf:
+            - $ref: "#/components/schemas/OnRampPropertiesWithPaymentInstructions"
+            - $ref: "#/components/schemas/PrefundedOnRampProperties"
         - type: object
-          required:
-            - paymentInstructions
           properties:
-            paymentInstructions:
-              $ref: "#/x-schemas/PublicBlockchainAddress"
-            payment:
-              $ref: "#/x-schemas/PublicBlockchainTransaction"
             receipt:
-              $ref: "#/x-schemas/PublicBlockchainTransaction"
+              $ref: "#/components/schemas/OnRampReceipt"
+
+    OffRamp:
+      allOf:
+        - $ref: "#/components/schemas/CommonRamp"
+        - oneOf:
+            - $ref: "#/components/schemas/OffRampPropertiesWithPaymentInstructions"
+            - $ref: "#/components/schemas/PrefundedOffRampProperties"
+        - type: object
+          properties:
+            receipt:
+              $ref: "#/components/schemas/OffRampReceipt"
+
+    Bridge:
+      allOf:
+        - $ref: "#/components/schemas/CommonRamp"
+        - oneOf:
+            - $ref: "#/components/schemas/BridgePropertiesWithPaymentInstructions"
+            - $ref: "#/components/schemas/PrefundedBridgeProperties"
+        - type: object
+          properties:
+            receipt:
+              $ref: "#/components/schemas/BridgeReceipt"
 
     Ramp:
       oneOf:
-        - $ref: "#/components/schemas/OnRampTransfer"
-        - $ref: "#/components/schemas/OffRampTransfer"
-        - $ref: "#/components/schemas/BridgeTransfer"
+        - $ref: "#/components/schemas/OnRamp"
+        - $ref: "#/components/schemas/OffRamp"
+        - $ref: "#/components/schemas/Bridge"
 
     RampFiatTransfer:
       oneOf:
         - $ref: "#/x-schemas/IbanTransfer"
-        - $ref: "#/x-schemas/SwiftTransfer"
         - $ref: "#/x-schemas/AchTransfer"
         - $ref: "#/x-schemas/WireTransfer"
         - $ref: "#/x-schemas/SpeiTransfer"
+        - $ref: "#/x-schemas/PixTransfer"
+        - $ref: "#/x-schemas/EuropeanSEPATransfer"
+        - $ref: "#/x-schemas/LocalBankTransfer"
+        - $ref: "#/x-schemas/MobileMoneyTransfer"
+        - $ref: "#/x-schemas/PayIdTransfer"
+        - $ref: "#/x-schemas/InteracTransfer"
+        - $ref: "#/x-schemas/ChapsTransfer"
+        - $ref: "#/x-schemas/FpsUkTransfer"
+
+    TakeFrom:
+      type: object
+      properties:
+        takeFrom:
+          description: Instructs the provider which prefunded source sub-account to debit for this ramp's settlement. If omitted, the provider debits the prefunded balance from the ramps's accountId by default.
+          type: string
+
+    OrderQuote:
+      type: object
+      required:
+        - type
+        - quoteId
+      properties:
+        type:
+          type: string
+          enum:
+            - Quote
+        quoteId:
+          type: string
+        reQuote:
+          oneOf:
+            - $ref: "#/components/schemas/Retry"
+            - $ref: "#/components/schemas/Market"
+
+    Retry:
+      type: object
+      required:
+        - type
+        - slippage
+      properties:
+        type:
+          type: string
+          enum:
+            - Retry
+        slippage:
+          type: number
+          description: Slippage tolerance in basis points (bps) for quote orders - 1 is 0.01% and 10000 is 100%
+        count:
+          type: number
+          description: If quote is expired, how many times to re-generate new quotes to try having the order executed as in the original quote.
+
+    Market:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - Market

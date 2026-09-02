@@ -28,6 +28,7 @@ x-header-params:
   X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
   X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
   X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
+  X-FBAPI-INITIATED-BY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-INITIATED-BY' }
 
 x-schemas:
   AssetReference: { $ref: './fb-provider-api.yaml#/components/schemas/AssetReference' }
@@ -44,6 +45,9 @@ paths:
     get:
       operationId: getQuoteCapabilities
       summary: List possible asset conversions
+      description: >
+        Retrieves the list of supported asset conversion pairs that can be quoted.
+        Shows which assets can be converted to other assets through the liquidity service.
       tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -83,6 +87,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         description: Details of the quote request
@@ -108,12 +113,16 @@ paths:
     get:
       operationId: getQuotes
       summary: Get list of quotes sorted by creation time
+      description: >
+        Retrieves a paginated list of all quotes for the specified account.
+        Quotes are sorted by creation time and can be ordered ascending or descending.
       tags: [ liquidity ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
@@ -145,12 +154,16 @@ paths:
     get:
       operationId: getQuoteDetails
       summary: Get quote details
+      description: >
+        Retrieves detailed information about a specific quote, including
+        conversion rates, amounts, expiration time, and current status.
       tags: [ liquidity ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-path-params/EntityIdPathParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -173,12 +186,16 @@ paths:
     post:
       operationId: executeQuote
       summary: Execute quote
+      description: >
+        Executes a previously created quote, performing the actual asset conversion.
+        The quote must be valid and not expired for execution to succeed.
       tags: [ liquidity ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-path-params/EntityIdPathParam'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       responses:
@@ -275,6 +292,12 @@ components:
         conversionFeeBps:
           type: integer
           description: Conversion fee in basis points. The amounts are expected to include the fee.
+        conversionFeeAsset:
+          allOf:
+            - $ref: '#/x-schemas/AssetReference'
+            - description: >
+                This is the asset that will be used to pay the conversion fee.
+                If not returned, the asset will be the same as the fromAsset.
         status:
           $ref: '#/components/schemas/QuoteStatus'
         createdAt:

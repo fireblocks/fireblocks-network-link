@@ -12,7 +12,6 @@ import {
   DepositDestination,
   IbanCapability,
   PublicBlockchainCapability,
-  SwiftCapability,
 } from '../../client/generated';
 import { Repository } from './repository';
 import { fakeSchemaObject } from '../../schemas';
@@ -58,7 +57,6 @@ export class DepositController {
   private readonly depositRepository = new Repository<Deposit>();
   private readonly depositAddressRepository = new Repository<DepositAddress>();
   private readonly depositCapabilitiesRepository = new Repository<DepositCapability>();
-  private readonly swiftCodeRegexp = /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/;
   private readonly ibanRegexp = /^[A-Z]{2}\d{2}[a-zA-Z0-9]{1,30}$/;
 
   constructor(private readonly accountId: string) {
@@ -136,14 +134,6 @@ export class DepositController {
           iban: new RandExp(this.ibanRegexp).gen(),
         };
         break;
-      case SwiftCapability.transferMethod.SWIFT:
-        destination = {
-          ...transferMethod,
-          accountHolder: { name: randomUUID() },
-          swiftCode: new RandExp(this.swiftCodeRegexp).gen(),
-          routingNumber: randomUUID(),
-        };
-        break;
       case PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN:
         destination = {
           ...transferMethod,
@@ -188,7 +178,7 @@ export class DepositController {
   }
 
   public validateNewAddressCreationPossibility(
-    transferMethod: PublicBlockchainCapability | IbanCapability | SwiftCapability
+    transferMethod: PublicBlockchainCapability | IbanCapability
   ): void {
     const depositCapabilities = this.getDepositCapabilities();
     const relevantDepositCapability = depositCapabilities.find((capability) =>

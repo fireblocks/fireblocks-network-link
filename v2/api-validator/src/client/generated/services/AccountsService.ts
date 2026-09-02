@@ -13,6 +13,7 @@ export class AccountsService {
 
     /**
      * Get list of sub-accounts
+     * Retrieves a paginated list of all sub-accounts available to the provider. Can optionally include balance information for each account if requested. Allows defining parent-child relationships between accounts. Notice that Fireblocks currently supports only one level of hierarchy.
      * @returns any List of sub-accounts.
      * @throws ApiError
      */
@@ -21,6 +22,7 @@ export class AccountsService {
         xFbapiNonce,
         xFbapiTimestamp,
         xFbapiSignature,
+        xFbapiInitiatedBy,
         limit = 10,
         startingAfter,
         endingBefore,
@@ -43,6 +45,10 @@ export class AccountsService {
          * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
          */
         xFbapiSignature: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
         /**
          * Maximum number of returned items.
          */
@@ -70,6 +76,7 @@ export class AccountsService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             query: {
                 'limit': limit,
@@ -86,6 +93,8 @@ export class AccountsService {
 
     /**
      * Get sub-account details
+     * Retrieves detailed information about a specific sub-account, including account metadata and optionally balance information if requested.
+     *
      * @returns Account List of sub-accounts.
      * @throws ApiError
      */
@@ -95,6 +104,7 @@ export class AccountsService {
         xFbapiTimestamp,
         xFbapiSignature,
         accountId,
+        xFbapiInitiatedBy,
         balances,
     }: {
         /**
@@ -119,6 +129,10 @@ export class AccountsService {
          */
         accountId: string,
         /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
+        /**
          * Flag to include the account balances in the response. Balances are not returned by default for account endpoints.
          */
         balances?: boolean,
@@ -134,6 +148,7 @@ export class AccountsService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             query: {
                 'balances': balances,

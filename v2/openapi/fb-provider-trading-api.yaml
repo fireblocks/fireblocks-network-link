@@ -28,6 +28,7 @@ x-header-params:
   X-FBAPI-SIGNATURE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-SIGNATURE' }
   X-FBAPI-NONCE: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-NONCE' }
   X-FBAPI-TIMESTAMP: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-TIMESTAMP' }
+  X-FBAPI-INITIATED-BY: { $ref: './fb-provider-api.yaml#/components/parameters/X-FBAPI-INITIATED-BY' }
 
 x-schemas:
   PositiveAmount: { $ref: './fb-provider-api.yaml#/components/schemas/PositiveAmount'}
@@ -43,6 +44,9 @@ paths:
     get:
       operationId: getBooks
       summary: List order books
+      description: >
+        Retrieves a list of all available trading order books supported by the provider.
+        Each book represents a trading pair where users can place buy and sell orders.
       tags: [ capabilities ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
@@ -101,12 +105,16 @@ paths:
     get:
       operationId: getBookDetails
       summary: Get details of an order book
+      description: >
+        Retrieves detailed information about a specific trading order book,
+        including book metadata, trading pair details, and current status.
       tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
         '200':
@@ -163,6 +171,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
@@ -244,6 +253,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
@@ -311,45 +321,6 @@ paths:
         '5XX':
           $ref: '#/x-responses/ErrorResponse'
 
-  /trading/books/{id}/history:
-    get:
-      operationId: getBookOrderHistory
-      summary: List fulfilled orders in an order book
-      description: >-
-        List fulfilled orders in an order book, sorted descending
-        by the fulfillment time.
-      tags: [ trading ]
-      parameters:
-        - $ref: '#/x-header-params/X-FBAPI-KEY'
-        - $ref: '#/x-header-params/X-FBAPI-NONCE'
-        - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
-        - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
-        - $ref: '#/x-query-params/PaginationLimit'
-        - $ref: '#/x-query-params/PaginationStartingAfter'
-        - $ref: '#/x-query-params/PaginationEndingBefore'
-        - $ref: '#/x-path-params/EntityIdPathParam'
-      responses:
-        '200':
-          description: List of fulfilled trades.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [ trades ]
-                properties:
-                  trades:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MarketTrade'
-        '400':
-          $ref: '#/x-responses/BadRequestResponse'
-        '401':
-          $ref: '#/x-responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/x-responses/ErrorResponse'
-        '5XX':
-          $ref: '#/x-responses/ErrorResponse'
-
   /accounts/{accountId}/trading/orders:
     get:
       operationId: getOrders
@@ -362,6 +333,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-query-params/PaginationLimit'
         - $ref: '#/x-query-params/PaginationStartingAfter'
         - $ref: '#/x-query-params/PaginationEndingBefore'
@@ -399,6 +371,7 @@ paths:
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
       requestBody:
         description: Order details
@@ -475,12 +448,16 @@ paths:
     get:
       operationId: getOrderDetails
       summary: Get trading order details
+      description: >
+        Retrieves detailed information about a specific trading order,
+        including order status, filled amounts, prices, and execution history.
       tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:
@@ -501,12 +478,16 @@ paths:
     delete:
       operationId: cancelOrder
       summary: Cancel an active trading order
+      description: >
+        Cancels an active trading order, removing it from the order book.
+        Only orders in pending or partially filled status can be cancelled.
       tags: [ trading ]
       parameters:
         - $ref: '#/x-header-params/X-FBAPI-KEY'
         - $ref: '#/x-header-params/X-FBAPI-NONCE'
         - $ref: '#/x-header-params/X-FBAPI-SIGNATURE'
         - $ref: '#/x-header-params/X-FBAPI-TIMESTAMP'
+        - $ref: '#/x-header-params/X-FBAPI-INITIATED-BY'
         - $ref: '#/x-path-params/SubAccountIdPathParam'
         - $ref: '#/x-path-params/EntityIdPathParam'
       responses:

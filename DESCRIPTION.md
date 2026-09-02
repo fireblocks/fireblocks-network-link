@@ -190,8 +190,20 @@ _Note_ that not all error codes need to be in use!
 # Changelog
 All notable changes to this project will be documented in this file. Dates are displayed in UTC.
 
+### v0.9.13
+> 17 August 2026
+* Added optional `uid` on the `/v1/accounts` response. This is the provider's native account identifier; Fireblocks persists it from the fundable account.
+
+### v0.9.12
+> 19 April 2026
+* Supporting Fraxtal on Mainnet.
+
+### v0.9.11
+> 10 February 2026
+* Supporting Canton on Mainnet and Testnet.
+
 ### v0.9.10
-> 32 March 2025
+> 1 April 2025
 * Supporting Kaia and Sonic networks on Mainnet.
 
 ### v0.9.9

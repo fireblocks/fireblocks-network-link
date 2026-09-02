@@ -8,7 +8,7 @@ import type { InternalTransfer } from './InternalTransfer';
 import type { OtherFiatTransfer } from './OtherFiatTransfer';
 import type { PeerAccountTransfer } from './PeerAccountTransfer';
 import type { PublicBlockchainTransaction } from './PublicBlockchainTransaction';
-import type { SwiftTransfer } from './SwiftTransfer';
+import type { WireTransfer } from './WireTransfer';
 
-export type Transfer = (PeerAccountTransfer | InternalTransfer | PublicBlockchainTransaction | IbanTransfer | SwiftTransfer | OtherFiatTransfer);
+export type Transfer = (PeerAccountTransfer | InternalTransfer | PublicBlockchainTransaction | IbanTransfer | WireTransfer | OtherFiatTransfer);
 

@@ -5,6 +5,7 @@
 
 import type { BusinessIdentificationInfo } from './BusinessIdentificationInfo';
 import type { PersonaIdentificationInfo } from './PersonaIdentificationInfo';
+import type { VaspInformation } from './VaspInformation';
 
 /**
  * An object that ensures the inclusion of either the originator or  beneficiary details for transactions.
@@ -19,5 +20,7 @@ export type ParticipantsIdentification = {
      * Information about the beneficiary of the transaction.
      */
     beneficiary?: (PersonaIdentificationInfo | BusinessIdentificationInfo);
+    originatingVasp?: VaspInformation;
+    beneficiaryVasp?: VaspInformation;
 };
 

@@ -7,7 +7,7 @@ import type { Blockchain } from './Blockchain';
 import type { CryptocurrencySymbol } from './CryptocurrencySymbol';
 
 export type NativeCryptocurrency = {
-    blockchain?: Blockchain;
+    blockchain: Blockchain;
     cryptocurrencySymbol: CryptocurrencySymbol;
     testAsset?: boolean;
 };

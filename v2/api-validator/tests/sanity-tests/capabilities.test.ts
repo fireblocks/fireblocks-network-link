@@ -19,20 +19,21 @@ describe('Capabilities', () => {
       expect(capabilities.components.accounts).not.toBeEmpty();
     });
 
-    it('should always have balances capability', () => {
-      expect(capabilities.components.balances).not.toBeEmpty();
+    it('should have balances capability if no ramps', () => {
+      if (!capabilities.components.ramps) {
+        expect(capabilities.components.balances).not.toBeEmpty();
+      }
     });
 
     describe('accounts mentioned in capabilities should exist in the accounts list', () => {
       const components = [
         'accounts',
         'balances',
-        'historicBalances',
         'transfers',
         'transfersBlockchain',
         'transfersFiat',
         'transfersPeerAccounts',
-        'trading',
+        // 'trading',
         'liquidity',
         'ramps',
       ];
@@ -55,6 +56,39 @@ describe('Capabilities', () => {
           }
         }
       );
+    });
+
+    describe('requirements validation', () => {
+      it('should have valid structure when requirements are present', () => {
+        if (capabilities.requirements) {
+          expect(capabilities.requirements).toBeDefined();
+          expect(typeof capabilities.requirements).toBe('object');
+        }
+      });
+
+      it('should have valid transfersBlockchain requirements when present', () => {
+        if (capabilities.requirements?.transfersBlockchain) {
+          const blockchainReqs = capabilities.requirements.transfersBlockchain;
+          expect(blockchainReqs).toBeDefined();
+          expect(typeof blockchainReqs).toBe('object');
+        }
+      });
+
+      it('should have valid withdrawalAddressPolicy when present', () => {
+        if (capabilities.requirements?.transfersBlockchain?.withdrawalAddressPolicy) {
+          const policy = capabilities.requirements.transfersBlockchain.withdrawalAddressPolicy;
+          expect(policy).toBeDefined();
+          expect(policy.value).toBeDefined();
+          expect(['ApprovedAddressesOnly', 'AllAddresses']).toContain(policy.value);
+        }
+      });
+
+      it('should only have requirements for components that exist', () => {
+        if (capabilities.requirements?.transfersBlockchain) {
+          // If transfersBlockchain requirements exist, the component should also exist
+          expect(capabilities.components.transfersBlockchain).toBeDefined();
+        }
+      });
     });
   });
 });

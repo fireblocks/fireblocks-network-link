@@ -99,6 +99,8 @@ export class CollateralService {
 
     /**
      * Get list of collateral account links
+     * Retrieves all collateral account links associated with the specified account. Returns details about link status, eligible assets, and collateral configuration.
+     *
      * @returns any List of collateral account links
      * @throws ApiError
      */
@@ -257,6 +259,8 @@ export class CollateralService {
 
     /**
      * Get list of collateral account deposit addresses
+     * Retrieves all registered deposit addresses for the specified collateral account. Can be filtered by asset ID or cryptocurrency symbol to get addresses for specific assets.
+     *
      * @returns CollateralDepositAddresses List of collateral deposit addresses
      * @throws ApiError
      */
@@ -354,6 +358,8 @@ export class CollateralService {
 
     /**
      * Get details of a specific deposit address in a collateral account.
+     * Retrieves detailed information about a specific deposit address within a collateral account, including the address details and recovery account configuration.
+     *
      * @returns CollateralAssetAddress Specific collateral deposit address
      * @throws ApiError
      */
@@ -579,6 +585,8 @@ export class CollateralService {
 
     /**
      * Get list of collateral account deposit transactions sorted by creation time
+     * Retrieves a paginated list of all deposit transactions for the specified collateral account. Transactions are sorted by creation time and include status information and approval details.
+     *
      * @returns CollateralDepositTransactionsResponse List of collateral deposit transactions
      * @throws ApiError
      */
@@ -664,6 +672,8 @@ export class CollateralService {
 
     /**
      * Get a collateral account deposit transaction details
+     * Retrieves detailed information about a specific collateral deposit transaction, including transaction status, approval details, and processing information.
+     *
      * @returns CollateralDepositTransactionResponse A collateral deposit transaction details
      * @throws ApiError
      */
@@ -889,6 +899,8 @@ export class CollateralService {
 
     /**
      * Get list of collateral withdrawal transactions sorted by creation time
+     * Retrieves a paginated list of all withdrawal transactions for the specified collateral account. Transactions are sorted by creation time and include status, approval details, and settlement information.
+     *
      * @returns CollateralWithdrawalTransactions List of collateral withdrawal transactions
      * @throws ApiError
      */
@@ -974,6 +986,8 @@ export class CollateralService {
 
     /**
      * Get a collateral withdrawal transaction details
+     * Retrieves detailed information about a specific collateral withdrawal transaction, including transaction status, approval details, settlement information, and rejection reasons if applicable.
+     *
      * @returns CollateralWithdrawalTransaction A collateral withdrawal transaction details
      * @throws ApiError
      */
@@ -1188,6 +1202,8 @@ export class CollateralService {
 
     /**
      * Get a settlement details
+     * Retrieves detailed information about a specific settlement state for a collateral account, including withdrawal and deposit transaction details, settlement status, and completion information.
+     *
      * @returns SettlementState A specific settlement details
      * @throws ApiError
      */

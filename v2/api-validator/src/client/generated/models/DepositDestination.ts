@@ -7,7 +7,6 @@ import type { IbanAddress } from './IbanAddress';
 import type { InternalTransferAddress } from './InternalTransferAddress';
 import type { PeerAccountTransferAddress } from './PeerAccountTransferAddress';
 import type { PublicBlockchainAddress } from './PublicBlockchainAddress';
-import type { SwiftAddress } from './SwiftAddress';
 
-export type DepositDestination = (PublicBlockchainAddress | IbanAddress | SwiftAddress | PeerAccountTransferAddress | InternalTransferAddress);
+export type DepositDestination = (PublicBlockchainAddress | IbanAddress | PeerAccountTransferAddress | InternalTransferAddress);
 

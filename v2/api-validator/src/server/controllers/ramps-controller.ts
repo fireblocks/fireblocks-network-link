@@ -1,27 +1,55 @@
+import { randomUUID } from 'crypto';
 import { JSONSchemaFaker } from 'json-schema-faker';
 import _ from 'lodash';
-import { fakeSchemaObject } from '../../schemas';
-import { AssetsController } from './assets-controller';
-import { Repository } from './repository';
 import {
+  AchAddress,
+  AchCapability,
   BridgeProperties,
+  ChapsAddress,
+  ChapsCapability,
+  FpsUkAddress,
+  FpsUkCapability,
+  EuropeanSEPAAddress,
+  EuropeanSEPACapability,
+  FiatAddress,
+  FiatCapability,
+  FiatPaymentInstruction,
   IbanAddress,
   IbanCapability,
+  InteracAddress,
+  InteracAddressPaymentInstruction,
+  InteracCapability,
+  LocalBankTransferAddress,
+  LocalBankTransferAddressPaymentInstruction,
+  LocalBankTransferCapability,
+  MobileMoneyAddressOffRamp,
+  MobileMoneyAddressPaymentInstruction,
+  MobileMoneyCapability,
   OffRampProperties,
   OnRampProperties,
+  PayIdAddress,
+  PayIdCapability,
+  PixAddress,
+  PixAddressPaymentInstruction,
+  PixCapability,
   PublicBlockchainAddress,
   Ramp,
   RampMethod,
   RampRequest,
   RampStatus,
-  SwiftAddress,
+  SpeiAddress,
+  SpeiCapability,
+  WireAddress,
+  WireCapability,
 } from '../../client/generated';
-import { randomUUID } from 'crypto';
 import { XComError } from '../../error';
+import { fakeSchemaObject } from '../../schemas';
+import { AssetsController } from './assets-controller';
+import { Repository } from './repository';
 import { UnknownAssetError } from './withdrawal-controller';
 
 const RAMPS_COUNT = 10;
-const RAMP_CAPABILITIES_COUNT = 5;
+const RAMP_CAPABILITIES_COUNT = 10;
 type Order = 'asc' | 'desc';
 
 export class RampNotFoundError extends XComError {
@@ -36,6 +64,28 @@ export class UnsupportedRampMethod extends XComError {
   }
 }
 
+export class UnsupportedBaseAssetError extends XComError {
+  constructor() {
+    super('The base asset is not supported by the provider');
+  }
+}
+
+export class UnsupportedQuoteAssetError extends XComError {
+  constructor() {
+    super('The quote asset is not supported by the provider');
+  }
+}
+
+export class AmountBelowMinimumError extends XComError {
+  constructor() {
+    super('The requested amount is below the provider minimum');
+  }
+}
+
+// Sentinel asset IDs used by tests to trigger specific error responses
+export const SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID = 'unsupported-source-asset-sentinel';
+export const SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID = 'unsupported-destination-asset-sentinel';
+
 export class RampsController {
   private readonly rampsRepository = new Repository<Ramp>();
   private readonly rampMethodRepository = new Repository<RampMethod>();
@@ -49,7 +99,7 @@ export class RampsController {
     }
 
     const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
-    injectKnownAssetIdsToRampsAssetObjects(knownAssetIds, this.rampsRepository);
+    injectKnownAssetIdsToRamps(knownAssetIds, this.rampsRepository);
   }
 
   private loadRampMethods() {
@@ -60,7 +110,7 @@ export class RampsController {
       this.rampMethodRepository.create(capability);
     }
     const knownAssetIds = AssetsController.getAllAdditionalAssets().map((a) => a.id);
-    injectKnownAssetIdsToRampsAssetObjects(knownAssetIds, this.rampMethodRepository);
+    injectKnownAssetIdsToRampsMethods(knownAssetIds, this.rampMethodRepository);
   }
 
   private static generateRampMethods() {
@@ -75,16 +125,50 @@ export class RampsController {
 
   private validateRampRequest(ramp: RampRequest) {
     if (
+      'assetId' in ramp.from.asset &&
+      ramp.from.asset.assetId === SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID
+    ) {
+      throw new UnsupportedBaseAssetError();
+    }
+
+    if (
+      'assetId' in ramp.to.asset &&
+      ramp.to.asset.assetId === SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID
+    ) {
+      throw new UnsupportedQuoteAssetError();
+    }
+
+    if (parseFloat(ramp.amount) <= 0) {
+      throw new AmountBelowMinimumError();
+    }
+
+    if (
       !AssetsController.isKnownAsset(ramp.from.asset) ||
-      !AssetsController.isKnownAsset(ramp.to.asset) ||
-      !AssetsController.isKnownAsset(ramp.recipient.asset)
+      !AssetsController.isKnownAsset(ramp.to.asset)
     ) {
       throw new UnknownAssetError();
     }
 
-    const capability = this.rampMethodRepository.findBy(
-      (c) => _.isEqual(c.from, ramp.from) && _.isEqual(c.to, ramp.to)
-    );
+    const capability = this.rampMethodRepository.findBy((c) => {
+      const rampFrom: any = {
+        asset: ramp.from.asset,
+      };
+
+      if ('transferMethod' in ramp.from) {
+        rampFrom.transferMethod = ramp.from.transferMethod;
+      }
+
+      if ('type' in ramp.from) {
+        rampFrom.type = ramp.from.type;
+      }
+
+      const rampTo: any = {
+        asset: ramp.to.asset,
+        transferMethod: ramp.to.transferMethod,
+      };
+
+      return _.isEqual(c.from, rampFrom) && _.isEqual(c.to, rampTo);
+    });
     if (!capability) {
       throw new UnsupportedRampMethod();
     }
@@ -112,7 +196,12 @@ export class RampsController {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { idempotencyKey, ...rampProps } = ramp;
     let paymentInstructions;
-    if (
+    let status = RampStatus.PENDING;
+
+    if ('type' in ramp.from && ramp.from.type === 'Prefunded') {
+      paymentInstructions = undefined;
+      status = RampStatus.PROCESSING;
+    } else if (
       ramp.type === OffRampProperties.type.OFF_RAMP ||
       ramp.type === BridgeProperties.type.BRIDGE
     ) {
@@ -121,10 +210,9 @@ export class RampsController {
         asset: ramp.from.asset,
       };
     } else if (ramp.type === OnRampProperties.type.ON_RAMP) {
+      const transferMethod = getTransferMethod((ramp.from as FiatCapability)?.transferMethod);
       paymentInstructions = {
-        ...(ramp.from.transferMethod === IbanCapability.transferMethod.IBAN
-          ? (fakeSchemaObject('IbanAddress') as IbanAddress)
-          : (fakeSchemaObject('SwiftAddress') as SwiftAddress)),
+        ...transferMethod,
         asset: ramp.from.asset,
       };
     } else {
@@ -137,17 +225,56 @@ export class RampsController {
       paymentInstructions,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      status: RampStatus.PENDING,
-      fees: {},
+      status,
+      expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
     };
     this.rampsRepository.create(newRamp);
     return newRamp;
   }
 }
 
-function injectKnownAssetIdsToRampsAssetObjects(
+function getTransferMethod(
+  transferMethod: FiatCapability['transferMethod']
+): FiatPaymentInstruction {
+  switch (transferMethod) {
+    case IbanCapability.transferMethod.IBAN:
+      return fakeSchemaObject('IbanAddress') as IbanAddress;
+    case AchCapability.transferMethod.ACH:
+      return fakeSchemaObject('AchAddress') as AchAddress;
+    case WireCapability.transferMethod.WIRE:
+      return fakeSchemaObject('WireAddress') as WireAddress;
+    case SpeiCapability.transferMethod.SPEI:
+      return fakeSchemaObject('SpeiAddress') as SpeiAddress;
+    case PixCapability.transferMethod.PIX:
+      return fakeSchemaObject('PixAddressPaymentInstruction') as PixAddressPaymentInstruction;
+    case ChapsCapability.transferMethod.CHAPS:
+      return fakeSchemaObject('ChapsAddress') as ChapsAddress;
+    case FpsUkCapability.transferMethod.FPS_UK:
+      return fakeSchemaObject('FpsUkAddress') as FpsUkAddress;
+    case EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA:
+      return fakeSchemaObject('EuropeanSEPAAddress') as EuropeanSEPAAddress;
+    case LocalBankTransferCapability.transferMethod.LBT:
+      return fakeSchemaObject(
+        'LocalBankTransferAddressPaymentInstruction'
+      ) as LocalBankTransferAddressPaymentInstruction;
+    case MobileMoneyCapability.transferMethod.MOMO:
+      return fakeSchemaObject(
+        'MobileMoneyAddressPaymentInstruction'
+      ) as MobileMoneyAddressPaymentInstruction;
+    case PayIdCapability.transferMethod.PAY_ID:
+      return fakeSchemaObject('PayIdAddress') as PayIdAddress;
+    case InteracCapability.transferMethod.INTERAC:
+      return fakeSchemaObject(
+        'InteracAddressPaymentInstruction'
+      ) as InteracAddressPaymentInstruction;
+    default:
+      throw new XComError('Invalid transfer method', { transferMethod });
+  }
+}
+
+function injectKnownAssetIdsToRampsMethods(
   knownAssetIds: string[],
-  repository: Repository<Ramp> | Repository<RampMethod>
+  repository: Repository<RampMethod>
 ) {
   for (const { id } of repository.list()) {
     const ramp = repository.find(id);
@@ -161,6 +288,38 @@ function injectKnownAssetIdsToRampsAssetObjects(
     }
     if ('assetId' in ramp.to.asset) {
       ramp.to.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+  }
+}
+
+function injectKnownAssetIdsToRamps(knownAssetIds: string[], repository: Repository<Ramp>) {
+  for (const { id } of repository.list()) {
+    const ramp = repository.find(id);
+    if (!ramp) {
+      throw new Error('Not possible!');
+    }
+
+    if ('assetId' in ramp.from.asset) {
+      ramp.from.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+    if ('assetId' in ramp.to.asset) {
+      ramp.to.asset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+    }
+
+    if (ramp.estimatedFees) {
+      for (const fee of ramp.estimatedFees) {
+        if ('assetId' in fee.feeAsset) {
+          fee.feeAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+        }
+      }
+    }
+
+    if (ramp.receipt?.actualFees) {
+      for (const fee of ramp.receipt.actualFees) {
+        if ('assetId' in fee.feeAsset) {
+          fee.feeAsset.assetId = JSONSchemaFaker.random.pick(knownAssetIds);
+        }
+      }
     }
   }
 }

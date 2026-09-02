@@ -167,6 +167,7 @@
       {
         "id": "7b959a94-e3fb-4411-9446-e38bc1b259fa",
         "asset": {
+          "blockchain": "Cardano",
           "cryptocurrencySymbol": "ADA"
         },
         "availableAmount": "1138.9121943",
@@ -175,6 +176,7 @@
       {
         "id": "c94212fc-774d-4b8e-a6ea-83c241a3f9d3",
         "asset": {
+          "blockchain": "Algorand",
           "cryptocurrencySymbol": "ALGO"
         },
         "availableAmount": "823301371",
@@ -183,7 +185,8 @@
       {
         "id": "3617057b-d274-4862-9f3f-e69dbbcfac6b",
         "asset": {
-          "cryptocurrencySymbol": "ARB"
+          "blockchain": "Arbitrum",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "9712.582533",
         "lockedAmount": "44645487446"
@@ -191,6 +194,7 @@
       {
         "id": "fcafec34-a922-4b2c-a12c-b34ebed850c1",
         "asset": {
+          "blockchain": "Astar",
           "cryptocurrencySymbol": "ASTR"
         },
         "availableAmount": "70378604",
@@ -199,6 +203,7 @@
       {
         "id": "4eaac335-26cf-41d8-9c28-82c25a25d2db",
         "asset": {
+          "blockchain": "Cosmos",
           "cryptocurrencySymbol": "ATOM"
         },
         "availableAmount": "37576498",
@@ -207,6 +212,7 @@
       {
         "id": "26bff838-6fc6-4b21-af5a-7411143b7aa0",
         "asset": {
+          "blockchain": "Aurora",
           "cryptocurrencySymbol": "AURORA"
         },
         "availableAmount": "03.25120546036",
@@ -215,6 +221,7 @@
       {
         "id": "ce3c9966-0a59-4b28-8ec1-d65fcf5da98f",
         "asset": {
+          "blockchain": "Avalanche",
           "cryptocurrencySymbol": "AVAX"
         },
         "availableAmount": "24802808203.8",
@@ -223,6 +230,7 @@
       {
         "id": "4784ffd8-3a94-4891-b493-c2e5b175092c",
         "asset": {
+          "blockchain": "Axelar",
           "cryptocurrencySymbol": "AXL"
         },
         "availableAmount": "673.601",
@@ -231,7 +239,8 @@
       {
         "id": "84152015-3b44-4eea-9870-e3276d90aea9",
         "asset": {
-          "cryptocurrencySymbol": "BASE"
+          "blockchain": "Base",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "756739.601323725",
         "lockedAmount": "9298388540"
@@ -239,6 +248,7 @@
       {
         "id": "f9d5b6c5-895e-421b-b4b2-f78d22e78914",
         "asset": {
+          "blockchain": "Bitcoin Cash",
           "cryptocurrencySymbol": "BCH"
         },
         "availableAmount": "11119",
@@ -247,6 +257,7 @@
       {
         "id": "07bef7fc-e02d-4b93-aff4-7340ccf88f7d",
         "asset": {
+          "blockchain": "Bitcoin Cash ABC",
           "cryptocurrencySymbol": "BCHA"
         },
         "availableAmount": "69",
@@ -255,6 +266,7 @@
       {
         "id": "ddbf4722-824e-4069-ac47-c074887c3e68",
         "asset": {
+          "blockchain": "Bitkub Chain",
           "cryptocurrencySymbol": "BITKUB"
         },
         "availableAmount": "6218213010",
@@ -263,6 +275,7 @@
       {
         "id": "15b2222f-eb5b-415e-b0d7-1a7f145b79e3",
         "asset": {
+          "blockchain": "BNB",
           "cryptocurrencySymbol": "BNB"
         },
         "availableAmount": "72.14",
@@ -271,6 +284,7 @@
       {
         "id": "8bd09afc-0f1a-43ed-867b-e0fd87494e03",
         "asset": {
+          "blockchain": "Bitcoin SV",
           "cryptocurrencySymbol": "BSV"
         },
         "availableAmount": "5616574034",
@@ -279,6 +293,7 @@
       {
         "id": "504e2a8d-69b5-45e0-9472-637f3dfa8205",
         "asset": {
+          "blockchain": "Bitcoin",
           "cryptocurrencySymbol": "BTC"
         },
         "availableAmount": "92",
@@ -287,6 +302,7 @@
       {
         "id": "242aeae5-c3ec-4a64-8bd2-d1b69cf39d62",
         "asset": {
+          "blockchain": "Canto",
           "cryptocurrencySymbol": "CANTO"
         },
         "availableAmount": "48",
@@ -295,6 +311,7 @@
       {
         "id": "35c337a5-8105-403e-ac3f-e74864f11059",
         "asset": {
+          "blockchain": "Celestia",
           "cryptocurrencySymbol": "CELESTIA"
         },
         "availableAmount": "96758594.54160277846",
@@ -303,6 +320,7 @@
       {
         "id": "585229ea-b592-42f5-91b8-f6a1b73b0392",
         "asset": {
+          "blockchain": "Celo",
           "cryptocurrencySymbol": "CELO"
         },
         "availableAmount": "233375235",
@@ -311,6 +329,7 @@
       {
         "id": "34d50d3b-5b0c-4b4f-a111-a53e83e04a7b",
         "asset": {
+          "blockchain": "Chiliz Legacy Chain",
           "cryptocurrencySymbol": "CHZ"
         },
         "availableAmount": "87803014303.297225",
@@ -319,6 +338,7 @@
       {
         "id": "5dcdf201-67d7-4c9f-8ff2-f80a0f378ca3",
         "asset": {
+          "blockchain": "Chiliz Chain",
           "cryptocurrencySymbol": "CHZ2"
         },
         "availableAmount": "246784187",
@@ -327,6 +347,7 @@
       {
         "id": "4aa7021d-8c0d-48bf-bd1a-a37425c0959b",
         "asset": {
+          "blockchain": "Cortex",
           "cryptocurrencySymbol": "CTXC"
         },
         "availableAmount": "38372.1107283768",
@@ -335,6 +356,7 @@
       {
         "id": "b2beb087-4bd6-40db-8d92-004002906259",
         "asset": {
+          "blockchain": "Dash",
           "cryptocurrencySymbol": "DASH"
         },
         "availableAmount": "2511532714",
@@ -343,6 +365,7 @@
       {
         "id": "324119a1-7189-4e31-94ed-8c7c19cbdcec",
         "asset": {
+          "blockchain": "Dogecoin",
           "cryptocurrencySymbol": "DOGE"
         },
         "availableAmount": "780.03548496463",
@@ -351,6 +374,7 @@
       {
         "id": "102acfcc-69b8-49e0-9030-5d8e70090052",
         "asset": {
+          "blockchain": "Polkadot",
           "cryptocurrencySymbol": "DOT"
         },
         "availableAmount": "297438994",
@@ -359,6 +383,7 @@
       {
         "id": "5f5259e5-3f02-41fa-be17-14568d3b441e",
         "asset": {
+          "blockchain": "DYDX",
           "cryptocurrencySymbol": "DYDX"
         },
         "availableAmount": "13",
@@ -367,6 +392,7 @@
       {
         "id": "1ca8bc8b-c59d-4204-a9d9-0357227e2c84",
         "asset": {
+          "blockchain": "EOS",
           "cryptocurrencySymbol": "EOS"
         },
         "availableAmount": "27680869",
@@ -375,6 +401,7 @@
       {
         "id": "3d55eaa6-d50e-440d-ad4e-4e6f5bc24777",
         "asset": {
+          "blockchain": "Ethereum Classic",
           "cryptocurrencySymbol": "ETC"
         },
         "availableAmount": "4",
@@ -383,6 +410,7 @@
       {
         "id": "e3253c89-e0e3-47f1-b78e-d9c4b028f36c",
         "asset": {
+          "blockchain": "Ethereum",
           "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "6432545340.08974550782",
@@ -391,6 +419,7 @@
       {
         "id": "8e156725-33bd-4257-9679-44cc7102d72d",
         "asset": {
+          "blockchain": "EthereumPoW",
           "cryptocurrencySymbol": "ETHW"
         },
         "availableAmount": "74846.2571642",
@@ -399,6 +428,7 @@
       {
         "id": "9faf32d2-051e-46a9-97d1-a996be2d0d29",
         "asset": {
+          "blockchain": "Evmos",
           "cryptocurrencySymbol": "EVMOS"
         },
         "availableAmount": "6634155328",
@@ -408,6 +438,7 @@
       {
         "id": "2e11a319-0319-41f4-b08b-100d96b46c85",
         "asset": {
+          "blockchain": "Flare",
           "cryptocurrencySymbol": "FLR"
         },
         "availableAmount": "897",
@@ -417,6 +448,7 @@
       {
         "id": "25c2a2a6-c0e7-4912-9bdf-8fafa9d45ebe",
         "asset": {
+          "blockchain": "Fantom Opera",
           "cryptocurrencySymbol": "FTM"
         },
         "availableAmount": "1360572",
@@ -425,6 +457,7 @@
       {
         "id": "fd65bf15-190f-4a7e-9aae-f5e338b65931",
         "asset": {
+          "blockchain": "Moonbeam",
           "cryptocurrencySymbol": "GLMR"
         },
         "availableAmount": "3929994718",
@@ -433,6 +466,7 @@
       {
         "id": "59f57d39-3eb7-40d5-a337-4d24a85203a5",
         "asset": {
+          "blockchain": "Hedera",
           "cryptocurrencySymbol": "HBAR"
         },
         "availableAmount": "3",
@@ -441,6 +475,7 @@
       {
         "id": "26259049-2abd-4d01-b262-4e7c1392fb44",
         "asset": {
+          "blockchain": "HT Chain",
           "cryptocurrencySymbol": "HT"
         },
         "availableAmount": "015334577",
@@ -449,6 +484,7 @@
       {
         "id": "32de4e45-f66b-413e-ad0d-9bec64f3e52c",
         "asset": {
+          "blockchain": "KAVA",
           "cryptocurrencySymbol": "KAVA"
         },
         "availableAmount": "521363157",
@@ -457,6 +493,7 @@
       {
         "id": "bdfdf84a-96ab-4fc2-abff-4305d43b72de",
         "asset": {
+          "blockchain": "Kusama",
           "cryptocurrencySymbol": "KSM"
         },
         "availableAmount": "1196273596.22780747856",
@@ -465,6 +502,7 @@
       {
         "id": "b6e11320-de01-4c0d-9f66-82d676e405da",
         "asset": {
+          "blockchain": "Litecoin",
           "cryptocurrencySymbol": "LTC"
         },
         "availableAmount": "9950229.505597",
@@ -473,6 +511,7 @@
       {
         "id": "abb11264-3dd3-49ad-9b15-3a5e4f13beb7",
         "asset": {
+          "blockchain": "Terra Classic",
           "cryptocurrencySymbol": "LUNA"
         },
         "availableAmount": "0623636056",
@@ -481,6 +520,7 @@
       {
         "id": "cdb65f28-d3fb-4f59-9f17-dcc6e434664f",
         "asset": {
+          "blockchain": "Terra 2.0",
           "cryptocurrencySymbol": "LUNA2"
         },
         "availableAmount": "224.235388587",
@@ -489,6 +529,7 @@
       {
         "id": "0339d770-4a2d-42ea-9ef2-9aa01156927a",
         "asset": {
+          "blockchain": "Polygon PoS",
           "cryptocurrencySymbol": "MATIC"
         },
         "availableAmount": "54799970",
@@ -497,6 +538,7 @@
       {
         "id": "b5561810-77b7-415d-84d6-e25f978cd86b",
         "asset": {
+          "blockchain": "Moonriver",
           "cryptocurrencySymbol": "MOVR"
         },
         "availableAmount": "864124",
@@ -505,6 +547,7 @@
       {
         "id": "f468d947-e452-45d0-a21b-347d14903d09",
         "asset": {
+          "blockchain": "NEAR Protocol",
           "cryptocurrencySymbol": "NEAR"
         },
         "availableAmount": "16080655079.16560",
@@ -513,6 +556,7 @@
       {
         "id": "94159fca-0945-4640-ab9a-b7a82ff04ea1",
         "asset": {
+          "blockchain": "Oasys",
           "cryptocurrencySymbol": "OAS"
         },
         "availableAmount": "66",
@@ -521,7 +565,8 @@
       {
         "id": "c60937b7-2dea-4a5b-a53d-6ea37a4d1784",
         "asset": {
-          "cryptocurrencySymbol": "OPT"
+          "blockchain": "Optimism",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "8.31",
         "lockedAmount": "117676225"
@@ -529,6 +574,7 @@
       {
         "id": "8a0a6f37-6f28-41ac-a9d9-d4cd0f31fc53",
         "asset": {
+          "blockchain": "Osmosis",
           "cryptocurrencySymbol": "OSMO"
         },
         "availableAmount": "41141.00467597",
@@ -537,6 +583,7 @@
       {
         "id": "85094c05-853b-4287-bb65-9c43e34da242",
         "asset": {
+          "blockchain": "Palm",
           "cryptocurrencySymbol": "PALM"
         },
         "availableAmount": "469290.2",
@@ -545,6 +592,7 @@
       {
         "id": "7d6f1b4e-d47a-4d56-a425-a213536d2920",
         "asset": {
+          "blockchain": "Ronin",
           "cryptocurrencySymbol": "RON"
         },
         "availableAmount": "91267.415",
@@ -553,6 +601,7 @@
       {
         "id": "7cd51bfb-bdd9-4375-90f9-434a51596e73",
         "asset": {
+          "blockchain": "RSK",
           "cryptocurrencySymbol": "RSK"
         },
         "availableAmount": "17543",
@@ -561,6 +610,7 @@
       {
         "id": "7ac6f8b1-fd1b-4862-8434-6a8d942dd176",
         "asset": {
+          "blockchain": "Shimmer",
           "cryptocurrencySymbol": "SMR"
         },
         "availableAmount": "3577693380",
@@ -569,6 +619,7 @@
       {
         "id": "0cea44f3-5073-4688-9667-8949ee7e3d26",
         "asset": {
+          "blockchain": "Solana",
           "cryptocurrencySymbol": "SOL"
         },
         "availableAmount": "9057948743",
@@ -577,6 +628,7 @@
       {
         "id": "29b1b19b-23ec-41ad-8f23-3cbbcfa1cae0",
         "asset": {
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "07895089400.1",
@@ -585,6 +637,7 @@
       {
         "id": "7d366081-f4f6-4ae4-b0db-480a896bfc49",
         "asset": {
+          "blockchain": "SX Network",
           "cryptocurrencySymbol": "SXNETWORK"
         },
         "availableAmount": "61.3355158",
@@ -593,6 +646,7 @@
       {
         "id": "46dacaf7-ad9c-4711-ac8b-6c6c06503046",
         "asset": {
+          "blockchain": "TokenEX",
           "cryptocurrencySymbol": "TKX"
         },
         "availableAmount": "316",
@@ -601,6 +655,7 @@
       {
         "id": "3faa9c40-d4a5-4f4e-a3eb-5a378f684c0f",
         "asset": {
+          "blockchain": "TRON",
           "cryptocurrencySymbol": "TRX"
         },
         "availableAmount": "8449661",
@@ -609,6 +664,7 @@
       {
         "id": "8ea10f3b-022d-4cd4-bfbe-47ebdfb89b66",
         "asset": {
+          "blockchain": "Velas",
           "cryptocurrencySymbol": "VLX"
         },
         "availableAmount": "3299",
@@ -617,6 +673,7 @@
       {
         "id": "a1e0b997-f4c2-4c0e-ade1-27134d685119",
         "asset": {
+          "blockchain": "WEMIX",
           "cryptocurrencySymbol": "WEMIX"
         },
         "availableAmount": "552",
@@ -625,6 +682,7 @@
       {
         "id": "8ce8bcd5-3f30-4750-9f70-8c57695e21a0",
         "asset": {
+          "blockchain": "XDB Chain",
           "cryptocurrencySymbol": "XDB"
         },
         "availableAmount": "386725.74371843",
@@ -633,6 +691,7 @@
       {
         "id": "1f4d8caf-6983-4884-974b-b5baa266b110",
         "asset": {
+          "blockchain": "XinFin Network",
           "cryptocurrencySymbol": "XDC"
         },
         "availableAmount": "31003639.048",
@@ -641,6 +700,7 @@
       {
         "id": "a4c49653-77b1-4e43-995f-bde81e100654",
         "asset": {
+          "blockchain": "eCash",
           "cryptocurrencySymbol": "XEC"
         },
         "availableAmount": "1011326535",
@@ -649,6 +709,7 @@
       {
         "id": "f23e7ea9-437f-455a-a342-b100811e916d",
         "asset": {
+          "blockchain": "NEM NIS1",
           "cryptocurrencySymbol": "XEM"
         },
         "availableAmount": "1",
@@ -657,6 +718,7 @@
       {
         "id": "bc2a3c6e-406d-4818-a507-638899eec673",
         "asset": {
+          "blockchain": "Stellar",
           "cryptocurrencySymbol": "XLM"
         },
         "availableAmount": "14.3901464572",
@@ -665,6 +727,7 @@
       {
         "id": "18b0c472-f005-4bca-af65-cef4b87df0c2",
         "asset": {
+          "blockchain": "XRP",
           "cryptocurrencySymbol": "XRP"
         },
         "availableAmount": "005684877",
@@ -673,6 +736,7 @@
       {
         "id": "995c660a-b77f-4aa0-8cc0-9f457c8e4a66",
         "asset": {
+          "blockchain": "Tezos",
           "cryptocurrencySymbol": "XTZ"
         },
         "availableAmount": "645946",
@@ -681,6 +745,7 @@
       {
         "id": "3036d8ac-c4a1-49bc-919d-2a5f4a6149db",
         "asset": {
+          "blockchain": "ZCash",
           "cryptocurrencySymbol": "ZEC"
         },
         "availableAmount": "40061",
@@ -3153,6 +3218,7 @@
       {
         "id": "dc662581-42d3-4128-8454-3ce4bdb44329",
         "asset": {
+          "blockchain": "Cardano",
           "cryptocurrencySymbol": "ADA"
         },
         "availableAmount": "54604.0132",
@@ -3161,6 +3227,7 @@
       {
         "id": "5cfed176-b745-4759-9611-6b0b699f1422",
         "asset": {
+          "blockchain": "Algorand",
           "cryptocurrencySymbol": "ALGO"
         },
         "availableAmount": "795.608",
@@ -3169,7 +3236,8 @@
       {
         "id": "e070e24a-bce9-4beb-ab5d-e866f88dd9a1",
         "asset": {
-          "cryptocurrencySymbol": "ARB"
+          "blockchain": "Arbitrum",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "9.81670777",
         "lockedAmount": "1"
@@ -3177,6 +3245,7 @@
       {
         "id": "d9094015-e9dc-42cf-8523-866c2e4910b1",
         "asset": {
+          "blockchain": "Astar",
           "cryptocurrencySymbol": "ASTR"
         },
         "availableAmount": "9867902",
@@ -3185,6 +3254,7 @@
       {
         "id": "6c1412bb-282e-499e-ba85-9cb26d95862c",
         "asset": {
+          "blockchain": "Cosmos",
           "cryptocurrencySymbol": "ATOM"
         },
         "availableAmount": "941.4761593",
@@ -3193,6 +3263,7 @@
       {
         "id": "ebff7ab6-0832-4fbc-ba4d-e91cfb9ed6a9",
         "asset": {
+          "blockchain": "Aurora",
           "cryptocurrencySymbol": "AURORA"
         },
         "availableAmount": "49423444313",
@@ -3201,6 +3272,7 @@
       {
         "id": "99dacadb-2591-4f31-a8e9-bcfd8a0a2692",
         "asset": {
+          "blockchain": "Avalanche",
           "cryptocurrencySymbol": "AVAX"
         },
         "availableAmount": "993.3",
@@ -3209,6 +3281,7 @@
       {
         "id": "f567a2d1-cb51-4b34-87f3-4ec2cc0fffbb",
         "asset": {
+          "blockchain": "Axelar",
           "cryptocurrencySymbol": "AXL"
         },
         "availableAmount": "018.358951645",
@@ -3217,7 +3290,8 @@
       {
         "id": "08e63b11-4bef-40e6-b837-a35a5e6a2470",
         "asset": {
-          "cryptocurrencySymbol": "BASE"
+          "blockchain": "Base",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "259",
         "lockedAmount": "5358673"
@@ -3225,6 +3299,7 @@
       {
         "id": "3e186bc0-ac76-4414-b31a-f82ad7f2b614",
         "asset": {
+          "blockchain": "Bitcoin Cash",
           "cryptocurrencySymbol": "BCH"
         },
         "availableAmount": "943401.91445325",
@@ -3233,6 +3308,7 @@
       {
         "id": "21ab4675-a03b-4957-a53a-f0a2b91b008b",
         "asset": {
+          "blockchain": "Bitcoin Cash ABC",
           "cryptocurrencySymbol": "BCHA"
         },
         "availableAmount": "3584132.2422980178",
@@ -3241,6 +3317,7 @@
       {
         "id": "7d10928a-8837-43a5-899c-6c13d4b2558f",
         "asset": {
+          "blockchain": "Bitkub Chain",
           "cryptocurrencySymbol": "BITKUB"
         },
         "availableAmount": "485952323",
@@ -3249,6 +3326,7 @@
       {
         "id": "f8e7fff9-b4f5-4a25-9b0d-f7f1c64e436a",
         "asset": {
+          "blockchain": "BNB",
           "cryptocurrencySymbol": "BNB"
         },
         "availableAmount": "488",
@@ -3257,6 +3335,7 @@
       {
         "id": "4fc5a9eb-3d76-4c59-876d-9e7801689a09",
         "asset": {
+          "blockchain": "Bitcoin SV",
           "cryptocurrencySymbol": "BSV"
         },
         "availableAmount": "68752714",
@@ -3265,6 +3344,7 @@
       {
         "id": "337b1426-5f21-4f84-b779-979b71e7156a",
         "asset": {
+          "blockchain": "Bitcoin",
           "cryptocurrencySymbol": "BTC"
         },
         "availableAmount": "802005494",
@@ -3273,6 +3353,7 @@
       {
         "id": "86ee4af0-8529-479d-a8b1-6452d1ccd883",
         "asset": {
+          "blockchain": "Canto",
           "cryptocurrencySymbol": "CANTO"
         },
         "availableAmount": "61712255",
@@ -3281,6 +3362,7 @@
       {
         "id": "567fd8bf-360f-459a-b2a6-a3ec12e876a3",
         "asset": {
+          "blockchain": "Celestia",
           "cryptocurrencySymbol": "CELESTIA"
         },
         "availableAmount": "264983.43",
@@ -3289,6 +3371,7 @@
       {
         "id": "f69e1a40-5c9b-4866-b365-9c6e8202d4f4",
         "asset": {
+          "blockchain": "Celo",
           "cryptocurrencySymbol": "CELO"
         },
         "availableAmount": "1516069064",
@@ -3297,6 +3380,7 @@
       {
         "id": "8ee0a9b3-605b-41a7-b9a7-34217fe69daf",
         "asset": {
+          "blockchain": "Chiliz Legacy Chain",
           "cryptocurrencySymbol": "CHZ"
         },
         "availableAmount": "2487.1072",
@@ -3305,6 +3389,7 @@
       {
         "id": "fca84095-53f6-4cc0-8463-679fae957c90",
         "asset": {
+          "blockchain": "Chiliz Chain",
           "cryptocurrencySymbol": "CHZ2"
         },
         "availableAmount": "9820",
@@ -3313,6 +3398,7 @@
       {
         "id": "4c1d29f8-b35c-4549-b8ad-ddf3ebd0f167",
         "asset": {
+          "blockchain": "Cortex",
           "cryptocurrencySymbol": "CTXC"
         },
         "availableAmount": "5158",
@@ -3321,6 +3407,7 @@
       {
         "id": "193821b6-e273-4d7d-b46a-182b60940967",
         "asset": {
+          "blockchain": "Dash",
           "cryptocurrencySymbol": "DASH"
         },
         "availableAmount": "170806484.89322",
@@ -3329,6 +3416,7 @@
       {
         "id": "0aa2ff01-e9ff-4ae1-ab9c-bd3a11882c1e",
         "asset": {
+          "blockchain": "Dogecoin",
           "cryptocurrencySymbol": "DOGE"
         },
         "availableAmount": "907005790",
@@ -3337,6 +3425,7 @@
       {
         "id": "5d404f52-530e-4634-9b4c-e0848d10311f",
         "asset": {
+          "blockchain": "Polkadot",
           "cryptocurrencySymbol": "DOT"
         },
         "availableAmount": "783236203",
@@ -3345,6 +3434,7 @@
       {
         "id": "0aeb8d2d-52cd-47c3-9d5f-566daccfc2ab",
         "asset": {
+          "blockchain": "DYDX",
           "cryptocurrencySymbol": "DYDX"
         },
         "availableAmount": "7",
@@ -3353,6 +3443,7 @@
       {
         "id": "549aa203-9513-4359-8d60-379a26033114",
         "asset": {
+          "blockchain": "EOS",
           "cryptocurrencySymbol": "EOS"
         },
         "availableAmount": "3",
@@ -3361,6 +3452,7 @@
       {
         "id": "c25fe8db-e0f1-467a-b74c-37cf76d70019",
         "asset": {
+          "blockchain": "Ethereum Classic",
           "cryptocurrencySymbol": "ETC"
         },
         "availableAmount": "0",
@@ -3369,6 +3461,7 @@
       {
         "id": "e93462cb-0759-4fe8-9c7b-e8e01417e8b8",
         "asset": {
+          "blockchain": "Ethereum",
           "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "8347",
@@ -3377,6 +3470,7 @@
       {
         "id": "854a0fd1-4023-4dac-a5ad-c31e3f6f0480",
         "asset": {
+          "blockchain": "EthereumPoW",
           "cryptocurrencySymbol": "ETHW"
         },
         "availableAmount": "91.560278",
@@ -3385,6 +3479,7 @@
       {
         "id": "60a899af-1bd0-4da1-a992-f14157a0d828",
         "asset": {
+          "blockchain": "Evmos",
           "cryptocurrencySymbol": "EVMOS"
         },
         "availableAmount": "611826848",
@@ -3393,6 +3488,7 @@
       {
         "id": "a8565ab0-b4e6-4a4b-82f0-5cb467b56588",
         "asset": {
+          "blockchain": "Flare",
           "cryptocurrencySymbol": "FLR"
         },
         "availableAmount": "9.4110114",
@@ -3401,6 +3497,7 @@
       {
         "id": "74b8acdf-a55b-4b52-909c-33b5c8cb0fc9",
         "asset": {
+          "blockchain": "Fantom Opera",
           "cryptocurrencySymbol": "FTM"
         },
         "availableAmount": "568608138",
@@ -3409,6 +3506,7 @@
       {
         "id": "7fbd0136-7294-43f3-a1e4-851d20519ace",
         "asset": {
+          "blockchain": "Moonbeam",
           "cryptocurrencySymbol": "GLMR"
         },
         "availableAmount": "71506.058",
@@ -3417,6 +3515,7 @@
       {
         "id": "1cfa5046-9c3f-445e-b3df-1aa7eb1b1ccf",
         "asset": {
+          "blockchain": "Hedera",
           "cryptocurrencySymbol": "HBAR"
         },
         "availableAmount": "5",
@@ -3425,6 +3524,7 @@
       {
         "id": "538f4735-42c3-449f-827a-4ba3e530986e",
         "asset": {
+          "blockchain": "HT Chain",
           "cryptocurrencySymbol": "HT"
         },
         "availableAmount": "83512777409",
@@ -3433,6 +3533,7 @@
       {
         "id": "f7b85473-8f6f-4dba-88d3-376476822357",
         "asset": {
+          "blockchain": "KAVA",
           "cryptocurrencySymbol": "KAVA"
         },
         "availableAmount": "82564",
@@ -3441,6 +3542,7 @@
       {
         "id": "a4599c1e-d6b7-4c89-b480-3a477764c5a1",
         "asset": {
+          "blockchain": "Kusama",
           "cryptocurrencySymbol": "KSM"
         },
         "availableAmount": "10.16",
@@ -3449,6 +3551,7 @@
       {
         "id": "c9682927-0697-4df0-b98d-f2091153d4af",
         "asset": {
+          "blockchain": "Litecoin",
           "cryptocurrencySymbol": "LTC"
         },
         "availableAmount": "7.0864",
@@ -3457,6 +3560,7 @@
       {
         "id": "2afa2fa8-aeb7-4606-9b7a-42cfc711d7b6",
         "asset": {
+          "blockchain": "Terra Classic",
           "cryptocurrencySymbol": "LUNA"
         },
         "availableAmount": "684589",
@@ -3465,6 +3569,7 @@
       {
         "id": "24caa524-0044-4a59-9b19-bf163eddca17",
         "asset": {
+          "blockchain": "Terra 2.0",
           "cryptocurrencySymbol": "LUNA2"
         },
         "availableAmount": "5078855587.42",
@@ -3473,6 +3578,7 @@
       {
         "id": "83f57ee4-aa45-4a56-b212-c98e98662771",
         "asset": {
+          "blockchain": "Polygon PoS",
           "cryptocurrencySymbol": "MATIC"
         },
         "availableAmount": "1749.8",
@@ -3481,6 +3587,7 @@
       {
         "id": "cc26aa5a-e3e2-4125-a7f5-883c6ad759fc",
         "asset": {
+          "blockchain": "Moonriver",
           "cryptocurrencySymbol": "MOVR"
         },
         "availableAmount": "22220",
@@ -3489,6 +3596,7 @@
       {
         "id": "9000aee3-5a0d-47c7-bf9e-0bcf50d6a8e3",
         "asset": {
+          "blockchain": "NEAR Protocol",
           "cryptocurrencySymbol": "NEAR"
         },
         "availableAmount": "89946505811.51933",
@@ -3497,6 +3605,7 @@
       {
         "id": "6c093e44-225e-4694-a40c-3a29b9975b4d",
         "asset": {
+          "blockchain": "Oasys",
           "cryptocurrencySymbol": "OAS"
         },
         "availableAmount": "442.054",
@@ -3505,7 +3614,8 @@
       {
         "id": "e96c46d0-f259-407d-b981-06670803b109",
         "asset": {
-          "cryptocurrencySymbol": "OPT"
+          "blockchain": "Optimism",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "6230.89096",
         "lockedAmount": "2148339"
@@ -3513,6 +3623,7 @@
       {
         "id": "d94ea526-6cdc-434a-9471-570106c732b0",
         "asset": {
+          "blockchain": "Osmosis",
           "cryptocurrencySymbol": "OSMO"
         },
         "availableAmount": "1",
@@ -3521,6 +3632,7 @@
       {
         "id": "518d5da2-7750-4e90-b472-6efb6dec06c6",
         "asset": {
+          "blockchain": "Palm",
           "cryptocurrencySymbol": "PALM"
         },
         "availableAmount": "841",
@@ -3529,6 +3641,7 @@
       {
         "id": "5682165f-80ea-4dc9-9af1-dce45bdac48b",
         "asset": {
+          "blockchain": "Ronin",
           "cryptocurrencySymbol": "RON"
         },
         "availableAmount": "930669008",
@@ -3537,6 +3650,7 @@
       {
         "id": "355f228c-f70d-4027-b132-11be60dfdf42",
         "asset": {
+          "blockchain": "RSK",
           "cryptocurrencySymbol": "RSK"
         },
         "availableAmount": "78013",
@@ -3545,6 +3659,7 @@
       {
         "id": "21610cfb-47de-47a7-93d1-a855d0bb1184",
         "asset": {
+          "blockchain": "Shimmer",
           "cryptocurrencySymbol": "SMR"
         },
         "availableAmount": "13593637",
@@ -3553,6 +3668,7 @@
       {
         "id": "db1a816a-5b84-433f-afe2-8137c61d3b10",
         "asset": {
+          "blockchain": "Solana",
           "cryptocurrencySymbol": "SOL"
         },
         "availableAmount": "24769488",
@@ -3561,6 +3677,7 @@
       {
         "id": "e6073052-d0c3-4a04-bf28-a6a19fd0231a",
         "asset": {
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "1828.58816",
@@ -3569,6 +3686,7 @@
       {
         "id": "2bf835c5-5ddf-4450-b203-6815899ba706",
         "asset": {
+          "blockchain": "SX Network",
           "cryptocurrencySymbol": "SXNETWORK"
         },
         "availableAmount": "7323",
@@ -3577,6 +3695,7 @@
       {
         "id": "c3406a76-5de4-4c23-a65c-ff9acf0dd75a",
         "asset": {
+          "blockchain": "TokenEX",
           "cryptocurrencySymbol": "TKX"
         },
         "availableAmount": "20156028426",
@@ -3585,6 +3704,7 @@
       {
         "id": "7ba03f70-9b04-4222-888e-555c5c5ec5f1",
         "asset": {
+          "blockchain": "TRON",
           "cryptocurrencySymbol": "TRX"
         },
         "availableAmount": "170627662.313554192",
@@ -3593,6 +3713,7 @@
       {
         "id": "5b8aaf17-93e1-442a-ad08-0b5e01150c37",
         "asset": {
+          "blockchain": "Velas",
           "cryptocurrencySymbol": "VLX"
         },
         "availableAmount": "03827745592.14225323",
@@ -3601,6 +3722,7 @@
       {
         "id": "049b2508-1c8e-4980-9116-3188181a861f",
         "asset": {
+          "blockchain": "WEMIX",
           "cryptocurrencySymbol": "WEMIX"
         },
         "availableAmount": "4.63447078",
@@ -3609,6 +3731,7 @@
       {
         "id": "f728c053-d9a7-45b6-95f6-d456dd0dd853",
         "asset": {
+          "blockchain": "XDB Chain",
           "cryptocurrencySymbol": "XDB"
         },
         "availableAmount": "090898590",
@@ -3617,6 +3740,7 @@
       {
         "id": "a99169f1-03d4-40eb-ac9d-f5f601e1e1a0",
         "asset": {
+          "blockchain": "XinFin Network",
           "cryptocurrencySymbol": "XDC"
         },
         "availableAmount": "141799419.44358725",
@@ -3625,6 +3749,7 @@
       {
         "id": "347fb723-3c3b-45c8-842f-60fa03d0ed66",
         "asset": {
+          "blockchain": "eCash",
           "cryptocurrencySymbol": "XEC"
         },
         "availableAmount": "7531",
@@ -3633,6 +3758,7 @@
       {
         "id": "50358392-294b-45c5-a9e7-7f16b7b4a8ff",
         "asset": {
+          "blockchain": "NEM NIS1",
           "cryptocurrencySymbol": "XEM"
         },
         "availableAmount": "902859615.128",
@@ -3641,6 +3767,7 @@
       {
         "id": "bbcd044a-6bdb-4a28-b56a-063d643bd517",
         "asset": {
+          "blockchain": "Stellar",
           "cryptocurrencySymbol": "XLM"
         },
         "availableAmount": "0523531222",
@@ -3649,6 +3776,7 @@
       {
         "id": "17c1b5c4-d6cd-4ffb-a7d7-93bc5af5a1c4",
         "asset": {
+          "blockchain": "XRP",
           "cryptocurrencySymbol": "XRP"
         },
         "availableAmount": "2725",
@@ -3657,6 +3785,7 @@
       {
         "id": "9ea2d064-f24c-4eed-9e18-0ef28901d2d6",
         "asset": {
+          "blockchain": "Tezos",
           "cryptocurrencySymbol": "XTZ"
         },
         "availableAmount": "6445708",
@@ -3665,6 +3794,7 @@
       {
         "id": "e3b4961f-ed12-4951-9c1e-8a47ad84c5a4",
         "asset": {
+          "blockchain": "ZCash",
           "cryptocurrencySymbol": "ZEC"
         },
         "availableAmount": "0",
@@ -6137,6 +6267,7 @@
       {
         "id": "98809c6a-45c4-49e0-8981-e1a22ecc1b8c",
         "asset": {
+          "blockchain": "Cardano",
           "cryptocurrencySymbol": "ADA"
         },
         "availableAmount": "0.7436997",
@@ -6145,6 +6276,7 @@
       {
         "id": "2f233702-11a4-4778-a325-0fe7ae3d5e47",
         "asset": {
+          "blockchain": "Algorand",
           "cryptocurrencySymbol": "ALGO"
         },
         "availableAmount": "5652764",
@@ -6153,7 +6285,8 @@
       {
         "id": "1c62b007-6f6f-4d01-8eee-9e90f64f984e",
         "asset": {
-          "cryptocurrencySymbol": "ARB"
+          "blockchain": "Arbitrum",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "7019735",
         "lockedAmount": "7.78620931565"
@@ -6161,6 +6294,7 @@
       {
         "id": "7580295c-38d3-4bd7-9a88-bc430ad7d4cd",
         "asset": {
+          "blockchain": "Astar",
           "cryptocurrencySymbol": "ASTR"
         },
         "availableAmount": "76",
@@ -6169,6 +6303,7 @@
       {
         "id": "a69b0e95-bd22-432a-a487-770779168f57",
         "asset": {
+          "blockchain": "Cosmos",
           "cryptocurrencySymbol": "ATOM"
         },
         "availableAmount": "670753",
@@ -6177,6 +6312,7 @@
       {
         "id": "5bd8d5b2-57c9-43b7-9d3f-5b8ee0a4f365",
         "asset": {
+          "blockchain": "Aurora",
           "cryptocurrencySymbol": "AURORA"
         },
         "availableAmount": "98873695",
@@ -6185,6 +6321,7 @@
       {
         "id": "f42c2bfa-5f17-40a2-b50b-ab73a9efad1e",
         "asset": {
+          "blockchain": "Avalanche",
           "cryptocurrencySymbol": "AVAX"
         },
         "availableAmount": "9433219.34676",
@@ -6193,6 +6330,7 @@
       {
         "id": "bbb4ba7a-1b1e-4935-a93e-ccea86d5ea62",
         "asset": {
+          "blockchain": "Axelar",
           "cryptocurrencySymbol": "AXL"
         },
         "availableAmount": "06295",
@@ -6201,7 +6339,8 @@
       {
         "id": "a2d1c4d8-25ec-4558-89a3-1f23e93b3608",
         "asset": {
-          "cryptocurrencySymbol": "BASE"
+          "blockchain": "Base",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "097035325",
         "lockedAmount": "79522847266"
@@ -6209,6 +6348,7 @@
       {
         "id": "547abbee-746d-4c61-bb2f-f38575f2743c",
         "asset": {
+          "blockchain": "Bitcoin Cash",
           "cryptocurrencySymbol": "BCH"
         },
         "availableAmount": "603273119.31757239",
@@ -6217,6 +6357,7 @@
       {
         "id": "2efae65b-5c35-4695-b730-d8ea64327a35",
         "asset": {
+          "blockchain": "Bitcoin Cash ABC",
           "cryptocurrencySymbol": "BCHA"
         },
         "availableAmount": "6",
@@ -6225,6 +6366,7 @@
       {
         "id": "69456079-c0c5-46d9-8105-4b038f3320ac",
         "asset": {
+          "blockchain": "Bitkub Chain",
           "cryptocurrencySymbol": "BITKUB"
         },
         "availableAmount": "07956",
@@ -6233,6 +6375,7 @@
       {
         "id": "45b35a49-1767-4bdf-8bea-3e09c5d047ea",
         "asset": {
+          "blockchain": "BNB",
           "cryptocurrencySymbol": "BNB"
         },
         "availableAmount": "1392161404.1969915427",
@@ -6241,6 +6384,7 @@
       {
         "id": "aee74580-6a5a-49f1-8ada-da6d637e01b5",
         "asset": {
+          "blockchain": "Bitcoin SV",
           "cryptocurrencySymbol": "BSV"
         },
         "availableAmount": "41566333393.7",
@@ -6249,6 +6393,7 @@
       {
         "id": "17f48f41-b877-4d28-8653-6c4263dc1a39",
         "asset": {
+          "blockchain": "Bitcoin",
           "cryptocurrencySymbol": "BTC"
         },
         "availableAmount": "762397206.7103037730",
@@ -6257,6 +6402,7 @@
       {
         "id": "cdbfb744-df26-43bf-b16c-9d62411f985f",
         "asset": {
+          "blockchain": "Canto",
           "cryptocurrencySymbol": "CANTO"
         },
         "availableAmount": "2",
@@ -6265,6 +6411,7 @@
       {
         "id": "b8b59cf0-851a-463a-b0dc-8a6134d37645",
         "asset": {
+          "blockchain": "Celestia",
           "cryptocurrencySymbol": "CELESTIA"
         },
         "availableAmount": "39115",
@@ -6273,6 +6420,7 @@
       {
         "id": "212ebbe3-0e41-47da-93d6-10393738c9fb",
         "asset": {
+          "blockchain": "Celo",
           "cryptocurrencySymbol": "CELO"
         },
         "availableAmount": "13041969749.665",
@@ -6281,6 +6429,7 @@
       {
         "id": "0d59e00a-d4fa-487f-b4da-49e1c3032ef8",
         "asset": {
+          "blockchain": "Chiliz Legacy Chain",
           "cryptocurrencySymbol": "CHZ"
         },
         "availableAmount": "915.39333",
@@ -6289,6 +6438,7 @@
       {
         "id": "9077bb2a-a9f2-459a-87c2-90c50fb3451d",
         "asset": {
+          "blockchain": "Chiliz Chain",
           "cryptocurrencySymbol": "CHZ2"
         },
         "availableAmount": "5898",
@@ -6297,6 +6447,7 @@
       {
         "id": "b9f474b1-bc11-4222-a4b6-37637a99f42d",
         "asset": {
+          "blockchain": "Cortex",
           "cryptocurrencySymbol": "CTXC"
         },
         "availableAmount": "62.1",
@@ -6305,6 +6456,7 @@
       {
         "id": "0cc3b3ed-ce0c-44f6-9fa5-63eba469abae",
         "asset": {
+          "blockchain": "Dash",
           "cryptocurrencySymbol": "DASH"
         },
         "availableAmount": "7267",
@@ -6313,6 +6465,7 @@
       {
         "id": "1b08f6ec-0542-4cc6-8bfa-142410120677",
         "asset": {
+          "blockchain": "Dogecoin",
           "cryptocurrencySymbol": "DOGE"
         },
         "availableAmount": "519",
@@ -6321,6 +6474,7 @@
       {
         "id": "2f58c4fd-f05b-4658-b316-0408f4b31947",
         "asset": {
+          "blockchain": "Polkadot",
           "cryptocurrencySymbol": "DOT"
         },
         "availableAmount": "892800.531016451",
@@ -6329,6 +6483,7 @@
       {
         "id": "d4b209a8-cf79-43fd-a085-91f134f26a70",
         "asset": {
+          "blockchain": "DYDX",
           "cryptocurrencySymbol": "DYDX"
         },
         "availableAmount": "20561900477.1934",
@@ -6337,6 +6492,7 @@
       {
         "id": "d4d9e462-1d7c-4eaf-a613-19446521d5d1",
         "asset": {
+          "blockchain": "EOS",
           "cryptocurrencySymbol": "EOS"
         },
         "availableAmount": "24",
@@ -6345,6 +6501,7 @@
       {
         "id": "2d31c383-6d5f-4833-ba3c-786d1d7765e2",
         "asset": {
+          "blockchain": "Ethereum Classic",
           "cryptocurrencySymbol": "ETC"
         },
         "availableAmount": "01.0241724",
@@ -6353,6 +6510,7 @@
       {
         "id": "600b669f-2e24-4478-8b1b-415c356f7c76",
         "asset": {
+          "blockchain": "Ethereum",
           "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "7",
@@ -6361,6 +6519,7 @@
       {
         "id": "2fedf859-6eae-46f0-9107-004a9b37c765",
         "asset": {
+          "blockchain": "EthereumPoW",
           "cryptocurrencySymbol": "ETHW"
         },
         "availableAmount": "99",
@@ -6369,6 +6528,7 @@
       {
         "id": "2d6d1b0e-5379-4834-8fac-bf761e2cac50",
         "asset": {
+          "blockchain": "Evmos",
           "cryptocurrencySymbol": "EVMOS"
         },
         "availableAmount": "3",
@@ -6377,6 +6537,7 @@
       {
         "id": "e2979265-2a7d-4b5a-ace6-1ec09960f05c",
         "asset": {
+          "blockchain": "Flare",
           "cryptocurrencySymbol": "FLR"
         },
         "availableAmount": "81074",
@@ -6385,6 +6546,7 @@
       {
         "id": "6d7bef5a-2ec0-4ddb-b5aa-144aa1856178",
         "asset": {
+          "blockchain": "Fantom Opera",
           "cryptocurrencySymbol": "FTM"
         },
         "availableAmount": "846498.4838",
@@ -6393,6 +6555,7 @@
       {
         "id": "cfd7f748-1c64-469f-a464-ad85e9fc30e7",
         "asset": {
+          "blockchain": "Moonbeam",
           "cryptocurrencySymbol": "GLMR"
         },
         "availableAmount": "061.5875950",
@@ -6401,6 +6564,7 @@
       {
         "id": "611d3027-10f3-4be7-bba1-c8964be3a272",
         "asset": {
+          "blockchain": "Hedera",
           "cryptocurrencySymbol": "HBAR"
         },
         "availableAmount": "976881",
@@ -6409,6 +6573,7 @@
       {
         "id": "300636b4-eca2-4f63-b495-2157a9d0a3b2",
         "asset": {
+          "blockchain": "HT Chain",
           "cryptocurrencySymbol": "HT"
         },
         "availableAmount": "13.06604",
@@ -6417,6 +6582,7 @@
       {
         "id": "4d6650f3-6bf9-446f-a471-9ccca5d4c876",
         "asset": {
+          "blockchain": "KAVA",
           "cryptocurrencySymbol": "KAVA"
         },
         "availableAmount": "6876253",
@@ -6425,6 +6591,7 @@
       {
         "id": "b8b04cac-f635-4191-abef-32fc7a492ff0",
         "asset": {
+          "blockchain": "Kusama",
           "cryptocurrencySymbol": "KSM"
         },
         "availableAmount": "880169983",
@@ -6433,6 +6600,7 @@
       {
         "id": "6ecbecf5-aaec-48db-946b-9d6154a28686",
         "asset": {
+          "blockchain": "Litecoin",
           "cryptocurrencySymbol": "LTC"
         },
         "availableAmount": "38150.174",
@@ -6441,6 +6609,7 @@
       {
         "id": "97606536-c7bc-40ba-bd1f-a19ead974c9e",
         "asset": {
+          "blockchain": "Terra Classic",
           "cryptocurrencySymbol": "LUNA"
         },
         "availableAmount": "97873",
@@ -6449,6 +6618,7 @@
       {
         "id": "565a4c70-df13-47a2-81ea-edf67251bbcf",
         "asset": {
+          "blockchain": "Terra 2.0",
           "cryptocurrencySymbol": "LUNA2"
         },
         "availableAmount": "6704351404",
@@ -6457,6 +6627,7 @@
       {
         "id": "9018428d-0310-4559-89e5-840dbf13a976",
         "asset": {
+          "blockchain": "Polygon PoS",
           "cryptocurrencySymbol": "MATIC"
         },
         "availableAmount": "0621784.3351684567",
@@ -6465,6 +6636,7 @@
       {
         "id": "7796f97b-8b91-4273-b0e6-8603fd291dac",
         "asset": {
+          "blockchain": "Moonriver",
           "cryptocurrencySymbol": "MOVR"
         },
         "availableAmount": "461396223",
@@ -6473,6 +6645,7 @@
       {
         "id": "131194b0-be59-46e3-af04-e2b80a4cb229",
         "asset": {
+          "blockchain": "NEAR Protocol",
           "cryptocurrencySymbol": "NEAR"
         },
         "availableAmount": "4700183901.345473",
@@ -6481,6 +6654,7 @@
       {
         "id": "614d63a5-9ee4-42c7-a005-270b49bc98bf",
         "asset": {
+          "blockchain": "Oasys",
           "cryptocurrencySymbol": "OAS"
         },
         "availableAmount": "08212076506",
@@ -6489,7 +6663,8 @@
       {
         "id": "be4900db-2a51-4ae1-98e7-a4b96c004823",
         "asset": {
-          "cryptocurrencySymbol": "OPT"
+          "blockchain": "Optimism",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "613939.8840",
         "lockedAmount": "0.62909512"
@@ -6497,6 +6672,7 @@
       {
         "id": "b22643a3-ea17-41d9-bac8-804412c6b191",
         "asset": {
+          "blockchain": "Osmosis",
           "cryptocurrencySymbol": "OSMO"
         },
         "availableAmount": "478020740",
@@ -6505,6 +6681,7 @@
       {
         "id": "6ed35185-f38e-4b68-a21b-f19f84ffbab1",
         "asset": {
+          "blockchain": "Palm",
           "cryptocurrencySymbol": "PALM"
         },
         "availableAmount": "13168312424.3060",
@@ -6513,6 +6690,7 @@
       {
         "id": "8879de85-e39d-49be-a8e1-e4098730f7ce",
         "asset": {
+          "blockchain": "Ronin",
           "cryptocurrencySymbol": "RON"
         },
         "availableAmount": "67405807.9252138608",
@@ -6521,6 +6699,7 @@
       {
         "id": "ccd5e345-5ba8-488b-9b27-103382f9b4c5",
         "asset": {
+          "blockchain": "RSK",
           "cryptocurrencySymbol": "RSK"
         },
         "availableAmount": "86597862.84249",
@@ -6529,6 +6708,7 @@
       {
         "id": "45d7de9c-cc54-4672-8928-5fe1052787a2",
         "asset": {
+          "blockchain": "Shimmer",
           "cryptocurrencySymbol": "SMR"
         },
         "availableAmount": "2048791",
@@ -6537,6 +6717,7 @@
       {
         "id": "c3d2799f-0b73-45dd-905b-12f5de1a3b16",
         "asset": {
+          "blockchain": "Solana",
           "cryptocurrencySymbol": "SOL"
         },
         "availableAmount": "200915.6316443589",
@@ -6545,6 +6726,7 @@
       {
         "id": "acdd558d-c40a-421a-9dbb-1714ec499170",
         "asset": {
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "615",
@@ -6553,6 +6735,7 @@
       {
         "id": "d2539fad-8903-4732-8c33-a88ba4335ea2",
         "asset": {
+          "blockchain": "SX Network",
           "cryptocurrencySymbol": "SXNETWORK"
         },
         "availableAmount": "0878535",
@@ -6561,6 +6744,7 @@
       {
         "id": "81617ebe-e37f-40a9-9462-036f4bfca61d",
         "asset": {
+          "blockchain": "TokenEX",
           "cryptocurrencySymbol": "TKX"
         },
         "availableAmount": "8133179764.601",
@@ -6569,6 +6753,7 @@
       {
         "id": "0e411791-607e-41be-8d23-e83e39debd2e",
         "asset": {
+          "blockchain": "TRON",
           "cryptocurrencySymbol": "TRX"
         },
         "availableAmount": "94210012019.9",
@@ -6577,6 +6762,7 @@
       {
         "id": "62b11d40-a39c-486e-809a-53119605ab62",
         "asset": {
+          "blockchain": "Velas",
           "cryptocurrencySymbol": "VLX"
         },
         "availableAmount": "2.33018104",
@@ -6585,6 +6771,7 @@
       {
         "id": "c3ccaf67-67f1-4f1c-a272-5e0296a8a9a3",
         "asset": {
+          "blockchain": "WEMIX",
           "cryptocurrencySymbol": "WEMIX"
         },
         "availableAmount": "165.16462586",
@@ -6593,6 +6780,7 @@
       {
         "id": "dc8144cc-7485-47e3-b7fa-f5ac6e55f124",
         "asset": {
+          "blockchain": "XDB Chain",
           "cryptocurrencySymbol": "XDB"
         },
         "availableAmount": "6.2121753753",
@@ -6601,6 +6789,7 @@
       {
         "id": "baa0e937-18dc-43d8-9eee-dafa0214389c",
         "asset": {
+          "blockchain": "XinFin Network",
           "cryptocurrencySymbol": "XDC"
         },
         "availableAmount": "872.69492413",
@@ -6609,6 +6798,7 @@
       {
         "id": "0aeeae0c-6636-4bf0-849b-4f1201b15749",
         "asset": {
+          "blockchain": "eCash",
           "cryptocurrencySymbol": "XEC"
         },
         "availableAmount": "9462955.24",
@@ -6617,6 +6807,7 @@
       {
         "id": "67ca7e09-ac3e-4524-8dfb-6e10a1a041c9",
         "asset": {
+          "blockchain": "NEM NIS1",
           "cryptocurrencySymbol": "XEM"
         },
         "availableAmount": "941",
@@ -6625,6 +6816,7 @@
       {
         "id": "227c7ef9-afdb-48ef-8045-3c1ddf052e31",
         "asset": {
+          "blockchain": "Stellar",
           "cryptocurrencySymbol": "XLM"
         },
         "availableAmount": "372",
@@ -6633,6 +6825,7 @@
       {
         "id": "2c432400-3954-45a4-8e33-8ff0929584b0",
         "asset": {
+          "blockchain": "XRP",
           "cryptocurrencySymbol": "XRP"
         },
         "availableAmount": "6471050190",
@@ -6641,6 +6834,7 @@
       {
         "id": "2a1e2513-a470-4897-84cc-294d47f44c33",
         "asset": {
+          "blockchain": "Tezos",
           "cryptocurrencySymbol": "XTZ"
         },
         "availableAmount": "41402",
@@ -6649,6 +6843,7 @@
       {
         "id": "48bbfa62-6e21-406b-904e-231b541b65ba",
         "asset": {
+          "blockchain": "ZCash",
           "cryptocurrencySymbol": "ZEC"
         },
         "availableAmount": "826876500.8767008",
@@ -9121,6 +9316,7 @@
       {
         "id": "790e8777-b875-4f4a-b16f-3ef659c4f32a",
         "asset": {
+          "blockchain": "Cardano",
           "cryptocurrencySymbol": "ADA"
         },
         "availableAmount": "98904",
@@ -9129,6 +9325,7 @@
       {
         "id": "cb950abc-9d5e-424f-a178-8eca6ebbab2c",
         "asset": {
+          "blockchain": "Algorand",
           "cryptocurrencySymbol": "ALGO"
         },
         "availableAmount": "49.72015822562",
@@ -9137,7 +9334,8 @@
       {
         "id": "a5160a77-9dcf-4a81-94ce-36a14f8c88d2",
         "asset": {
-          "cryptocurrencySymbol": "ARB"
+          "blockchain": "Arbitrum",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "972585408",
         "lockedAmount": "589105918.248748"
@@ -9145,6 +9343,7 @@
       {
         "id": "e6217512-df17-4261-aed0-607b11368b2c",
         "asset": {
+          "blockchain": "Astar",
           "cryptocurrencySymbol": "ASTR"
         },
         "availableAmount": "41525.4447",
@@ -9153,6 +9352,7 @@
       {
         "id": "bb95978a-0dcc-449e-b247-540685d945f9",
         "asset": {
+          "blockchain": "Cosmos",
           "cryptocurrencySymbol": "ATOM"
         },
         "availableAmount": "4536344",
@@ -9161,6 +9361,7 @@
       {
         "id": "2b0b51bc-a84d-4537-a24d-5b6f3cbef00b",
         "asset": {
+          "blockchain": "Aurora",
           "cryptocurrencySymbol": "AURORA"
         },
         "availableAmount": "35438076.4091722868",
@@ -9169,6 +9370,7 @@
       {
         "id": "7681ecf1-2690-44f1-bb8c-a956d82f5970",
         "asset": {
+          "blockchain": "Avalanche",
           "cryptocurrencySymbol": "AVAX"
         },
         "availableAmount": "48995095.6",
@@ -9177,6 +9379,7 @@
       {
         "id": "4cb125f1-b13b-4961-9ff2-b02c6ec344f1",
         "asset": {
+          "blockchain": "Axelar",
           "cryptocurrencySymbol": "AXL"
         },
         "availableAmount": "4922622107",
@@ -9185,7 +9388,8 @@
       {
         "id": "ef4f9cd4-0caf-4ba3-aa73-f222dab71fdf",
         "asset": {
-          "cryptocurrencySymbol": "BASE"
+          "blockchain": "Base",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "23736563071.72",
         "lockedAmount": "4.443"
@@ -9193,6 +9397,7 @@
       {
         "id": "fa95dbd0-0a1d-426f-8917-1c19dcd641ef",
         "asset": {
+          "blockchain": "Bitcoin Cash",
           "cryptocurrencySymbol": "BCH"
         },
         "availableAmount": "20628982428",
@@ -9201,6 +9406,7 @@
       {
         "id": "d0522fd4-f281-4ab3-9337-16d5b044fe3b",
         "asset": {
+          "blockchain": "Bitcoin Cash ABC",
           "cryptocurrencySymbol": "BCHA"
         },
         "availableAmount": "09487811083.237429",
@@ -9209,6 +9415,7 @@
       {
         "id": "34b6afa1-8761-4691-929d-e32ed6aa1475",
         "asset": {
+          "blockchain": "Bitkub Chain",
           "cryptocurrencySymbol": "BITKUB"
         },
         "availableAmount": "39.19775",
@@ -9217,6 +9424,7 @@
       {
         "id": "ca55a1c1-af4c-4fb0-b75a-b6f3e1a583a6",
         "asset": {
+          "blockchain": "BNB",
           "cryptocurrencySymbol": "BNB"
         },
         "availableAmount": "942807.27703",
@@ -9225,6 +9433,7 @@
       {
         "id": "522d6e56-a020-4b8c-a852-c971b437a294",
         "asset": {
+          "blockchain": "Bitcoin SV",
           "cryptocurrencySymbol": "BSV"
         },
         "availableAmount": "82",
@@ -9233,6 +9442,7 @@
       {
         "id": "6811be17-0dc3-413e-bfdf-919c389b1c29",
         "asset": {
+          "blockchain": "Bitcoin",
           "cryptocurrencySymbol": "BTC"
         },
         "availableAmount": "1.7896088274",
@@ -9241,6 +9451,7 @@
       {
         "id": "1b322938-60ac-43aa-a566-75652bb64eed",
         "asset": {
+          "blockchain": "Canto",
           "cryptocurrencySymbol": "CANTO"
         },
         "availableAmount": "7871150312",
@@ -9249,6 +9460,7 @@
       {
         "id": "8068d044-3848-4706-b678-77dcce0a1114",
         "asset": {
+          "blockchain": "Celestia",
           "cryptocurrencySymbol": "CELESTIA"
         },
         "availableAmount": "513",
@@ -9257,6 +9469,7 @@
       {
         "id": "f7e6c620-3cc9-4d6f-b0b6-674dad470ddf",
         "asset": {
+          "blockchain": "Celo",
           "cryptocurrencySymbol": "CELO"
         },
         "availableAmount": "9404.746461",
@@ -9265,6 +9478,7 @@
       {
         "id": "9bb7dd5e-018d-4152-9e4f-2c9f2aa31eb6",
         "asset": {
+          "blockchain": "Chiliz Legacy Chain",
           "cryptocurrencySymbol": "CHZ"
         },
         "availableAmount": "98954.19093",
@@ -9273,6 +9487,7 @@
       {
         "id": "fb8d7447-6cc9-427b-a3b2-f91f19ed396a",
         "asset": {
+          "blockchain": "Chiliz Chain",
           "cryptocurrencySymbol": "CHZ2"
         },
         "availableAmount": "29",
@@ -9281,6 +9496,7 @@
       {
         "id": "502183c6-6e36-4a97-8639-c71d127bdccb",
         "asset": {
+          "blockchain": "Cortex",
           "cryptocurrencySymbol": "CTXC"
         },
         "availableAmount": "23587586.9",
@@ -9289,6 +9505,7 @@
       {
         "id": "83910a5c-7ce2-4252-9ed9-395fc6504860",
         "asset": {
+          "blockchain": "Dash",
           "cryptocurrencySymbol": "DASH"
         },
         "availableAmount": "67606",
@@ -9297,6 +9514,7 @@
       {
         "id": "46b922a2-6426-4888-b45b-2777ba11b25f",
         "asset": {
+          "blockchain": "Dogecoin",
           "cryptocurrencySymbol": "DOGE"
         },
         "availableAmount": "08",
@@ -9305,6 +9523,7 @@
       {
         "id": "257a9607-9cd9-4b7e-b1ed-c6997a6c00b4",
         "asset": {
+          "blockchain": "Polkadot",
           "cryptocurrencySymbol": "DOT"
         },
         "availableAmount": "17307702",
@@ -9313,6 +9532,7 @@
       {
         "id": "25aacacc-7a16-43a5-b176-0406973f2e7a",
         "asset": {
+          "blockchain": "DYDX",
           "cryptocurrencySymbol": "DYDX"
         },
         "availableAmount": "0961979581",
@@ -9321,6 +9541,7 @@
       {
         "id": "f1df04dc-03dd-4fa1-9374-51b00c9ee00e",
         "asset": {
+          "blockchain": "EOS",
           "cryptocurrencySymbol": "EOS"
         },
         "availableAmount": "76214975",
@@ -9329,6 +9550,7 @@
       {
         "id": "f400b67b-4e77-4992-94e7-883e09c561e7",
         "asset": {
+          "blockchain": "Ethereum Classic",
           "cryptocurrencySymbol": "ETC"
         },
         "availableAmount": "80766084",
@@ -9337,6 +9559,7 @@
       {
         "id": "fd0a9bdc-c016-4469-bf2c-ae208c35cbe9",
         "asset": {
+          "blockchain": "Ethereum",
           "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "1045948445",
@@ -9345,6 +9568,7 @@
       {
         "id": "2a1e8a37-e31b-4a54-97ab-3c14d492e088",
         "asset": {
+          "blockchain": "EthereumPoW",
           "cryptocurrencySymbol": "ETHW"
         },
         "availableAmount": "498.73705",
@@ -9353,6 +9577,7 @@
       {
         "id": "3c09d6a5-97aa-4253-8933-f2a4c73c1936",
         "asset": {
+          "blockchain": "Evmos",
           "cryptocurrencySymbol": "EVMOS"
         },
         "availableAmount": "5263602129",
@@ -9361,6 +9586,7 @@
       {
         "id": "c7362af3-a7a0-4ffd-95e8-b1f243ad3f08",
         "asset": {
+          "blockchain": "Flare",
           "cryptocurrencySymbol": "FLR"
         },
         "availableAmount": "02802.8622949",
@@ -9369,6 +9595,7 @@
       {
         "id": "dcc7dac3-4092-428e-9e6d-042ce6e9b925",
         "asset": {
+          "blockchain": "Fantom Opera",
           "cryptocurrencySymbol": "FTM"
         },
         "availableAmount": "0914353.8049806",
@@ -9377,6 +9604,7 @@
       {
         "id": "42cdec03-7297-4748-851c-182980238d57",
         "asset": {
+          "blockchain": "Moonbeam",
           "cryptocurrencySymbol": "GLMR"
         },
         "availableAmount": "646.45962031",
@@ -9385,6 +9613,7 @@
       {
         "id": "00e54818-d48b-4e33-aaa4-a4fa4bd8b990",
         "asset": {
+          "blockchain": "Hedera",
           "cryptocurrencySymbol": "HBAR"
         },
         "availableAmount": "09665441870",
@@ -9393,6 +9622,7 @@
       {
         "id": "aeb1a1a2-4671-47ec-80e9-49d1b689f5aa",
         "asset": {
+          "blockchain": "HT Chain",
           "cryptocurrencySymbol": "HT"
         },
         "availableAmount": "07601",
@@ -9401,6 +9631,7 @@
       {
         "id": "919cf819-3d0a-438f-9eb2-81bf3f0700c9",
         "asset": {
+          "blockchain": "KAVA",
           "cryptocurrencySymbol": "KAVA"
         },
         "availableAmount": "7286261459",
@@ -9409,6 +9640,7 @@
       {
         "id": "a4a6c25b-c61a-4c7e-bf96-8288ca5466f5",
         "asset": {
+          "blockchain": "Kusama",
           "cryptocurrencySymbol": "KSM"
         },
         "availableAmount": "0",
@@ -9417,6 +9649,7 @@
       {
         "id": "12eabbf0-e02b-4913-8562-ae9c0b369024",
         "asset": {
+          "blockchain": "Litecoin",
           "cryptocurrencySymbol": "LTC"
         },
         "availableAmount": "81065",
@@ -9425,6 +9658,7 @@
       {
         "id": "19752e5d-12b1-4bb1-9e76-8a9cd4bf814f",
         "asset": {
+          "blockchain": "Terra Classic",
           "cryptocurrencySymbol": "LUNA"
         },
         "availableAmount": "462504.01034411624",
@@ -9433,6 +9667,7 @@
       {
         "id": "2d0fac97-7946-4f76-ae42-e89e299d6aed",
         "asset": {
+          "blockchain": "Terra 2.0",
           "cryptocurrencySymbol": "LUNA2"
         },
         "availableAmount": "43828028",
@@ -9441,6 +9676,7 @@
       {
         "id": "8cc22cad-9f76-4219-9816-9b1854c10cf8",
         "asset": {
+          "blockchain": "Polygon PoS",
           "cryptocurrencySymbol": "MATIC"
         },
         "availableAmount": "04574983",
@@ -9449,6 +9685,7 @@
       {
         "id": "7729ad81-e7ad-449c-986e-460065db004d",
         "asset": {
+          "blockchain": "Moonriver",
           "cryptocurrencySymbol": "MOVR"
         },
         "availableAmount": "841402215",
@@ -9457,6 +9694,7 @@
       {
         "id": "e4379497-1664-458d-90b7-767fbcb1a3a6",
         "asset": {
+          "blockchain": "NEAR Protocol",
           "cryptocurrencySymbol": "NEAR"
         },
         "availableAmount": "03748917",
@@ -9465,6 +9703,7 @@
       {
         "id": "64039fdf-96c8-4dea-bcbe-da9a60892da8",
         "asset": {
+          "blockchain": "Oasys",
           "cryptocurrencySymbol": "OAS"
         },
         "availableAmount": "918677",
@@ -9473,7 +9712,8 @@
       {
         "id": "64a7dca2-eb7b-4b17-b3ee-7be2cda2b762",
         "asset": {
-          "cryptocurrencySymbol": "OPT"
+          "blockchain": "Optimism",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "05815629.488",
         "lockedAmount": "66"
@@ -9481,6 +9721,7 @@
       {
         "id": "9ffa36ad-3a3d-40c8-a57b-2784225e60f3",
         "asset": {
+          "blockchain": "Osmosis",
           "cryptocurrencySymbol": "OSMO"
         },
         "availableAmount": "66571",
@@ -9489,6 +9730,7 @@
       {
         "id": "4746c7ab-9d15-4eba-9bc4-b1aae3992054",
         "asset": {
+          "blockchain": "Palm",
           "cryptocurrencySymbol": "PALM"
         },
         "availableAmount": "1.15",
@@ -9497,6 +9739,7 @@
       {
         "id": "2272420b-9dc7-4155-8f4a-88c72cd94141",
         "asset": {
+          "blockchain": "Ronin",
           "cryptocurrencySymbol": "RON"
         },
         "availableAmount": "887",
@@ -9505,6 +9748,7 @@
       {
         "id": "7cc0887c-3520-4e10-a305-9d8ebef05a0d",
         "asset": {
+          "blockchain": "RSK",
           "cryptocurrencySymbol": "RSK"
         },
         "availableAmount": "4084071695.495264",
@@ -9513,6 +9757,7 @@
       {
         "id": "53240578-1145-496b-96f4-cfc2b04629ac",
         "asset": {
+          "blockchain": "Shimmer",
           "cryptocurrencySymbol": "SMR"
         },
         "availableAmount": "8.83867883568",
@@ -9521,6 +9766,7 @@
       {
         "id": "ffdb41b6-2aec-4841-bd9c-8441e675142c",
         "asset": {
+          "blockchain": "Solana",
           "cryptocurrencySymbol": "SOL"
         },
         "availableAmount": "9228001760",
@@ -9529,6 +9775,7 @@
       {
         "id": "3decda8e-e245-4cf5-914f-45eadee0382c",
         "asset": {
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "084544.4408",
@@ -9537,6 +9784,7 @@
       {
         "id": "6802f5c7-d9aa-4968-80c0-ff31209c138e",
         "asset": {
+          "blockchain": "SX Network",
           "cryptocurrencySymbol": "SXNETWORK"
         },
         "availableAmount": "3.4349105246",
@@ -9545,6 +9793,7 @@
       {
         "id": "4c996af2-1018-4963-b789-4510ac04fa25",
         "asset": {
+          "blockchain": "TokenEX",
           "cryptocurrencySymbol": "TKX"
         },
         "availableAmount": "78167328581.7780",
@@ -9553,6 +9802,7 @@
       {
         "id": "0e83efed-2d71-4ff7-8d46-8344a4091078",
         "asset": {
+          "blockchain": "TRON",
           "cryptocurrencySymbol": "TRX"
         },
         "availableAmount": "828",
@@ -9561,6 +9811,7 @@
       {
         "id": "ceb6d3f2-63d8-49c8-97ee-f247348fcbee",
         "asset": {
+          "blockchain": "Velas",
           "cryptocurrencySymbol": "VLX"
         },
         "availableAmount": "14552839100.9789",
@@ -9569,6 +9820,7 @@
       {
         "id": "ad2bbb32-61a7-4f5e-a44d-4d5a20728e9b",
         "asset": {
+          "blockchain": "WEMIX",
           "cryptocurrencySymbol": "WEMIX"
         },
         "availableAmount": "5307",
@@ -9577,6 +9829,7 @@
       {
         "id": "bce05a5d-80b5-4003-8355-9a1a19fa635a",
         "asset": {
+          "blockchain": "XDB Chain",
           "cryptocurrencySymbol": "XDB"
         },
         "availableAmount": "7204515332",
@@ -9585,6 +9838,7 @@
       {
         "id": "339efede-e884-4eb2-8944-3a3118e6cd5a",
         "asset": {
+          "blockchain": "XinFin Network",
           "cryptocurrencySymbol": "XDC"
         },
         "availableAmount": "8236251661.27556761191",
@@ -9593,6 +9847,7 @@
       {
         "id": "198c8f6a-5126-4f1c-a4f2-c3a218c22d51",
         "asset": {
+          "blockchain": "eCash",
           "cryptocurrencySymbol": "XEC"
         },
         "availableAmount": "311813",
@@ -9601,6 +9856,7 @@
       {
         "id": "0c9b0b82-c019-47e9-81e2-661e3fb6e7cc",
         "asset": {
+          "blockchain": "NEM NIS1",
           "cryptocurrencySymbol": "XEM"
         },
         "availableAmount": "4295243.539797",
@@ -9609,6 +9865,7 @@
       {
         "id": "99df210b-5cce-4d17-9c58-ac838c693bb9",
         "asset": {
+          "blockchain": "Stellar",
           "cryptocurrencySymbol": "XLM"
         },
         "availableAmount": "15",
@@ -9617,6 +9874,7 @@
       {
         "id": "4fc62793-c988-467b-b8e0-c6c558b54a85",
         "asset": {
+          "blockchain": "XRP",
           "cryptocurrencySymbol": "XRP"
         },
         "availableAmount": "380248.47300636677",
@@ -9625,6 +9883,7 @@
       {
         "id": "65d0d64f-5213-43f6-b509-28b00cb1e85a",
         "asset": {
+          "blockchain": "Tezos",
           "cryptocurrencySymbol": "XTZ"
         },
         "availableAmount": "33.38",
@@ -9633,6 +9892,7 @@
       {
         "id": "fc686401-907f-49dc-8675-9b89243a250f",
         "asset": {
+          "blockchain": "ZCash",
           "cryptocurrencySymbol": "ZEC"
         },
         "availableAmount": "598.777",
@@ -12105,6 +12365,7 @@
       {
         "id": "5c50b424-4b1e-4ae5-ac23-b5dec8be0931",
         "asset": {
+          "blockchain": "Cardano",
           "cryptocurrencySymbol": "ADA"
         },
         "availableAmount": "4562.079186133",
@@ -12113,6 +12374,7 @@
       {
         "id": "30efd3b8-5224-4d2f-902e-04c13d9ab386",
         "asset": {
+          "blockchain": "Algorand",
           "cryptocurrencySymbol": "ALGO"
         },
         "availableAmount": "026346783.952755403",
@@ -12121,7 +12383,8 @@
       {
         "id": "965767e8-5656-444f-8eb8-b19abbc37eb3",
         "asset": {
-          "cryptocurrencySymbol": "ARB"
+          "blockchain": "Arbitrum",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "7957613",
         "lockedAmount": "7"
@@ -12129,6 +12392,7 @@
       {
         "id": "269a962b-610f-4a5a-b67f-e183ef6f3636",
         "asset": {
+          "blockchain": "Astar",
           "cryptocurrencySymbol": "ASTR"
         },
         "availableAmount": "2",
@@ -12137,6 +12401,7 @@
       {
         "id": "1dcb1fc5-2fdc-4ccf-8bf3-9d12a54f479c",
         "asset": {
+          "blockchain": "Cosmos",
           "cryptocurrencySymbol": "ATOM"
         },
         "availableAmount": "9676.50613199",
@@ -12145,6 +12410,7 @@
       {
         "id": "68ea367a-df72-4514-8e8c-2e39272791e8",
         "asset": {
+          "blockchain": "Aurora",
           "cryptocurrencySymbol": "AURORA"
         },
         "availableAmount": "152337.84413830847",
@@ -12153,6 +12419,7 @@
       {
         "id": "3826973f-2ab0-461c-b64a-aad74c79520f",
         "asset": {
+          "blockchain": "Avalanche",
           "cryptocurrencySymbol": "AVAX"
         },
         "availableAmount": "6.760536508",
@@ -12161,6 +12428,7 @@
       {
         "id": "d01851f1-2d73-4150-9b47-5ce1452e2c00",
         "asset": {
+          "blockchain": "Axelar",
           "cryptocurrencySymbol": "AXL"
         },
         "availableAmount": "1",
@@ -12169,7 +12437,8 @@
       {
         "id": "dd7db1f2-b777-487d-bd43-2095040016a0",
         "asset": {
-          "cryptocurrencySymbol": "BASE"
+          "blockchain": "Base",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "0831998586",
         "lockedAmount": "8408285010.788"
@@ -12177,6 +12446,7 @@
       {
         "id": "7e3d0161-481b-4c83-a86f-4d1da80dfbb2",
         "asset": {
+          "blockchain": "Bitcoin Cash",
           "cryptocurrencySymbol": "BCH"
         },
         "availableAmount": "674610887",
@@ -12185,6 +12455,7 @@
       {
         "id": "d85e20f5-d1ad-414c-86e5-f89c09ef297c",
         "asset": {
+          "blockchain": "Bitcoin Cash ABC",
           "cryptocurrencySymbol": "BCHA"
         },
         "availableAmount": "5636",
@@ -12193,6 +12464,7 @@
       {
         "id": "6db73eb5-f017-4561-9879-d8520f4b65a6",
         "asset": {
+          "blockchain": "Bitkub Chain",
           "cryptocurrencySymbol": "BITKUB"
         },
         "availableAmount": "7389155.02350450",
@@ -12201,6 +12473,7 @@
       {
         "id": "1064ed9f-70f0-475a-b804-c18c2fded202",
         "asset": {
+          "blockchain": "BNB",
           "cryptocurrencySymbol": "BNB"
         },
         "availableAmount": "15.7870",
@@ -12209,6 +12482,7 @@
       {
         "id": "774123b6-f901-456e-ae6d-1580d0ecedf5",
         "asset": {
+          "blockchain": "Bitcoin SV",
           "cryptocurrencySymbol": "BSV"
         },
         "availableAmount": "70831397.76790279",
@@ -12217,6 +12491,7 @@
       {
         "id": "716cff67-eae7-4606-82c5-9d95ec3f3794",
         "asset": {
+          "blockchain": "Bitcoin",
           "cryptocurrencySymbol": "BTC"
         },
         "availableAmount": "71868321",
@@ -12225,6 +12500,7 @@
       {
         "id": "fd45e5ca-9825-4ee7-a867-b6d4553a9805",
         "asset": {
+          "blockchain": "Canto",
           "cryptocurrencySymbol": "CANTO"
         },
         "availableAmount": "3693344012",
@@ -12233,6 +12509,7 @@
       {
         "id": "ec95d150-8397-491a-bac5-a967c01292d0",
         "asset": {
+          "blockchain": "Celestia",
           "cryptocurrencySymbol": "CELESTIA"
         },
         "availableAmount": "78711973.96709487",
@@ -12241,6 +12518,7 @@
       {
         "id": "21f43c6c-57b1-4089-b448-6b45aae597a5",
         "asset": {
+          "blockchain": "Celo",
           "cryptocurrencySymbol": "CELO"
         },
         "availableAmount": "011",
@@ -12249,6 +12527,7 @@
       {
         "id": "2ba194c7-49c8-4baa-8f76-cd10bd404a3c",
         "asset": {
+          "blockchain": "Chiliz Legacy Chain",
           "cryptocurrencySymbol": "CHZ"
         },
         "availableAmount": "3048455663",
@@ -12257,6 +12536,7 @@
       {
         "id": "7fa8e7d2-11e4-4ae4-99ec-8c395af0acb9",
         "asset": {
+          "blockchain": "Chiliz Chain",
           "cryptocurrencySymbol": "CHZ2"
         },
         "availableAmount": "546.1646154",
@@ -12265,6 +12545,7 @@
       {
         "id": "f4771735-7ab4-46ef-9a08-31eeb9e17b6a",
         "asset": {
+          "blockchain": "Cortex",
           "cryptocurrencySymbol": "CTXC"
         },
         "availableAmount": "39.9908",
@@ -12273,6 +12554,7 @@
       {
         "id": "100e0bd9-6808-4a7a-aacf-659ae19e6287",
         "asset": {
+          "blockchain": "Dash",
           "cryptocurrencySymbol": "DASH"
         },
         "availableAmount": "14.92024",
@@ -12281,6 +12563,7 @@
       {
         "id": "6f2b9236-75c7-4879-a7be-5cdae0a2e939",
         "asset": {
+          "blockchain": "Dogecoin",
           "cryptocurrencySymbol": "DOGE"
         },
         "availableAmount": "553686360",
@@ -12289,6 +12572,7 @@
       {
         "id": "b6c87364-aee6-4157-991a-b56f297544a6",
         "asset": {
+          "blockchain": "Polkadot",
           "cryptocurrencySymbol": "DOT"
         },
         "availableAmount": "65400664",
@@ -12297,6 +12581,7 @@
       {
         "id": "76090034-53e1-40f7-9c15-25fdd5c455c9",
         "asset": {
+          "blockchain": "DYDX",
           "cryptocurrencySymbol": "DYDX"
         },
         "availableAmount": "0.0458644247",
@@ -12305,6 +12590,7 @@
       {
         "id": "1f927c70-83a9-4ad4-b61d-b86fd78abb0f",
         "asset": {
+          "blockchain": "EOS",
           "cryptocurrencySymbol": "EOS"
         },
         "availableAmount": "0.4",
@@ -12313,6 +12599,7 @@
       {
         "id": "adf06379-ba4a-40b5-ba58-2874826689ed",
         "asset": {
+          "blockchain": "Ethereum Classic",
           "cryptocurrencySymbol": "ETC"
         },
         "availableAmount": "803",
@@ -12321,6 +12608,7 @@
       {
         "id": "37fb2a16-e637-431b-b6e7-28e3160391c0",
         "asset": {
+          "blockchain": "Ethereum",
           "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "39602661594",
@@ -12329,6 +12617,7 @@
       {
         "id": "b9882623-fdc0-48e7-9e52-a88c82b17e48",
         "asset": {
+          "blockchain": "EthereumPoW",
           "cryptocurrencySymbol": "ETHW"
         },
         "availableAmount": "26868486.543974",
@@ -12337,6 +12626,7 @@
       {
         "id": "f4face09-835f-4c0e-928a-dc2f6d03d3a7",
         "asset": {
+          "blockchain": "Evmos",
           "cryptocurrencySymbol": "EVMOS"
         },
         "availableAmount": "9545186081",
@@ -12345,6 +12635,7 @@
       {
         "id": "6683c24d-2ccd-4a84-89d6-fc59525fdcbf",
         "asset": {
+          "blockchain": "Flare",
           "cryptocurrencySymbol": "FLR"
         },
         "availableAmount": "7041276.38320510",
@@ -12353,6 +12644,7 @@
       {
         "id": "77bf7e1e-f70d-4a41-960e-f5f21e56b7d0",
         "asset": {
+          "blockchain": "Fantom Opera",
           "cryptocurrencySymbol": "FTM"
         },
         "availableAmount": "935529510",
@@ -12361,6 +12653,7 @@
       {
         "id": "b98910f9-917f-4655-9e05-b01feb01c23a",
         "asset": {
+          "blockchain": "Moonbeam",
           "cryptocurrencySymbol": "GLMR"
         },
         "availableAmount": "818035.33464",
@@ -12369,6 +12662,7 @@
       {
         "id": "84f9a64a-6ac4-4e2f-b8fd-fd3b9d874d5b",
         "asset": {
+          "blockchain": "Hedera",
           "cryptocurrencySymbol": "HBAR"
         },
         "availableAmount": "82744712",
@@ -12377,6 +12671,7 @@
       {
         "id": "e451b6ff-1e71-4b0b-8840-d24a5c8d3cfd",
         "asset": {
+          "blockchain": "HT Chain",
           "cryptocurrencySymbol": "HT"
         },
         "availableAmount": "457405",
@@ -12385,6 +12680,7 @@
       {
         "id": "4302c287-46ac-4ac2-b055-5689db7b9361",
         "asset": {
+          "blockchain": "KAVA",
           "cryptocurrencySymbol": "KAVA"
         },
         "availableAmount": "85",
@@ -12393,6 +12689,7 @@
       {
         "id": "3932b566-3916-4720-9e27-6bfe825164e9",
         "asset": {
+          "blockchain": "Kusama",
           "cryptocurrencySymbol": "KSM"
         },
         "availableAmount": "1502.380",
@@ -12401,6 +12698,7 @@
       {
         "id": "68df5ebe-bbde-47fa-af79-d440424efac7",
         "asset": {
+          "blockchain": "Litecoin",
           "cryptocurrencySymbol": "LTC"
         },
         "availableAmount": "0.96",
@@ -12409,6 +12707,7 @@
       {
         "id": "9391485a-d333-45be-a0b5-b67a1cfc449e",
         "asset": {
+          "blockchain": "Terra Classic",
           "cryptocurrencySymbol": "LUNA"
         },
         "availableAmount": "86601804",
@@ -12417,6 +12716,7 @@
       {
         "id": "e79150e6-26b0-47f3-ab64-b7f219e5ac47",
         "asset": {
+          "blockchain": "Terra 2.0",
           "cryptocurrencySymbol": "LUNA2"
         },
         "availableAmount": "55932321322.5",
@@ -12425,6 +12725,7 @@
       {
         "id": "71990def-a0d4-449e-9e19-aa3485214eb3",
         "asset": {
+          "blockchain": "Polygon PoS",
           "cryptocurrencySymbol": "MATIC"
         },
         "availableAmount": "16389502",
@@ -12433,6 +12734,7 @@
       {
         "id": "dc567fe4-3b9b-4971-a34b-e136aee584d9",
         "asset": {
+          "blockchain": "Moonriver",
           "cryptocurrencySymbol": "MOVR"
         },
         "availableAmount": "75030757980.8386900164",
@@ -12441,6 +12743,7 @@
       {
         "id": "fec76fd3-c752-48f9-ad21-868ea151c1b5",
         "asset": {
+          "blockchain": "NEAR Protocol",
           "cryptocurrencySymbol": "NEAR"
         },
         "availableAmount": "0785562535.0306325",
@@ -12449,6 +12752,7 @@
       {
         "id": "86fcb697-dc43-4086-be3e-4a75121d2e0e",
         "asset": {
+          "blockchain": "Oasys",
           "cryptocurrencySymbol": "OAS"
         },
         "availableAmount": "45943912052",
@@ -12457,7 +12761,8 @@
       {
         "id": "ba8f955b-1728-44bf-b454-b41e0d2b7d8c",
         "asset": {
-          "cryptocurrencySymbol": "OPT"
+          "blockchain": "Optimism",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "67429.1",
         "lockedAmount": "05790574145"
@@ -12465,6 +12770,7 @@
       {
         "id": "9771f7e0-492c-4a11-9438-4fe44468d704",
         "asset": {
+          "blockchain": "Osmosis",
           "cryptocurrencySymbol": "OSMO"
         },
         "availableAmount": "9631",
@@ -12473,6 +12779,7 @@
       {
         "id": "4b9ee4af-88a9-4cf2-b26d-411c13940f0e",
         "asset": {
+          "blockchain": "Palm",
           "cryptocurrencySymbol": "PALM"
         },
         "availableAmount": "67148364853.628073932",
@@ -12481,6 +12788,7 @@
       {
         "id": "4e3b55ef-3162-42f6-b5f8-92896a6e5c4e",
         "asset": {
+          "blockchain": "Ronin",
           "cryptocurrencySymbol": "RON"
         },
         "availableAmount": "924",
@@ -12489,6 +12797,7 @@
       {
         "id": "18d00c69-b31f-4a73-9076-7bd44057aeb4",
         "asset": {
+          "blockchain": "RSK",
           "cryptocurrencySymbol": "RSK"
         },
         "availableAmount": "364274",
@@ -12497,6 +12806,7 @@
       {
         "id": "acce11fb-4298-4c3e-8e95-39b22cde8f52",
         "asset": {
+          "blockchain": "Shimmer",
           "cryptocurrencySymbol": "SMR"
         },
         "availableAmount": "1557160",
@@ -12505,6 +12815,7 @@
       {
         "id": "3b0a087d-4e3a-4d71-8107-79f957129853",
         "asset": {
+          "blockchain": "Solana",
           "cryptocurrencySymbol": "SOL"
         },
         "availableAmount": "15679",
@@ -12513,6 +12824,7 @@
       {
         "id": "9d3d6db6-c000-4427-bb04-f6a559c97331",
         "asset": {
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "6913113559.3110503",
@@ -12521,6 +12833,7 @@
       {
         "id": "4113394c-5ee7-4f56-8437-5865d685d911",
         "asset": {
+          "blockchain": "SX Network",
           "cryptocurrencySymbol": "SXNETWORK"
         },
         "availableAmount": "7617.5036540593",
@@ -12529,6 +12842,7 @@
       {
         "id": "5b466f6f-d513-4153-bc5f-94b6e61eae9f",
         "asset": {
+          "blockchain": "TokenEX",
           "cryptocurrencySymbol": "TKX"
         },
         "availableAmount": "9433.04609874",
@@ -12537,6 +12851,7 @@
       {
         "id": "32a95e48-0a9a-44db-bbd6-f8d07ba6a822",
         "asset": {
+          "blockchain": "TRON",
           "cryptocurrencySymbol": "TRX"
         },
         "availableAmount": "975",
@@ -12545,6 +12860,7 @@
       {
         "id": "21d0405a-4716-49ed-a2eb-4be3e2ed8f19",
         "asset": {
+          "blockchain": "Velas",
           "cryptocurrencySymbol": "VLX"
         },
         "availableAmount": "71842713699",
@@ -12553,6 +12869,7 @@
       {
         "id": "b3b4e8e8-95a0-4959-9cb5-0ee8500b341b",
         "asset": {
+          "blockchain": "WEMIX",
           "cryptocurrencySymbol": "WEMIX"
         },
         "availableAmount": "539236337",
@@ -12561,6 +12878,7 @@
       {
         "id": "d7d00838-883d-48ba-90ca-832b2297b4ee",
         "asset": {
+          "blockchain": "XDB Chain",
           "cryptocurrencySymbol": "XDB"
         },
         "availableAmount": "5.1235827832",
@@ -12569,6 +12887,7 @@
       {
         "id": "e248058e-1e87-4caf-a867-9bc586dbc33c",
         "asset": {
+          "blockchain": "XinFin Network",
           "cryptocurrencySymbol": "XDC"
         },
         "availableAmount": "04995.3",
@@ -12577,6 +12896,7 @@
       {
         "id": "b362830e-d426-48e3-ad70-7b4203b0eb67",
         "asset": {
+          "blockchain": "eCash",
           "cryptocurrencySymbol": "XEC"
         },
         "availableAmount": "15.67183331030",
@@ -12585,6 +12905,7 @@
       {
         "id": "1b913cf2-af17-418f-ae81-91d6829d4056",
         "asset": {
+          "blockchain": "NEM NIS1",
           "cryptocurrencySymbol": "XEM"
         },
         "availableAmount": "37",
@@ -12593,6 +12914,7 @@
       {
         "id": "8ec16bad-b84e-405c-8d81-ab02c4ee31a3",
         "asset": {
+          "blockchain": "Stellar",
           "cryptocurrencySymbol": "XLM"
         },
         "availableAmount": "47017.07948185846",
@@ -12601,6 +12923,7 @@
       {
         "id": "72185d7e-251c-471c-a7fd-5ff51755c764",
         "asset": {
+          "blockchain": "XRP",
           "cryptocurrencySymbol": "XRP"
         },
         "availableAmount": "57357518",
@@ -12609,6 +12932,7 @@
       {
         "id": "52d76e43-7f70-4923-adb9-802a0a1e9972",
         "asset": {
+          "blockchain": "Tezos",
           "cryptocurrencySymbol": "XTZ"
         },
         "availableAmount": "410248",
@@ -12617,6 +12941,7 @@
       {
         "id": "8cfe222d-4b7c-4221-86c2-73571fe33a29",
         "asset": {
+          "blockchain": "ZCash",
           "cryptocurrencySymbol": "ZEC"
         },
         "availableAmount": "757.295585249",
@@ -15089,6 +15414,7 @@
       {
         "id": "d0c7e016-ca8d-47a7-aa06-98453a8cff88",
         "asset": {
+          "blockchain": "Cardano",
           "cryptocurrencySymbol": "ADA"
         },
         "availableAmount": "5678",
@@ -15097,6 +15423,7 @@
       {
         "id": "45c36395-1e55-4a9e-8ab3-04011bfaa84a",
         "asset": {
+          "blockchain": "Algorand",
           "cryptocurrencySymbol": "ALGO"
         },
         "availableAmount": "37",
@@ -15105,7 +15432,8 @@
       {
         "id": "9c3db1d7-ba77-4dfb-9ac9-88d48b8ac8db",
         "asset": {
-          "cryptocurrencySymbol": "ARB"
+          "blockchain": "Arbitrum",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "9",
         "lockedAmount": "4411560"
@@ -15113,6 +15441,7 @@
       {
         "id": "c534db61-1940-4568-977d-fb12d9c94acf",
         "asset": {
+          "blockchain": "Astar",
           "cryptocurrencySymbol": "ASTR"
         },
         "availableAmount": "8331",
@@ -15121,6 +15450,7 @@
       {
         "id": "67230364-d226-4869-8345-e2aa8718b1bf",
         "asset": {
+          "blockchain": "Cosmos",
           "cryptocurrencySymbol": "ATOM"
         },
         "availableAmount": "5587015356.045630",
@@ -15129,6 +15459,7 @@
       {
         "id": "849a369d-20af-4506-ad0e-43dfcd22f81e",
         "asset": {
+          "blockchain": "Aurora",
           "cryptocurrencySymbol": "AURORA"
         },
         "availableAmount": "25",
@@ -15137,6 +15468,7 @@
       {
         "id": "556ba830-ba33-4762-851d-fbb28b6ee42b",
         "asset": {
+          "blockchain": "Avalanche",
           "cryptocurrencySymbol": "AVAX"
         },
         "availableAmount": "1040261.2",
@@ -15145,6 +15477,7 @@
       {
         "id": "b6077721-751f-4452-81d7-efc7deebddde",
         "asset": {
+          "blockchain": "Axelar",
           "cryptocurrencySymbol": "AXL"
         },
         "availableAmount": "7166432",
@@ -15153,7 +15486,8 @@
       {
         "id": "dff86553-c21b-4f45-831f-df8fd8403614",
         "asset": {
-          "cryptocurrencySymbol": "BASE"
+          "blockchain": "Base",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "6744",
         "lockedAmount": "340.167710037"
@@ -15161,6 +15495,7 @@
       {
         "id": "ea6c8605-8219-4b12-bb2d-ceea33a977ef",
         "asset": {
+          "blockchain": "Bitcoin Cash",
           "cryptocurrencySymbol": "BCH"
         },
         "availableAmount": "5976.049233868",
@@ -15169,6 +15504,7 @@
       {
         "id": "4085571d-f7f7-421a-bc8d-aa4a33894635",
         "asset": {
+          "blockchain": "Bitcoin Cash ABC",
           "cryptocurrencySymbol": "BCHA"
         },
         "availableAmount": "1.13017",
@@ -15177,6 +15513,7 @@
       {
         "id": "29e2b92a-5548-428f-be1c-cc9eac336540",
         "asset": {
+          "blockchain": "Bitkub Chain",
           "cryptocurrencySymbol": "BITKUB"
         },
         "availableAmount": "8836109324",
@@ -15185,6 +15522,7 @@
       {
         "id": "99d1536b-0e2c-4438-b244-3f28e0adce14",
         "asset": {
+          "blockchain": "BNB",
           "cryptocurrencySymbol": "BNB"
         },
         "availableAmount": "09.04275806474",
@@ -15193,6 +15531,7 @@
       {
         "id": "91c0cb1c-470a-4bb2-8649-7c8d55d07fa4",
         "asset": {
+          "blockchain": "Bitcoin SV",
           "cryptocurrencySymbol": "BSV"
         },
         "availableAmount": "1332238",
@@ -15201,6 +15540,7 @@
       {
         "id": "46c91ff6-9fdb-4a2a-afe1-c2a46a70eb3d",
         "asset": {
+          "blockchain": "Bitcoin",
           "cryptocurrencySymbol": "BTC"
         },
         "availableAmount": "4524.0477522077",
@@ -15209,6 +15549,7 @@
       {
         "id": "d19134c7-20cd-4774-b002-7000185bb48a",
         "asset": {
+          "blockchain": "Canto",
           "cryptocurrencySymbol": "CANTO"
         },
         "availableAmount": "4249541.5422661105",
@@ -15217,6 +15558,7 @@
       {
         "id": "f4202c4e-f466-40f6-94f1-5f262b258bba",
         "asset": {
+          "blockchain": "Celestia",
           "cryptocurrencySymbol": "CELESTIA"
         },
         "availableAmount": "9084670.1537880",
@@ -15225,6 +15567,7 @@
       {
         "id": "f43530cd-70bc-4e2d-8613-8340825b976d",
         "asset": {
+          "blockchain": "Celo",
           "cryptocurrencySymbol": "CELO"
         },
         "availableAmount": "25980612",
@@ -15233,6 +15576,7 @@
       {
         "id": "7e18e838-77d5-4725-85f5-ad1f8c444484",
         "asset": {
+          "blockchain": "Chiliz Legacy Chain",
           "cryptocurrencySymbol": "CHZ"
         },
         "availableAmount": "515",
@@ -15241,6 +15585,7 @@
       {
         "id": "1240b1c8-8d5f-4de7-be71-a5807cc60594",
         "asset": {
+          "blockchain": "Chiliz Chain",
           "cryptocurrencySymbol": "CHZ2"
         },
         "availableAmount": "37.2",
@@ -15249,6 +15594,7 @@
       {
         "id": "c9e0895e-b81d-4246-91c1-6b0c2845b38a",
         "asset": {
+          "blockchain": "Cortex",
           "cryptocurrencySymbol": "CTXC"
         },
         "availableAmount": "1540733",
@@ -15257,6 +15603,7 @@
       {
         "id": "e257cc7a-e9f7-4469-9710-9b5adebb584a",
         "asset": {
+          "blockchain": "Dash",
           "cryptocurrencySymbol": "DASH"
         },
         "availableAmount": "912243145",
@@ -15265,6 +15612,7 @@
       {
         "id": "93829525-f4a3-4987-b8ab-f3fe6b869ebe",
         "asset": {
+          "blockchain": "Dogecoin",
           "cryptocurrencySymbol": "DOGE"
         },
         "availableAmount": "8.22",
@@ -15273,6 +15621,7 @@
       {
         "id": "2f8a8a4b-4772-49d4-8926-6bea8cd07234",
         "asset": {
+          "blockchain": "Polkadot",
           "cryptocurrencySymbol": "DOT"
         },
         "availableAmount": "86666.4835",
@@ -15281,6 +15630,7 @@
       {
         "id": "92cd367b-66da-4d97-9325-3c2dcf59b72d",
         "asset": {
+          "blockchain": "DYDX",
           "cryptocurrencySymbol": "DYDX"
         },
         "availableAmount": "0039315245",
@@ -15289,6 +15639,7 @@
       {
         "id": "a489a721-01f5-4160-b18e-19d20d1b3304",
         "asset": {
+          "blockchain": "EOS",
           "cryptocurrencySymbol": "EOS"
         },
         "availableAmount": "58685236",
@@ -15297,6 +15648,7 @@
       {
         "id": "93622eb4-653c-4ffc-9e7d-599349decd36",
         "asset": {
+          "blockchain": "Ethereum Classic",
           "cryptocurrencySymbol": "ETC"
         },
         "availableAmount": "5.844627",
@@ -15305,6 +15657,7 @@
       {
         "id": "d5e800f1-5daf-4311-8ee3-b109f9dd5a5e",
         "asset": {
+          "blockchain": "Ethereum",
           "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "612",
@@ -15313,6 +15666,7 @@
       {
         "id": "28e3a99e-dd51-4992-b2e9-7719da8a7095",
         "asset": {
+          "blockchain": "EthereumPoW",
           "cryptocurrencySymbol": "ETHW"
         },
         "availableAmount": "7105797135",
@@ -15321,6 +15675,7 @@
       {
         "id": "da23b8d9-19e7-45e8-9566-d1df4c48b5e3",
         "asset": {
+          "blockchain": "Evmos",
           "cryptocurrencySymbol": "EVMOS"
         },
         "availableAmount": "9475155006.75373",
@@ -15329,6 +15684,7 @@
       {
         "id": "ab1478d7-8a91-4971-9b57-3e63b1b42282",
         "asset": {
+          "blockchain": "Flare",
           "cryptocurrencySymbol": "FLR"
         },
         "availableAmount": "665",
@@ -15337,6 +15693,7 @@
       {
         "id": "2c996b3b-1774-4922-b8c3-798ba08b5547",
         "asset": {
+          "blockchain": "Fantom Opera",
           "cryptocurrencySymbol": "FTM"
         },
         "availableAmount": "3869609",
@@ -15345,6 +15702,7 @@
       {
         "id": "2d5a5142-febd-427d-a256-a4dbd0dead30",
         "asset": {
+          "blockchain": "Moonbeam",
           "cryptocurrencySymbol": "GLMR"
         },
         "availableAmount": "907127.6841798",
@@ -15353,6 +15711,7 @@
       {
         "id": "cac4fef3-4aff-4fa9-bee9-0a3fd67da0c7",
         "asset": {
+          "blockchain": "Hedera",
           "cryptocurrencySymbol": "HBAR"
         },
         "availableAmount": "415.571150",
@@ -15361,6 +15720,7 @@
       {
         "id": "630e0613-d322-43f7-b408-392413ae59f4",
         "asset": {
+          "blockchain": "HT Chain",
           "cryptocurrencySymbol": "HT"
         },
         "availableAmount": "2011725",
@@ -15369,6 +15729,7 @@
       {
         "id": "554a14a7-17f2-4387-a79d-8a3b317273d0",
         "asset": {
+          "blockchain": "KAVA",
           "cryptocurrencySymbol": "KAVA"
         },
         "availableAmount": "72066294159",
@@ -15377,6 +15738,7 @@
       {
         "id": "a4f70577-3bd4-4a46-9c95-3ff38fb87b00",
         "asset": {
+          "blockchain": "Kusama",
           "cryptocurrencySymbol": "KSM"
         },
         "availableAmount": "310707.7210",
@@ -15385,6 +15747,7 @@
       {
         "id": "19760909-9e7f-4810-974c-b3860c300c46",
         "asset": {
+          "blockchain": "Litecoin",
           "cryptocurrencySymbol": "LTC"
         },
         "availableAmount": "69699",
@@ -15393,6 +15756,7 @@
       {
         "id": "f8230d2c-bbfd-4183-a6a3-64de5f9d1e68",
         "asset": {
+          "blockchain": "Terra Classic",
           "cryptocurrencySymbol": "LUNA"
         },
         "availableAmount": "27691964038",
@@ -15401,6 +15765,7 @@
       {
         "id": "342fb252-caa1-4003-a80d-53616a1d3151",
         "asset": {
+          "blockchain": "Terra 2.0",
           "cryptocurrencySymbol": "LUNA2"
         },
         "availableAmount": "5547",
@@ -15409,6 +15774,7 @@
       {
         "id": "44951f3c-2dc2-40ea-b9e9-b7b4fdb4fc06",
         "asset": {
+          "blockchain": "Polygon PoS",
           "cryptocurrencySymbol": "MATIC"
         },
         "availableAmount": "19.7158126",
@@ -15417,6 +15783,7 @@
       {
         "id": "07374bd9-92e2-460b-a932-571000e4bd3e",
         "asset": {
+          "blockchain": "Moonriver",
           "cryptocurrencySymbol": "MOVR"
         },
         "availableAmount": "8908",
@@ -15425,6 +15792,7 @@
       {
         "id": "8b7c4617-986f-4267-9cd0-93e3fb2ec1ac",
         "asset": {
+          "blockchain": "NEAR Protocol",
           "cryptocurrencySymbol": "NEAR"
         },
         "availableAmount": "71.56125976269",
@@ -15433,6 +15801,7 @@
       {
         "id": "fa4034e2-528d-46ca-82d6-1964fc6bcdd5",
         "asset": {
+          "blockchain": "Oasys",
           "cryptocurrencySymbol": "OAS"
         },
         "availableAmount": "9413799.06039170",
@@ -15441,7 +15810,8 @@
       {
         "id": "432dcefe-490d-461b-b3b2-2b1fdaf8b870",
         "asset": {
-          "cryptocurrencySymbol": "OPT"
+          "blockchain": "Optimism",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "040774.13727956918",
         "lockedAmount": "700683"
@@ -15449,6 +15819,7 @@
       {
         "id": "01e35eeb-2037-44be-9773-ad57479bc0d0",
         "asset": {
+          "blockchain": "Osmosis",
           "cryptocurrencySymbol": "OSMO"
         },
         "availableAmount": "27",
@@ -15457,6 +15828,7 @@
       {
         "id": "aeb813f6-7d99-44e7-a534-ae169b1cd44a",
         "asset": {
+          "blockchain": "Palm",
           "cryptocurrencySymbol": "PALM"
         },
         "availableAmount": "3079866",
@@ -15465,6 +15837,7 @@
       {
         "id": "c81fa028-fb2a-4812-9878-f6368b61370e",
         "asset": {
+          "blockchain": "Ronin",
           "cryptocurrencySymbol": "RON"
         },
         "availableAmount": "005116.6817975082",
@@ -15473,6 +15846,7 @@
       {
         "id": "4c2b3219-69ca-4db8-a3ba-991e9554e10c",
         "asset": {
+          "blockchain": "RSK",
           "cryptocurrencySymbol": "RSK"
         },
         "availableAmount": "78",
@@ -15481,6 +15855,7 @@
       {
         "id": "b04e46cc-bec2-4ce8-88ff-184f9828099d",
         "asset": {
+          "blockchain": "Shimmer",
           "cryptocurrencySymbol": "SMR"
         },
         "availableAmount": "8.6071297",
@@ -15489,6 +15864,7 @@
       {
         "id": "f09f79e2-7e8e-452b-a9cf-c46c743a6b0c",
         "asset": {
+          "blockchain": "Solana",
           "cryptocurrencySymbol": "SOL"
         },
         "availableAmount": "65803203.25",
@@ -15497,6 +15873,7 @@
       {
         "id": "84bee0f3-66c0-4854-b6f4-2b55252ecc7a",
         "asset": {
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "5671285",
@@ -15505,6 +15882,7 @@
       {
         "id": "a5c167b1-8ad8-43c6-b593-d8ee7116ef2f",
         "asset": {
+          "blockchain": "SX Network",
           "cryptocurrencySymbol": "SXNETWORK"
         },
         "availableAmount": "208751906",
@@ -15513,6 +15891,7 @@
       {
         "id": "24c14361-7d20-40c0-bd6f-783df13d0170",
         "asset": {
+          "blockchain": "TokenEX",
           "cryptocurrencySymbol": "TKX"
         },
         "availableAmount": "308",
@@ -15521,6 +15900,7 @@
       {
         "id": "7abbe2a0-9848-42c7-b694-f156835d0c97",
         "asset": {
+          "blockchain": "TRON",
           "cryptocurrencySymbol": "TRX"
         },
         "availableAmount": "11.9594796005",
@@ -15529,6 +15909,7 @@
       {
         "id": "5faf8edf-5b04-4936-b98d-04e66e79ebb2",
         "asset": {
+          "blockchain": "Velas",
           "cryptocurrencySymbol": "VLX"
         },
         "availableAmount": "71158963.55954495",
@@ -15537,6 +15918,7 @@
       {
         "id": "4692ac72-c0c3-4ba0-8938-0949f838c32d",
         "asset": {
+          "blockchain": "WEMIX",
           "cryptocurrencySymbol": "WEMIX"
         },
         "availableAmount": "01506847941.89125884",
@@ -15545,6 +15927,7 @@
       {
         "id": "69a618e6-bf50-49f3-bf58-5d032f6e5263",
         "asset": {
+          "blockchain": "XDB Chain",
           "cryptocurrencySymbol": "XDB"
         },
         "availableAmount": "5838183.1692661",
@@ -15553,6 +15936,7 @@
       {
         "id": "811cbd18-6f69-4392-9a72-a1a73585680e",
         "asset": {
+          "blockchain": "XinFin Network",
           "cryptocurrencySymbol": "XDC"
         },
         "availableAmount": "95032147229.028852287",
@@ -15561,6 +15945,7 @@
       {
         "id": "8fa31f0d-7fe1-4a58-aae1-78064eba25f0",
         "asset": {
+          "blockchain": "eCash",
           "cryptocurrencySymbol": "XEC"
         },
         "availableAmount": "0710808",
@@ -15569,6 +15954,7 @@
       {
         "id": "d399ac46-61e0-41d8-8ad1-7783b5d26ed3",
         "asset": {
+          "blockchain": "NEM NIS1",
           "cryptocurrencySymbol": "XEM"
         },
         "availableAmount": "7278195.42633142897",
@@ -15577,6 +15963,7 @@
       {
         "id": "09398ece-6e26-4787-98f0-072e9497b717",
         "asset": {
+          "blockchain": "Stellar",
           "cryptocurrencySymbol": "XLM"
         },
         "availableAmount": "6088.24474",
@@ -15585,6 +15972,7 @@
       {
         "id": "4a216b82-8f47-410b-913f-f03639625047",
         "asset": {
+          "blockchain": "XRP",
           "cryptocurrencySymbol": "XRP"
         },
         "availableAmount": "74282553918",
@@ -15593,6 +15981,7 @@
       {
         "id": "e6918e28-73e0-4219-ab04-5586a6c436b6",
         "asset": {
+          "blockchain": "Tezos",
           "cryptocurrencySymbol": "XTZ"
         },
         "availableAmount": "4644911307",
@@ -15601,6 +15990,7 @@
       {
         "id": "5612015d-6bd3-47d9-b599-800d89c7f64b",
         "asset": {
+          "blockchain": "ZCash",
           "cryptocurrencySymbol": "ZEC"
         },
         "availableAmount": "0491245",
@@ -18073,6 +18463,7 @@
       {
         "id": "faf139f5-e013-4033-b056-7c3a28ae6537",
         "asset": {
+          "blockchain": "Cardano",
           "cryptocurrencySymbol": "ADA"
         },
         "availableAmount": "52.9095",
@@ -18081,6 +18472,7 @@
       {
         "id": "90a2cca5-cf5f-443d-8ed4-299e89fcce07",
         "asset": {
+          "blockchain": "Algorand",
           "cryptocurrencySymbol": "ALGO"
         },
         "availableAmount": "9064",
@@ -18089,7 +18481,8 @@
       {
         "id": "4555582f-af02-40e7-b29e-c94cdb712bc7",
         "asset": {
-          "cryptocurrencySymbol": "ARB"
+          "blockchain": "Arbitrum",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "531767768",
         "lockedAmount": "56252104.2744861468"
@@ -18097,6 +18490,7 @@
       {
         "id": "31b84fe1-657c-4c91-8f6d-351467742510",
         "asset": {
+          "blockchain": "Astar",
           "cryptocurrencySymbol": "ASTR"
         },
         "availableAmount": "03345408",
@@ -18105,6 +18499,7 @@
       {
         "id": "ff1c7e69-1aff-47b9-aaab-c3b3e1d98979",
         "asset": {
+          "blockchain": "Cosmos",
           "cryptocurrencySymbol": "ATOM"
         },
         "availableAmount": "9095398",
@@ -18113,6 +18508,7 @@
       {
         "id": "8075c5ed-2147-47d3-98cf-84980ee39d3b",
         "asset": {
+          "blockchain": "Aurora",
           "cryptocurrencySymbol": "AURORA"
         },
         "availableAmount": "4.2689826",
@@ -18121,6 +18517,7 @@
       {
         "id": "228669e9-40c1-4560-8d2a-a0a0043a9f94",
         "asset": {
+          "blockchain": "Avalanche",
           "cryptocurrencySymbol": "AVAX"
         },
         "availableAmount": "222176038",
@@ -18129,6 +18526,7 @@
       {
         "id": "dee02554-4afa-4dd1-a005-afbe5995495d",
         "asset": {
+          "blockchain": "Axelar",
           "cryptocurrencySymbol": "AXL"
         },
         "availableAmount": "70786170538.56671643950",
@@ -18137,7 +18535,8 @@
       {
         "id": "03abb931-7cfe-439c-873e-4fa0bc2c4e8b",
         "asset": {
-          "cryptocurrencySymbol": "BASE"
+          "blockchain": "Base",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "5",
         "lockedAmount": "2.20652496243"
@@ -18145,6 +18544,7 @@
       {
         "id": "201014dc-1656-4265-9c1c-2db385e2755b",
         "asset": {
+          "blockchain": "Bitcoin Cash",
           "cryptocurrencySymbol": "BCH"
         },
         "availableAmount": "246516557.73349126998",
@@ -18153,6 +18553,7 @@
       {
         "id": "f95465c9-9089-4072-bb7a-4379564acd9b",
         "asset": {
+          "blockchain": "Bitcoin Cash ABC",
           "cryptocurrencySymbol": "BCHA"
         },
         "availableAmount": "998",
@@ -18161,6 +18562,7 @@
       {
         "id": "8d481333-2907-4e11-8428-83673eca873e",
         "asset": {
+          "blockchain": "Bitkub Chain",
           "cryptocurrencySymbol": "BITKUB"
         },
         "availableAmount": "4864499400",
@@ -18169,6 +18571,7 @@
       {
         "id": "e60b319a-5c37-4635-b626-0c666044a337",
         "asset": {
+          "blockchain": "BNB",
           "cryptocurrencySymbol": "BNB"
         },
         "availableAmount": "84",
@@ -18177,6 +18580,7 @@
       {
         "id": "a3c057b9-9cf3-408e-af0b-b300f122c66a",
         "asset": {
+          "blockchain": "Bitcoin SV",
           "cryptocurrencySymbol": "BSV"
         },
         "availableAmount": "74659.734",
@@ -18185,6 +18589,7 @@
       {
         "id": "a60e44fc-54c6-4d6c-90b5-d73aed98c222",
         "asset": {
+          "blockchain": "Bitcoin",
           "cryptocurrencySymbol": "BTC"
         },
         "availableAmount": "18037672.795",
@@ -18193,6 +18598,7 @@
       {
         "id": "622b14ff-e269-4ade-ab95-f5dc195d856c",
         "asset": {
+          "blockchain": "Canto",
           "cryptocurrencySymbol": "CANTO"
         },
         "availableAmount": "96",
@@ -18201,6 +18607,7 @@
       {
         "id": "d59d8974-049a-416d-8f7b-0514ade0b5d6",
         "asset": {
+          "blockchain": "Celestia",
           "cryptocurrencySymbol": "CELESTIA"
         },
         "availableAmount": "6548613432",
@@ -18209,6 +18616,7 @@
       {
         "id": "7b69c3bf-d866-4580-adf3-d33a7aa1170f",
         "asset": {
+          "blockchain": "Celo",
           "cryptocurrencySymbol": "CELO"
         },
         "availableAmount": "967748",
@@ -18217,6 +18625,7 @@
       {
         "id": "a2dc99bb-7be8-4179-b62a-a7bc2362745e",
         "asset": {
+          "blockchain": "Chiliz Legacy Chain",
           "cryptocurrencySymbol": "CHZ"
         },
         "availableAmount": "99356486686.88953347509",
@@ -18225,6 +18634,7 @@
       {
         "id": "d1c8a92e-70c7-44c9-8507-978fbf8d1ed9",
         "asset": {
+          "blockchain": "Chiliz Chain",
           "cryptocurrencySymbol": "CHZ2"
         },
         "availableAmount": "2715.56562229",
@@ -18233,6 +18643,7 @@
       {
         "id": "ae2e9397-c2a8-4f30-b147-0cab2887208d",
         "asset": {
+          "blockchain": "Cortex",
           "cryptocurrencySymbol": "CTXC"
         },
         "availableAmount": "4893294",
@@ -18241,6 +18652,7 @@
       {
         "id": "63456cac-0d38-4bf7-847f-afebf554369a",
         "asset": {
+          "blockchain": "Dash",
           "cryptocurrencySymbol": "DASH"
         },
         "availableAmount": "873873285.0472890",
@@ -18249,6 +18661,7 @@
       {
         "id": "812db4e9-8dad-4227-89ab-3a55d9a8c6f9",
         "asset": {
+          "blockchain": "Dogecoin",
           "cryptocurrencySymbol": "DOGE"
         },
         "availableAmount": "8.8",
@@ -18257,6 +18670,7 @@
       {
         "id": "21fc02a1-624f-474a-9793-8386e24e0c56",
         "asset": {
+          "blockchain": "Polkadot",
           "cryptocurrencySymbol": "DOT"
         },
         "availableAmount": "9",
@@ -18265,6 +18679,7 @@
       {
         "id": "373a8ce0-441a-4f94-882d-fa6cc8b0a60f",
         "asset": {
+          "blockchain": "DYDX",
           "cryptocurrencySymbol": "DYDX"
         },
         "availableAmount": "78676",
@@ -18273,6 +18688,7 @@
       {
         "id": "985ddeb5-407f-47fa-b772-773d2fb59158",
         "asset": {
+          "blockchain": "EOS",
           "cryptocurrencySymbol": "EOS"
         },
         "availableAmount": "73522209.68168875885",
@@ -18281,6 +18697,7 @@
       {
         "id": "8e3ff452-5628-426c-b7d4-dcb3c3b172db",
         "asset": {
+          "blockchain": "Ethereum Classic",
           "cryptocurrencySymbol": "ETC"
         },
         "availableAmount": "745185",
@@ -18289,6 +18706,7 @@
       {
         "id": "4787d7bb-61c4-4997-a47a-99814d8eb4c8",
         "asset": {
+          "blockchain": "Ethereum",
           "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "996",
@@ -18297,6 +18715,7 @@
       {
         "id": "2fb555f1-ca16-4e7a-91c6-ebef37f27f4c",
         "asset": {
+          "blockchain": "EthereumPoW",
           "cryptocurrencySymbol": "ETHW"
         },
         "availableAmount": "434477.75",
@@ -18305,6 +18724,7 @@
       {
         "id": "a2f5dedd-d6b1-4f5a-bbe2-b147c0ca4978",
         "asset": {
+          "blockchain": "Evmos",
           "cryptocurrencySymbol": "EVMOS"
         },
         "availableAmount": "49",
@@ -18313,6 +18733,7 @@
       {
         "id": "b0ae366a-28e6-426b-9132-79245f9e2ede",
         "asset": {
+          "blockchain": "Flare",
           "cryptocurrencySymbol": "FLR"
         },
         "availableAmount": "70280",
@@ -18321,6 +18742,7 @@
       {
         "id": "4bdc722e-b6cb-4a0d-8753-44709100837e",
         "asset": {
+          "blockchain": "Fantom Opera",
           "cryptocurrencySymbol": "FTM"
         },
         "availableAmount": "1844822.928911254",
@@ -18329,6 +18751,7 @@
       {
         "id": "70275449-e3c4-478e-96e7-6a48f3af5417",
         "asset": {
+          "blockchain": "Moonbeam",
           "cryptocurrencySymbol": "GLMR"
         },
         "availableAmount": "92.082081713",
@@ -18337,6 +18760,7 @@
       {
         "id": "cb052a69-6051-40e8-8017-560cd0e0ea5b",
         "asset": {
+          "blockchain": "Hedera",
           "cryptocurrencySymbol": "HBAR"
         },
         "availableAmount": "22205116",
@@ -18345,6 +18769,7 @@
       {
         "id": "e890fd5a-4d8c-44f8-9500-73ff1902525d",
         "asset": {
+          "blockchain": "HT Chain",
           "cryptocurrencySymbol": "HT"
         },
         "availableAmount": "3215592",
@@ -18353,6 +18778,7 @@
       {
         "id": "e69a2843-4118-4341-81b1-60bec8161a57",
         "asset": {
+          "blockchain": "KAVA",
           "cryptocurrencySymbol": "KAVA"
         },
         "availableAmount": "96198750009",
@@ -18361,6 +18787,7 @@
       {
         "id": "759d5556-4fe4-4484-a917-8d127a77a968",
         "asset": {
+          "blockchain": "Kusama",
           "cryptocurrencySymbol": "KSM"
         },
         "availableAmount": "8",
@@ -18369,6 +18796,7 @@
       {
         "id": "f51b9e6a-61fe-4355-8256-1e683eb28b8c",
         "asset": {
+          "blockchain": "Litecoin",
           "cryptocurrencySymbol": "LTC"
         },
         "availableAmount": "13.699862",
@@ -18377,6 +18805,7 @@
       {
         "id": "bede3814-4013-4cfe-9aa7-a873e81a9ee2",
         "asset": {
+          "blockchain": "Terra Classic",
           "cryptocurrencySymbol": "LUNA"
         },
         "availableAmount": "3637151.70766678",
@@ -18385,6 +18814,7 @@
       {
         "id": "75aa4350-8bcd-4695-b3a2-8c875aec3b58",
         "asset": {
+          "blockchain": "Terra 2.0",
           "cryptocurrencySymbol": "LUNA2"
         },
         "availableAmount": "684958464",
@@ -18393,6 +18823,7 @@
       {
         "id": "bdb52ba3-8e8a-41c1-9075-e6c2961695b0",
         "asset": {
+          "blockchain": "Polygon PoS",
           "cryptocurrencySymbol": "MATIC"
         },
         "availableAmount": "87522635",
@@ -18401,6 +18832,7 @@
       {
         "id": "4b0c1a91-d79b-48b1-ba0e-cd6ae9d6cfe4",
         "asset": {
+          "blockchain": "Moonriver",
           "cryptocurrencySymbol": "MOVR"
         },
         "availableAmount": "92605822.17",
@@ -18409,6 +18841,7 @@
       {
         "id": "b804fbf7-ae0e-43d7-8855-47d2022ec359",
         "asset": {
+          "blockchain": "NEAR Protocol",
           "cryptocurrencySymbol": "NEAR"
         },
         "availableAmount": "47.87012",
@@ -18417,6 +18850,7 @@
       {
         "id": "9e7343a2-2e40-4be7-8d17-36a53ccbc730",
         "asset": {
+          "blockchain": "Oasys",
           "cryptocurrencySymbol": "OAS"
         },
         "availableAmount": "147597664",
@@ -18425,7 +18859,8 @@
       {
         "id": "fa9a50e4-79b3-421c-a52d-21fd06fec6b9",
         "asset": {
-          "cryptocurrencySymbol": "OPT"
+          "blockchain": "Optimism",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "78293300165",
         "lockedAmount": "291139777.316"
@@ -18433,6 +18868,7 @@
       {
         "id": "0faec9b9-55c7-4d5c-b881-6865aa6ea586",
         "asset": {
+          "blockchain": "Osmosis",
           "cryptocurrencySymbol": "OSMO"
         },
         "availableAmount": "862764215",
@@ -18441,6 +18877,7 @@
       {
         "id": "694deeeb-0369-4d74-8f7a-61e6b766f11d",
         "asset": {
+          "blockchain": "Palm",
           "cryptocurrencySymbol": "PALM"
         },
         "availableAmount": "0856",
@@ -18449,6 +18886,7 @@
       {
         "id": "4db5418b-9e03-41da-9e13-cc092c87f84d",
         "asset": {
+          "blockchain": "Ronin",
           "cryptocurrencySymbol": "RON"
         },
         "availableAmount": "39457",
@@ -18457,6 +18895,7 @@
       {
         "id": "dca8ad62-ec4f-4583-89d9-29cbe78c983e",
         "asset": {
+          "blockchain": "RSK",
           "cryptocurrencySymbol": "RSK"
         },
         "availableAmount": "431",
@@ -18465,6 +18904,7 @@
       {
         "id": "7d023117-50ae-4339-8571-1a7fe8f0d81d",
         "asset": {
+          "blockchain": "Shimmer",
           "cryptocurrencySymbol": "SMR"
         },
         "availableAmount": "433895.2",
@@ -18473,6 +18913,7 @@
       {
         "id": "66b5b312-d173-418a-b4a5-551bad91f2a3",
         "asset": {
+          "blockchain": "Solana",
           "cryptocurrencySymbol": "SOL"
         },
         "availableAmount": "29421495122.59937347",
@@ -18481,6 +18922,7 @@
       {
         "id": "acfcc58a-5d26-41f2-80b5-31c19564ecdf",
         "asset": {
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "7043.906859",
@@ -18489,6 +18931,7 @@
       {
         "id": "54f9deb0-2b1b-43b9-9b0b-7c4b8f1bcfbd",
         "asset": {
+          "blockchain": "SX Network",
           "cryptocurrencySymbol": "SXNETWORK"
         },
         "availableAmount": "0795052112.4",
@@ -18497,6 +18940,7 @@
       {
         "id": "be97b505-3a33-43e6-a5f9-530ec72a5284",
         "asset": {
+          "blockchain": "TokenEX",
           "cryptocurrencySymbol": "TKX"
         },
         "availableAmount": "7540632263.11020",
@@ -18505,6 +18949,7 @@
       {
         "id": "9f4d6e38-3e3b-4e04-9fdb-698b348d0b34",
         "asset": {
+          "blockchain": "TRON",
           "cryptocurrencySymbol": "TRX"
         },
         "availableAmount": "5129.957540",
@@ -18513,6 +18958,7 @@
       {
         "id": "5307914e-2fd3-4c49-8adc-403e6ae60c69",
         "asset": {
+          "blockchain": "Velas",
           "cryptocurrencySymbol": "VLX"
         },
         "availableAmount": "613513.63",
@@ -18521,6 +18967,7 @@
       {
         "id": "1856201a-eb42-4156-9c78-d4bd179218c8",
         "asset": {
+          "blockchain": "WEMIX",
           "cryptocurrencySymbol": "WEMIX"
         },
         "availableAmount": "7",
@@ -18529,6 +18976,7 @@
       {
         "id": "4c8c4b49-7b2b-4b62-8d82-0c8559447bc5",
         "asset": {
+          "blockchain": "XDB Chain",
           "cryptocurrencySymbol": "XDB"
         },
         "availableAmount": "71262895734.0",
@@ -18537,6 +18985,7 @@
       {
         "id": "13965521-ea9d-4ad7-ba9a-9541426be96c",
         "asset": {
+          "blockchain": "XinFin Network",
           "cryptocurrencySymbol": "XDC"
         },
         "availableAmount": "47169010",
@@ -18545,6 +18994,7 @@
       {
         "id": "8ce800e6-1a44-42fe-b0ee-dad79a58af3b",
         "asset": {
+          "blockchain": "eCash",
           "cryptocurrencySymbol": "XEC"
         },
         "availableAmount": "4419843",
@@ -18553,6 +19003,7 @@
       {
         "id": "81a45158-d3d1-447c-b27f-968a5e3331e9",
         "asset": {
+          "blockchain": "NEM NIS1",
           "cryptocurrencySymbol": "XEM"
         },
         "availableAmount": "3897310",
@@ -18561,6 +19012,7 @@
       {
         "id": "1ce042a5-28ca-49e4-99a0-e10ee0ed1a97",
         "asset": {
+          "blockchain": "Stellar",
           "cryptocurrencySymbol": "XLM"
         },
         "availableAmount": "956546",
@@ -18569,6 +19021,7 @@
       {
         "id": "4b8e8f4f-573a-4a22-870a-a05ddfc11633",
         "asset": {
+          "blockchain": "XRP",
           "cryptocurrencySymbol": "XRP"
         },
         "availableAmount": "6526162.4656",
@@ -18577,6 +19030,7 @@
       {
         "id": "387857c5-41b4-4dd3-af84-8eef34726867",
         "asset": {
+          "blockchain": "Tezos",
           "cryptocurrencySymbol": "XTZ"
         },
         "availableAmount": "45.635131",
@@ -18585,6 +19039,7 @@
       {
         "id": "7d964245-e2d9-4780-8bb2-d78187575013",
         "asset": {
+          "blockchain": "ZCash",
           "cryptocurrencySymbol": "ZEC"
         },
         "availableAmount": "036710.9613039671",
@@ -21057,6 +21512,7 @@
       {
         "id": "e5cb4339-ae0d-427c-9d62-77933c17e914",
         "asset": {
+          "blockchain": "Cardano",
           "cryptocurrencySymbol": "ADA"
         },
         "availableAmount": "60",
@@ -21065,6 +21521,7 @@
       {
         "id": "7c378ca6-9fdb-4711-b523-30fbe39a08d2",
         "asset": {
+          "blockchain": "Algorand",
           "cryptocurrencySymbol": "ALGO"
         },
         "availableAmount": "14985160765",
@@ -21073,7 +21530,8 @@
       {
         "id": "e5666fee-a2ed-45a8-bf56-61a372c99214",
         "asset": {
-          "cryptocurrencySymbol": "ARB"
+          "blockchain": "Arbitrum",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "84",
         "lockedAmount": "5080813395"
@@ -21081,6 +21539,7 @@
       {
         "id": "b90f99b9-167b-4fca-810f-d41c3a8b5f7c",
         "asset": {
+          "blockchain": "Astar",
           "cryptocurrencySymbol": "ASTR"
         },
         "availableAmount": "54308780911.8296080548",
@@ -21089,6 +21548,7 @@
       {
         "id": "e22d9092-8eab-4c1d-9eff-c6b979e6847a",
         "asset": {
+          "blockchain": "Cosmos",
           "cryptocurrencySymbol": "ATOM"
         },
         "availableAmount": "73270",
@@ -21097,6 +21557,7 @@
       {
         "id": "937746ed-ae0f-4b01-b360-18c6cfca5bab",
         "asset": {
+          "blockchain": "Aurora",
           "cryptocurrencySymbol": "AURORA"
         },
         "availableAmount": "84.384",
@@ -21105,6 +21566,7 @@
       {
         "id": "ccecc24f-cd84-4f36-b645-4818a9cdaf0f",
         "asset": {
+          "blockchain": "Avalanche",
           "cryptocurrencySymbol": "AVAX"
         },
         "availableAmount": "4371956.448",
@@ -21113,6 +21575,7 @@
       {
         "id": "10930c2a-fc5d-4004-b6f8-dae3a7641243",
         "asset": {
+          "blockchain": "Axelar",
           "cryptocurrencySymbol": "AXL"
         },
         "availableAmount": "6994",
@@ -21121,7 +21584,8 @@
       {
         "id": "0fa9e621-ae1e-479d-99e1-3273fc16f3ed",
         "asset": {
-          "cryptocurrencySymbol": "BASE"
+          "blockchain": "Base",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "676129315",
         "lockedAmount": "9630469780.1763"
@@ -21129,6 +21593,7 @@
       {
         "id": "a0fb93cf-3851-4397-8421-a681584621b7",
         "asset": {
+          "blockchain": "Bitcoin Cash",
           "cryptocurrencySymbol": "BCH"
         },
         "availableAmount": "24733956385.0616669023",
@@ -21137,6 +21602,7 @@
       {
         "id": "9a80b276-a80d-4277-b138-69b5053b53a0",
         "asset": {
+          "blockchain": "Bitcoin Cash ABC",
           "cryptocurrencySymbol": "BCHA"
         },
         "availableAmount": "995",
@@ -21145,6 +21611,7 @@
       {
         "id": "e3488836-c1d5-48bf-843c-b2aa35e23d0a",
         "asset": {
+          "blockchain": "Bitkub Chain",
           "cryptocurrencySymbol": "BITKUB"
         },
         "availableAmount": "52",
@@ -21153,6 +21620,7 @@
       {
         "id": "e353d1b3-403b-4681-8bbe-4136368660c0",
         "asset": {
+          "blockchain": "BNB",
           "cryptocurrencySymbol": "BNB"
         },
         "availableAmount": "7981",
@@ -21161,6 +21629,7 @@
       {
         "id": "90823c1e-248c-488a-b3d5-94b5726b6ab5",
         "asset": {
+          "blockchain": "Bitcoin SV",
           "cryptocurrencySymbol": "BSV"
         },
         "availableAmount": "39845.8053",
@@ -21169,6 +21638,7 @@
       {
         "id": "68bb9163-b480-4e8b-8ea8-fe18254252ae",
         "asset": {
+          "blockchain": "Bitcoin",
           "cryptocurrencySymbol": "BTC"
         },
         "availableAmount": "1532663125.8463",
@@ -21177,6 +21647,7 @@
       {
         "id": "e2ffb21e-3571-4436-b688-d538557a6e77",
         "asset": {
+          "blockchain": "Canto",
           "cryptocurrencySymbol": "CANTO"
         },
         "availableAmount": "27462779655",
@@ -21185,6 +21656,7 @@
       {
         "id": "739ae653-741a-4abc-b812-48805f6883f4",
         "asset": {
+          "blockchain": "Celestia",
           "cryptocurrencySymbol": "CELESTIA"
         },
         "availableAmount": "152",
@@ -21193,6 +21665,7 @@
       {
         "id": "21265ed3-7bb5-40e7-a97f-1e73b8459b9d",
         "asset": {
+          "blockchain": "Celo",
           "cryptocurrencySymbol": "CELO"
         },
         "availableAmount": "42",
@@ -21201,6 +21674,7 @@
       {
         "id": "12c0b87e-eddf-4c23-b100-ccba225e45d9",
         "asset": {
+          "blockchain": "Chiliz Legacy Chain",
           "cryptocurrencySymbol": "CHZ"
         },
         "availableAmount": "241174",
@@ -21209,6 +21683,7 @@
       {
         "id": "2763e091-4610-4cbb-9b22-775b839eff7b",
         "asset": {
+          "blockchain": "Chiliz Chain",
           "cryptocurrencySymbol": "CHZ2"
         },
         "availableAmount": "63937.22329",
@@ -21217,6 +21692,7 @@
       {
         "id": "51a6d804-594e-4ab3-b369-bf481e170d56",
         "asset": {
+          "blockchain": "Cortex",
           "cryptocurrencySymbol": "CTXC"
         },
         "availableAmount": "82378376",
@@ -21225,6 +21701,7 @@
       {
         "id": "87c80ef8-59d9-4b1e-99d3-8cda03b74b43",
         "asset": {
+          "blockchain": "Dash",
           "cryptocurrencySymbol": "DASH"
         },
         "availableAmount": "7325",
@@ -21233,6 +21710,7 @@
       {
         "id": "9fecc6b4-ae36-4f91-9aff-ab09c287a0c7",
         "asset": {
+          "blockchain": "Dogecoin",
           "cryptocurrencySymbol": "DOGE"
         },
         "availableAmount": "246",
@@ -21241,6 +21719,7 @@
       {
         "id": "24cb3dc5-488c-4d5d-9687-73113b098a90",
         "asset": {
+          "blockchain": "Polkadot",
           "cryptocurrencySymbol": "DOT"
         },
         "availableAmount": "938.34036553101",
@@ -21249,6 +21728,7 @@
       {
         "id": "1ccec3fc-97cf-4e29-bce8-48720c8a437c",
         "asset": {
+          "blockchain": "DYDX",
           "cryptocurrencySymbol": "DYDX"
         },
         "availableAmount": "79938835",
@@ -21257,6 +21737,7 @@
       {
         "id": "cb29323a-c6e1-4e1e-8484-bb44d785393d",
         "asset": {
+          "blockchain": "EOS",
           "cryptocurrencySymbol": "EOS"
         },
         "availableAmount": "2.7",
@@ -21265,6 +21746,7 @@
       {
         "id": "754ea32b-74a2-4171-92c9-ea75c6cd0d54",
         "asset": {
+          "blockchain": "Ethereum Classic",
           "cryptocurrencySymbol": "ETC"
         },
         "availableAmount": "51780937",
@@ -21273,6 +21755,7 @@
       {
         "id": "4e9da753-98f9-455e-a05b-15ac531febbd",
         "asset": {
+          "blockchain": "Ethereum",
           "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "7588355.342291",
@@ -21281,6 +21764,7 @@
       {
         "id": "31d9a691-14e8-47d9-96c6-dcd0560b83a2",
         "asset": {
+          "blockchain": "EthereumPoW",
           "cryptocurrencySymbol": "ETHW"
         },
         "availableAmount": "199133",
@@ -21289,6 +21773,7 @@
       {
         "id": "30c8b86b-1ff1-416d-8d18-8106dcf47a33",
         "asset": {
+          "blockchain": "Evmos",
           "cryptocurrencySymbol": "EVMOS"
         },
         "availableAmount": "240551",
@@ -21297,6 +21782,7 @@
       {
         "id": "617f250e-8bad-4fdb-88a7-8f1b2d90c686",
         "asset": {
+          "blockchain": "Flare",
           "cryptocurrencySymbol": "FLR"
         },
         "availableAmount": "7814976197.587",
@@ -21305,6 +21791,7 @@
       {
         "id": "eaf3eeae-5551-4e1f-a0dc-40b4132d78f7",
         "asset": {
+          "blockchain": "Fantom Opera",
           "cryptocurrencySymbol": "FTM"
         },
         "availableAmount": "7.0",
@@ -21313,6 +21800,7 @@
       {
         "id": "c078522e-c0c4-4c03-87a9-58392a806512",
         "asset": {
+          "blockchain": "Moonbeam",
           "cryptocurrencySymbol": "GLMR"
         },
         "availableAmount": "257",
@@ -21321,6 +21809,7 @@
       {
         "id": "ffd64a6b-44c1-4bfa-b50d-70040d1d1a29",
         "asset": {
+          "blockchain": "Hedera",
           "cryptocurrencySymbol": "HBAR"
         },
         "availableAmount": "18490571550.86246",
@@ -21329,6 +21818,7 @@
       {
         "id": "c808dc98-3f12-4094-8703-633d6ebbd93d",
         "asset": {
+          "blockchain": "HT Chain",
           "cryptocurrencySymbol": "HT"
         },
         "availableAmount": "163453763",
@@ -21337,6 +21827,7 @@
       {
         "id": "a49bcd9b-6fc3-4d87-9041-7e6fe18cc648",
         "asset": {
+          "blockchain": "KAVA",
           "cryptocurrencySymbol": "KAVA"
         },
         "availableAmount": "443",
@@ -21345,6 +21836,7 @@
       {
         "id": "e129b6d6-ed93-4c2c-b4f7-40c7469f48e5",
         "asset": {
+          "blockchain": "Kusama",
           "cryptocurrencySymbol": "KSM"
         },
         "availableAmount": "56",
@@ -21353,6 +21845,7 @@
       {
         "id": "651f5141-4f26-42da-bef2-cb52ec482a51",
         "asset": {
+          "blockchain": "Litecoin",
           "cryptocurrencySymbol": "LTC"
         },
         "availableAmount": "86144157352",
@@ -21361,6 +21854,7 @@
       {
         "id": "3deb4623-3f02-47bd-818b-a07c83278265",
         "asset": {
+          "blockchain": "Terra Classic",
           "cryptocurrencySymbol": "LUNA"
         },
         "availableAmount": "2",
@@ -21369,6 +21863,7 @@
       {
         "id": "e7667886-723c-4355-a7b8-bf85ce77f4a6",
         "asset": {
+          "blockchain": "Terra 2.0",
           "cryptocurrencySymbol": "LUNA2"
         },
         "availableAmount": "1741.26749732540",
@@ -21377,6 +21872,7 @@
       {
         "id": "2c9e645c-da8c-4b39-8634-351caec4ac2f",
         "asset": {
+          "blockchain": "Polygon PoS",
           "cryptocurrencySymbol": "MATIC"
         },
         "availableAmount": "20480207939.7478",
@@ -21385,6 +21881,7 @@
       {
         "id": "123b30b1-1e9f-4f78-9006-5fb23839eee8",
         "asset": {
+          "blockchain": "Moonriver",
           "cryptocurrencySymbol": "MOVR"
         },
         "availableAmount": "04",
@@ -21393,6 +21890,7 @@
       {
         "id": "05dcfe27-189b-462e-a870-b12f75cc6598",
         "asset": {
+          "blockchain": "NEAR Protocol",
           "cryptocurrencySymbol": "NEAR"
         },
         "availableAmount": "2446",
@@ -21401,6 +21899,7 @@
       {
         "id": "1130a456-b180-419b-a312-ad462856646a",
         "asset": {
+          "blockchain": "Oasys",
           "cryptocurrencySymbol": "OAS"
         },
         "availableAmount": "9706491",
@@ -21409,7 +21908,8 @@
       {
         "id": "8dd699b5-e915-473c-a548-1c2e230a0aed",
         "asset": {
-          "cryptocurrencySymbol": "OPT"
+          "blockchain": "Optimism",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "335978745",
         "lockedAmount": "94369.148114611"
@@ -21417,6 +21917,7 @@
       {
         "id": "f2a236c9-c0cb-48cb-a787-81234b6134ba",
         "asset": {
+          "blockchain": "Osmosis",
           "cryptocurrencySymbol": "OSMO"
         },
         "availableAmount": "297559663",
@@ -21425,6 +21926,7 @@
       {
         "id": "4ea1a9ae-a03f-43ae-8142-6ecfd6e02795",
         "asset": {
+          "blockchain": "Palm",
           "cryptocurrencySymbol": "PALM"
         },
         "availableAmount": "478881.133183",
@@ -21433,6 +21935,7 @@
       {
         "id": "f86ee563-8da3-45be-a406-e6446e8714a2",
         "asset": {
+          "blockchain": "Ronin",
           "cryptocurrencySymbol": "RON"
         },
         "availableAmount": "18.3694",
@@ -21441,6 +21944,7 @@
       {
         "id": "543ca77d-8da0-4e92-a8ed-bfb98585bb40",
         "asset": {
+          "blockchain": "RSK",
           "cryptocurrencySymbol": "RSK"
         },
         "availableAmount": "9134387",
@@ -21449,6 +21953,7 @@
       {
         "id": "ae500dbc-55a7-4369-b136-a69ded3e3b1e",
         "asset": {
+          "blockchain": "Shimmer",
           "cryptocurrencySymbol": "SMR"
         },
         "availableAmount": "158",
@@ -21457,6 +21962,7 @@
       {
         "id": "593c0b18-5439-421e-bab6-15eda868e435",
         "asset": {
+          "blockchain": "Solana",
           "cryptocurrencySymbol": "SOL"
         },
         "availableAmount": "79435423979.185329237",
@@ -21465,6 +21971,7 @@
       {
         "id": "e5317b57-8953-4c9a-89dd-afdc1066eea9",
         "asset": {
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "1487",
@@ -21473,6 +21980,7 @@
       {
         "id": "768bce70-ccff-455b-b752-d17d30fbda28",
         "asset": {
+          "blockchain": "SX Network",
           "cryptocurrencySymbol": "SXNETWORK"
         },
         "availableAmount": "72149464561.04077415549",
@@ -21481,6 +21989,7 @@
       {
         "id": "d3f71b90-0018-4af3-a835-edb478bc914a",
         "asset": {
+          "blockchain": "TokenEX",
           "cryptocurrencySymbol": "TKX"
         },
         "availableAmount": "0520.58588",
@@ -21489,6 +21998,7 @@
       {
         "id": "bdb67c89-e397-403f-9bfe-214df12357f3",
         "asset": {
+          "blockchain": "TRON",
           "cryptocurrencySymbol": "TRX"
         },
         "availableAmount": "56846874",
@@ -21497,6 +22007,7 @@
       {
         "id": "050fd250-6fa6-4159-8c83-edddc0913262",
         "asset": {
+          "blockchain": "Velas",
           "cryptocurrencySymbol": "VLX"
         },
         "availableAmount": "169.9",
@@ -21505,6 +22016,7 @@
       {
         "id": "fbcfc6d3-b3ef-4a84-875d-c4034456d6d4",
         "asset": {
+          "blockchain": "WEMIX",
           "cryptocurrencySymbol": "WEMIX"
         },
         "availableAmount": "804",
@@ -21513,6 +22025,7 @@
       {
         "id": "9f868c2a-b037-4794-bff3-47ad8e9780a8",
         "asset": {
+          "blockchain": "XDB Chain",
           "cryptocurrencySymbol": "XDB"
         },
         "availableAmount": "76086324",
@@ -21521,6 +22034,7 @@
       {
         "id": "ce045c06-d3b6-4903-b9d4-08ca8b31b364",
         "asset": {
+          "blockchain": "XinFin Network",
           "cryptocurrencySymbol": "XDC"
         },
         "availableAmount": "495673282.25906",
@@ -21529,6 +22043,7 @@
       {
         "id": "47e43276-a256-4c92-a002-17ed3615fc12",
         "asset": {
+          "blockchain": "eCash",
           "cryptocurrencySymbol": "XEC"
         },
         "availableAmount": "4037223669.15376",
@@ -21537,6 +22052,7 @@
       {
         "id": "64416023-8b42-493c-9306-89a899065a33",
         "asset": {
+          "blockchain": "NEM NIS1",
           "cryptocurrencySymbol": "XEM"
         },
         "availableAmount": "5814",
@@ -21545,6 +22061,7 @@
       {
         "id": "64d53240-48f4-4cdc-be64-da9dd764a2ce",
         "asset": {
+          "blockchain": "Stellar",
           "cryptocurrencySymbol": "XLM"
         },
         "availableAmount": "985318",
@@ -21553,6 +22070,7 @@
       {
         "id": "be7ddeab-35e4-4f94-9990-37843dd3cd83",
         "asset": {
+          "blockchain": "XRP",
           "cryptocurrencySymbol": "XRP"
         },
         "availableAmount": "31499.2",
@@ -21561,6 +22079,7 @@
       {
         "id": "33c9418b-0651-4ce5-89d0-76f2761ad161",
         "asset": {
+          "blockchain": "Tezos",
           "cryptocurrencySymbol": "XTZ"
         },
         "availableAmount": "61882.7587194",
@@ -21569,6 +22088,7 @@
       {
         "id": "8cbbc48b-d12d-447e-8926-c7672881a308",
         "asset": {
+          "blockchain": "ZCash",
           "cryptocurrencySymbol": "ZEC"
         },
         "availableAmount": "50096.102073689",
@@ -24041,6 +24561,7 @@
       {
         "id": "9bc6524a-c3ca-466b-9bd5-6e2a8f9dfd61",
         "asset": {
+          "blockchain": "Cardano",
           "cryptocurrencySymbol": "ADA"
         },
         "availableAmount": "90818247.5",
@@ -24049,6 +24570,7 @@
       {
         "id": "2b3aa345-179b-4ee6-9806-df5db79b4a53",
         "asset": {
+          "blockchain": "Algorand",
           "cryptocurrencySymbol": "ALGO"
         },
         "availableAmount": "9989121.2",
@@ -24057,7 +24579,8 @@
       {
         "id": "2ff64be8-6ee2-4c0a-884e-8aa6da176d81",
         "asset": {
-          "cryptocurrencySymbol": "ARB"
+          "blockchain": "Arbitrum",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "72237.17673",
         "lockedAmount": "87.8143"
@@ -24065,6 +24588,7 @@
       {
         "id": "d8a39ac0-bea1-470a-b97b-863812d240d0",
         "asset": {
+          "blockchain": "Astar",
           "cryptocurrencySymbol": "ASTR"
         },
         "availableAmount": "26461",
@@ -24073,6 +24597,7 @@
       {
         "id": "05a26b8f-2470-4692-a5d6-06f1d4c55195",
         "asset": {
+          "blockchain": "Cosmos",
           "cryptocurrencySymbol": "ATOM"
         },
         "availableAmount": "48002.220",
@@ -24081,6 +24606,7 @@
       {
         "id": "2294d741-f97c-4c67-9aa7-6751534eaaba",
         "asset": {
+          "blockchain": "Aurora",
           "cryptocurrencySymbol": "AURORA"
         },
         "availableAmount": "073",
@@ -24089,6 +24615,7 @@
       {
         "id": "360f540d-1dca-4dd0-b2f0-792722098a8a",
         "asset": {
+          "blockchain": "Avalanche",
           "cryptocurrencySymbol": "AVAX"
         },
         "availableAmount": "7",
@@ -24097,6 +24624,7 @@
       {
         "id": "e463279b-fcd8-40b0-ad1e-e876e926aa5d",
         "asset": {
+          "blockchain": "Axelar",
           "cryptocurrencySymbol": "AXL"
         },
         "availableAmount": "711894685",
@@ -24105,7 +24633,8 @@
       {
         "id": "559ba831-08da-47f2-b1d7-5c65b40a2a8d",
         "asset": {
-          "cryptocurrencySymbol": "BASE"
+          "blockchain": "Base",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "74182407352",
         "lockedAmount": "36916"
@@ -24113,6 +24642,7 @@
       {
         "id": "01487d43-4612-4aae-a66f-1919c1d3c99e",
         "asset": {
+          "blockchain": "Bitcoin Cash",
           "cryptocurrencySymbol": "BCH"
         },
         "availableAmount": "3583080838",
@@ -24121,6 +24651,7 @@
       {
         "id": "4ec8f6d8-e7ba-47ee-94c8-0faa685cd38a",
         "asset": {
+          "blockchain": "Bitcoin Cash ABC",
           "cryptocurrencySymbol": "BCHA"
         },
         "availableAmount": "33935.10346",
@@ -24129,6 +24660,7 @@
       {
         "id": "52a881fc-23df-435f-b486-589922bda3d6",
         "asset": {
+          "blockchain": "Bitkub Chain",
           "cryptocurrencySymbol": "BITKUB"
         },
         "availableAmount": "8.47",
@@ -24137,6 +24669,7 @@
       {
         "id": "989a6f09-ea30-473d-869c-58be652ff66e",
         "asset": {
+          "blockchain": "BNB",
           "cryptocurrencySymbol": "BNB"
         },
         "availableAmount": "813798",
@@ -24145,6 +24678,7 @@
       {
         "id": "7ff66e71-3222-422d-aadb-91222800fe80",
         "asset": {
+          "blockchain": "Bitcoin SV",
           "cryptocurrencySymbol": "BSV"
         },
         "availableAmount": "475481",
@@ -24153,6 +24687,7 @@
       {
         "id": "9e5a117c-30f4-4751-8fb7-aee5cf4c9401",
         "asset": {
+          "blockchain": "Bitcoin",
           "cryptocurrencySymbol": "BTC"
         },
         "availableAmount": "53565011698.39",
@@ -24161,6 +24696,7 @@
       {
         "id": "f4aa19cc-c0c2-49cf-8be9-0c5dd6dad4a3",
         "asset": {
+          "blockchain": "Canto",
           "cryptocurrencySymbol": "CANTO"
         },
         "availableAmount": "848",
@@ -24169,6 +24705,7 @@
       {
         "id": "f715cf36-2d0c-49f9-834c-61f740f49157",
         "asset": {
+          "blockchain": "Celestia",
           "cryptocurrencySymbol": "CELESTIA"
         },
         "availableAmount": "3391682415",
@@ -24177,6 +24714,7 @@
       {
         "id": "71cf0eb3-bccd-4aff-883f-a08f31c947d4",
         "asset": {
+          "blockchain": "Celo",
           "cryptocurrencySymbol": "CELO"
         },
         "availableAmount": "88",
@@ -24185,6 +24723,7 @@
       {
         "id": "7e3c0f6a-3191-416b-ac9a-9179093160ed",
         "asset": {
+          "blockchain": "Chiliz Legacy Chain",
           "cryptocurrencySymbol": "CHZ"
         },
         "availableAmount": "4",
@@ -24193,6 +24732,7 @@
       {
         "id": "8cac0332-8b7a-4918-8da9-4ff546c4994c",
         "asset": {
+          "blockchain": "Chiliz Chain",
           "cryptocurrencySymbol": "CHZ2"
         },
         "availableAmount": "366",
@@ -24201,6 +24741,7 @@
       {
         "id": "b54864c4-b619-4290-905f-e58492d7a54a",
         "asset": {
+          "blockchain": "Cortex",
           "cryptocurrencySymbol": "CTXC"
         },
         "availableAmount": "9092306.4",
@@ -24209,6 +24750,7 @@
       {
         "id": "9f11a3c1-c110-44d8-b36b-428d3511f74b",
         "asset": {
+          "blockchain": "Dash",
           "cryptocurrencySymbol": "DASH"
         },
         "availableAmount": "575805.0256981",
@@ -24217,6 +24759,7 @@
       {
         "id": "48efa828-b5ef-4bcf-ba43-3d68f6e229bd",
         "asset": {
+          "blockchain": "Dogecoin",
           "cryptocurrencySymbol": "DOGE"
         },
         "availableAmount": "22101732128.10392891",
@@ -24225,6 +24768,7 @@
       {
         "id": "6f359c04-1310-406e-b738-c86db46e8e67",
         "asset": {
+          "blockchain": "Polkadot",
           "cryptocurrencySymbol": "DOT"
         },
         "availableAmount": "6873559445.5465141655",
@@ -24233,6 +24777,7 @@
       {
         "id": "fed3eb34-2a5e-4629-834a-8c2848fda7c7",
         "asset": {
+          "blockchain": "DYDX",
           "cryptocurrencySymbol": "DYDX"
         },
         "availableAmount": "0.4",
@@ -24241,6 +24786,7 @@
       {
         "id": "b5c0084d-5355-478e-89a5-06cae9fa3124",
         "asset": {
+          "blockchain": "EOS",
           "cryptocurrencySymbol": "EOS"
         },
         "availableAmount": "1555323",
@@ -24249,6 +24795,7 @@
       {
         "id": "6971f60f-66c9-49f2-84bf-201ae5508e14",
         "asset": {
+          "blockchain": "Ethereum Classic",
           "cryptocurrencySymbol": "ETC"
         },
         "availableAmount": "043150734.77046691",
@@ -24257,6 +24804,7 @@
       {
         "id": "4cdc3194-83e9-4e14-8bf9-141b004c41ce",
         "asset": {
+          "blockchain": "Ethereum",
           "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "9201",
@@ -24265,6 +24813,7 @@
       {
         "id": "a8da3d97-85bc-478f-b8ba-53d0925558fb",
         "asset": {
+          "blockchain": "EthereumPoW",
           "cryptocurrencySymbol": "ETHW"
         },
         "availableAmount": "44210.714689",
@@ -24273,6 +24822,7 @@
       {
         "id": "45fdbd54-15e1-45ff-8622-730205334598",
         "asset": {
+          "blockchain": "Evmos",
           "cryptocurrencySymbol": "EVMOS"
         },
         "availableAmount": "70.794364582",
@@ -24281,6 +24831,7 @@
       {
         "id": "96089592-c0dc-41ff-98ac-09ff357bd5d5",
         "asset": {
+          "blockchain": "Flare",
           "cryptocurrencySymbol": "FLR"
         },
         "availableAmount": "955.59",
@@ -24289,6 +24840,7 @@
       {
         "id": "32095199-171d-4b13-989b-9d47977c092a",
         "asset": {
+          "blockchain": "Fantom Opera",
           "cryptocurrencySymbol": "FTM"
         },
         "availableAmount": "67.6334",
@@ -24297,6 +24849,7 @@
       {
         "id": "f695a19c-572d-451b-a201-afda5abe0117",
         "asset": {
+          "blockchain": "Moonbeam",
           "cryptocurrencySymbol": "GLMR"
         },
         "availableAmount": "152.43687",
@@ -24305,6 +24858,7 @@
       {
         "id": "e9b79d77-0a1f-420b-b769-ec7fdb458dc7",
         "asset": {
+          "blockchain": "Hedera",
           "cryptocurrencySymbol": "HBAR"
         },
         "availableAmount": "09680301483",
@@ -24313,6 +24867,7 @@
       {
         "id": "087b6dd8-302d-4f9d-a19c-9802bec1a334",
         "asset": {
+          "blockchain": "HT Chain",
           "cryptocurrencySymbol": "HT"
         },
         "availableAmount": "5399",
@@ -24321,6 +24876,7 @@
       {
         "id": "807194df-9a37-4f0b-a2ab-3738cfab0222",
         "asset": {
+          "blockchain": "KAVA",
           "cryptocurrencySymbol": "KAVA"
         },
         "availableAmount": "4709632",
@@ -24329,6 +24885,7 @@
       {
         "id": "09fa2458-8161-4b97-867e-da0abaf1ff2f",
         "asset": {
+          "blockchain": "Kusama",
           "cryptocurrencySymbol": "KSM"
         },
         "availableAmount": "89901648428",
@@ -24337,6 +24894,7 @@
       {
         "id": "bb3cc28b-8a2c-4279-8113-0fa75c0aed67",
         "asset": {
+          "blockchain": "Litecoin",
           "cryptocurrencySymbol": "LTC"
         },
         "availableAmount": "4004.24",
@@ -24345,6 +24903,7 @@
       {
         "id": "dc0b0680-19ce-4af6-80e6-6cb60caac026",
         "asset": {
+          "blockchain": "Terra Classic",
           "cryptocurrencySymbol": "LUNA"
         },
         "availableAmount": "923423581.47174321356",
@@ -24353,6 +24912,7 @@
       {
         "id": "878147fb-713b-4f46-8f73-a200f65c4c3e",
         "asset": {
+          "blockchain": "Terra 2.0",
           "cryptocurrencySymbol": "LUNA2"
         },
         "availableAmount": "07348",
@@ -24361,6 +24921,7 @@
       {
         "id": "942dd2a1-d2d8-4516-8a5f-29efbaeb2331",
         "asset": {
+          "blockchain": "Polygon PoS",
           "cryptocurrencySymbol": "MATIC"
         },
         "availableAmount": "4038300761.038121",
@@ -24369,6 +24930,7 @@
       {
         "id": "03cae2a2-f337-42d4-8891-e56611979b21",
         "asset": {
+          "blockchain": "Moonriver",
           "cryptocurrencySymbol": "MOVR"
         },
         "availableAmount": "58309086241.30894811",
@@ -24377,6 +24939,7 @@
       {
         "id": "af90e87a-be37-4f1e-8530-378b713cd3a0",
         "asset": {
+          "blockchain": "NEAR Protocol",
           "cryptocurrencySymbol": "NEAR"
         },
         "availableAmount": "2078549.18128",
@@ -24385,6 +24948,7 @@
       {
         "id": "5df62df5-21ba-408f-9035-ef6a04fc9eff",
         "asset": {
+          "blockchain": "Oasys",
           "cryptocurrencySymbol": "OAS"
         },
         "availableAmount": "61579.42049394543",
@@ -24393,7 +24957,8 @@
       {
         "id": "bd886f22-b7ee-48f6-99d4-c79f69535501",
         "asset": {
-          "cryptocurrencySymbol": "OPT"
+          "blockchain": "Optimism",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "222332.593636",
         "lockedAmount": "2330671872"
@@ -24401,6 +24966,7 @@
       {
         "id": "2bcb5ff1-179f-4a56-8f9b-192aca3a2986",
         "asset": {
+          "blockchain": "Osmosis",
           "cryptocurrencySymbol": "OSMO"
         },
         "availableAmount": "251415054.66902",
@@ -24409,6 +24975,7 @@
       {
         "id": "0579cd2f-44e5-4387-b704-4d06d25992f4",
         "asset": {
+          "blockchain": "Palm",
           "cryptocurrencySymbol": "PALM"
         },
         "availableAmount": "839638",
@@ -24417,6 +24984,7 @@
       {
         "id": "aad84281-6b07-4dda-9781-616837d44a50",
         "asset": {
+          "blockchain": "Ronin",
           "cryptocurrencySymbol": "RON"
         },
         "availableAmount": "5605800660.6720461662",
@@ -24425,6 +24993,7 @@
       {
         "id": "4ef2dac3-ac09-4948-bdc2-f965ffafd083",
         "asset": {
+          "blockchain": "RSK",
           "cryptocurrencySymbol": "RSK"
         },
         "availableAmount": "85218451.704529122",
@@ -24433,6 +25002,7 @@
       {
         "id": "607ca4ca-b7d1-4d08-b347-a06d84772b18",
         "asset": {
+          "blockchain": "Shimmer",
           "cryptocurrencySymbol": "SMR"
         },
         "availableAmount": "372711",
@@ -24441,6 +25011,7 @@
       {
         "id": "d771e5a9-52d0-4c9e-8706-4c409eb8309d",
         "asset": {
+          "blockchain": "Solana",
           "cryptocurrencySymbol": "SOL"
         },
         "availableAmount": "549880.216945",
@@ -24449,6 +25020,7 @@
       {
         "id": "cd6e5ccb-9079-473f-a82a-4c35c117d06f",
         "asset": {
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "926",
@@ -24457,6 +25029,7 @@
       {
         "id": "528ab26d-94f4-4d95-8de1-a0ff053b987c",
         "asset": {
+          "blockchain": "SX Network",
           "cryptocurrencySymbol": "SXNETWORK"
         },
         "availableAmount": "42071.68465585",
@@ -24465,6 +25038,7 @@
       {
         "id": "d98ba5a5-6617-47d9-9b66-41d16fdb3a84",
         "asset": {
+          "blockchain": "TokenEX",
           "cryptocurrencySymbol": "TKX"
         },
         "availableAmount": "50974014.4221",
@@ -24473,6 +25047,7 @@
       {
         "id": "d49ed754-a274-4580-8e53-3dbca36e8a8a",
         "asset": {
+          "blockchain": "TRON",
           "cryptocurrencySymbol": "TRX"
         },
         "availableAmount": "60860110",
@@ -24481,6 +25056,7 @@
       {
         "id": "8be0a73e-5d76-4dc8-ae02-2d80f44f8ecf",
         "asset": {
+          "blockchain": "Velas",
           "cryptocurrencySymbol": "VLX"
         },
         "availableAmount": "276152.68402",
@@ -24489,6 +25065,7 @@
       {
         "id": "e455dbb6-61ce-454a-9e2e-18899a29f8d0",
         "asset": {
+          "blockchain": "WEMIX",
           "cryptocurrencySymbol": "WEMIX"
         },
         "availableAmount": "45.6541",
@@ -24497,6 +25074,7 @@
       {
         "id": "1f16000c-86af-4abc-9c49-567a08bd8dba",
         "asset": {
+          "blockchain": "XDB Chain",
           "cryptocurrencySymbol": "XDB"
         },
         "availableAmount": "164101483",
@@ -24505,6 +25083,7 @@
       {
         "id": "555e632d-6e58-4691-b868-a3cabbc1d4e2",
         "asset": {
+          "blockchain": "XinFin Network",
           "cryptocurrencySymbol": "XDC"
         },
         "availableAmount": "8518595770.21",
@@ -24513,6 +25092,7 @@
       {
         "id": "b1c7eaf7-b944-4a1a-9204-9df7e277006f",
         "asset": {
+          "blockchain": "eCash",
           "cryptocurrencySymbol": "XEC"
         },
         "availableAmount": "32933771756.9677",
@@ -24521,6 +25101,7 @@
       {
         "id": "c739cbd3-ad89-4268-95da-c1ecc0b421a5",
         "asset": {
+          "blockchain": "NEM NIS1",
           "cryptocurrencySymbol": "XEM"
         },
         "availableAmount": "9338.3836251",
@@ -24529,6 +25110,7 @@
       {
         "id": "d2fb1a8d-a023-4d10-9c27-62bffd1dd171",
         "asset": {
+          "blockchain": "Stellar",
           "cryptocurrencySymbol": "XLM"
         },
         "availableAmount": "61364299970",
@@ -24537,6 +25119,7 @@
       {
         "id": "3013464f-117b-4143-9797-655b4a28f26a",
         "asset": {
+          "blockchain": "XRP",
           "cryptocurrencySymbol": "XRP"
         },
         "availableAmount": "9978410390",
@@ -24545,6 +25128,7 @@
       {
         "id": "fb5ac6cf-08cd-4915-a579-1bbe6eeb7c6e",
         "asset": {
+          "blockchain": "Tezos",
           "cryptocurrencySymbol": "XTZ"
         },
         "availableAmount": "907.23844166",
@@ -24553,6 +25137,7 @@
       {
         "id": "4ed6c8c9-bf23-4cf2-bced-4fb8a5daa1fa",
         "asset": {
+          "blockchain": "ZCash",
           "cryptocurrencySymbol": "ZEC"
         },
         "availableAmount": "50",
@@ -27025,6 +27610,7 @@
       {
         "id": "80d0761b-8c0e-40dc-b237-cf6f3fbbede3",
         "asset": {
+          "blockchain": "Cardano",
           "cryptocurrencySymbol": "ADA"
         },
         "availableAmount": "3678339",
@@ -27033,6 +27619,7 @@
       {
         "id": "3dcfbd94-1990-4056-86ca-3e6f02b85bf8",
         "asset": {
+          "blockchain": "Algorand",
           "cryptocurrencySymbol": "ALGO"
         },
         "availableAmount": "8509037375.87882957084",
@@ -27041,7 +27628,8 @@
       {
         "id": "a54bc740-3355-46fa-934a-b53d878a3956",
         "asset": {
-          "cryptocurrencySymbol": "ARB"
+          "blockchain": "Arbitrum",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "9202",
         "lockedAmount": "019109085"
@@ -27049,6 +27637,7 @@
       {
         "id": "08b47f33-647f-451a-b2ae-adc49d9ea72c",
         "asset": {
+          "blockchain": "Astar",
           "cryptocurrencySymbol": "ASTR"
         },
         "availableAmount": "2",
@@ -27057,6 +27646,7 @@
       {
         "id": "a670dc9d-2f0f-4ee6-9d3d-1a242a84f9c0",
         "asset": {
+          "blockchain": "Cosmos",
           "cryptocurrencySymbol": "ATOM"
         },
         "availableAmount": "94316469197",
@@ -27065,6 +27655,7 @@
       {
         "id": "00b7a9c9-e440-443c-8022-8c893828c4fe",
         "asset": {
+          "blockchain": "Aurora",
           "cryptocurrencySymbol": "AURORA"
         },
         "availableAmount": "1232420",
@@ -27073,6 +27664,7 @@
       {
         "id": "f700a15e-3a9a-4cae-821e-12e581b96aa2",
         "asset": {
+          "blockchain": "Avalanche",
           "cryptocurrencySymbol": "AVAX"
         },
         "availableAmount": "0.22342044717",
@@ -27081,6 +27673,7 @@
       {
         "id": "f955705c-21aa-4a66-b2d5-6f636d0a2313",
         "asset": {
+          "blockchain": "Axelar",
           "cryptocurrencySymbol": "AXL"
         },
         "availableAmount": "1877021171.22557012",
@@ -27089,7 +27682,8 @@
       {
         "id": "ead73dbb-4f71-4f9a-bd82-e46071fcdff8",
         "asset": {
-          "cryptocurrencySymbol": "BASE"
+          "blockchain": "Base",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "839",
         "lockedAmount": "17.0535172"
@@ -27097,6 +27691,7 @@
       {
         "id": "0f49478d-9c1e-4aa0-835b-217017b51269",
         "asset": {
+          "blockchain": "Bitcoin Cash",
           "cryptocurrencySymbol": "BCH"
         },
         "availableAmount": "7503.46756",
@@ -27105,6 +27700,7 @@
       {
         "id": "89974cb0-b715-4705-b6cc-cc71e054c676",
         "asset": {
+          "blockchain": "Bitcoin Cash ABC",
           "cryptocurrencySymbol": "BCHA"
         },
         "availableAmount": "3402.994",
@@ -27113,6 +27709,7 @@
       {
         "id": "b10d588b-21db-4ba4-9c37-efdb316f743a",
         "asset": {
+          "blockchain": "Bitkub Chain",
           "cryptocurrencySymbol": "BITKUB"
         },
         "availableAmount": "30640",
@@ -27121,6 +27718,7 @@
       {
         "id": "cf9e3981-68b8-42d8-815f-04e26194f6f9",
         "asset": {
+          "blockchain": "BNB",
           "cryptocurrencySymbol": "BNB"
         },
         "availableAmount": "438.77",
@@ -27129,6 +27727,7 @@
       {
         "id": "7bdda504-0f81-4dfe-a0c6-203ce8c2aa42",
         "asset": {
+          "blockchain": "Bitcoin SV",
           "cryptocurrencySymbol": "BSV"
         },
         "availableAmount": "192238570",
@@ -27137,6 +27736,7 @@
       {
         "id": "e94de41b-68e1-4165-b7e4-cc51c5fe5223",
         "asset": {
+          "blockchain": "Bitcoin",
           "cryptocurrencySymbol": "BTC"
         },
         "availableAmount": "31928489807",
@@ -27145,6 +27745,7 @@
       {
         "id": "f2008785-5156-498b-96be-3b22ce4bf3e6",
         "asset": {
+          "blockchain": "Canto",
           "cryptocurrencySymbol": "CANTO"
         },
         "availableAmount": "5246.52429",
@@ -27153,6 +27754,7 @@
       {
         "id": "0fd1b1aa-1eb5-419b-b7d9-4708525f1462",
         "asset": {
+          "blockchain": "Celestia",
           "cryptocurrencySymbol": "CELESTIA"
         },
         "availableAmount": "92188",
@@ -27161,6 +27763,7 @@
       {
         "id": "f649a57d-837b-49fe-a903-7bfa34b35c70",
         "asset": {
+          "blockchain": "Celo",
           "cryptocurrencySymbol": "CELO"
         },
         "availableAmount": "6",
@@ -27169,6 +27772,7 @@
       {
         "id": "5ad02d3a-3132-4791-ad0d-eb96ba5acb50",
         "asset": {
+          "blockchain": "Chiliz Legacy Chain",
           "cryptocurrencySymbol": "CHZ"
         },
         "availableAmount": "472180629.52828506714",
@@ -27177,6 +27781,7 @@
       {
         "id": "5c653478-394a-48de-beb7-514bc91301d9",
         "asset": {
+          "blockchain": "Chiliz Chain",
           "cryptocurrencySymbol": "CHZ2"
         },
         "availableAmount": "12164021581.0758",
@@ -27185,6 +27790,7 @@
       {
         "id": "610ea38b-3b6d-426f-9124-197f5c1cd5e2",
         "asset": {
+          "blockchain": "Cortex",
           "cryptocurrencySymbol": "CTXC"
         },
         "availableAmount": "4151897",
@@ -27193,6 +27799,7 @@
       {
         "id": "a44a7818-388d-435c-bcc5-a825fb7a4a34",
         "asset": {
+          "blockchain": "Dash",
           "cryptocurrencySymbol": "DASH"
         },
         "availableAmount": "2597688",
@@ -27201,6 +27808,7 @@
       {
         "id": "58312b2a-ce07-469f-9408-f3b7ea4ec225",
         "asset": {
+          "blockchain": "Dogecoin",
           "cryptocurrencySymbol": "DOGE"
         },
         "availableAmount": "848049.2502651032",
@@ -27209,6 +27817,7 @@
       {
         "id": "8a5db38f-9c9e-46d0-8467-3107239442c0",
         "asset": {
+          "blockchain": "Polkadot",
           "cryptocurrencySymbol": "DOT"
         },
         "availableAmount": "3990.994487",
@@ -27217,6 +27826,7 @@
       {
         "id": "f40919b9-89aa-4b06-8b69-a0bd473423cd",
         "asset": {
+          "blockchain": "DYDX",
           "cryptocurrencySymbol": "DYDX"
         },
         "availableAmount": "3073",
@@ -27225,6 +27835,7 @@
       {
         "id": "5aa279db-c065-4e5b-b0d1-bc5b46200ed9",
         "asset": {
+          "blockchain": "EOS",
           "cryptocurrencySymbol": "EOS"
         },
         "availableAmount": "96147514945.0547554166",
@@ -27233,6 +27844,7 @@
       {
         "id": "3f18df13-95df-4616-8ff6-6542e6972060",
         "asset": {
+          "blockchain": "Ethereum Classic",
           "cryptocurrencySymbol": "ETC"
         },
         "availableAmount": "62793012070.58",
@@ -27241,6 +27853,7 @@
       {
         "id": "bef301cf-cf5a-48a8-acd5-217ad3423f4d",
         "asset": {
+          "blockchain": "Ethereum",
           "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "3139696356",
@@ -27249,6 +27862,7 @@
       {
         "id": "73e5229b-f199-4e70-8ee9-545bc71a2e61",
         "asset": {
+          "blockchain": "EthereumPoW",
           "cryptocurrencySymbol": "ETHW"
         },
         "availableAmount": "4672356",
@@ -27257,6 +27871,7 @@
       {
         "id": "a3b7e412-1375-4315-9d0d-db69625b7492",
         "asset": {
+          "blockchain": "Evmos",
           "cryptocurrencySymbol": "EVMOS"
         },
         "availableAmount": "6615",
@@ -27265,6 +27880,7 @@
       {
         "id": "30abb51a-df82-4675-9387-f2423c03d687",
         "asset": {
+          "blockchain": "Flare",
           "cryptocurrencySymbol": "FLR"
         },
         "availableAmount": "1636769.281305",
@@ -27273,6 +27889,7 @@
       {
         "id": "a6c37899-913f-4f39-9d33-328a1efcc06c",
         "asset": {
+          "blockchain": "Fantom Opera",
           "cryptocurrencySymbol": "FTM"
         },
         "availableAmount": "38.8416936737",
@@ -27281,6 +27898,7 @@
       {
         "id": "501018b5-18e3-49e0-ae7e-64e50284365b",
         "asset": {
+          "blockchain": "Moonbeam",
           "cryptocurrencySymbol": "GLMR"
         },
         "availableAmount": "6862.72",
@@ -27289,6 +27907,7 @@
       {
         "id": "7655b9a8-a12c-47da-b3b0-a28ae7c482de",
         "asset": {
+          "blockchain": "Hedera",
           "cryptocurrencySymbol": "HBAR"
         },
         "availableAmount": "66.3712271889",
@@ -27297,6 +27916,7 @@
       {
         "id": "0ccd244e-7b32-4388-8db0-5a8a629f52de",
         "asset": {
+          "blockchain": "HT Chain",
           "cryptocurrencySymbol": "HT"
         },
         "availableAmount": "05",
@@ -27305,6 +27925,7 @@
       {
         "id": "800ba2f9-edc1-48a6-9e46-814c89f2f9c0",
         "asset": {
+          "blockchain": "KAVA",
           "cryptocurrencySymbol": "KAVA"
         },
         "availableAmount": "500332340",
@@ -27313,6 +27934,7 @@
       {
         "id": "35ef16c9-0ec6-4846-80c7-462f70d9178e",
         "asset": {
+          "blockchain": "Kusama",
           "cryptocurrencySymbol": "KSM"
         },
         "availableAmount": "84961451860",
@@ -27321,6 +27943,7 @@
       {
         "id": "47deb68b-4f63-4295-939a-6a0907bd53f3",
         "asset": {
+          "blockchain": "Litecoin",
           "cryptocurrencySymbol": "LTC"
         },
         "availableAmount": "164",
@@ -27329,6 +27952,7 @@
       {
         "id": "6c6c7cd5-7fcf-4600-8a6a-909fb0707508",
         "asset": {
+          "blockchain": "Terra Classic",
           "cryptocurrencySymbol": "LUNA"
         },
         "availableAmount": "5660",
@@ -27337,6 +27961,7 @@
       {
         "id": "c9712334-bf0e-45b7-a630-f25393564d05",
         "asset": {
+          "blockchain": "Terra 2.0",
           "cryptocurrencySymbol": "LUNA2"
         },
         "availableAmount": "69946.678",
@@ -27345,6 +27970,7 @@
       {
         "id": "ee725425-7966-4135-b024-dc92af0c4dd5",
         "asset": {
+          "blockchain": "Polygon PoS",
           "cryptocurrencySymbol": "MATIC"
         },
         "availableAmount": "9840.43",
@@ -27353,6 +27979,7 @@
       {
         "id": "40d8417c-7ae9-44be-87b3-0312f64a9d6a",
         "asset": {
+          "blockchain": "Moonriver",
           "cryptocurrencySymbol": "MOVR"
         },
         "availableAmount": "543864",
@@ -27361,6 +27988,7 @@
       {
         "id": "8b1b9a31-08a0-4fa7-a80d-34f3c2b44f23",
         "asset": {
+          "blockchain": "NEAR Protocol",
           "cryptocurrencySymbol": "NEAR"
         },
         "availableAmount": "64.021619",
@@ -27369,6 +27997,7 @@
       {
         "id": "3881efc3-e513-4c87-8764-fe1a1878b12e",
         "asset": {
+          "blockchain": "Oasys",
           "cryptocurrencySymbol": "OAS"
         },
         "availableAmount": "5513.2",
@@ -27377,7 +28006,8 @@
       {
         "id": "ef1682f2-c174-4d37-9f59-5a796fe7d582",
         "asset": {
-          "cryptocurrencySymbol": "OPT"
+          "blockchain": "Optimism",
+          "cryptocurrencySymbol": "ETH"
         },
         "availableAmount": "92115.791",
         "lockedAmount": "9320902"
@@ -27385,6 +28015,7 @@
       {
         "id": "d6f1c914-d729-4239-9717-9c21809584c8",
         "asset": {
+          "blockchain": "Osmosis",
           "cryptocurrencySymbol": "OSMO"
         },
         "availableAmount": "225",
@@ -27393,6 +28024,7 @@
       {
         "id": "87e39e4a-e51b-4241-9443-39330bca7f23",
         "asset": {
+          "blockchain": "Palm",
           "cryptocurrencySymbol": "PALM"
         },
         "availableAmount": "42.92025",
@@ -27401,6 +28033,7 @@
       {
         "id": "45943b70-68f3-4466-b288-2188654e2675",
         "asset": {
+          "blockchain": "Ronin",
           "cryptocurrencySymbol": "RON"
         },
         "availableAmount": "862922.3329950574",
@@ -27409,6 +28042,7 @@
       {
         "id": "81c34b47-003b-4a93-835f-c4fae90215cf",
         "asset": {
+          "blockchain": "RSK",
           "cryptocurrencySymbol": "RSK"
         },
         "availableAmount": "74551",
@@ -27417,6 +28051,7 @@
       {
         "id": "db52eb7e-d889-4add-adb1-b418196a4867",
         "asset": {
+          "blockchain": "Shimmer",
           "cryptocurrencySymbol": "SMR"
         },
         "availableAmount": "745697",
@@ -27425,6 +28060,7 @@
       {
         "id": "0cb03aae-df20-4f33-b64f-ce41ebaed9c7",
         "asset": {
+          "blockchain": "Solana",
           "cryptocurrencySymbol": "SOL"
         },
         "availableAmount": "35700936534",
@@ -27433,6 +28069,7 @@
       {
         "id": "6b53c5af-e9b5-4ffd-8a61-497731aa0254",
         "asset": {
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "200293510",
@@ -27441,6 +28078,7 @@
       {
         "id": "c44cd9a4-e028-4224-9705-998cf246dd58",
         "asset": {
+          "blockchain": "SX Network",
           "cryptocurrencySymbol": "SXNETWORK"
         },
         "availableAmount": "4",
@@ -27449,6 +28087,7 @@
       {
         "id": "5c46f634-421e-457a-b215-a572c9e3ed78",
         "asset": {
+          "blockchain": "TokenEX",
           "cryptocurrencySymbol": "TKX"
         },
         "availableAmount": "88113",
@@ -27457,6 +28096,7 @@
       {
         "id": "d2f595b7-48b3-4f4a-85a3-dec2d66208bf",
         "asset": {
+          "blockchain": "TRON",
           "cryptocurrencySymbol": "TRX"
         },
         "availableAmount": "4.6",
@@ -27465,6 +28105,7 @@
       {
         "id": "17e4e186-7fb0-42cd-8452-542a6052fc02",
         "asset": {
+          "blockchain": "Velas",
           "cryptocurrencySymbol": "VLX"
         },
         "availableAmount": "12704853.75035",
@@ -27473,6 +28114,7 @@
       {
         "id": "22569670-b25b-4136-8914-5aa8f62c177f",
         "asset": {
+          "blockchain": "WEMIX",
           "cryptocurrencySymbol": "WEMIX"
         },
         "availableAmount": "5.536",
@@ -27481,6 +28123,7 @@
       {
         "id": "1d1a70bf-d297-4375-b02e-43303cf9e22b",
         "asset": {
+          "blockchain": "XDB Chain",
           "cryptocurrencySymbol": "XDB"
         },
         "availableAmount": "7600.787",
@@ -27489,6 +28132,7 @@
       {
         "id": "e188251b-fee3-4e9a-a28c-b9992281c009",
         "asset": {
+          "blockchain": "XinFin Network",
           "cryptocurrencySymbol": "XDC"
         },
         "availableAmount": "02565203",
@@ -27497,6 +28141,7 @@
       {
         "id": "493d3694-bb68-44b1-9ec6-5f403ab09235",
         "asset": {
+          "blockchain": "eCash",
           "cryptocurrencySymbol": "XEC"
         },
         "availableAmount": "968422075",
@@ -27505,6 +28150,7 @@
       {
         "id": "6fe3377e-5098-48fb-9cc6-a1c718e898f5",
         "asset": {
+          "blockchain": "NEM NIS1",
           "cryptocurrencySymbol": "XEM"
         },
         "availableAmount": "8615.7",
@@ -27513,6 +28159,7 @@
       {
         "id": "cae846da-25e8-4620-95db-74b47d566aec",
         "asset": {
+          "blockchain": "Stellar",
           "cryptocurrencySymbol": "XLM"
         },
         "availableAmount": "08444.527",
@@ -27521,6 +28168,7 @@
       {
         "id": "9d59ee11-ae2c-4c02-9208-da3ffff51ee2",
         "asset": {
+          "blockchain": "XRP",
           "cryptocurrencySymbol": "XRP"
         },
         "availableAmount": "4694",
@@ -27529,6 +28177,7 @@
       {
         "id": "10872ded-23cc-4b48-98b8-58b45671088c",
         "asset": {
+          "blockchain": "Tezos",
           "cryptocurrencySymbol": "XTZ"
         },
         "availableAmount": "90332",
@@ -27537,6 +28186,7 @@
       {
         "id": "90a7b2fe-a4c0-40c1-8904-0f3154439849",
         "asset": {
+          "blockchain": "ZCash",
           "cryptocurrencySymbol": "ZEC"
         },
         "availableAmount": "408093547",

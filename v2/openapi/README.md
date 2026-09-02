@@ -8,38 +8,17 @@ for over 1,800 leading trading desks, hedge funds, brokerages, custodians, 3rd p
 and banks. To meet the demand for third-party services that want to access the liquidity
 of institutional investors and traders, Fireblocks is opening its platform for fast
 third-party integration.
-As part of an initiative to make sure that the end user still has complete control over their own assets, the provider can offer an Off Exchange solution.
-This way, the end user can enjoy the various benefits of the exchange while avoiding the risk of a centralized malfunction, all through the Fireblocks platform.
+As part of an initiative to make sure that the end user still has complete control over
+their own assets, the provider can offer an Off Exchange solution.
+This way, the end user can enjoy the various benefits of the exchange while avoiding the
+risk of a centralized malfunction, all through the Fireblocks platform.
 Reach out to us for a partnership agreement and add a Connector
 to have your product integrated.
 
-## How Fireblocks customers access third-party accounts
+Further reading:
 
-Fireblocks customers use the Fireblocks web-based console to connect their Fireblocks
-account to third-party solution providers. Fireblocks supports the integration of various
-solution providers such as banks, cryptocurrency exchanges, and cryptocurrency on-ramp and
-off-ramp services.
-
-After a third-party account is connected, customers use the Fireblocks Console and
-Fireblocks API to:
-
-- View account balances for their primary, secondary, and trading accounts.
-- Move funds between their accounts and their Fireblocks Vaults.
-- Withdraw funds from and deposit funds to their accounts.
-- Convert cryptocurrencies to and from fiat currencies (for on/off-ramping).
-- Track the status of their withdrawals and deposits.
-- View and audit their transaction history.
-- With the off-exchange solution, the provider can serve its end user with:
-  - A complete control on their funds
-  - A trustable relationship, where the customer safely continues their work with the exchange
-
-## How to register as a service provider?
-
-Fireblocks gives you, as a partner, the ability to integrate your services and be
-listed on Fireblocks platform as a bank or an exchange (including being registered as an
-on/off-ramp provider). To be listed as a partner on Fireblocks platform, partners
-implement the Fireblocks Connectivity API and register their services by contacting
-Fireblocks support team.
+- [Listing Your Service on the Provider Network ⧉](https://support.fireblocks.io/hc/en-us/articles/22144765384348-Listing-your-service-on-the-Provider-Network)
+- [Network Link Integration Guide for Provider Connectivity ⧉](https://developers.fireblocks.com/docs/network-link-integration-guide-for-provider-connectivity)
 
 # API Usage Guide
 
@@ -83,7 +62,7 @@ as follows:
   the server should handle the new request and consider the new response as the original
   response when handling any consecutive retries.
 
-Servers are expected to recognize a retry for 7 days, at least, since the last attempt.
+Servers are expected to recognize a retry for 72 hours, at least, since the last attempt.
 
 ## Pagination
 
@@ -137,7 +116,6 @@ this response indicates that all the capabilities are supported:
     "transfersBlockchain": "*",
     "transfersFiat": "*",
     "transfersPeerAccounts": "*",
-    "trading": "*",
     "liquidity": "*",
     "ramps": "*"
   }
@@ -165,18 +143,6 @@ be replaced by a list of account IDs:
 Based on the response, Fireblocks platform will use the endpoints specific to each
 component to discover the specific capabilities for each component.
 
-## Mandatory endpoints
-
-All the capability, accounts, and balances endpoints must be always implemented, for all
-the users and all their accounts. These endpoints are:
-
-- `GET /capabilities`
-- `GET /capabilities/assets`
-- `GET /capabilities/assets/{id}`
-- `GET /accounts`
-- `GET /accounts/{accountId}`
-- `GET /accounts/{accountId}/balances`
-
 ## Security
 
 To ensure secure communication the protocol specifies several HTTP headers that must be
@@ -186,7 +152,9 @@ sent with each HTTP request:
 - `X-FBAPI-TIMESTAMP` - request creation UTC time, expressed in milliseconds since Unix
   Epoch.
 - `X-FBAPI-NONCE` - request universal unique identifier (UUID).
-- `X-FBAPI-SIGNATURE` – request cryptographic signature.
+- `X-FBAPI-SIGNATURE` – request cryptographic signature, signed using the provider private key.
+- `X-FB-PLATFORM-SIGNATURE` - appears only in the Off-Exchange requests sent from Fireblocks;
+  contains request cryptographic signature, signed using Fireblocks private key.
 
 ### Signature
 
@@ -221,14 +189,20 @@ be: `1691606624184c3d5f400-0e7e-4f94-a199-44b8cc7b6b81GET/accounts/A1234/balance
 
 #### Computing the signature
 
-The signature is computed by applying a pre-encoding function, a signing algorithm and
-a post-encoding function to the message. A server can implement one of the several
-supported options and specify the choice during the server on-boarding process. The same
-signing method will be used for all the requests.
+The signature is computed by following these steps:
+1. Encode the message using UTF-8 encoding.
+2. Apply the pre-encoding function.
+3. Apply the signing algorithm.
+4. Apply the post-encoding function.
+
+**Important:** The message string must be UTF-8 encoded before signing.
+
+A server can implement one of the several supported options and specify the choice during
+the server on-boarding process. The same signing method will be used for all the requests.
 
 These are the supported algorithms:
 
-Pre- and post-encoding:
+Pre-encoding:
 
 - URL encoded
 - Base64
@@ -236,16 +210,49 @@ Pre- and post-encoding:
 - Base58
 - Base32
 
+Post-encoding:
+
+- Base64
+- HexStr
+- Base58
+- Base32
+
+Notice that URL encoding is not supported for post-encoding.
+
 Signing algorithms and possible hash functions:
 
 - HMAC (SHA512, SHA3_256, or SHA256)
 - RSA PKCS1v15 (SHA512, SHA3_256, or SHA256)
 - ECDSA prime256v1/secp256k1 (SHA256 only)
 
+### Off-Exchange (Collateral) platform signature
+
+Off-Exchange (Collateral) integration assumes bi-directional communication. All the requests,
+sent as part of this integration, from Fireblocks to a provider's servers, contain an additional
+header named `X-FB-PLATFORM-SIGNATURE`. This header contains the request signature signed with
+Fireblocks private key. All providers are expected to validate this signature.
+
+- [Public keys for the signature validation](https://developers.fireblocks.com/docs/off-exchange)
+
+The signed message is built identically to the [provider signature](#building-the-message-to-sign).
+The signature itself is calculated by applying SHA512 pre-encoding function, applying RSA PKCS1v15
+signing algorithm, and finally applying base64 encoding to the result.
+
+The signature verification usually consists of these steps:
+1. Build the message, as [described above](#building-the-message-to-sign).
+2. Calculate the message hash by applying SHA512 to the message.
+3. Get the value of the `X-FB-PLATFORM-SIGNATURE` header.
+4. Base64 decode the value to get the actual signature.
+5. Decrypt the signature using RSA PKCS1v15 and the
+   [Fireblocks public key](https://developers.fireblocks.com/docs/off-exchange).
+6. If the result is identical to the message hash, the signature is valid.
+
+Notice, that in many frameworks, some of these steps are combined into a single step.
+
 ## Assets and transfer methods
 
-An asset in Fireblocks Connectivity API is either a national currency (
-per [ISO-4217](https://en.wikipedia.org/wiki/ISO_4217)), one
+An asset in Fireblocks Connectivity API is either a national currency
+(per [ISO-4217](https://en.wikipedia.org/wiki/ISO_4217)), one
 of the blockchain native cryptocurrencies, explicitly listed in the API specification, or
 an arbitrary blockchain token. A provider can choose to support test
 versions of assets by setting testAsset flag in the capabilities response.
@@ -401,8 +408,8 @@ The purpose of the Fireblocks collateral account is to enable a middle ground fo
 The collateral capability is a two-way integration between Fireblocks and the provider.
 Fireblocks will send requests to the provider for most cases, but some actions or data fetch will be initiated by the provider.
 
-The Fireblocks -> Provider requests are described in this API specification.
-The Provider -> Fireblocks requests are listed below (refer to the Fireblocks' API specification for the full details):
+The Fireblocks to Provider requests are described in this API specification.
+The Provider to Fireblocks requests are listed below (refer to the Fireblocks API specification for the full details):
 
 - `GET /v1/collateral/transactions/{collateralTxId}`
 - `POST /v1/collateral/settlements`
@@ -591,3 +598,70 @@ Afterwards, the pairing token can be added as a new Collateral Signer user to th
 #### In-depth - Forcing a settlement
 
 ![FlowInvoked](doc-assets/flow_invoked_enforcement.png)
+
+
+# Operational Considerations
+## IP whitelisting
+
+All API calls from Fireblocks to the provider service are sent from a fixed set of
+IP addresses, grouped by geographical region. The provider should whitelist these
+addresses to allow Fireblocks to access the provider servers.
+
+Following are the IP addresses grouped by region:
+
+### Singapore
+
+- `18.99.36.0`
+- `18.99.36.1`
+- `18.99.36.2`
+- `18.99.36.3`
+- `18.99.36.4`
+- `18.99.36.5`
+- `18.99.36.6`
+- `18.99.36.7`
+- `18.99.36.8`
+- `18.99.36.9`
+- `52.76.208.129`
+
+### Europe
+
+- `18.98.161.0`
+- `18.98.161.1`
+- `18.98.161.2`
+- `18.98.161.3`
+- `18.98.161.4`
+- `18.98.161.5`
+- `18.98.161.6`
+- `18.98.161.7`
+- `18.98.161.8`
+- `18.98.161.9`
+- `18.98.161.10`
+- `18.98.161.11`
+- `18.98.161.12`
+- `18.98.161.13`
+- `18.98.161.14`
+- `18.98.161.15`
+- `18.98.161.16`
+- `18.98.161.17`
+- `18.98.161.18`
+- `18.98.161.19`
+- `18.133.153.74`
+- `3.10.68.107`
+- `3.64.123.47`
+- `18.158.242.74`
+- `3.10.103.242`
+- `3.67.233.15`
+
+### USA
+
+- `18.97.132.0`
+- `18.97.132.1`
+- `18.97.132.2`
+- `18.97.132.3`
+- `18.97.132.4`
+- `18.97.132.5`
+- `18.97.132.6`
+- `18.97.132.7`
+- `18.97.132.8`
+- `18.97.132.9`
+- `40.117.39.160`

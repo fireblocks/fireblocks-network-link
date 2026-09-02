@@ -93,12 +93,3 @@ export async function getBalances(
     ),
   };
 }
-
-export async function getHistoricBalances(
-  request: FastifyRequest<
-    BalancesBody & AssetQuerystring & AccountIdPathParam & PaginationQuerystring
-  >,
-  reply: FastifyReply
-): Promise<BalancesResponse> {
-  return getBalances(request, reply);
-}

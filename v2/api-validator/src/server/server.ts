@@ -3,7 +3,7 @@ import logger from '../logging';
 import { createWebApp } from './app';
 import { AccountsController } from './controllers/accounts-controller';
 import { AssetsController } from './controllers/assets-controller';
-import { BooksController } from './controllers/books-controller';
+// import { BooksController } from './controllers/books-controller';
 
 const log = logger('server');
 
@@ -41,7 +41,7 @@ async function start() {
     const app = await createWebApp();
     AssetsController.loadAdditionalAssets();
     AccountsController.loadAccounts();
-    BooksController.loadBooks();
+    // BooksController.loadBooks();
     await app.start();
   } catch (err: unknown) {
     handleError(err);

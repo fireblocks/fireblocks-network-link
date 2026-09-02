@@ -68,14 +68,24 @@ describe.skipIf(noLiquidityCapability)('Liquidity', () => {
       throw new Error('Expected to throw');
     };
 
+    const QUOTE_MIN_EXPIRATION_MS = 30000;
+
     it('should succeed with only fromAmount', async () => {
       const quote = await getCreateQuoteSuccessResult({ ...capability, fromAmount: '1' });
       expect(quote.status).toBe(QuoteStatus.READY);
+
+      const created = new Date(quote.createdAt).getTime();
+      const expires = new Date(quote.expiresAt).getTime();
+      expect(expires - created).toBeGreaterThanOrEqual(QUOTE_MIN_EXPIRATION_MS);
     });
 
     it('should succeed with only toAmount', async () => {
       const quote = await getCreateQuoteSuccessResult({ ...capability, toAmount: '1' });
       expect(quote.status).toBe(QuoteStatus.READY);
+
+      const created = new Date(quote.createdAt).getTime();
+      const expires = new Date(quote.expiresAt).getTime();
+      expect(expires - created).toBeGreaterThanOrEqual(QUOTE_MIN_EXPIRATION_MS);
     });
 
     it('should fail with using both fromAmount and toAmount', async () => {

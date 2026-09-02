@@ -4,9 +4,9 @@ servers:
     url: http://0.0.0.0:8000
 info:
   title: Fireblocks Provider Connectivity API v2
-  version: 0.4.1
+  version: 0.5.1
   x-logo:
-    url: doc-assets/fireblocks-logo.png
+    url: doc-assets/fireblocks-logo-lockup-network-navy.png
     altText: Fireblocks logo
   contact:
     name: Fireblocks
@@ -23,12 +23,10 @@ tags:
     description: User accounts management operations.
   - name: balances
     description: Balances management operations.
-  - name: historicBalances
-    description: Historic balances operations.
+  - name: rates
+    description: Rates operations.
   - name: liquidity
     description: Liquidity operations
-  - name: trading
-    description: Order book trading operations.
   - name: transfers
     description: Fund transfers management operations.
   - name: transfersBlockchain
@@ -41,6 +39,8 @@ tags:
     description: Transfers to a sub account in the same account.
   - name: collateral
     description: Collateral management operations.
+  - name: collateralNotifications
+    description: Webhook notifications sent by Fireblocks to exchanges for collateral events.
   - name: ramps
     description: |-
       Beta Feature – Limited Access.
@@ -82,10 +82,10 @@ paths:
                       transfersFiat: '*'
                       transfersPeerAccounts: '*'
                       transfersInternal: '*'
-                      trading: '*'
                       liquidity: '*'
                       collateral: '*'
                       ramps: '*'
+                      rates: '*'
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:
@@ -106,6 +106,23 @@ paths:
                       transfersFiat:
                         - 6cd2fe1e-d0bc-4fad-a9ba-9384e0fdfdc0
                         - 7885a47b-0719-4448-b59e-3b8497cd1685
+                capabilitiesWithRequirements:
+                  summary: Capabilities with requirements
+                  value:
+                    version: 1.2.0
+                    components:
+                      accounts: '*'
+                      balances: '*'
+                      transfersBlockchain: '*'
+                      transfersFiat: '*'
+                    requirements:
+                      transfersBlockchain:
+                        userIdentification: {}
+                        withdrawalAddressPolicy:
+                          type: WithdrawalAddressPolicy
+                          value: ApprovedAddressesOnly
+                      transfersFiat:
+                        userIdentification: {}
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -224,6 +241,7 @@ paths:
     get:
       operationId: getAccounts
       summary: Get list of sub-accounts
+      description: Retrieves a paginated list of all sub-accounts available to the provider. Can optionally include balance information for each account if requested. Allows defining parent-child relationships between accounts. Notice that Fireblocks currently supports only one level of hierarchy.
       tags:
         - accounts
       parameters:
@@ -231,6 +249,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -261,6 +280,8 @@ paths:
     get:
       operationId: getAccountDetails
       summary: Get sub-account details
+      description: |
+        Retrieves detailed information about a specific sub-account, including account metadata and optionally balance information if requested.
       tags:
         - accounts
       parameters:
@@ -268,6 +289,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/AccountBalancesQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -285,10 +307,71 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
+  /accounts/{accountId}/rate:
+    get:
+      operationId: getRateByAccountAndPairId
+      summary: Get rate by account and assets
+      tags:
+        - rates
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/ConversionPairIdQueryParam'
+        - $ref: '#/components/parameters/RampsPairIdQueryParam'
+        - $ref: '#/components/parameters/OrderBookPairIdQueryParam'
+      responses:
+        '200':
+          description: Rate by pair id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rate'
+              examples:
+                usdToEur:
+                  summary: USD to EUR rate
+                  value:
+                    rate: '0.9'
+                    timestamp: 1546658861000
+                    baseAsset:
+                      nationalCurrencyCode: USD
+                    quoteAsset:
+                      nationalCurrencyCode: EUR
+                btcToUsd:
+                  summary: BTC to USD rate
+                  value:
+                    rate: '10000'
+                    timestamp: 1546658861000
+                    baseAsset:
+                      cryptocurrencySymbol: BTC
+                    quoteAsset:
+                      nationalCurrencyCode: USD
+                usdcToUsd:
+                  summary: USDC to USD rate
+                  value:
+                    rate: '1'
+                    timestamp: 1546658861000
+                    baseAsset:
+                      assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                    quoteAsset:
+                      nationalCurrencyCode: USD
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        4XX:
+          $ref: '#/components/responses/ErrorResponse'
+        5XX:
+          $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/balances:
     get:
       operationId: getBalances
       summary: Get current balances
+      description: |
+        Retrieves current balance information for the specified account. Can be filtered by asset ID, national currency code, or cryptocurrency symbol.
       tags:
         - balances
       parameters:
@@ -296,6 +379,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -352,55 +436,12 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /accounts/{accountId}/historic-balances:
-    get:
-      operationId: getHistoricBalances
-      summary: Get balances at specific time in the past
-      tags:
-        - historicBalances
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/AssetIdQueryParam'
-        - $ref: '#/components/parameters/NationalCurrencyCodeQueryParam'
-        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
-        - $ref: '#/components/parameters/SubAccountIdPathParam'
-        - name: time
-          description: Time of the requested balances.
-          in: query
-          required: true
-          schema:
-            type: string
-            format: date-time
-      responses:
-        '200':
-          description: List of asset balances.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - balances
-                properties:
-                  balances:
-                    $ref: '#/components/schemas/Balances'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
   /capabilities/liquidity/quotes:
     get:
       operationId: getQuoteCapabilities
       summary: List possible asset conversions
+      description: |
+        Retrieves the list of supported asset conversion pairs that can be quoted. Shows which assets can be converted to other assets through the liquidity service.
       tags:
         - capabilities
       parameters:
@@ -438,6 +479,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         description: Details of the quote request
@@ -463,6 +505,8 @@ paths:
     get:
       operationId: getQuotes
       summary: Get list of quotes sorted by creation time
+      description: |
+        Retrieves a paginated list of all quotes for the specified account. Quotes are sorted by creation time and can be ordered ascending or descending.
       tags:
         - liquidity
       parameters:
@@ -470,6 +514,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -501,6 +546,8 @@ paths:
     get:
       operationId: getQuoteDetails
       summary: Get quote details
+      description: |
+        Retrieves detailed information about a specific quote, including conversion rates, amounts, expiration time, and current status.
       tags:
         - liquidity
       parameters:
@@ -508,6 +555,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -529,6 +577,8 @@ paths:
     post:
       operationId: executeQuote
       summary: Execute quote
+      description: |
+        Executes a previously created quote, performing the actual asset conversion. The quote must be valid and not expired for execution to succeed.
       tags:
         - liquidity
       parameters:
@@ -536,6 +586,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -553,451 +604,12 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         5XX:
           $ref: '#/components/responses/ErrorResponse'
-  /capabilities/trading/books:
-    get:
-      operationId: getBooks
-      summary: List order books
-      tags:
-        - capabilities
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-      responses:
-        '200':
-          description: List of order books
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - books
-                properties:
-                  books:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/OrderBook'
-              example:
-                books:
-                  - id: BTC/USDC
-                    description: Bitcoin book
-                    baseAsset:
-                      blockchain: Bitcoin
-                      cryptocurrencySymbol: BTC
-                    quoteAsset:
-                      assetId: f0844d82-7097-4521-95bc-d843724a893e
-                  - id: GBP/USDC
-                    baseAsset:
-                      nationalCurrencyCode: GBP
-                    quoteAsset:
-                      assetId: f0844d82-7097-4521-95bc-d843724a893e
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-  /trading/books/{id}:
-    get:
-      operationId: getBookDetails
-      summary: Get details of an order book
-      tags:
-        - trading
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/EntityIdPathParam'
-      responses:
-        '200':
-          description: The specified trading book if it exists
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OrderBook'
-              examples:
-                btcUsdc:
-                  summary: BTC/USDC book
-                  value:
-                    id: BTC/USDC
-                    description: Bitcoin book
-                    baseAsset:
-                      blockchain: Bitcoin
-                      cryptocurrencySymbol: BTC
-                    quoteAsset:
-                      assetId: f0844d82-7097-4521-95bc-d843724a893e
-                gbpUsdc:
-                  summary: GBP/USDC book
-                  value:
-                    id: GBP/USDC
-                    baseAsset:
-                      nationalCurrencyCode: GBP
-                    quoteAsset:
-                      assetId: f0844d82-7097-4521-95bc-d843724a893e
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-  /trading/books/{id}/asks:
-    get:
-      operationId: getBookAsks
-      summary: Get active sell orders in an order book
-      description: List active sell orders in an order book, sorted ascending by the sell price. Each entry is sum of all the asks at the specific price point.
-      tags:
-        - trading
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/EntityIdPathParam'
-      responses:
-        '200':
-          description: Active sell orders.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - asks
-                properties:
-                  asks:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MarketEntry'
-              examples:
-                btcUsdc:
-                  summary: Asks for the BTC/USDC book
-                  value:
-                    asks:
-                      - id: EADAC726-414B-4C5B-B26A-8A616446BDB0
-                        price: '29312.03'
-                        amount: '9.21634'
-                        totalPrice: '270149.63'
-                        side: SELL
-                      - id: 23631CE5-123B-4163-A6CD-6BF3CE5521C6
-                        price: '29315.97'
-                        amount: '22.33346'
-                        totalPrice: '654727.04'
-                        side: SELL
-                      - id: 375C2D0A-2874-4FCE-A860-068856D05A87
-                        price: '29316.95'
-                        amount: '9.30764'
-                        totalPrice: '272871.62'
-                        side: SELL
-                      - id: E577CE57-57BE-49F4-ACA9-DA8EA0F560BD
-                        price: '29317.14'
-                        amount: '7.56552'
-                        totalPrice: '221799.41'
-                        side: SELL
-                      - id: E776FAF0-B9BB-414B-8519-CB01D088FAC2
-                        price: '29317.38'
-                        amount: '9.87465'
-                        totalPrice: '289498.87'
-                        side: SELL
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-  /trading/books/{id}/bids:
-    get:
-      operationId: getBookBids
-      summary: Get active buy orders in an order book
-      description: List active buy orders in an order book, sorted descending by the buy price. Each entry is sum of all the bids at the specific price point.
-      tags:
-        - trading
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/EntityIdPathParam'
-      responses:
-        '200':
-          description: Active buy orders.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - bids
-                properties:
-                  bids:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MarketEntry'
-              examples:
-                btcUsdc:
-                  summary: Bids for the BTC/USDC book
-                  value:
-                    bids:
-                      - id: 92946569-74FE-42BD-9898-CBD03A5D407B
-                        price: '29312.03'
-                        amount: '9.21634'
-                        totalPrice: '270149.63'
-                        side: BUY
-                      - id: F69C17BB-9E2A-4159-8938-8B142F55B4BE
-                        price: '29310.42'
-                        amount: '0.00091'
-                        totalPrice: '26.67'
-                        side: BUY
-                      - id: E7042B8A-D467-4144-AC53-92C4A96C2A84
-                        price: '29310.35'
-                        amount: '0.027'
-                        totalPrice: '791.38'
-                        side: BUY
-                      - id: 6A3444BC-34D1-411B-B505-ADE557307C62
-                        price: '29310.34'
-                        amount: '0.4275'
-                        totalPrice: '12530.17'
-                        side: BUY
-                      - id: 27C49660-AC51-409D-A6C9-5E5BB0FFFACE
-                        price: '29310.27'
-                        amount: '0.01412'
-                        totalPrice: '413.86'
-                        side: BUY
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-  /trading/books/{id}/history:
-    get:
-      operationId: getBookOrderHistory
-      summary: List fulfilled orders in an order book
-      description: List fulfilled orders in an order book, sorted descending by the fulfillment time.
-      tags:
-        - trading
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/EntityIdPathParam'
-      responses:
-        '200':
-          description: List of fulfilled trades.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - trades
-                properties:
-                  trades:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MarketTrade'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-  /accounts/{accountId}/trading/orders:
-    get:
-      operationId: getOrders
-      summary: List trading orders
-      description: List trading orders sorted descending by the creation time.
-      tags:
-        - trading
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/SubAccountIdPathParam'
-      responses:
-        '200':
-          description: Order details
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - orders
-                properties:
-                  orders:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Order'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-    post:
-      operationId: createOrder
-      summary: Create a new trading order
-      description: '`quoteAssetPrice` must be specified for limit orders, but cannot be used in market orders.'
-      tags:
-        - trading
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/SubAccountIdPathParam'
-      requestBody:
-        description: Order details
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OrderRequest'
-            examples:
-              limitSellOrder:
-                summary: Sell 10 BTC for 20,000 USDC each, at most
-                value:
-                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
-                  bookId: BTC_USDC
-                  side: SELL
-                  orderType: LIMIT
-                  timeInForce: GOOD_TILL_CANCELED
-                  baseAssetQuantity: '10'
-                  quoteAssetPrice: '20000'
-              limitBuyOrder:
-                summary: Buy 1 BTC for at most 20,000 USDC
-                value:
-                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
-                  bookId: BTC_USDC
-                  side: BUY
-                  orderType: LIMIT
-                  timeInForce: GOOD_TILL_CANCELED
-                  quoteAssetPrice: '20000'
-                  baseAssetQuantity: '1'
-              marketBuyOrder:
-                summary: Buy BTC at the market price for 200,000 USDC in total
-                value:
-                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
-                  bookId: BTC_USDC
-                  side: BUY
-                  orderType: MARKET
-                  timeInForce: GOOD_TILL_CANCELED
-                  baseAssetQuantity: '1'
-              marketSellOrder:
-                summary: Sell 10 BTC at the market
-                value:
-                  idempotencyKey: 03449d61-0966-481e-b12c-df651451c258
-                  bookId: BTC_USDC
-                  side: SELL
-                  orderType: MARKET
-                  timeInForce: GOOD_TILL_CANCELED
-                  baseAssetQuantity: '10'
-      responses:
-        '200':
-          description: Newly created book order details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
-              example:
-                id: cf091554-f2b8-4cea-9783-2a7e5065b549
-                status: TRADING
-                bookId: BTC_USDC
-                side: SELL
-                orderType: LIMIT
-                timeInForce: GOOD_TILL_CANCELED
-                baseAssetQuantity: '10'
-                quoteAssetPrice: '20000'
-                createdAt: 2023-06-02T19:45:26.550Z
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-  /accounts/{accountId}/trading/orders/{id}:
-    get:
-      operationId: getOrderDetails
-      summary: Get trading order details
-      tags:
-        - trading
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/SubAccountIdPathParam'
-        - $ref: '#/components/parameters/EntityIdPathParam'
-      responses:
-        '200':
-          description: Book order details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OrderWithTrades'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
-    delete:
-      operationId: cancelOrder
-      summary: Cancel an active trading order
-      tags:
-        - trading
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/SubAccountIdPathParam'
-        - $ref: '#/components/parameters/EntityIdPathParam'
-      responses:
-        '200':
-          description: Order canceled.
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        4XX:
-          $ref: '#/components/responses/ErrorResponse'
-        5XX:
-          $ref: '#/components/responses/ErrorResponse'
   /accounts/{accountId}/capabilities/transfers/withdrawals:
     get:
       operationId: getWithdrawalMethods
       summary: Get list of supported withdrawal methods
+      description: |
+        Retrieves the list of supported withdrawal methods available for the specified account. Shows which withdrawal types, networks, and destinations are supported for fund transfers.
       tags:
         - capabilities
       parameters:
@@ -1085,6 +697,8 @@ paths:
     get:
       operationId: getDepositMethods
       summary: Get list of supported deposit methods
+      description: |
+        Retrieves the list of supported deposit methods available for the specified account. Shows which deposit types, networks, and sources are supported for fund transfers.
       tags:
         - capabilities
       parameters:
@@ -1178,6 +792,8 @@ paths:
     get:
       operationId: getWithdrawals
       summary: Get list of withdrawals sorted by creation time
+      description: |
+        Retrieves a paginated list of all withdrawal transactions for the specified account. Withdrawals are sorted by creation time and include all types of withdrawal operations.
       tags:
         - transfers
       parameters:
@@ -1185,6 +801,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -1205,6 +822,8 @@ paths:
     get:
       operationId: getWithdrawalDetails
       summary: Get withdrawal details
+      description: |
+        Retrieves detailed information about a specific withdrawal transaction, including status, amounts, fees, destination details, and processing information.
       tags:
         - transfers
       parameters:
@@ -1212,6 +831,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1233,6 +853,8 @@ paths:
     get:
       operationId: getBlockchainWithdrawals
       summary: Get list of withdrawals over public blockchains sorted by creation time
+      description: |
+        Retrieves a paginated list of withdrawal transactions sent over public blockchains. Includes cryptocurrency transfers to external blockchain addresses, sorted by creation time.
       tags:
         - transfersBlockchain
       parameters:
@@ -1240,6 +862,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -1278,6 +901,9 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
+        - $ref: '#/components/parameters/X-FBAPI-APPROVED-BY'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNED-BY'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         description: Withdrawal details
@@ -1305,6 +931,8 @@ paths:
     get:
       operationId: getFiatWithdrawals
       summary: Get list of fiat withdrawals sorted by creation time
+      description: |
+        Retrieves a paginated list of fiat currency withdrawal transactions. Includes traditional banking transfers and wire transfers, sorted by creation time.
       tags:
         - transfersFiat
       parameters:
@@ -1312,6 +940,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -1350,6 +979,9 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
+        - $ref: '#/components/parameters/X-FBAPI-APPROVED-BY'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNED-BY'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         description: Withdrawal details
@@ -1377,6 +1009,8 @@ paths:
     get:
       operationId: getPeerAccountWithdrawals
       summary: Get list of withdrawals to peer accounts, sorted by creation time
+      description: |
+        Retrieves a paginated list of withdrawal transactions sent to peer accounts. Includes transfers to other accounts within the same provider ecosystem, sorted by creation time.
       tags:
         - transfersPeerAccounts
       parameters:
@@ -1384,6 +1018,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -1414,7 +1049,9 @@ paths:
     post:
       operationId: createPeerAccountWithdrawal
       summary: Create new withdrawal to a peer account
-      description: Should reject any non peer acount withdrawal request.
+      description: |
+        Withdrawal to a peer account is enabled for fiat or tokenized assets only.
+        Should reject any non peer acount withdrawal request.
       tags:
         - transfersPeerAccounts
       parameters:
@@ -1422,6 +1059,9 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
+        - $ref: '#/components/parameters/X-FBAPI-APPROVED-BY'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNED-BY'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         description: Withdrawal details
@@ -1449,6 +1089,8 @@ paths:
     get:
       operationId: getSubAccountWithdrawals
       summary: Get list of withdrawals to sub-accounts, sorted by creation time
+      description: |
+        Retrieves a paginated list of internal withdrawal transactions between sub-accounts. Includes transfers within the same organization or account structure, sorted by creation time.
       tags:
         - transfersInternal
       parameters:
@@ -1456,6 +1098,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -1494,6 +1137,9 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
+        - $ref: '#/components/parameters/X-FBAPI-APPROVED-BY'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNED-BY'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         description: Withdrawal details
@@ -1521,6 +1167,8 @@ paths:
     get:
       operationId: getDeposits
       summary: Get list of deposits sorted by creation time in a descending order
+      description: |
+        Retrieves a paginated list of all deposit transactions for the specified account. Deposits are sorted by creation time in descending order and include all types of deposit operations.
       tags:
         - transfers
       parameters:
@@ -1528,6 +1176,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -1558,6 +1207,8 @@ paths:
     get:
       operationId: getDepositDetails
       summary: Get deposit details
+      description: |
+        Retrieves detailed information about a specific deposit transaction, including status, amounts, source details, confirmation information, and processing details.
       tags:
         - transfers
       parameters:
@@ -1565,6 +1216,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1586,13 +1238,17 @@ paths:
     post:
       operationId: createDepositAddress
       summary: Create new deposit address
+      description: |
+        Creates a new deposit address for the specified account and asset. The generated address can be used to receive deposits for the specified cryptocurrency or token.
       tags:
-        - transfers
+        - transfersFiat
+        - transfersBlockchain
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         description: Deposit address details
@@ -1619,13 +1275,17 @@ paths:
     get:
       operationId: getDepositAddresses
       summary: Get list of existing deposit addresses
+      description: |
+        Retrieves a paginated list of all deposit addresses associated with the specified account. Shows addresses for different cryptocurrencies and networks that can receive deposits.
       tags:
-        - transfers
+        - transfersFiat
+        - transfersBlockchain
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -1656,13 +1316,17 @@ paths:
     get:
       operationId: getDepositAddressDetails
       summary: Get details of a deposit address
+      description: |
+        Retrieves detailed information about a specific deposit address, including the address string, associated network, asset type, and usage metadata.
       tags:
-        - transfers
+        - transfersFiat
+        - transfersBlockchain
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1683,13 +1347,17 @@ paths:
     delete:
       operationId: disableDepositAddress
       summary: Disable a deposit address
+      description: |
+        Disables a specific deposit address, preventing it from receiving new deposits. Existing funds sent to the address may still be processed depending on timing and confirmation status.
       tags:
-        - transfers
+        - transfersFiat
+        - transfersBlockchain
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/EntityIdPathParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -1746,6 +1414,8 @@ paths:
     get:
       operationId: getCollateralAccountLinks
       summary: Get list of collateral account links
+      description: |
+        Retrieves all collateral account links associated with the specified account. Returns details about link status, eligible assets, and collateral configuration.
       tags:
         - collateral
       parameters:
@@ -1846,6 +1516,8 @@ paths:
     get:
       operationId: getCollateralDepositAddresses
       summary: Get list of collateral account deposit addresses
+      description: |
+        Retrieves all registered deposit addresses for the specified collateral account. Can be filtered by asset ID or cryptocurrency symbol to get addresses for specific assets.
       tags:
         - collateral
       parameters:
@@ -1883,6 +1555,8 @@ paths:
     get:
       operationId: getCollateralDepositAddressesDetails
       summary: Get details of a specific deposit address in a collateral account.
+      description: |
+        Retrieves detailed information about a specific deposit address within a collateral account, including the address details and recovery account configuration.
       tags:
         - collateral
       parameters:
@@ -2001,6 +1675,8 @@ paths:
     get:
       operationId: getCollateralDepositTransactions
       summary: Get list of collateral account deposit transactions sorted by creation time
+      description: |
+        Retrieves a paginated list of all deposit transactions for the specified collateral account. Transactions are sorted by creation time and include status information and approval details.
       tags:
         - collateral
       parameters:
@@ -2036,6 +1712,8 @@ paths:
     get:
       operationId: getCollateralDepositTransactionDetails
       summary: Get a collateral account deposit transaction details
+      description: |
+        Retrieves detailed information about a specific collateral deposit transaction, including transaction status, approval details, and processing information.
       tags:
         - collateral
       parameters:
@@ -2154,6 +1832,8 @@ paths:
     get:
       operationId: getCollateralWithdrawalTransactions
       summary: Get list of collateral withdrawal transactions sorted by creation time
+      description: |
+        Retrieves a paginated list of all withdrawal transactions for the specified collateral account. Transactions are sorted by creation time and include status, approval details, and settlement information.
       tags:
         - collateral
       parameters:
@@ -2189,6 +1869,8 @@ paths:
     get:
       operationId: getCollateralWithdrawalTransactionDetails
       summary: Get a collateral withdrawal transaction details
+      description: |
+        Retrieves detailed information about a specific collateral withdrawal transaction, including transaction status, approval details, settlement information, and rejection reasons if applicable.
       tags:
         - collateral
       parameters:
@@ -2297,6 +1979,8 @@ paths:
     get:
       operationId: getSettlementDetails
       summary: Get a settlement details
+      description: |
+        Retrieves detailed information about a specific settlement state for a collateral account, including withdrawal and deposit transaction details, settlement status, and completion information.
       tags:
         - collateral
       parameters:
@@ -2330,6 +2014,8 @@ paths:
     get:
       operationId: getRampMethods
       summary: Get list of supported ramp methods
+      description: |
+        Retrieves the list of supported on-ramp and off-ramp methods available for the specified account. Shows which payment methods and currencies are supported for fiat-to-crypto and crypto-to-fiat conversions.
       tags:
         - capabilities
       parameters:
@@ -2356,6 +2042,8 @@ paths:
     get:
       operationId: getRamps
       summary: Get list of ramps sorted by creation time
+      description: |
+        Retrieves a paginated list of all ramp transactions for the specified account. Ramps are sorted by creation time and include both on-ramp and off-ramp operations.
       tags:
         - ramps
       parameters:
@@ -2363,6 +2051,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -2390,6 +2079,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       requestBody:
         description: Ramp details
@@ -2413,6 +2103,8 @@ paths:
     get:
       operationId: getRampDetails
       summary: Get details of a specific ramp
+      description: |
+        Retrieves detailed information about a specific ramp transaction, including payment instructions, status, amounts, and processing details.
       tags:
         - ramps
       parameters:
@@ -2420,6 +2112,7 @@ paths:
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
         - $ref: '#/components/parameters/EntityIdPathParam'
       responses:
@@ -2470,6 +2163,27 @@ components:
       description: |-
         Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
         - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
+      schema:
+        type: string
+    X-FBAPI-INITIATED-BY:
+      name: X-FBAPI-INITIATED-BY
+      in: header
+      required: false
+      description: Conditional. This header is provided only when the corresponding capability requirement is enabled.
+      schema:
+        type: string
+    X-FBAPI-APPROVED-BY:
+      name: X-FBAPI-APPROVED-BY
+      in: header
+      required: false
+      description: Conditional. This header is provided only when the corresponding capability requirement is enabled.
+      schema:
+        type: string
+    X-FBAPI-SIGNED-BY:
+      name: X-FBAPI-SIGNED-BY
+      in: header
+      required: false
+      description: Conditional. This header is provided only when the corresponding capability requirement is enabled.
       schema:
         type: string
     EntityIdPathParam:
@@ -2536,6 +2250,24 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/CryptocurrencySymbol'
+    ConversionPairIdQueryParam:
+      name: conversionPairId
+      in: query
+      description: Conversion pair to get the rate for.
+      schema:
+        type: string
+    RampsPairIdQueryParam:
+      name: rampsPairId
+      in: query
+      description: Ramps pair to get the rate for.
+      schema:
+        type: string
+    OrderBookPairIdQueryParam:
+      name: orderBookPairId
+      in: query
+      description: Order book pair to get the rate for.
+      schema:
+        type: string
     AccountBalancesQueryParam:
       name: balances
       in: query
@@ -2655,6 +2387,84 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Ramp'
+          examples:
+            onRamp:
+              summary: OnRamp
+              description: A standard fiat to crypto on-ramp without additional features.
+              value:
+                id: 16b8b2c3-bd61-4745-9c48-3d30c2bc6907
+                createdAt: '2021-09-01T12:00:00Z'
+                updatedAt: '2021-09-01T12:00:00Z'
+                status: Pending
+                amount: '1000.00'
+                type: OnRamp
+                expiresAt: '2021-09-01T12:00:00Z'
+                from:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                to:
+                  asset:
+                    assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
+                  transferMethod: PublicBlockchain
+                  address: '0x1234567890abcdef1234567890abcdef12345678'
+                paymentInstructions:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                  accountHolder:
+                    name: John Doe
+                    address: 123 Main St, New York, NY 10001
+                  iban: US1234567890
+                estimatedFees:
+                  - feeType: ORDER
+                    feeAsset:
+                      nationalCurrencyCode: USD
+                    fee:
+                      amountType: FIXED
+                      amount: '100.00'
+            onRampWithQuote:
+              summary: OnRamp with Quote
+              description: An on-ramp that includes quote information for price execution.
+              value:
+                id: 69fa4f38-c1fd-4215-a310-82272225c4ef
+                createdAt: '2021-09-01T12:00:00Z'
+                updatedAt: '2021-09-01T12:00:00Z'
+                status: Pending
+                amount: '500.00'
+                type: OnRamp
+                expiresAt: '2021-09-01T12:00:00Z'
+                from:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                to:
+                  asset:
+                    assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
+                  transferMethod: PublicBlockchain
+                  address: '0xabcdef1234567890abcdef1234567890abcdef12'
+                paymentInstructions:
+                  asset:
+                    nationalCurrencyCode: USD
+                  transferMethod: Iban
+                  accountHolder:
+                    name: Jane Smith
+                    address: 456 Oak Street, London, UK
+                  iban: US1234567890
+                executionDetails:
+                  type: Quote
+                  quoteId: quote-123456789
+                  reQuote:
+                    type: Retry
+                    slippage: 0.02
+                    count: 3
+                estimatedFees:
+                  - feeType: ORDER
+                    feeAsset:
+                      nationalCurrencyCode: USD
+                    fee:
+                      amountType: FIXED
+                      amount: '100.00'
     GetRampDetailsResponse:
       description: Ramp details.
       content:
@@ -2694,6 +2504,8 @@ components:
                       asset:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                      tag: 1234567890abcdef
                     paymentInstructions:
                       asset:
                         nationalCurrencyCode: USD
@@ -2702,15 +2514,14 @@ components:
                         name: John Doe
                         address: 123 Main St, New York, NY 10001
                       iban: US1234567890
-                    recipient:
-                      asset:
-                        assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
-                      transferMethod: PublicBlockchain
-                      address: '0x1234567890abcdef1234567890abcdef12345678'
-                      tag: 1234567890abcdef
-                    fees:
-                      subAccount: 100
-                      provider: 200
+                    estimatedFees:
+                      - feeType: ORDER
+                        feeAsset:
+                          nationalCurrencyCode: USD
+                        fee:
+                          amountType: FIXED
+                          amount: '100.00'
+                    expiresAt: '2021-09-01T12:00:00Z'
                   - id: 69fa4f38-c1fd-4215-a310-82272225c4ef
                     createdAt: '2021-09-01T12:00:00Z'
                     updatedAt: '2021-09-01T12:00:00Z'
@@ -2725,19 +2536,15 @@ components:
                       asset:
                         nationalCurrencyCode: USD
                       transferMethod: Iban
+                      accountHolder:
+                        name: John Doe
+                        address: 123 Main St, New York, NY 10001
+                      iban: US1234567890
                     paymentInstructions:
                       asset:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
                       address: '0x1234567890abcdef1234567890abcdef12345678'
-                    recipient:
-                      asset:
-                        nationalCurrencyCode: USD
-                      transferMethod: Iban
-                      accountHolder:
-                        name: John Doe
-                        address: 123 Main St, New York, NY 10001
-                      iban: US1234567890
                     payment:
                       blockchainTxId: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
                       amount: '1231.45'
@@ -2754,8 +2561,14 @@ components:
                         address: 123 Main St, New York, NY 10001
                       iban: US1234567890
                       amount: '1231.45'
-                    fees:
-                      subAccount: 100
+                      actualFees:
+                        - feeType: ORDER
+                          feeAsset:
+                            nationalCurrencyCode: USD
+                          fee:
+                            amountType: FIXED
+                            amount: '100.00'
+                    expiresAt: '2021-09-01T12:00:00Z'
                   - id: afc7caa0-5b7e-4c98-8f2a-a037d0c6bbea
                     createdAt: '2021-09-01T12:00:00Z'
                     updatedAt: '2021-09-01T12:00:00Z'
@@ -2770,17 +2583,13 @@ components:
                       asset:
                         assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
                       transferMethod: PublicBlockchain
+                      address: '0x1234567890abcdef1234567890abcdef12345678'
+                      tag: 1234567890abcdef
                     paymentInstructions:
                       asset:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
                       address: '0x1234567890abcdef1234567890abcdef12355678'
-                    recipient:
-                      asset:
-                        assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
-                      transferMethod: PublicBlockchain
-                      address: '0x1234567890abcdef1234567890abcdef12345678'
-                      tag: 1234567890abcdef
                     payment:
                       blockchainTxId: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef'
                       amount: '1231.45'
@@ -2789,14 +2598,27 @@ components:
                         assetId: 360de0ad-9ba1-45d5-8074-22453f193d65
                       transferMethod: PublicBlockchain
                     receipt:
+                      actualFees:
+                        - feeType: ORDER
+                          feeAsset:
+                            nationalCurrencyCode: USD
+                          fee:
+                            amountType: FIXED
+                            amount: '100.00'
                       blockchainTxId: '0x1234567890abcdef1234567899abcdef1234567890abcdef1234567890abcdef'
                       amount: '1231.45'
                       address: '0x1234567890abcdef1234567890abcdef12345678'
                       asset:
                         assetId: 606bce6b-ff15-4704-9390-b9e32a6cfcff
                       transferMethod: PublicBlockchain
-                    fees:
-                      subAccount: 100
+                    estimatedFees:
+                      - feeType: ORDER
+                        feeAsset:
+                          nationalCurrencyCode: USD
+                        fee:
+                          amountType: FIXED
+                          amount: '100.00'
+                    expiresAt: '2021-09-01T12:00:00Z'
   schemas:
     GeneralError:
       description: Should be returned only if there in no more specific object.
@@ -2839,6 +2661,14 @@ components:
             - unsupported-transfer-method
             - transfer-destination-not-allowed
             - unsupported-ramp-method
+            - unsupported-source-asset
+            - unsupported-destination-asset
+            - amount-below-minimum
+            - amount-above-maximum
+            - pii-missing
+            - unsupported-external-source
+            - unsupported-region
+            - destination-not-whitelisted
         propertyName:
           description: |-
             Name of property that caused the error. By convention, should always start with a slash ("/"). If the property is nested, the path should be separated by slashes.
@@ -2888,6 +2718,57 @@ components:
           example: 1.0.37
         components:
           $ref: '#/components/schemas/ApiComponents'
+        requirements:
+          $ref: '#/components/schemas/CapabilitiesWithRequirements'
+    UserIdentificationRequirement:
+      description: No properties. Specifying an empty object will cause the user identification headers (X-FBAPI-INITIATED-BY, X-FBAPI-APPROVED-BY, X-FBAPI-SIGNED-BY) to be included in requests.
+      type: object
+    CommonCapabilityRequirements:
+      description: Capability requirements shared by all the capabilities.
+      type: object
+      properties:
+        userIdentification:
+          $ref: '#/components/schemas/UserIdentificationRequirement'
+    WithdrawalAddressPolicyRequirement:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          enum:
+            - ApprovedAddressesOnly
+            - AllAddresses
+    TransfersBlockchainRequirements:
+      allOf:
+        - $ref: '#/components/schemas/CommonCapabilityRequirements'
+        - type: object
+          properties:
+            withdrawalAddressPolicy:
+              $ref: '#/components/schemas/WithdrawalAddressPolicyRequirement'
+    CapabilitiesWithRequirements:
+      type: object
+      properties:
+        accounts:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        balances:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        transfers:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        transfersBlockchain:
+          $ref: '#/components/schemas/TransfersBlockchainRequirements'
+        transfersFiat:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        transfersPeerAccounts:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        transfersInternal:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        liquidity:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        ramps:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        rates:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
     ApiComponents:
       description: Lists supported API components and which sub-accounts support the component.
       type: object
@@ -2899,8 +2780,6 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         balances:
           $ref: '#/components/schemas/AccountsSet'
-        historicBalances:
-          $ref: '#/components/schemas/AccountsSet'
         transfers:
           $ref: '#/components/schemas/AccountsSet'
         transfersBlockchain:
@@ -2911,13 +2790,13 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         transfersInternal:
           $ref: '#/components/schemas/AccountsSet'
-        trading:
-          $ref: '#/components/schemas/AccountsSet'
         liquidity:
           $ref: '#/components/schemas/AccountsSet'
         collateral:
           $ref: '#/components/schemas/AccountsSet'
         ramps:
+          $ref: '#/components/schemas/AccountsSet'
+        rates:
           $ref: '#/components/schemas/AccountsSet'
         custom:
           $ref: '#/components/schemas/AccountsSet'
@@ -2953,7 +2832,7 @@ components:
           $ref: '#/components/schemas/AccountStatus'
         parentId:
           type: string
-          description: The ID of the parent account. If the field is empty, the account is a main account.
+          description: The ID of the parent account. If the field is empty, the account is a main account. Notice that Fireblocks currently supports only one level of hierarchy.
     AccountId:
       type: object
       required:
@@ -3084,12 +2963,65 @@ components:
               type: string
             stellarCurrencyCode:
               type: string
+    ContractBasedToken:
+      allOf:
+        - $ref: '#/components/schemas/AssetCommonProperties'
+        - type: object
+          required:
+            - type
+            - blockchain
+            - contractAddress
+          properties:
+            type:
+              enum:
+                - Jetton
+                - Trc20Token
+            blockchain:
+              $ref: '#/components/schemas/Blockchain'
+            contractAddress:
+              type: string
+      example:
+        id: 7df38516-a9bd-42cd-9ac3-284f665ca6e8
+        type: Jetton
+        blockchain: TON
+        name: Tether USD
+        symbol: USDT
+        decimalPlaces: 6
+        testAsset: true
+        contractAddress: EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs
+    SolanaToken:
+      allOf:
+        - $ref: '#/components/schemas/AssetCommonProperties'
+        - type: object
+          required:
+            - type
+            - blockchain
+            - mintAddress
+          properties:
+            type:
+              enum:
+                - SplToken
+            blockchain:
+              $ref: '#/components/schemas/Blockchain'
+            mintAddress:
+              type: string
+      example:
+        id: 8d156559-8ecf-4170-acb8-a2cfa76bc3f4
+        type: SplToken
+        blockchain: Solana
+        name: USD Coin
+        symbol: USDC
+        description: The world's largest regulated stablecoin powering global finance
+        decimalPlaces: 6
+        mintAddress: EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v
     AssetDefinition:
       anyOf:
         - $ref: '#/components/schemas/BucketAsset'
         - $ref: '#/components/schemas/Erc20Token'
         - $ref: '#/components/schemas/Bep20Token'
         - $ref: '#/components/schemas/StellarToken'
+        - $ref: '#/components/schemas/ContractBasedToken'
+        - $ref: '#/components/schemas/SolanaToken'
     NationalCurrency:
       type: object
       required:
@@ -3102,6 +3034,7 @@ components:
     NativeCryptocurrency:
       type: object
       required:
+        - blockchain
         - cryptocurrencySymbol
       properties:
         blockchain:
@@ -3144,6 +3077,19 @@ components:
               type: string
             addressTag:
               type: string
+    Rate:
+      type: object
+      required:
+        - rate
+        - timestamp
+      properties:
+        rate:
+          type: string
+        timestamp:
+          type: number
+          format: UNIX-timestamp-epoch
+          description: In Milliseconds. The timestamp on the creation of the rate.
+          example: 1546658861000
     AssetReference:
       oneOf:
         - $ref: '#/components/schemas/NationalCurrency'
@@ -3159,6 +3105,7 @@ components:
         - Avalanche
         - Axelar
         - Base
+        - Berachain
         - Bitcoin
         - Bitcoin Cash
         - Bitcoin Cash ABC
@@ -3188,6 +3135,7 @@ components:
         - HT Chain
         - KAVA
         - Kusama
+        - Fraxtal
         - Litecoin
         - Moonbeam
         - Moonriver
@@ -3209,6 +3157,7 @@ components:
         - Terra 2.0
         - Terra Classic
         - Tezos
+        - TON
         - TokenEX
         - TRON
         - Velas
@@ -3217,20 +3166,25 @@ components:
         - XinFin Network
         - XRP
         - ZCash
+        - Linea
+        - Babylon
+        - Canton
+        - BNB Smart Chain
+        - HyperEVM
+        - Sui
     CryptocurrencySymbol:
       type: string
       enum:
         - ADA
         - ALGO
-        - ARB
         - ASTR
         - ATOM
         - AURORA
         - AVAX
         - AXL
-        - BASE
         - BCH
         - BCHA
+        - BERA
         - BITKUB
         - BNB
         - BSV
@@ -3257,6 +3211,7 @@ components:
         - HT
         - KAVA
         - KSM
+        - FRAX
         - LTC
         - LUNA
         - LUNA2
@@ -3264,7 +3219,6 @@ components:
         - MOVR
         - NEAR
         - OAS
-        - OPT
         - OSMO
         - PALM
         - RON
@@ -3285,6 +3239,11 @@ components:
         - XRP
         - XTZ
         - ZEC
+        - GRAM
+        - BABY
+        - CANTON
+        - HYPE
+        - SUI
     NationalCurrencyCode:
       type: string
       description: National currency codes as defined in ISO 4217.
@@ -3576,6 +3535,28 @@ components:
         - ZWL
         - ZWN
         - ZWR
+    PersonalIdentificationType:
+      type: string
+      description: The type of identification document issued to the individual.
+      enum:
+        - NIN Slip/Card
+        - BVN
+        - ID Card
+        - ID Book
+        - National ID
+        - Alien Card
+        - Passport
+        - Ecowas Card
+        - Rwanda Card
+        - Drivers License
+        - Resident Card
+        - Voter ID
+        - Health Insurance ID
+        - Ghana Card
+        - Refugee ID
+        - SSNIT
+        - Non Citizen ID
+        - National Registration Card
     QuoteCapability:
       type: object
       required:
@@ -3656,6 +3637,11 @@ components:
         conversionFeeBps:
           type: integer
           description: Conversion fee in basis points. The amounts are expected to include the fee.
+        conversionFeeAsset:
+          allOf:
+            - $ref: '#/components/schemas/AssetReference'
+            - description: |
+                This is the asset that will be used to pay the conversion fee. If not returned, the asset will be the same as the fromAsset.
         status:
           $ref: '#/components/schemas/QuoteStatus'
         createdAt:
@@ -3666,157 +3652,6 @@ components:
           description: Quote expiration time.
           type: string
           format: date-time
-    OrderBook:
-      type: object
-      required:
-        - id
-        - baseAsset
-        - quoteAsset
-      properties:
-        id:
-          type: string
-        description:
-          type: string
-        baseAsset:
-          $ref: '#/components/schemas/AssetReference'
-        quoteAsset:
-          $ref: '#/components/schemas/AssetReference'
-    MarketEntry:
-      type: object
-      required:
-        - id
-        - amount
-        - price
-        - totalPrice
-        - side
-      properties:
-        id:
-          type: string
-        amount:
-          allOf:
-            - $ref: '#/components/schemas/PositiveAmount'
-          description: Amount of the base asset traded.
-        price:
-          $ref: '#/components/schemas/PositiveAmount'
-        totalPrice:
-          $ref: '#/components/schemas/PositiveAmount'
-        side:
-          $ref: '#/components/schemas/OrderSide'
-    MarketTrade:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/MarketEntry'
-        - type: object
-          required:
-            - finalizedAt
-          properties:
-            finalizedAt:
-              description: Time when the trade was finalized.
-              type: string
-              format: date-time
-    OrderCommonProperties:
-      allOf:
-        - type: object
-          required:
-            - bookId
-            - side
-            - timeInForce
-            - baseAssetQuantity
-          properties:
-            bookId:
-              description: ID of the order book.
-              type: string
-            side:
-              $ref: '#/components/schemas/OrderSide'
-            timeInForce:
-              $ref: '#/components/schemas/OrderTimeInForce'
-            baseAssetQuantity:
-              $ref: '#/components/schemas/PositiveAmount'
-    OrderSide:
-      enum:
-        - SELL
-        - BUY
-    OrderTimeInForce:
-      enum:
-        - GOOD_TILL_CANCELED
-        - FILL_OR_KILL
-        - IMMEDIATE_OR_CANCEL
-    LimitOrderData:
-      allOf:
-        - $ref: '#/components/schemas/OrderCommonProperties'
-        - type: object
-          required:
-            - orderType
-            - quoteAssetPrice
-          properties:
-            orderType:
-              enum:
-                - LIMIT
-            quoteAssetPrice:
-              $ref: '#/components/schemas/PositiveAmount'
-    MarketOrderData:
-      allOf:
-        - $ref: '#/components/schemas/OrderCommonProperties'
-        - type: object
-          required:
-            - orderType
-          properties:
-            orderType:
-              enum:
-                - MARKET
-    OrderData:
-      oneOf:
-        - $ref: '#/components/schemas/LimitOrderData'
-        - $ref: '#/components/schemas/MarketOrderData'
-    OrderRequest:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/OrderData'
-        - type: object
-          required:
-            - idempotencyKey
-          properties:
-            idempotencyKey:
-              type: string
-    Order:
-      allOf:
-        - $ref: '#/components/schemas/OrderData'
-        - type: object
-          required:
-            - id
-            - status
-            - createdAt
-          properties:
-            id:
-              type: string
-            status:
-              $ref: '#/components/schemas/OrderStatus'
-            createdAt:
-              description: Time when the order was created.
-              type: string
-              format: date-time
-            finalizedAt:
-              description: Time when the order was finalized.
-              type: string
-              format: date-time
-    OrderWithTrades:
-      allOf:
-        - $ref: '#/components/schemas/Order'
-        - type: object
-          required:
-            - trades
-          properties:
-            trades:
-              type: array
-              items:
-                $ref: '#/components/schemas/MarketTrade'
-    OrderStatus:
-      enum:
-        - TRADING
-        - CANCELED
-        - REJECTED
-        - EXPIRED
-        - FULFILLED
     AccountHolderDetails:
       type: object
       required:
@@ -3864,6 +3699,9 @@ components:
               $ref: '#/components/schemas/AccountHolderDetails'
             iban:
               $ref: '#/components/schemas/Iban'
+            bic:
+              type: string
+              description: Bank Identifier Code (SWIFT/BIC)
     IbanTransferDestination:
       allOf:
         - $ref: '#/components/schemas/IbanAddress'
@@ -3876,52 +3714,6 @@ components:
     IbanTransfer:
       allOf:
         - $ref: '#/components/schemas/IbanTransferDestination'
-        - type: object
-          properties:
-            referenceId:
-              type: string
-    SwiftCode:
-      type: string
-      pattern: ^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$
-    SwiftCapability:
-      type: object
-      required:
-        - asset
-        - transferMethod
-      properties:
-        asset:
-          $ref: '#/components/schemas/NationalCurrency'
-        transferMethod:
-          enum:
-            - Swift
-    SwiftAddress:
-      allOf:
-        - $ref: '#/components/schemas/SwiftCapability'
-        - type: object
-          required:
-            - accountHolder
-            - swiftCode
-            - routingNumber
-          properties:
-            accountHolder:
-              $ref: '#/components/schemas/AccountHolderDetails'
-            swiftCode:
-              $ref: '#/components/schemas/SwiftCode'
-            routingNumber:
-              type: string
-              description: Routing number identifying the bank account.
-    SwiftTransferDestination:
-      allOf:
-        - $ref: '#/components/schemas/SwiftAddress'
-        - type: object
-          required:
-            - amount
-          properties:
-            amount:
-              $ref: '#/components/schemas/PositiveAmount'
-    SwiftTransfer:
-      allOf:
-        - $ref: '#/components/schemas/SwiftTransferDestination'
         - type: object
           properties:
             referenceId:
@@ -4072,6 +3864,593 @@ components:
           properties:
             referenceId:
               type: string
+    PixCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Pix
+    PixAddress:
+      allOf:
+        - $ref: '#/components/schemas/PixCapability'
+        - type: object
+          required:
+            - accountHolder
+            - pixKey
+            - keyType
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            pixKey:
+              type: string
+            keyType:
+              type: string
+              enum:
+                - cpf
+                - cnpj
+                - email
+                - phone
+                - random
+            bankName:
+              type: string
+            bankCode:
+              type: string
+    PixAddressPaymentInstruction:
+      allOf:
+        - $ref: '#/components/schemas/PixAddress'
+        - type: object
+          properties:
+            qrCode:
+              type: string
+              description: PIX QR code
+              example: 00020126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-426655440000520400005303986540510.005802BR5913ACME BRASIL6009SAO PAULO62070503***6304ABCD
+            expirationDate:
+              type: string
+              description: Expiration for PIX Cobrança (optional, ISO 8601 format)
+              example: '2025-12-10T23:59:59Z'
+    PixTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/PixAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    PixTransfer:
+      allOf:
+        - $ref: '#/components/schemas/PixTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    ChapsAccountNumber:
+      type: string
+      pattern: ^\d{8}$
+      description: CHAPS account number (8 digits)
+    ChapsSortCode:
+      type: string
+      pattern: ^\d{6}$
+      description: CHAPS 6-digit sort code
+    ChapsBankAccountCountry:
+      type: string
+      pattern: ^.{2}
+      description: CHAPS bank account country (2 digits)
+    ChapsBankAccountHolderName:
+      type: string
+      pattern: ^(?=.{1,140}$)[^\s]+(\s+[^\s]+)*$
+      description: CHAPS bank account holder name
+    ChapsCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Chaps
+    ChapsAddress:
+      allOf:
+        - $ref: '#/components/schemas/ChapsCapability'
+        - type: object
+          required:
+            - accountHolder
+            - accountNumber
+            - sortCode
+            - bankAccountCountry
+            - bankAccountHolderName
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            accountNumber:
+              $ref: '#/components/schemas/ChapsAccountNumber'
+            sortCode:
+              $ref: '#/components/schemas/ChapsSortCode'
+            bankAccountCountry:
+              $ref: '#/components/schemas/ChapsBankAccountCountry'
+            bankAccountHolderName:
+              $ref: '#/components/schemas/ChapsBankAccountHolderName'
+            bankName:
+              type: string
+              description: Optional bank name
+    ChapsTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/ChapsAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    ChapsTransfer:
+      allOf:
+        - $ref: '#/components/schemas/ChapsTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    FpsUkAccountNumber:
+      type: string
+      pattern: ^\d{8}$
+      description: FPS UK account number (8 digits)
+    FpsUkSortCode:
+      type: string
+      pattern: ^\d{6}$
+      description: FPS UK 6-digit sort code
+    FpsUkBankAccountCountry:
+      type: string
+      pattern: ^.{2}
+      description: FPS UK bank account country (ISO 3166-1 alpha-2)
+    FpsUkCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - FpsUk
+    FpsUkAddress:
+      allOf:
+        - $ref: '#/components/schemas/FpsUkCapability'
+        - type: object
+          required:
+            - accountHolder
+            - accountNumber
+            - sortCode
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            accountNumber:
+              $ref: '#/components/schemas/FpsUkAccountNumber'
+            sortCode:
+              $ref: '#/components/schemas/FpsUkSortCode'
+            bankAccountCountry:
+              $ref: '#/components/schemas/FpsUkBankAccountCountry'
+            bankName:
+              type: string
+              description: Optional bank name
+    FpsUkTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/FpsUkAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    FpsUkTransfer:
+      allOf:
+        - $ref: '#/components/schemas/FpsUkTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    EuropeanSEPACapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - EuropeanSEPA
+    EuropeanSEPAAddress:
+      allOf:
+        - $ref: '#/components/schemas/EuropeanSEPACapability'
+        - type: object
+          required:
+            - accountHolder
+            - iban
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            iban:
+              $ref: '#/components/schemas/Iban'
+            bic:
+              type: string
+              description: Bank Identifier Code (SWIFT/BIC)
+            bankName:
+              type: string
+            bankBranch:
+              type: string
+            bankAddress:
+              type: string
+            purposeCode:
+              type: string
+              description: ISO purpose code for the transfer
+            taxId:
+              type: string
+              description: Beneficiary tax identification number
+    EuropeanSEPATransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/EuropeanSEPAAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    EuropeanSEPATransfer:
+      allOf:
+        - $ref: '#/components/schemas/EuropeanSEPATransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    MobileMoneyCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Momo
+    MobilePhoneNumber:
+      type: string
+      pattern: ^\+[1-9]\d{1,14}$
+      description: Mobile phone number in E.164 format
+    MobileMoneyAddressBase:
+      description: Base mobile money address with beneficiary info (without redirect URLs)
+      allOf:
+        - $ref: '#/components/schemas/MobileMoneyCapability'
+        - type: object
+          required:
+            - mobilePhoneNumber
+            - provider
+            - email
+            - accountHolder
+          properties:
+            mobilePhoneNumber:
+              $ref: '#/components/schemas/MobilePhoneNumber'
+            email:
+              type: string
+              format: email
+            provider:
+              type: string
+              enum:
+                - m-pesa
+                - airtel
+                - mtn
+                - tigo
+                - orange
+                - wave
+              description: Mobile money provider
+    MobileMoneyAddressOnRamp:
+      description: Mobile money address for on-ramp
+      allOf:
+        - $ref: '#/components/schemas/MobileMoneyAddressBase'
+        - type: object
+          properties:
+            successRedirectUrl:
+              type: string
+              description: URL to redirect to after successful payment
+    MobileMoneyAddressOffRamp:
+      description: Mobile money address for off-ramp
+      allOf:
+        - $ref: '#/components/schemas/MobileMoneyAddressBase'
+        - $ref: '#/components/schemas/MobileMoneyAddressBeneficiaryInfo'
+    MobileMoneyAddressPaymentInstruction:
+      allOf:
+        - $ref: '#/components/schemas/MobileMoneyAddressBase'
+        - $ref: '#/components/schemas/MobileMoneyAddressBeneficiaryInfo'
+        - type: object
+          properties:
+            successPaymentInstructionRedirect:
+              type: string
+            paymentRedirect:
+              $ref: '#/components/schemas/PaymentRedirect'
+    MobileMoneyAddressBeneficiaryInfo:
+      allOf:
+        - type: object
+          required:
+            - accountHolder
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            beneficiaryDocumentId:
+              type: string
+              description: Beneficiary document identification (may be required)
+            beneficiaryRelationship:
+              type: string
+              description: Relationship to beneficiary for AML purposes
+    MobileMoneyTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/MobileMoneyAddressOffRamp'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    MobileMoneyTransfer:
+      allOf:
+        - $ref: '#/components/schemas/MobileMoneyTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    LocalBankTransferCapability:
+      description: Local Bank Transfer Capability
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Lbt
+    LocalBankTransferAddress:
+      allOf:
+        - $ref: '#/components/schemas/LocalBankTransferCapability'
+        - type: object
+          required:
+            - accountHolder
+            - accountNumber
+            - bankName
+            - bankCode
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            accountNumber:
+              $ref: '#/components/schemas/BankAccountNumber'
+            bankName:
+              type: string
+              description: Name of the bank
+            bankCode:
+              type: string
+              description: Internal bank identifier
+    LocalBankTransferAddressOnRamp:
+      allOf:
+        - $ref: '#/components/schemas/LocalBankTransferCapability'
+        - type: object
+          properties:
+            successRedirectUrl:
+              type: string
+              description: URL to redirect to after successful payment
+    LocalBankTransferAddressPaymentInstruction:
+      allOf:
+        - $ref: '#/components/schemas/LocalBankTransferCapability'
+        - type: object
+          required:
+            - accountHolder
+            - accountNumber
+            - bankName
+            - bankCode
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            accountNumber:
+              $ref: '#/components/schemas/BankAccountNumber'
+            bankName:
+              type: string
+              description: Name of the bank
+            bankCode:
+              type: string
+              description: Internal bank identifier
+            successPaymentInstructionRedirect:
+              type: string
+            paymentRedirect:
+              $ref: '#/components/schemas/PaymentRedirect'
+    PaymentRedirect:
+      type: object
+      properties:
+        url:
+          type: string
+          description: URL to redirect to
+          example: https://yellowcard.example.com/authorize?token=abc123&transactionId=16b8b2c3-bd61-4745-9c48-3d30c2bc6907
+        expiresAt:
+          type: string
+          description: Expiration date of the redirect
+          example: '2025-01-15T12:00:00Z'
+    LocalBankTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/LocalBankTransferAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    LocalBankTransfer:
+      allOf:
+        - $ref: '#/components/schemas/LocalBankTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    PayIdCapability:
+      description: PayId Transfer Capability
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - PayId
+    PayIdAddress:
+      allOf:
+        - $ref: '#/components/schemas/PayIdCapability'
+        - type: object
+          required:
+            - accountHolder
+            - type
+            - value
+            - accountNumber
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+            type:
+              type: string
+              enum:
+                - email
+            value:
+              type: string
+              description: PayId value
+              example: merchant@example.com
+            bsb:
+              type: string
+              description: BSB value
+              example: '062000'
+            accountNumber:
+              type: string
+              description: Account number value
+    PayIdTransferDestination:
+      allOf:
+        - $ref: '#/components/schemas/PayIdAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    PayIdTransfer:
+      allOf:
+        - $ref: '#/components/schemas/PayIdTransferDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
+    InteracCapability:
+      type: object
+      required:
+        - asset
+        - transferMethod
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        transferMethod:
+          type: string
+          enum:
+            - Interac
+    RecipientHandle:
+      type: object
+      required:
+        - type
+        - value
+      properties:
+        type:
+          type: string
+          enum:
+            - email
+        value:
+          type: string
+          description: Recipient value
+          example: merchant@example.com
+    InteracTransferDetailsBase:
+      type: object
+      required:
+        - recipientHandle
+      properties:
+        recipientHandle:
+          $ref: '#/components/schemas/RecipientHandle'
+        message:
+          type: string
+    InteracTransferSecurityQuestionAndAnswer:
+      type: object
+      required:
+        - autoDeposit
+      properties:
+        autoDeposit:
+          type: boolean
+        securityQuestion:
+          description: if autoDeposit is false, this is required
+          type: string
+        securityAnswer:
+          type: string
+          description: if autoDeposit is false, this is required
+    InteractTransferDetailsOffRamp:
+      allOf:
+        - $ref: '#/components/schemas/InteracTransferDetailsBase'
+    InteractTransferDetailsOnRamp:
+      allOf:
+        - $ref: '#/components/schemas/InteracTransferDetailsBase'
+        - $ref: '#/components/schemas/InteracTransferSecurityQuestionAndAnswer'
+    InteracAddress:
+      allOf:
+        - $ref: '#/components/schemas/InteracCapability'
+        - $ref: '#/components/schemas/InteractTransferDetailsOffRamp'
+        - type: object
+          required:
+            - accountHolder
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+    InteracAddressPaymentInstruction:
+      description: |-
+        When true, funds are deposited directly into the recipient's bank account without a security question.
+         When false, a security question and answer are required to complete the transfer
+      allOf:
+        - $ref: '#/components/schemas/InteracCapability'
+        - $ref: '#/components/schemas/InteractTransferDetailsOnRamp'
+        - type: object
+          required:
+            - accountHolder
+          properties:
+            accountHolder:
+              $ref: '#/components/schemas/AccountHolderDetails'
+    InteracDestination:
+      allOf:
+        - $ref: '#/components/schemas/InteracAddress'
+        - type: object
+          required:
+            - amount
+          properties:
+            amount:
+              $ref: '#/components/schemas/PositiveAmount'
+    InteracTransfer:
+      allOf:
+        - $ref: '#/components/schemas/InteracDestination'
+        - type: object
+          properties:
+            referenceId:
+              type: string
     OtherFiatTransfer:
       type: object
       description: Used for historic fiat transfers that do not fit a more specific transfer method.  It is impossible to create new deposits or withdrawal of this type using this API.
@@ -4097,10 +4476,18 @@ components:
     FiatCapability:
       oneOf:
         - $ref: '#/components/schemas/IbanCapability'
-        - $ref: '#/components/schemas/SwiftCapability'
         - $ref: '#/components/schemas/AchCapability'
         - $ref: '#/components/schemas/WireCapability'
         - $ref: '#/components/schemas/SpeiCapability'
+        - $ref: '#/components/schemas/PixCapability'
+        - $ref: '#/components/schemas/EuropeanSEPACapability'
+        - $ref: '#/components/schemas/LocalBankTransferCapability'
+        - $ref: '#/components/schemas/MobileMoneyCapability'
+        - $ref: '#/components/schemas/PayIdCapability'
+        - $ref: '#/components/schemas/InteracCapability'
+        - $ref: '#/components/schemas/ChapsCapability'
+        - $ref: '#/components/schemas/FpsUkCapability'
+        - $ref: '#/components/schemas/InternalTransferMethod'
     PublicBlockchainTransactionDestination:
       type: object
       allOf:
@@ -4139,6 +4526,7 @@ components:
         asset:
           $ref: '#/components/schemas/AssetReference'
         transferMethod:
+          type: string
           enum:
             - InternalTransfer
     InternalTransferCapability:
@@ -4217,15 +4605,12 @@ components:
         - $ref: '#/components/schemas/InternalTransferCapability'
         - $ref: '#/components/schemas/PublicBlockchainCapability'
         - $ref: '#/components/schemas/IbanCapability'
-        - $ref: '#/components/schemas/SwiftCapability'
     FiatTransferDestination:
       oneOf:
         - $ref: '#/components/schemas/IbanTransferDestination'
-        - $ref: '#/components/schemas/SwiftTransferDestination'
     FiatTransfer:
       oneOf:
         - $ref: '#/components/schemas/IbanTransfer'
-        - $ref: '#/components/schemas/SwiftTransfer'
         - $ref: '#/components/schemas/OtherFiatTransfer'
     Transfer:
       oneOf:
@@ -4233,22 +4618,44 @@ components:
         - $ref: '#/components/schemas/InternalTransfer'
         - $ref: '#/components/schemas/PublicBlockchainTransaction'
         - $ref: '#/components/schemas/IbanTransfer'
-        - $ref: '#/components/schemas/SwiftTransfer'
+        - $ref: '#/components/schemas/WireTransfer'
         - $ref: '#/components/schemas/OtherFiatTransfer'
     DepositDestination:
       oneOf:
         - $ref: '#/components/schemas/PublicBlockchainAddress'
         - $ref: '#/components/schemas/IbanAddress'
-        - $ref: '#/components/schemas/SwiftAddress'
         - $ref: '#/components/schemas/PeerAccountTransferAddress'
+        - $ref: '#/components/schemas/InternalTransferAddress'
+    FiatPaymentInstruction:
+      description: Fiat payment instruction for on-ramp
+      oneOf:
+        - $ref: '#/components/schemas/IbanAddress'
+        - $ref: '#/components/schemas/AchAddress'
+        - $ref: '#/components/schemas/WireAddress'
+        - $ref: '#/components/schemas/SpeiAddress'
+        - $ref: '#/components/schemas/PixAddressPaymentInstruction'
+        - $ref: '#/components/schemas/ChapsAddress'
+        - $ref: '#/components/schemas/FpsUkAddress'
+        - $ref: '#/components/schemas/EuropeanSEPAAddress'
+        - $ref: '#/components/schemas/LocalBankTransferAddressPaymentInstruction'
+        - $ref: '#/components/schemas/MobileMoneyAddressPaymentInstruction'
+        - $ref: '#/components/schemas/PayIdAddress'
+        - $ref: '#/components/schemas/InteracAddressPaymentInstruction'
         - $ref: '#/components/schemas/InternalTransferAddress'
     FiatAddress:
       oneOf:
         - $ref: '#/components/schemas/IbanAddress'
-        - $ref: '#/components/schemas/SwiftAddress'
         - $ref: '#/components/schemas/AchAddress'
         - $ref: '#/components/schemas/WireAddress'
         - $ref: '#/components/schemas/SpeiAddress'
+        - $ref: '#/components/schemas/PixAddress'
+        - $ref: '#/components/schemas/EuropeanSEPAAddress'
+        - $ref: '#/components/schemas/LocalBankTransferAddress'
+        - $ref: '#/components/schemas/MobileMoneyAddressOffRamp'
+        - $ref: '#/components/schemas/PayIdAddress'
+        - $ref: '#/components/schemas/InteracAddress'
+        - $ref: '#/components/schemas/ChapsAddress'
+        - $ref: '#/components/schemas/FpsUkAddress'
     DepositAddressStatus:
       enum:
         - enabled
@@ -4278,7 +4685,6 @@ components:
           oneOf:
             - $ref: '#/components/schemas/PublicBlockchainCapability'
             - $ref: '#/components/schemas/IbanCapability'
-            - $ref: '#/components/schemas/SwiftCapability'
     DepositCapability:
       type: object
       description: Capability to deposit to a balance asset using a specific transfer capability. `addressCreationPolicy` determines whether new deposit addresses could be requested for this deposit capability.
@@ -4375,6 +4781,19 @@ components:
           type: string
         lastName:
           type: string
+    VaspInformation:
+      type: object
+      properties:
+        vaspName:
+          type: string
+        vaspCountry:
+          type: string
+        vaspCode:
+          type: string
+        vaspWebsite:
+          type: string
+        vaspRegion:
+          type: string
     PersonaIdentificationInfo:
       type: object
       description: Individual information about the beneficiary of the transaction.
@@ -4396,6 +4815,22 @@ components:
           example: '1999-01-01'
         postalAddress:
           $ref: '#/components/schemas/PostalAddress'
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        phone:
+          $ref: '#/components/schemas/MobilePhoneNumber'
+        idNumber:
+          type: string
+          description: A unique identifier assigned to the individual by the relevant regulatory authority.
+        idType:
+          $ref: '#/components/schemas/PersonalIdentificationType'
+        additionalIdNumber:
+          type: string
+          description: An additional unique identifier assigned to the individual by the relevant regulatory authority.
+        additionalIdType:
+          $ref: '#/components/schemas/PersonalIdentificationType'
     BusinessIdentificationInfo:
       type: object
       description: Information related to the business entity acting as the beneficiary of the transaction.
@@ -4417,6 +4852,12 @@ components:
           description: A unique identifier assigned to the business entity by the relevant regulatory authority, often used for tax and legal purposes.
         postalAddress:
           $ref: '#/components/schemas/PostalAddress'
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        phone:
+          $ref: '#/components/schemas/MobilePhoneNumber'
     ParticipantsIdentification:
       type: object
       description: |
@@ -4432,6 +4873,10 @@ components:
           oneOf:
             - $ref: '#/components/schemas/PersonaIdentificationInfo'
             - $ref: '#/components/schemas/BusinessIdentificationInfo'
+        originatingVasp:
+          $ref: '#/components/schemas/VaspInformation'
+        beneficiaryVasp:
+          $ref: '#/components/schemas/VaspInformation'
     WithdrawalRequestCommonProperties:
       type: object
       required:
@@ -4468,6 +4913,8 @@ components:
               $ref: '#/components/schemas/PublicBlockchainTransactionDestination'
             participantsIdentification:
               $ref: '#/components/schemas/ParticipantsIdentification'
+            reasonForPayment:
+              $ref: '#/components/schemas/ReasonForPayment'
     PeerAccountWithdrawalRequest:
       allOf:
         - $ref: '#/components/schemas/WithdrawalRequestCommonProperties'
@@ -4477,7 +4924,11 @@ components:
             - destination
           properties:
             balanceAsset:
-              $ref: '#/components/schemas/AssetReference'
+              description: |
+                Balance asset for peer account withdrawals. Native cryptocurrencies are not supported; only fiat assets and other (e.g., tokenized) assets are allowed.
+              oneOf:
+                - $ref: '#/components/schemas/NationalCurrency'
+                - $ref: '#/components/schemas/OtherAssetReference'
             destination:
               $ref: '#/components/schemas/PeerAccountTransferDestination'
     InternalWithdrawalRequest:
@@ -4492,6 +4943,9 @@ components:
               $ref: '#/components/schemas/AssetReference'
             destination:
               $ref: '#/components/schemas/InternalTransferDestination'
+            referenceId:
+              type: string
+              description: A unique identifier assigned by an external system to track the transaction or entity across different platforms.
     WithdrawalCommonProperties:
       type: object
       required:
@@ -5281,6 +5735,32 @@ components:
         - Completed
         - Failed
         - Refunded
+    PrefundedOnRampCapability:
+      type: object
+      title: Prefunded Fiat to Crypto
+      required:
+        - from
+        - to
+      properties:
+        from:
+          $ref: '#/components/schemas/PrefundedFiatCapability'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
+    OnRampRequestFrom:
+      oneOf:
+        - $ref: '#/components/schemas/IbanCapability'
+        - $ref: '#/components/schemas/AchCapability'
+        - $ref: '#/components/schemas/WireCapability'
+        - $ref: '#/components/schemas/SpeiCapability'
+        - $ref: '#/components/schemas/PixCapability'
+        - $ref: '#/components/schemas/EuropeanSEPACapability'
+        - $ref: '#/components/schemas/LocalBankTransferAddressOnRamp'
+        - $ref: '#/components/schemas/MobileMoneyAddressOnRamp'
+        - $ref: '#/components/schemas/PayIdCapability'
+        - $ref: '#/components/schemas/InteracCapability'
+        - $ref: '#/components/schemas/ChapsCapability'
+        - $ref: '#/components/schemas/FpsUkCapability'
+        - $ref: '#/components/schemas/InternalTransferMethod'
     OnRampCapability:
       type: object
       title: Fiat to Crypto
@@ -5292,6 +5772,17 @@ components:
           $ref: '#/components/schemas/FiatCapability'
         to:
           $ref: '#/components/schemas/PublicBlockchainCapability'
+    PrefundedOffRampCapability:
+      type: object
+      title: Prefunded Crypto to Fiat
+      required:
+        - from
+        - to
+      properties:
+        from:
+          $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        to:
+          $ref: '#/components/schemas/FiatCapability'
     OffRampCapability:
       type: object
       title: Crypto to Fiat
@@ -5303,6 +5794,17 @@ components:
           $ref: '#/components/schemas/PublicBlockchainCapability'
         to:
           $ref: '#/components/schemas/FiatCapability'
+    PrefundedBridgeCapability:
+      type: object
+      title: Prefunded Crypto to Crypto
+      required:
+        - from
+        - to
+      properties:
+        from:
+          $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainCapability'
     BridgeCapability:
       type: object
       title: Crypto to Crypto
@@ -5324,8 +5826,63 @@ components:
               type: string
         - oneOf:
             - $ref: '#/components/schemas/OnRampCapability'
+            - $ref: '#/components/schemas/PrefundedOnRampCapability'
             - $ref: '#/components/schemas/OffRampCapability'
+            - $ref: '#/components/schemas/PrefundedOffRampCapability'
             - $ref: '#/components/schemas/BridgeCapability'
+            - $ref: '#/components/schemas/PrefundedBridgeCapability'
+    BlockchainCapabilityWithOptionalAddress:
+      title: Blockchain Capability With Address
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainCapability'
+        - type: object
+          properties:
+            address:
+              type: string
+    PrefundedFiatCapability:
+      type: object
+      required:
+        - asset
+        - type
+      properties:
+        asset:
+          $ref: '#/components/schemas/NationalCurrency'
+        type:
+          type: string
+          enum:
+            - Prefunded
+    PrefundedBlockchainCapability:
+      type: object
+      required:
+        - asset
+        - type
+      properties:
+        asset:
+          $ref: '#/components/schemas/CryptocurrencyReference'
+        type:
+          type: string
+          enum:
+            - Prefunded
+    PrefundedOnRampFrom:
+      allOf:
+        - $ref: '#/components/schemas/PrefundedFiatCapability'
+        - $ref: '#/components/schemas/TakeFrom'
+    PrefundedOnRampProperties:
+      type: object
+      title: On Ramp - Prefunded
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - OnRamp
+        from:
+          $ref: '#/components/schemas/PrefundedOnRampFrom'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainAddress'
     OnRampProperties:
       type: object
       title: On Ramp
@@ -5333,7 +5890,6 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
@@ -5342,9 +5898,43 @@ components:
         from:
           $ref: '#/components/schemas/FiatCapability'
         to:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
-        recipient:
           $ref: '#/components/schemas/PublicBlockchainAddress'
+    PrefundedOffRampFrom:
+      allOf:
+        - $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        - $ref: '#/components/schemas/TakeFrom'
+    OnRampRequestProperties:
+      type: object
+      title: On Ramp
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - OnRamp
+        from:
+          $ref: '#/components/schemas/OnRampRequestFrom'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainAddress'
+    PrefundedOffRampProperties:
+      type: object
+      title: Off Ramp - Prefunded
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - OffRamp
+        from:
+          $ref: '#/components/schemas/PrefundedOffRampFrom'
+        to:
+          $ref: '#/components/schemas/FiatAddress'
     OffRampProperties:
       type: object
       title: Off Ramp
@@ -5352,18 +5942,35 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
           enum:
             - OffRamp
         from:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
+          $ref: '#/components/schemas/BlockchainCapabilityWithOptionalAddress'
         to:
-          $ref: '#/components/schemas/FiatCapability'
-        recipient:
           $ref: '#/components/schemas/FiatAddress'
+    PrefundedBridgeFrom:
+      allOf:
+        - $ref: '#/components/schemas/PrefundedBlockchainCapability'
+        - $ref: '#/components/schemas/TakeFrom'
+    PrefundedBridgeProperties:
+      type: object
+      title: Bridge - Prefunded
+      required:
+        - type
+        - from
+        - to
+      properties:
+        type:
+          type: string
+          enum:
+            - Bridge
+        from:
+          $ref: '#/components/schemas/PrefundedBridgeFrom'
+        to:
+          $ref: '#/components/schemas/PublicBlockchainAddress'
     BridgeProperties:
       type: object
       title: Bridge
@@ -5371,18 +5978,53 @@ components:
         - type
         - from
         - to
-        - recipient
       properties:
         type:
           type: string
           enum:
             - Bridge
         from:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
+          $ref: '#/components/schemas/BlockchainCapabilityWithOptionalAddress'
         to:
-          $ref: '#/components/schemas/PublicBlockchainCapability'
-        recipient:
           $ref: '#/components/schemas/PublicBlockchainAddress'
+    ReasonForPayment:
+      type: string
+      description: |
+        The reason or purpose of the payment. Sent when the provider requires a categorical reason for cross-border payment compliance and reporting.
+      enum:
+        - InvoicePayment
+        - ServicesPayment
+        - SoftwarePayment
+        - ImportedGoodsPayment
+        - TravelServices
+        - TransferToOwnAccount
+        - LoanRepayment
+        - Payroll
+        - PropertyRental
+        - InformationServiceCharges
+        - AdvertisingAndPublicRelations
+        - IntellectualPropertyFees
+        - FinancialServiceFees
+        - AdvisoryAndTechnicalFees
+        - RepresentativeOfficeExpenses
+        - TaxPayment
+        - GoodsTransportationFees
+        - ConstructionExpenses
+        - InsurancePremium
+        - GeneralGoodsTrade
+        - InsuranceClaimsPayment
+        - FamilyRemittance
+        - EducationExpenses
+        - MedicalTreatment
+        - Donations
+        - MutualFundInvestment
+        - CurrencyExchange
+        - AdvanceGoodsPayment
+        - MerchantSettlement
+        - RepatriationFundSettlement
+        - CorporateInvestment
+        - InterCompanyTransfer
+        - OfficeOperatingExpenses
     CommonRampRequestProperties:
       type: object
       required:
@@ -5393,23 +6035,83 @@ components:
           type: string
         amount:
           $ref: '#/components/schemas/PositiveAmount'
+        customerReferenceId:
+          type: string
+          description: Optional customer reference identifier for tracking purposes
+        reasonForPayment:
+          $ref: '#/components/schemas/ReasonForPayment'
     RampRequest:
       allOf:
         - $ref: '#/components/schemas/CommonRampRequestProperties'
         - oneOf:
-            - $ref: '#/components/schemas/OnRampProperties'
+            - $ref: '#/components/schemas/OnRampRequestProperties'
+            - $ref: '#/components/schemas/PrefundedOnRampProperties'
             - $ref: '#/components/schemas/OffRampProperties'
+            - $ref: '#/components/schemas/PrefundedOffRampProperties'
             - $ref: '#/components/schemas/BridgeProperties'
-    RampFees:
+            - $ref: '#/components/schemas/PrefundedBridgeProperties'
+        - type: object
+          properties:
+            executionDetails:
+              oneOf:
+                - $ref: '#/components/schemas/OrderQuote'
+        - type: object
+          properties:
+            participantsIdentification:
+              $ref: '#/components/schemas/ParticipantsIdentification'
+    FixedFeeAmount:
       type: object
-      description: Fees associated with the ramp transfer.
+      required:
+        - amountType
+        - amount
       properties:
-        subAccount:
-          type: integer
-          description: Fees charged from the sub-account in basis points.
-        provider:
-          type: integer
-          description: Fees charged by the provider for the ramp service in basis points.
+        amountType:
+          type: string
+          enum:
+            - FIXED
+        amount:
+          $ref: '#/components/schemas/PositiveAmount'
+    BasisPointsFeeAmount:
+      type: object
+      required:
+        - amountType
+        - amount
+      properties:
+        amountType:
+          type: string
+          enum:
+            - BASIS_POINTS
+        amount:
+          type: number
+          description: Basis points (bps) - 1 is 0.01% and 10000 is 100%
+    FeeAmount:
+      oneOf:
+        - $ref: '#/components/schemas/FixedFeeAmount'
+        - $ref: '#/components/schemas/BasisPointsFeeAmount'
+    Fee:
+      type: object
+      required:
+        - feeType
+        - feeAsset
+        - fee
+      properties:
+        feeType:
+          type: string
+          description: |
+            Specifies the category of fee applied to the transaction. - ORDER - Fee charged by the platform for executing the trade. - NETWORK - Blockchain network fee paid to validators/miners. - SPREAD - Implicit cost built into the price difference between quotes. - REBATE - Negative fee returned to the user as a reward or incentive.
+          enum:
+            - ORDER
+            - NETWORK
+            - SPREAD
+            - REBATE
+        feeAsset:
+          $ref: '#/components/schemas/AssetReference'
+        fee:
+          $ref: '#/components/schemas/FeeAmount'
+    RampFees:
+      type: array
+      items:
+        $ref: '#/components/schemas/Fee'
     CommonRamp:
       type: object
       required:
@@ -5418,6 +6120,7 @@ components:
         - createdAt
         - updatedAt
         - amount
+        - expiresAt
       properties:
         id:
           type: string
@@ -5431,65 +6134,180 @@ components:
           $ref: '#/components/schemas/RampStatus'
         amount:
           $ref: '#/components/schemas/PositiveAmount'
-        fees:
+        estimatedFees:
           $ref: '#/components/schemas/RampFees'
-    OnRampTransfer:
+        executionDetails:
+          oneOf:
+            - $ref: '#/components/schemas/OrderQuote'
+        expiresAt:
+          description: Ramp expiration time.
+          type: string
+          format: date-time
+        failureReason:
+          enum:
+            - unsupported-ramp-method
+            - unsupported-source-asset
+            - unsupported-destination-asset
+            - amount-below-minimum
+            - amount-above-maximum
+            - pii-missing
+            - unsupported-external-source
+            - unsupported-region
+            - destination-not-whitelisted
+    OnRampPropertiesWithPaymentInstructions:
+      type: object
+      title: On Ramp
       allOf:
-        - $ref: '#/components/schemas/CommonRamp'
-        - $ref: '#/components/schemas/OnRampProperties'
         - type: object
           required:
             - paymentInstructions
           properties:
             paymentInstructions:
               allOf:
-                - $ref: '#/components/schemas/FiatAddress'
+                - $ref: '#/components/schemas/FiatPaymentInstruction'
                 - type: object
                   properties:
                     referenceId:
                       type: string
-            payment:
-              $ref: '#/components/schemas/RampFiatTransfer'
-            receipt:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
-    OffRampTransfer:
+        - $ref: '#/components/schemas/OnRampProperties'
+    OffRampPropertiesWithPaymentInstructions:
+      type: object
+      title: Off Ramp
       allOf:
-        - $ref: '#/components/schemas/CommonRamp'
+        - type: object
+          required:
+            - paymentInstructions
+          properties:
+            paymentInstructions:
+              $ref: '#/components/schemas/PublicBlockchainAddress'
         - $ref: '#/components/schemas/OffRampProperties'
+    BridgePropertiesWithPaymentInstructions:
+      type: object
+      title: Bridge
+      allOf:
         - type: object
           required:
             - paymentInstructions
           properties:
             paymentInstructions:
               $ref: '#/components/schemas/PublicBlockchainAddress'
-            payment:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
-            receipt:
-              $ref: '#/components/schemas/RampFiatTransfer'
-    BridgeTransfer:
+        - $ref: '#/components/schemas/BridgeProperties'
+    OnRampReceipt:
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainTransaction'
+        - type: object
+          properties:
+            actualFees:
+              $ref: '#/components/schemas/RampFees'
+    OffRampReceipt:
+      allOf:
+        - $ref: '#/components/schemas/RampFiatTransfer'
+        - type: object
+          properties:
+            actualFees:
+              $ref: '#/components/schemas/RampFees'
+    BridgeReceipt:
+      allOf:
+        - $ref: '#/components/schemas/PublicBlockchainTransaction'
+        - type: object
+          properties:
+            actualFees:
+              $ref: '#/components/schemas/RampFees'
+    OnRamp:
+      title: On Ramp
       allOf:
         - $ref: '#/components/schemas/CommonRamp'
-        - $ref: '#/components/schemas/BridgeProperties'
+        - oneOf:
+            - $ref: '#/components/schemas/OnRampPropertiesWithPaymentInstructions'
+            - $ref: '#/components/schemas/PrefundedOnRampProperties'
         - type: object
-          required:
-            - paymentInstructions
           properties:
-            paymentInstructions:
-              $ref: '#/components/schemas/PublicBlockchainAddress'
-            payment:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
             receipt:
-              $ref: '#/components/schemas/PublicBlockchainTransaction'
+              $ref: '#/components/schemas/OnRampReceipt'
+    OffRamp:
+      allOf:
+        - $ref: '#/components/schemas/CommonRamp'
+        - oneOf:
+            - $ref: '#/components/schemas/OffRampPropertiesWithPaymentInstructions'
+            - $ref: '#/components/schemas/PrefundedOffRampProperties'
+        - type: object
+          properties:
+            receipt:
+              $ref: '#/components/schemas/OffRampReceipt'
+    Bridge:
+      allOf:
+        - $ref: '#/components/schemas/CommonRamp'
+        - oneOf:
+            - $ref: '#/components/schemas/BridgePropertiesWithPaymentInstructions'
+            - $ref: '#/components/schemas/PrefundedBridgeProperties'
+        - type: object
+          properties:
+            receipt:
+              $ref: '#/components/schemas/BridgeReceipt'
     Ramp:
       oneOf:
-        - $ref: '#/components/schemas/OnRampTransfer'
-        - $ref: '#/components/schemas/OffRampTransfer'
-        - $ref: '#/components/schemas/BridgeTransfer'
+        - $ref: '#/components/schemas/OnRamp'
+        - $ref: '#/components/schemas/OffRamp'
+        - $ref: '#/components/schemas/Bridge'
     RampFiatTransfer:
       oneOf:
         - $ref: '#/components/schemas/IbanTransfer'
-        - $ref: '#/components/schemas/SwiftTransfer'
         - $ref: '#/components/schemas/AchTransfer'
         - $ref: '#/components/schemas/WireTransfer'
         - $ref: '#/components/schemas/SpeiTransfer'
+        - $ref: '#/components/schemas/PixTransfer'
+        - $ref: '#/components/schemas/EuropeanSEPATransfer'
+        - $ref: '#/components/schemas/LocalBankTransfer'
+        - $ref: '#/components/schemas/MobileMoneyTransfer'
+        - $ref: '#/components/schemas/PayIdTransfer'
+        - $ref: '#/components/schemas/InteracTransfer'
+        - $ref: '#/components/schemas/ChapsTransfer'
+        - $ref: '#/components/schemas/FpsUkTransfer'
+    TakeFrom:
+      type: object
+      properties:
+        takeFrom:
+          description: Instructs the provider which prefunded source sub-account to debit for this ramp's settlement. If omitted, the provider debits the prefunded balance from the ramps's accountId by default.
+          type: string
+    OrderQuote:
+      type: object
+      required:
+        - type
+        - quoteId
+      properties:
+        type:
+          type: string
+          enum:
+            - Quote
+        quoteId:
+          type: string
+        reQuote:
+          oneOf:
+            - $ref: '#/components/schemas/Retry'
+            - $ref: '#/components/schemas/Market'
+    Retry:
+      type: object
+      required:
+        - type
+        - slippage
+      properties:
+        type:
+          type: string
+          enum:
+            - Retry
+        slippage:
+          type: number
+          description: Slippage tolerance in basis points (bps) for quote orders - 1 is 0.01% and 10000 is 100%
+        count:
+          type: number
+          description: If quote is expired, how many times to re-generate new quotes to try having the order executed as in the original quote.
+    Market:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - Market
   securitySchemes: {}

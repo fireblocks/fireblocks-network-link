@@ -16,7 +16,6 @@ import {
   PeerAccountTransferCapability,
   PeerAccountWithdrawalRequest,
   PublicBlockchainCapability,
-  SwiftCapability,
   TransferCapability,
   Withdrawal,
   WithdrawalCapability,
@@ -154,10 +153,7 @@ export class WithdrawalController {
   }
 
   public getFiatWithdrawals(order: Order): Withdrawal[] {
-    const fiatTransferMethods: string[] = [
-      IbanCapability.transferMethod.IBAN,
-      SwiftCapability.transferMethod.SWIFT,
-    ];
+    const fiatTransferMethods: string[] = [IbanCapability.transferMethod.IBAN];
     const withdrawals = this.getWithdrawals(order);
     return withdrawals.filter((withdrawal) =>
       fiatTransferMethods.includes(withdrawal.destination.transferMethod)

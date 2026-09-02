@@ -1,6 +1,6 @@
 import VError from 'verror';
 import config from './config';
-import { pino as Pino } from 'pino';
+import pino from 'pino';
 import { XComError } from './error';
 
 export type ObjectType = Record<string, unknown>;
@@ -15,16 +15,16 @@ export class Logger {
   readonly info: LogFn;
   readonly debug: LogFn;
   readonly trace: LogFn;
-  public readonly pinoLogger: Pino.Logger;
+  public readonly pinoLogger: pino.Logger;
 
-  constructor(options: Pino.LoggerOptions) {
-    this.pinoLogger = Pino(options);
+  constructor(options: pino.LoggerOptions) {
+    this.pinoLogger = pino(options);
 
-    const makeLogFn = (pinoFn: Pino.LogFn): LogFn => {
+    const makeLogFn = (pinoFn: pino.LogFn): LogFn => {
       return (msg, data?) => pinoFn.bind(this.pinoLogger)({ msg, data });
     };
 
-    const makeErrorLogFn = (pinoFn: Pino.LogFn): ErrorLogFn => {
+    const makeErrorLogFn = (pinoFn: pino.LogFn): ErrorLogFn => {
       return (msg: string, data?: ObjectType, error?: ErrorType) => {
         const errorData = error ? extractErrorData(error) : {};
         const completeData = { ...data, ...errorData };

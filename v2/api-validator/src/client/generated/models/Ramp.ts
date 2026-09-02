@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import type { BridgeTransfer } from './BridgeTransfer';
-import type { OffRampTransfer } from './OffRampTransfer';
-import type { OnRampTransfer } from './OnRampTransfer';
+import type { Bridge } from './Bridge';
+import type { OffRamp } from './OffRamp';
+import type { OnRamp } from './OnRamp';
 
-export type Ramp = (OnRampTransfer | OffRampTransfer | BridgeTransfer);
+export type Ramp = (OnRamp | OffRamp | Bridge);
 

@@ -5,7 +5,7 @@ import {
   signerFactory,
 } from '../../src/security/signing';
 
-const data = 'data';
+const data = '@All in the golden afternoon Full leisurely we glide Loïc';
 
 // 78965 Used only for testing
 const ecdsaPrivateKey = `-----BEGIN EC PRIVATE KEY-----
@@ -148,7 +148,7 @@ describe('Signing methods', () => {
           signerFactory(signingAlgo).sign(data, privateKey, hashAlgo);
         }).toThrow(AlgorithmNotSupportedError);
         expect(() => {
-          signerFactory(signingAlgo).verify(data, publicKey, 'signature', hashAlgo);
+          signerFactory(signingAlgo).verify(data, publicKey, Buffer.from('signature'), hashAlgo);
         }).toThrow(AlgorithmNotSupportedError);
       });
     }

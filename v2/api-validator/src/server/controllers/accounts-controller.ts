@@ -3,15 +3,19 @@ import {
   AssetBalance,
   AssetCreditBalance,
   Balances,
+  Blockchain,
   CryptocurrencySymbol,
   NationalCurrencyCode,
+  Rate,
 } from '../../client/generated';
+import { CRYPTOCURRENCY_SYMBOL_TO_BLOCKCHAINS } from './cryptocurrency-blockchain-map';
 import { fakeSchemaObject } from '../../schemas';
 import { Repository } from './repository';
 import { AssetsController } from './assets-controller';
 import { XComError } from '../../error';
 import { JSONSchemaFaker } from 'json-schema-faker';
 import { isParentAccount } from '../../utils/account-helper';
+
 import { loadCapabilitiesJson } from './capabilities-loader';
 import { hasCapability } from '../../../tests/utils/capable-accounts';
 
@@ -20,6 +24,12 @@ const SUB_ACCOUNT_COUNT = 10;
 export class AccountNotExistError extends XComError {
   constructor() {
     super('Account does not exist');
+  }
+}
+
+export class RateBadRequestError extends XComError {
+  constructor() {
+    super('Rate pair id is required');
   }
 }
 
@@ -93,6 +103,45 @@ export class AccountsController {
     }
     return result;
   }
+
+  public static getRateByPairId(
+    accountId: string,
+    pairId: string,
+    pairType: 'conversion' | 'ramps' | 'orderBook'
+  ): Rate {
+    // Check if account exists first
+    const account = AccountsController.getSubAccount(accountId);
+    if (!account) {
+      throw new AccountNotExistError();
+    }
+    if (!pairId) {
+      throw new RateBadRequestError();
+    }
+
+    // Generate different rates based on the pair type
+    let rateValue: string;
+
+    switch (pairType) {
+      case 'conversion':
+        rateValue = '1.25';
+        break;
+      case 'ramps':
+        rateValue = '45000.00';
+        break;
+      case 'orderBook':
+        rateValue = '0.85';
+        break;
+      default:
+        throw new RateBadRequestError();
+    }
+
+    const rate: Rate = {
+      rate: rateValue,
+      timestamp: Date.now(),
+    };
+
+    return rate;
+  }
 }
 
 function getEveryAssetBalances(knownAdditionalAssetIds: string[]) {
@@ -110,8 +159,13 @@ function getEveryAssetBalances(knownAdditionalAssetIds: string[]) {
   }
 
   for (const cryptocurrencySymbol of Object.values(CryptocurrencySymbol)) {
-    balance.asset = { cryptocurrencySymbol };
-    balances.push(balance);
+    const blockchains = CRYPTOCURRENCY_SYMBOL_TO_BLOCKCHAINS[cryptocurrencySymbol] ?? [
+      Blockchain.BITCOIN,
+    ];
+    for (const blockchain of blockchains) {
+      balance.asset = { blockchain, cryptocurrencySymbol };
+      balances.push(balance);
+    }
   }
 
   for (const nationalCurrencyCode of Object.values(NationalCurrencyCode)) {

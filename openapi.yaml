@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Fireblocks Network Link for Account Linking Partners
-  version: "0.9.10"
+  version: "0.9.13"
   contact:
     email: support@fireblocks.com
   license:
@@ -22,6 +22,9 @@ paths:
               In case the 3rd party supports an account type but the account doesn't
               contain any balance, it is expected the "balances"
               field to be an empty array.
+
+              Each account may optionally include `uid`, the provider's native account
+              identifier. Fireblocks persists this value from the fundable account.
       operationId: GET /accounts
       parameters:
         - name: X-FBAPI-KEY
@@ -53,6 +56,16 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Balance'
+              example:
+                - displayName: "Margin (Cross)"
+                  type: MARGIN
+                  uid: "3c4e2590-d333-4bdd-acd1-3edcdee85777"
+                  balances:
+                    - coinSymbol: USDT
+                      totalAmount: "195.172612"
+                      pendingAmount: "188.2315812"
+                      availableAmount: "10.333"
+                      creditAmount: "3.1"
         '400':
           description: Return custom error and error code here.
         '401':
@@ -1160,6 +1173,7 @@ components:
       - Hedera
       - Bitkub Chain
       - Kusama
+      - Fraxtal
       - Litecoin
       - Luna Classic
       - Luna 2.0
@@ -1182,6 +1196,31 @@ components:
       - THORChain Rune
       - Astar
       - Berachain
+      - Sui
+      - Babylon
+      - Mantle
+      - Blast
+      - Fastex Bahamut
+      - Manta
+      - Neutron
+      - Zircuit
+      - Somnia
+      - Etherlink
+      - NEM
+      - Centrifuge
+      - Canton
+      - ZIGChain
+      - Axelar
+      - zkSync Era
+      - Filecoin
+      - Scroll
+      - Plasma
+      - Codex
+      - World Chain
+      - Sei
+      - Monad
+      - The Open Network
+      - Gram
       example:
         Ethereum
     Testnet_Networks:
@@ -1235,6 +1274,15 @@ components:
         - THORChain Rune
         - Astar
         - Berachain
+        - Sui
+        - Canton
+        - Axelar
+        - Celestia
+        - Plasma
+        - World Chain
+        - Monad
+        - The Open Network
+        - Gram
       example:
         Westend
     Coin_Class:
@@ -1340,6 +1388,13 @@ components:
           nullable: true
         type:
           $ref : '#/components/schemas/Account_Type'
+        uid:
+          type: string
+          example: "3c4e2590-d333-4bdd-acd1-3edcdee85777"
+          description: >
+            Optional provider-side account identifier.
+            When present on the fundable account, Fireblocks persists it as the provider account id.
+            Omit this field, or set it to the account id value.
         balances:
           type: array
           items:

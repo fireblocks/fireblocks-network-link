@@ -14,6 +14,8 @@ export class TransfersPeerAccountsService {
 
     /**
      * Get list of withdrawals to peer accounts, sorted by creation time
+     * Retrieves a paginated list of withdrawal transactions sent to peer accounts. Includes transfers to other accounts within the same provider ecosystem, sorted by creation time.
+     *
      * @returns any List of withdrawals.
      * @throws ApiError
      */
@@ -23,6 +25,7 @@ export class TransfersPeerAccountsService {
         xFbapiSignature,
         xFbapiTimestamp,
         accountId,
+        xFbapiInitiatedBy,
         limit = 10,
         startingAfter,
         endingBefore,
@@ -49,6 +52,10 @@ export class TransfersPeerAccountsService {
          * Sub-account identifier.
          */
         accountId: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
         /**
          * Maximum number of returned items.
          */
@@ -79,6 +86,7 @@ export class TransfersPeerAccountsService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
             },
             query: {
                 'limit': limit,
@@ -95,7 +103,9 @@ export class TransfersPeerAccountsService {
 
     /**
      * Create new withdrawal to a peer account
+     * Withdrawal to a peer account is enabled for fiat or tokenized assets only.
      * Should reject any non peer acount withdrawal request.
+     *
      * @returns PeerAccountWithdrawal New withdrawal has been successfully created.
      * @throws ApiError
      */
@@ -106,6 +116,9 @@ export class TransfersPeerAccountsService {
         xFbapiTimestamp,
         accountId,
         requestBody,
+        xFbapiInitiatedBy,
+        xFbapiApprovedBy,
+        xFbapiSignedBy,
     }: {
         /**
          * API authentication key.
@@ -132,6 +145,18 @@ export class TransfersPeerAccountsService {
          * Withdrawal details
          */
         requestBody: PeerAccountWithdrawalRequest,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiInitiatedBy?: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiApprovedBy?: string,
+        /**
+         * Conditional. This header is provided only when the corresponding capability requirement is enabled.
+         */
+        xFbapiSignedBy?: string,
     }): CancelablePromise<PeerAccountWithdrawal> {
         return this.httpRequest.request({
             method: 'POST',
@@ -144,6 +169,9 @@ export class TransfersPeerAccountsService {
                 'X-FBAPI-NONCE': xFbapiNonce,
                 'X-FBAPI-SIGNATURE': xFbapiSignature,
                 'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
+                'X-FBAPI-INITIATED-BY': xFbapiInitiatedBy,
+                'X-FBAPI-APPROVED-BY': xFbapiApprovedBy,
+                'X-FBAPI-SIGNED-BY': xFbapiSignedBy,
             },
             body: requestBody,
             mediaType: 'application/json',

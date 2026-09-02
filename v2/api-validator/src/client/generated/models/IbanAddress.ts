@@ -10,5 +10,9 @@ import type { IbanCapability } from './IbanCapability';
 export type IbanAddress = (IbanCapability & {
     accountHolder: AccountHolderDetails;
     iban: Iban;
+    /**
+     * Bank Identifier Code (SWIFT/BIC)
+     */
+    bic?: string;
 });
 

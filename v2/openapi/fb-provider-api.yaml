@@ -4,9 +4,9 @@ servers:
     url: http://0.0.0.0:8000
 info:
   title: 'Fireblocks Provider Connectivity API v2'
-  version: 0.4.1
+  version: 0.5.1
   x-logo:
-    url: 'doc-assets/fireblocks-logo.png'
+    url: 'doc-assets/fireblocks-logo-lockup-network-navy.png'
     altText: 'Fireblocks logo'
 
   contact:
@@ -27,9 +27,8 @@ tags:
     description: User accounts management operations.
   - name: balances
     description: Balances management operations.
-  - name: historicBalances
-    description: Historic balances operations.
-
+  - name: rates
+    description: Rates operations.
 paths:
   /capabilities:
     get:
@@ -68,10 +67,11 @@ paths:
                       transfersFiat: "*"
                       transfersPeerAccounts: "*"
                       transfersInternal: "*"
-                      trading: "*"
+                      # trading: "*"
                       liquidity: "*"
                       collateral: "*"
                       ramps: "*"
+                      rates: "*"
                 allAccountsSupportSomeCapabilities:
                   summary: All accounts support only balances and accounts capabilities
                   value:
@@ -92,6 +92,23 @@ paths:
                       transfersFiat:
                         - "6cd2fe1e-d0bc-4fad-a9ba-9384e0fdfdc0"
                         - "7885a47b-0719-4448-b59e-3b8497cd1685"
+                capabilitiesWithRequirements:
+                  summary: Capabilities with requirements
+                  value:
+                    version: 1.2.0
+                    components:
+                      accounts: '*'
+                      balances: '*'
+                      transfersBlockchain: '*'
+                      transfersFiat: '*'
+                    requirements:
+                      transfersBlockchain:
+                        userIdentification: {}
+                        withdrawalAddressPolicy:
+                          type: WithdrawalAddressPolicy
+                          value: ApprovedAddressesOnly
+                      transfersFiat:
+                        userIdentification: {}
         '400':
           $ref: '#/components/responses/BadRequestResponse'
         '401':
@@ -222,12 +239,18 @@ paths:
     get:
       operationId: getAccounts
       summary: Get list of sub-accounts
+      description: >-
+        Retrieves a paginated list of all sub-accounts available to the provider.
+        Can optionally include balance information for each account if requested.
+        Allows defining parent-child relationships between accounts.
+        Notice that Fireblocks currently supports only one level of hierarchy.
       tags: [ accounts ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -258,12 +281,16 @@ paths:
     get:
       operationId: getAccountDetails
       summary: Get sub-account details
+      description: >
+        Retrieves detailed information about a specific sub-account, including
+        account metadata and optionally balance information if requested.
       tags: [ accounts ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/AccountBalancesQueryParam'
         - $ref: '#/components/parameters/SubAccountIdPathParam'
       responses:
@@ -281,17 +308,86 @@ paths:
           $ref: '#/components/responses/ErrorResponse'
         '5XX':
           $ref: '#/components/responses/ErrorResponse'
+  
+  /accounts/{accountId}/rate:
+    get:
+      operationId: getRateByAccountAndPairId
+      summary: Get rate by account and assets
+      tags: [ rates ]
+      parameters:
+        - $ref: '#/components/parameters/X-FBAPI-KEY'
+        - $ref: '#/components/parameters/X-FBAPI-NONCE'
+        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
+        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
+        - $ref: '#/components/parameters/SubAccountIdPathParam'
+        - $ref: '#/components/parameters/ConversionPairIdQueryParam'
+        - $ref: '#/components/parameters/RampsPairIdQueryParam'
+        - $ref: '#/components/parameters/OrderBookPairIdQueryParam'
+      responses:
+        '200':
+          description: Rate by pair id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rate'
+              examples:
+                usdToEur:
+                  summary: USD to EUR rate
+                  value:
+                    rate: "0.9"
+                    timestamp: 1546658861000
+                    baseAsset: {
+                      nationalCurrencyCode: "USD" 
+                    }
+                    quoteAsset: {
+                      nationalCurrencyCode: "EUR"
+                    }
+                btcToUsd:
+                  summary: BTC to USD rate    
+                  value:
+                    rate: "10000"
+                    timestamp: 1546658861000
+                    baseAsset: {
+                      cryptocurrencySymbol: "BTC"
+                    }
+                    quoteAsset: {   
+                      nationalCurrencyCode: "USD"
+                    }
+                usdcToUsd:
+                  summary: USDC to USD rate
+                  value:
+                    rate: "1" 
+                    timestamp: 1546658861000
+                    baseAsset: {
+                      assetId: "360de0ad-9ba1-45d5-8074-22453f193d65"
+                    }
+                    quoteAsset: {
+                      nationalCurrencyCode: "USD"
+                    }
+        '400':
+          $ref: '#/components/responses/BadRequestResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedResponse'
+        '4XX':
+          $ref: '#/components/responses/ErrorResponse'
+        '5XX':
+          $ref: '#/components/responses/ErrorResponse'
 
   /accounts/{accountId}/balances:
     get:
       operationId: getBalances
       summary: Get current balances
+      description: >
+        Retrieves current balance information for the specified account.
+        Can be filtered by asset ID, national currency code, or cryptocurrency symbol.
       tags: [ balances ]
       parameters:
         - $ref: '#/components/parameters/X-FBAPI-KEY'
         - $ref: '#/components/parameters/X-FBAPI-NONCE'
         - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
         - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
+        - $ref: '#/components/parameters/X-FBAPI-INITIATED-BY'
         - $ref: '#/components/parameters/PaginationLimit'
         - $ref: '#/components/parameters/PaginationStartingAfter'
         - $ref: '#/components/parameters/PaginationEndingBefore'
@@ -366,49 +462,6 @@ paths:
         '5XX':
           $ref: '#/components/responses/ErrorResponse'
 
-  /accounts/{accountId}/historic-balances:
-    get:
-      operationId: getHistoricBalances
-      summary: Get balances at specific time in the past
-      tags: [ historicBalances ]
-      parameters:
-        - $ref: '#/components/parameters/X-FBAPI-KEY'
-        - $ref: '#/components/parameters/X-FBAPI-NONCE'
-        - $ref: '#/components/parameters/X-FBAPI-TIMESTAMP'
-        - $ref: '#/components/parameters/X-FBAPI-SIGNATURE'
-        - $ref: '#/components/parameters/PaginationLimit'
-        - $ref: '#/components/parameters/PaginationStartingAfter'
-        - $ref: '#/components/parameters/PaginationEndingBefore'
-        - $ref: '#/components/parameters/AssetIdQueryParam'
-        - $ref: '#/components/parameters/NationalCurrencyCodeQueryParam'
-        - $ref: '#/components/parameters/CryptocurrencySymbolQueryParam'
-
-        - $ref: '#/components/parameters/SubAccountIdPathParam'
-        - name: time
-          description: Time of the requested balances.
-          in: query
-          required: true
-          schema: { type: string, format: date-time }
-      responses:
-        '200':
-          description: List of asset balances.
-          content:
-            application/json:
-              schema:
-                type: object
-                required: [ balances ]
-                properties:
-                  balances:
-                    $ref: '#/components/schemas/Balances'
-        '400':
-          $ref: '#/components/responses/BadRequestResponse'
-        '401':
-          $ref: '#/components/responses/UnauthorizedResponse'
-        '4XX':
-          $ref: '#/components/responses/ErrorResponse'
-        '5XX':
-          $ref: '#/components/responses/ErrorResponse'
-
 components:
   parameters:
     X-FB-PLATFORM-SIGNATURE:
@@ -460,6 +513,33 @@ components:
       schema:
         type: string
 
+    X-FBAPI-INITIATED-BY:
+      name: X-FBAPI-INITIATED-BY
+      in: header
+      required: false
+      description: >-
+        Conditional. This header is provided only when the corresponding capability requirement is enabled.
+      schema:
+        type: string
+
+    X-FBAPI-APPROVED-BY:
+      name: X-FBAPI-APPROVED-BY
+      in: header
+      required: false
+      description: >-
+        Conditional. This header is provided only when the corresponding capability requirement is enabled.
+      schema:
+        type: string
+
+    X-FBAPI-SIGNED-BY:
+      name: X-FBAPI-SIGNED-BY
+      in: header
+      required: false
+      description: >-
+        Conditional. This header is provided only when the corresponding capability requirement is enabled.
+      schema:
+        type: string
+
     EntityIdPathParam:
       name: id
       in: path
@@ -467,7 +547,6 @@ components:
       description: Entity unique identifier.
       schema:
         type: string
-
     SubAccountIdPathParam:
       name: accountId
       in: path
@@ -547,6 +626,31 @@ components:
       in: query
       schema:
         $ref: '#/components/schemas/CryptocurrencySymbol'
+
+    ConversionPairIdQueryParam:
+      name: conversionPairId
+      in: query
+      description: >-
+        Conversion pair to get the rate for.
+      schema:
+        type: string
+
+    RampsPairIdQueryParam:
+      name: rampsPairId
+      in: query
+      description: >-
+        Ramps pair to get the rate for.
+      schema:
+        type: string
+
+    OrderBookPairIdQueryParam:
+      name: orderBookPairId
+      in: query
+      description: >-
+        Order book pair to get the rate for.
+      schema:
+        type: string
+
 
     AccountBalancesQueryParam:
       name: balances
@@ -631,6 +735,14 @@ components:
             - unsupported-transfer-method
             - transfer-destination-not-allowed
             - unsupported-ramp-method
+            - unsupported-source-asset
+            - unsupported-destination-asset
+            - amount-below-minimum
+            - amount-above-maximum
+            - pii-missing
+            - unsupported-external-source
+            - unsupported-region
+            - destination-not-whitelisted
         propertyName:
           description: >-
             Name of property that caused the error.
@@ -684,6 +796,64 @@ components:
           example: '1.0.37'
         components:
           $ref: '#/components/schemas/ApiComponents'
+        requirements:
+          $ref: '#/components/schemas/CapabilitiesWithRequirements'
+    
+    UserIdentificationRequirement:
+      description: >-
+        No properties. Specifying an empty object will cause the user identification headers
+        (X-FBAPI-INITIATED-BY, X-FBAPI-APPROVED-BY, X-FBAPI-SIGNED-BY) to be included in requests.
+      type: object
+
+    CommonCapabilityRequirements:
+      description: Capability requirements shared by all the capabilities.
+      type: object
+      properties:
+        userIdentification:
+          $ref: '#/components/schemas/UserIdentificationRequirement'
+
+    WithdrawalAddressPolicyRequirement:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          enum:
+            - ApprovedAddressesOnly
+            - AllAddresses
+
+    TransfersBlockchainRequirements:
+      allOf:
+        - $ref: '#/components/schemas/CommonCapabilityRequirements'
+        - type: object
+          properties:
+            withdrawalAddressPolicy:
+              $ref: '#/components/schemas/WithdrawalAddressPolicyRequirement'
+
+    CapabilitiesWithRequirements:
+      type: object
+      properties:
+        accounts:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        balances:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        transfers:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        transfersBlockchain:
+          $ref: '#/components/schemas/TransfersBlockchainRequirements'
+        transfersFiat:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        transfersPeerAccounts:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        transfersInternal:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        liquidity:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        ramps:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
+        rates:
+          $ref: '#/components/schemas/CommonCapabilityRequirements'
 
     ApiComponents:
       description: >-
@@ -695,8 +865,6 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         balances:
           $ref: '#/components/schemas/AccountsSet'
-        historicBalances:
-          $ref: '#/components/schemas/AccountsSet'
         transfers:
           $ref: '#/components/schemas/AccountsSet'
         transfersBlockchain:
@@ -707,13 +875,15 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         transfersInternal:
           $ref: '#/components/schemas/AccountsSet'
-        trading:
-          $ref: '#/components/schemas/AccountsSet'
+        # trading:
+        #   $ref: '#/components/schemas/AccountsSet'
         liquidity:
           $ref: '#/components/schemas/AccountsSet'
         collateral:
           $ref: '#/components/schemas/AccountsSet'
         ramps:
+          $ref: '#/components/schemas/AccountsSet'
+        rates:
           $ref: '#/components/schemas/AccountsSet'
         custom:
           $ref: '#/components/schemas/AccountsSet'
@@ -754,7 +924,9 @@ components:
           $ref: '#/components/schemas/AccountStatus'
         parentId:
           type: string
-          description: The ID of the parent account. If the field is empty, the account is a main account.
+          description: >-
+            The ID of the parent account. If the field is empty, the account is a main account.
+            Notice that Fireblocks currently supports only one level of hierarchy.
 
     AccountId:
       type: object
@@ -871,12 +1043,58 @@ components:
             stellarCurrencyCode:
               type: string
 
+    ContractBasedToken:
+      allOf:
+        - $ref: '#/components/schemas/AssetCommonProperties'
+        - type: object
+          required: [ type, blockchain, contractAddress ]
+          properties:
+            type:
+              enum: [ Jetton, Trc20Token ]
+            blockchain:
+              $ref: '#/components/schemas/Blockchain'
+            contractAddress:
+              type: string
+      example:
+        id: "7df38516-a9bd-42cd-9ac3-284f665ca6e8"
+        type: "Jetton"
+        blockchain: "TON"
+        name: "Tether USD"
+        symbol: "USDT"
+        decimalPlaces: 6
+        testAsset: true
+        contractAddress: "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"
+
+    SolanaToken:
+      allOf:
+        - $ref: '#/components/schemas/AssetCommonProperties'
+        - type: object
+          required: [ type, blockchain, mintAddress ]
+          properties:
+            type:
+              enum: [ SplToken ]
+            blockchain:
+              $ref: '#/components/schemas/Blockchain'
+            mintAddress:
+              type: string
+      example:
+        id: "8d156559-8ecf-4170-acb8-a2cfa76bc3f4"
+        type: "SplToken"
+        blockchain: "Solana"
+        name: "USD Coin"
+        symbol: "USDC"
+        description: "The world's largest regulated stablecoin powering global finance"
+        decimalPlaces: 6
+        mintAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+
     AssetDefinition:
       anyOf:
         - $ref: '#/components/schemas/BucketAsset'
         - $ref: '#/components/schemas/Erc20Token'
         - $ref: '#/components/schemas/Bep20Token'
         - $ref: '#/components/schemas/StellarToken'
+        - $ref: '#/components/schemas/ContractBasedToken'
+        - $ref: '#/components/schemas/SolanaToken'
 
     NationalCurrency:
       type: object
@@ -891,6 +1109,7 @@ components:
     NativeCryptocurrency:
       type: object
       required:
+        - blockchain
         - cryptocurrencySymbol
       properties:
         blockchain:
@@ -934,6 +1153,18 @@ components:
             addressTag:
               type: string
 
+    Rate:
+      type: object
+      required: [ rate, timestamp ]
+      properties:
+        rate:
+          type: string
+        timestamp:
+          type: number
+          format: UNIX-timestamp-epoch
+          description: "In Milliseconds. The timestamp on the creation of the rate."
+          example: 1546658861000
+
     AssetReference:
       oneOf:
         - $ref: '#/components/schemas/NationalCurrency'
@@ -950,6 +1181,7 @@ components:
         - Avalanche
         - Axelar
         - Base
+        - Berachain
         - Bitcoin
         - Bitcoin Cash
         - Bitcoin Cash ABC
@@ -979,6 +1211,7 @@ components:
         - HT Chain
         - KAVA
         - Kusama
+        - Fraxtal
         - Litecoin
         - Moonbeam
         - Moonriver
@@ -1000,6 +1233,7 @@ components:
         - Terra 2.0
         - Terra Classic
         - Tezos
+        - TON
         - TokenEX
         - TRON
         - Velas
@@ -1008,21 +1242,25 @@ components:
         - XinFin Network
         - XRP
         - ZCash
-
+        - Linea
+        - Babylon
+        - Canton
+        - BNB Smart Chain
+        - HyperEVM
+        - Sui
     CryptocurrencySymbol:
       type: string
       enum:
         - ADA
         - ALGO
-        - ARB
         - ASTR
         - ATOM
         - AURORA
         - AVAX
         - AXL
-        - BASE
         - BCH
         - BCHA
+        - BERA
         - BITKUB
         - BNB
         - BSV
@@ -1049,6 +1287,7 @@ components:
         - HT
         - KAVA
         - KSM
+        - FRAX
         - LTC
         - LUNA
         - LUNA2
@@ -1056,7 +1295,6 @@ components:
         - MOVR
         - NEAR
         - OAS
-        - OPT
         - OSMO
         - PALM
         - RON
@@ -1077,6 +1315,11 @@ components:
         - XRP
         - XTZ
         - ZEC
+        - GRAM
+        - BABY
+        - CANTON
+        - HYPE
+        - SUI
 
     NationalCurrencyCode:
       type: string
@@ -1369,3 +1612,26 @@ components:
         - ZWL
         - ZWN
         - ZWR
+
+    PersonalIdentificationType:
+      type: string
+      description: The type of identification document issued to the individual.
+      enum:
+        - NIN Slip/Card
+        - BVN
+        - ID Card
+        - ID Book
+        - National ID
+        - Alien Card
+        - Passport
+        - Ecowas Card
+        - Rwanda Card
+        - Drivers License
+        - Resident Card
+        - Voter ID
+        - Health Insurance ID
+        - Ghana Card
+        - Refugee ID
+        - SSNIT
+        - Non Citizen ID
+        - National Registration Card

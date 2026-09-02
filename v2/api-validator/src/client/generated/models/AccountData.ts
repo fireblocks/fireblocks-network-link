@@ -12,7 +12,7 @@ export type AccountData = {
     balances?: Balances;
     status: AccountStatus;
     /**
-     * The ID of the parent account. If the field is empty, the account is a main account.
+     * The ID of the parent account. If the field is empty, the account is a main account. Notice that Fireblocks currently supports only one level of hierarchy.
      */
     parentId?: string;
 };

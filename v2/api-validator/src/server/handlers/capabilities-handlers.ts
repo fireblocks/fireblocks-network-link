@@ -8,15 +8,16 @@ const CAPABILITIES: Capabilities = {
   components: {
     accounts: '*',
     balances: '*',
-    historicBalances: '*',
     transfers: '*',
     transfersBlockchain: '*',
     transfersFiat: '*',
     transfersPeerAccounts: '*',
-    trading: '*',
+    transfersInternal: '*',
+    // trading: '*',
     liquidity: '*',
     collateral: '*',
     ramps: '*',
+    rates: '*',
   },
 };
 

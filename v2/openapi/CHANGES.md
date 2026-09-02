@@ -1,5 +1,33 @@
 # Changelog
 
+## Unreleased
+
+### Breaking changes
+
+- `createPeerAccountWithdrawal` (POST `/accounts/{accountId}/transfers/withdrawals/peeraccount`):
+  the `balanceAsset` of `PeerAccountWithdrawalRequest` no longer accepts
+  `NativeCryptocurrency`. Peer account withdrawals are supported for fiat
+  (`NationalCurrency`) and other (`OtherAssetReference`, e.g. tokenized) assets only.
+  The operation description was updated to reflect this restriction.
+
+## 0.5.1 - 2026-04-19
+
+### Specification changes
+
+- Added support for Fraxtal.
+ 
+## 0.4.2 - 2025-12-07
+
+### Specification changes
+
+- Removed trading and order book endpoints from the API specification.
+  - Removed `GET /accounts/{accountId}/trading/orders` endpoint
+  - Removed `POST /accounts/{accountId}/trading/orders` endpoint  
+  - Removed `GET /accounts/{accountId}/trading/orders/{orderId}` endpoint
+  - Removed `DELETE /accounts/{accountId}/trading/orders/{orderId}` endpoint
+  - Removed `GET /accounts/{accountId}/trading/orderbook` endpoint
+  - Removed trading capabilities from the capabilities endpoint
+  
 ## 0.4.1 - 2024-05-20
 
 ### Non-breaking improvements
@@ -39,6 +67,20 @@
 - Validation tool stability improvements.
   
 -----
+## 0.5.0 - 2026-01-27
+
+### Non-breaking improvements
+
+- Documentation improvements.
+- Supporting "requirements" as part of the server capabilities.
+- Supporting first "requirement" - withdrawalAddressPolicy.
+- Extended the ParticipantsIdentification with VASP data for both originators and beneficiary.
+- Added email to Participants data.
+
+### Bug fixes
+
+-----
+
 ## 0.3.1 - 2023-11-21
 
 ### Non-breaking improvements

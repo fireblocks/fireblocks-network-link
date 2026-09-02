@@ -10,10 +10,9 @@ import { AccountsService } from './services/AccountsService';
 import { BalancesService } from './services/BalancesService';
 import { CapabilitiesService } from './services/CapabilitiesService';
 import { CollateralService } from './services/CollateralService';
-import { HistoricBalancesService } from './services/HistoricBalancesService';
 import { LiquidityService } from './services/LiquidityService';
 import { RampsService } from './services/RampsService';
-import { TradingService } from './services/TradingService';
+import { RatesService } from './services/RatesService';
 import { TransfersService } from './services/TransfersService';
 import { TransfersBlockchainService } from './services/TransfersBlockchainService';
 import { TransfersFiatService } from './services/TransfersFiatService';
@@ -28,10 +27,9 @@ export class ApiClient {
     public readonly balances: BalancesService;
     public readonly capabilities: CapabilitiesService;
     public readonly collateral: CollateralService;
-    public readonly historicBalances: HistoricBalancesService;
     public readonly liquidity: LiquidityService;
     public readonly ramps: RampsService;
-    public readonly trading: TradingService;
+    public readonly rates: RatesService;
     public readonly transfers: TransfersService;
     public readonly transfersBlockchain: TransfersBlockchainService;
     public readonly transfersFiat: TransfersFiatService;
@@ -43,7 +41,7 @@ export class ApiClient {
     constructor(config?: Partial<OpenAPIConfig>, HttpRequest: HttpRequestConstructor = AxiosHttpRequest) {
         this.request = new HttpRequest({
             BASE: config?.BASE ?? 'http://0.0.0.0:8000',
-            VERSION: config?.VERSION ?? '0.4.1',
+            VERSION: config?.VERSION ?? '0.5.1',
             WITH_CREDENTIALS: config?.WITH_CREDENTIALS ?? false,
             CREDENTIALS: config?.CREDENTIALS ?? 'include',
             TOKEN: config?.TOKEN,
@@ -57,10 +55,9 @@ export class ApiClient {
         this.balances = new BalancesService(this.request);
         this.capabilities = new CapabilitiesService(this.request);
         this.collateral = new CollateralService(this.request);
-        this.historicBalances = new HistoricBalancesService(this.request);
         this.liquidity = new LiquidityService(this.request);
         this.ramps = new RampsService(this.request);
-        this.trading = new TradingService(this.request);
+        this.rates = new RatesService(this.request);
         this.transfers = new TransfersService(this.request);
         this.transfersBlockchain = new TransfersBlockchainService(this.request);
         this.transfersFiat = new TransfersFiatService(this.request);

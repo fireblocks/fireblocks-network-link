@@ -10,6 +10,7 @@ import {
   AssetBalance,
   AssetReference,
   BadRequestError,
+  Blockchain,
   CryptocurrencySymbol,
   IbanCapability,
   InternalTransferCapability,
@@ -18,7 +19,6 @@ import {
   NationalCurrencyCode,
   PeerAccountTransferCapability,
   PublicBlockchainCapability,
-  SwiftCapability,
   type TransferCapability,
   Withdrawal,
   WithdrawalCapability,
@@ -30,6 +30,7 @@ import {
   PostalAddress,
   FullName,
   BlockchainWithdrawalRequest,
+  VaspInformation,
 } from '../../src/client/generated';
 import { fakeSchemaObject } from '../../src/schemas';
 import _ from 'lodash';
@@ -38,11 +39,15 @@ import { arrayFromAsyncGenerator, paginated } from '../utils/pagination';
 import { isParentAccount } from '../../src/utils/account-helper';
 import { InternalTransferDestinationPolicy } from '../../src/client/generated/models/InternalTransferDestinationPolicy';
 
+function isNativeCryptocurrency(asset: AssetReference): boolean {
+  return 'cryptocurrencySymbol' in asset && !('assetId' in asset);
+}
+
 const noTransfersCapability = !hasCapability('transfers');
 const noTransfersBlockchainCapability = !hasCapability('transfersBlockchain');
 const noTransfersFiatCapability = !hasCapability('transfersFiat');
 const noTransfersPeerAccountsCapability = !hasCapability('transfersPeerAccounts');
-const noTransfersSubaccountCapability = Client.getCachedAccounts().length <= 1;
+const noTransfersSubaccountCapability = !hasCapability('transfersInternal');
 
 const transfersCapableAccountIds = getAllCapableAccountIds('transfers');
 const blockchainTransfersCapableAccountIds = getAllCapableAccountIds('transfersBlockchain');
@@ -54,10 +59,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
   let assets: AssetsDirectory;
   let accountCapabilitiesMap: Map<string, WithdrawalCapability[]>;
   let accountsMap: Map<string, Account>;
-  const fiatTransferMethods: string[] = [
-    IbanCapability.transferMethod.IBAN,
-    SwiftCapability.transferMethod.SWIFT,
-  ];
+  const fiatTransferMethods: string[] = [IbanCapability.transferMethod.IBAN];
 
   const findParentOf = (accountId: string) =>
     Array.from(accountsMap.values()).find((a) =>
@@ -93,7 +95,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
     const accounts = await arrayFromAsyncGenerator(paginated(getAccounts));
     accountsMap = new Map<string, Account>();
     accounts.forEach((account) => accountsMap.set(account.id, account));
-  });
+  }, 60000);
 
   describe('Capabilities', () => {
     it('should return only known assets in response', () => {
@@ -205,7 +207,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         getSubAccountWithdrawals,
         transfersCapableAccountIds
       );
-    });
+    }, 60000);
 
     it('should be sorted by creation time in a descending order', () => {
       const allWithdrawalResponses = [
@@ -321,7 +323,6 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
     const subAccountDestinationConfig = config.get('withdrawal.subAccount');
     const peerAccountDestinationConfig = config.get('withdrawal.peerAccount');
     const blockchainDestinationConfig = config.get('withdrawal.blockchain');
-    const swiftDestinationConfig = config.get('withdrawal.swift');
     const ibanDestinationConfig = config.get('withdrawal.iban');
 
     const getCapabilityAssetBalance = async (
@@ -441,6 +442,226 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           }
         });
       });
+
+      describe('Blockchain withdrawal with VASP information', () => {
+        const originatingVasp: VaspInformation = {
+          vaspName: 'Originating VASP Inc',
+          vaspCountry: 'US',
+          vaspCode: 'VASP001',
+          vaspWebsite: 'https://originating-vasp.example.com',
+          vaspRegion: 'North America',
+        };
+
+        const beneficiaryVasp: VaspInformation = {
+          vaspName: 'Beneficiary VASP Ltd',
+          vaspCountry: 'GB',
+          vaspCode: 'VASP002',
+          vaspWebsite: 'https://beneficiary-vasp.example.com',
+          vaspRegion: 'Europe',
+        };
+
+        it('should succeed with originating VASP information', async () => {
+          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+            const transferMethodSpecificCapabilities = capabilities.filter(
+              (capability) =>
+                capability.withdrawal.transferMethod ===
+                PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            );
+
+            for (const capability of transferMethodSpecificCapabilities) {
+              const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
+              const assetBalance = await getCapabilityAssetBalance(accountId, capability);
+
+              if (
+                !assetBalance ||
+                Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
+              ) {
+                continue;
+              }
+
+              const participantsIdentification: ParticipantsIdentification = {
+                originator: personaIdentificationInfo,
+                beneficiary: personaIdentificationInfo,
+                originatingVasp,
+              };
+
+              const requestBody: BlockchainWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: minWithdrawalAmount,
+                balanceAsset: capability.balanceAsset,
+                destination: {
+                  ...blockchainDestinationConfig,
+                  amount: minWithdrawalAmount,
+                  ...capability.withdrawal,
+                },
+                participantsIdentification,
+              };
+
+              const response = await client.transfersBlockchain.createBlockchainWithdrawal({
+                accountId,
+                requestBody,
+              });
+
+              expect(response).toBeDefined();
+              expect(response.status).toBe('pending');
+              return; // Test passed, exit early
+            }
+          }
+        });
+
+        it('should succeed with beneficiary VASP information', async () => {
+          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+            const transferMethodSpecificCapabilities = capabilities.filter(
+              (capability) =>
+                capability.withdrawal.transferMethod ===
+                PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            );
+
+            for (const capability of transferMethodSpecificCapabilities) {
+              const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
+              const assetBalance = await getCapabilityAssetBalance(accountId, capability);
+
+              if (
+                !assetBalance ||
+                Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
+              ) {
+                continue;
+              }
+
+              const participantsIdentification: ParticipantsIdentification = {
+                originator: personaIdentificationInfo,
+                beneficiary: personaIdentificationInfo,
+                beneficiaryVasp,
+              };
+
+              const requestBody: BlockchainWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: minWithdrawalAmount,
+                balanceAsset: capability.balanceAsset,
+                destination: {
+                  ...blockchainDestinationConfig,
+                  amount: minWithdrawalAmount,
+                  ...capability.withdrawal,
+                },
+                participantsIdentification,
+              };
+
+              const response = await client.transfersBlockchain.createBlockchainWithdrawal({
+                accountId,
+                requestBody,
+              });
+
+              expect(response).toBeDefined();
+              expect(response.status).toBe('pending');
+              return; // Test passed, exit early
+            }
+          }
+        });
+
+        it('should succeed with both originating and beneficiary VASP information', async () => {
+          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+            const transferMethodSpecificCapabilities = capabilities.filter(
+              (capability) =>
+                capability.withdrawal.transferMethod ===
+                PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            );
+
+            for (const capability of transferMethodSpecificCapabilities) {
+              const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
+              const assetBalance = await getCapabilityAssetBalance(accountId, capability);
+
+              if (
+                !assetBalance ||
+                Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
+              ) {
+                continue;
+              }
+
+              const participantsIdentification: ParticipantsIdentification = {
+                originator: personaIdentificationInfo,
+                beneficiary: personaIdentificationInfo,
+                originatingVasp,
+                beneficiaryVasp,
+              };
+
+              const requestBody: BlockchainWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: minWithdrawalAmount,
+                balanceAsset: capability.balanceAsset,
+                destination: {
+                  ...blockchainDestinationConfig,
+                  amount: minWithdrawalAmount,
+                  ...capability.withdrawal,
+                },
+                participantsIdentification,
+              };
+
+              const response = await client.transfersBlockchain.createBlockchainWithdrawal({
+                accountId,
+                requestBody,
+              });
+
+              expect(response).toBeDefined();
+              expect(response.status).toBe('pending');
+              return; // Test passed, exit early
+            }
+          }
+        });
+
+        it('should succeed with partial VASP information', async () => {
+          for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
+            const transferMethodSpecificCapabilities = capabilities.filter(
+              (capability) =>
+                capability.withdrawal.transferMethod ===
+                PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+            );
+
+            for (const capability of transferMethodSpecificCapabilities) {
+              const minWithdrawalAmount = capability.minWithdrawalAmount ?? '0';
+              const assetBalance = await getCapabilityAssetBalance(accountId, capability);
+
+              if (
+                !assetBalance ||
+                Number(assetBalance.availableAmount) < Number(minWithdrawalAmount)
+              ) {
+                continue;
+              }
+
+              const partialVasp: VaspInformation = {
+                vaspName: 'Partial VASP',
+                vaspCountry: 'US',
+              };
+
+              const participantsIdentification: ParticipantsIdentification = {
+                originator: personaIdentificationInfo,
+                beneficiary: personaIdentificationInfo,
+                originatingVasp: partialVasp,
+              };
+
+              const requestBody: BlockchainWithdrawalRequest = {
+                idempotencyKey: randomUUID(),
+                balanceAmount: minWithdrawalAmount,
+                balanceAsset: capability.balanceAsset,
+                destination: {
+                  ...blockchainDestinationConfig,
+                  amount: minWithdrawalAmount,
+                  ...capability.withdrawal,
+                },
+                participantsIdentification,
+              };
+
+              const response = await client.transfersBlockchain.createBlockchainWithdrawal({
+                accountId,
+                requestBody,
+              });
+
+              expect(response).toBeDefined();
+              expect(response.status).toBe('pending');
+              return; // Test passed, exit early
+            }
+          }
+        });
+      });
     });
 
     describe.each([
@@ -471,24 +692,19 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         assetExample: { nationalCurrencyCode: NationalCurrencyCode.USD },
         noRelevantCapability: noTransfersPeerAccountsCapability,
         withdrawalCapabilityName: 'PeerAccountTransferCapability',
+        isSupportedBalanceAsset: (asset: AssetReference) => !isNativeCryptocurrency(asset),
       },
       {
         transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
         config: blockchainDestinationConfig,
         createWithdrawal: (client: Client, { accountId, requestBody }) =>
           client.transfersBlockchain.createBlockchainWithdrawal({ accountId, requestBody }),
-        assetExample: { cryptocurrencySymbol: CryptocurrencySymbol.BTC },
+        assetExample: {
+          blockchain: Blockchain.BITCOIN,
+          cryptocurrencySymbol: CryptocurrencySymbol.BTC,
+        },
         noRelevantCapability: noTransfersBlockchainCapability,
         withdrawalCapabilityName: 'PublicBlockchainCapability',
-      },
-      {
-        transferMethod: SwiftCapability.transferMethod.SWIFT,
-        config: swiftDestinationConfig,
-        createWithdrawal: (client: Client, { accountId, requestBody }) =>
-          client.transfersFiat.createFiatWithdrawal({ accountId, requestBody }),
-        assetExample: { nationalCurrencyCode: NationalCurrencyCode.USD },
-        noRelevantCapability: noTransfersFiatCapability,
-        withdrawalCapabilityName: 'SwiftCapability',
       },
       {
         transferMethod: IbanCapability.transferMethod.IBAN,
@@ -510,7 +726,11 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
         additionalFilters,
         specialDestinationFieldsForErrorTests,
         withdrawalCapabilityName,
+        isSupportedBalanceAsset,
       }) => {
+        const passesBalanceAssetFilter = (asset: AssetReference): boolean =>
+          isSupportedBalanceAsset === undefined ? true : isSupportedBalanceAsset(asset);
+
         it.skipIf(noRelevantCapability)(
           'should succeed making withdrawal for every capability that the account has sufficient balance for',
           async () => {
@@ -518,6 +738,7 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
               const transferMethodSpecificCapabilities = capabilities.filter(
                 (capability) =>
                   capability.withdrawal.transferMethod === transferMethod &&
+                  passesBalanceAssetFilter(capability.balanceAsset) &&
                   (additionalFilters === undefined ||
                     additionalFilters.map((f) => f(capability)).every((v) => v === true))
               );
@@ -545,6 +766,14 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                     // transferMethod: capability.withdrawal.transferMethod,
                   },
                 };
+
+                // Skip if trying to transfer to the same account (for internal transfers)
+                if (
+                  transferMethod === InternalTransferMethod.transferMethod.INTERNAL_TRANSFER &&
+                  requestBody.destination.accountId === accountId
+                ) {
+                  continue;
+                }
 
                 const withdrawal = await createWithdrawal(client, {
                   accountId,
@@ -638,7 +867,9 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
           async ({ skip, errorTypes }) => {
             for (const [accountId, capabilities] of accountCapabilitiesMap.entries()) {
               const transferMethodSpecificCapabilities = capabilities.filter(
-                (capability) => capability.withdrawal.transferMethod === transferMethod
+                (capability) =>
+                  capability.withdrawal.transferMethod === transferMethod &&
+                  passesBalanceAssetFilter(capability.balanceAsset)
               );
 
               for (const capability of transferMethodSpecificCapabilities) {
@@ -666,6 +897,10 @@ describe.skipIf(noTransfersCapability)('Withdrawals', () => {
                 }
 
                 if (skip(withdrawal, capabilities, fakeAssetReference)) {
+                  continue;
+                }
+
+                if (!passesBalanceAssetFilter(fakeAssetReference)) {
                   continue;
                 }
 

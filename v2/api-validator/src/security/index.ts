@@ -5,7 +5,8 @@ import { HashAlgorithm, SigningAlgorithm, getVerifyKey, signerFactory } from './
 export function verifySignature(payload: string, signature: string): boolean {
   const signingConfig = config.get('authentication').signing;
   const decodedSignature = decode(signature, signingConfig.postEncoding);
-  const encodedPayload = encode(payload, signingConfig.preEncoding);
+  const utf8Payload = Buffer.from(payload, 'utf8');
+  const encodedPayload = encode(utf8Payload, signingConfig.preEncoding);
   return verify(
     encodedPayload,
     decodedSignature,
@@ -17,7 +18,8 @@ export function verifySignature(payload: string, signature: string): boolean {
 
 export function buildRequestSignature(payload: string): string {
   const signingConfig = config.get('authentication').signing;
-  const encodedPayload = encode(payload, signingConfig.preEncoding);
+  const utf8Payload = Buffer.from(payload, 'utf8');
+  const encodedPayload = encode(utf8Payload, signingConfig.preEncoding);
   const signature = sign(
     encodedPayload,
     signingConfig.signingAlgorithm,
@@ -33,13 +35,13 @@ function sign(
   signingAlgorithm: SigningAlgorithm,
   privateKey: string,
   hashAlgorithm: HashAlgorithm
-): string {
+): Buffer {
   return signerFactory(signingAlgorithm).sign(payload, privateKey, hashAlgorithm);
 }
 
 function verify(
   payload: string,
-  decodedSignature: string,
+  decodedSignature: Buffer,
   signingAlgorithm: SigningAlgorithm,
   privateKey: string,
   hashAlgorithm: HashAlgorithm
@@ -52,10 +54,10 @@ function verify(
   );
 }
 
-function encode(payload: string, encoding: Encoding): string {
+function encode(payload: Buffer, encoding: Encoding): string {
   return encoderFactory(encoding).encode(payload);
 }
 
-function decode(payload: string, encoding: Encoding): string {
+function decode(payload: string, encoding: Encoding): Buffer {
   return encoderFactory(encoding).decode(payload);
 }

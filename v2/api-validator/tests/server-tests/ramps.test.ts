@@ -1,70 +1,168 @@
+import { randomUUID } from 'crypto';
 import Client from '../../src/client';
-import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
-import { AssetsDirectory } from '../utils/assets-directory';
 import {
-  Ramp,
+  AchCapability,
+  ApiError,
   AssetReference,
+  BadRequestError,
   BridgeProperties,
+  CountryAlpha2Code,
   FiatCapability,
+  FullName,
+  IbanCapability,
+  PostalAddress,
   OffRampProperties,
   OnRampProperties,
+  OrderQuote,
+  ParticipantRelationshipType,
+  PersonaIdentificationInfo,
+  PrefundedBlockchainCapability,
+  PrefundedBridgeProperties,
+  PrefundedFiatCapability,
+  PrefundedOffRampProperties,
+  PrefundedOnRampProperties,
   PublicBlockchainCapability,
+  Ramp,
   RampMethod,
   RampRequest,
-  ApiError,
-  BadRequestError,
-  RequestPart,
-  IbanCapability,
-  SwiftCapability,
   RampStatus,
-  AchCapability,
-  WireCapability,
+  ReasonForPayment,
+  RequestPart,
   SpeiCapability,
+  WireCapability,
+  Retry,
+  MobileMoneyCapability,
+  PixCapability,
+  EuropeanSEPACapability,
+  LocalBankTransferCapability,
+  Blockchain,
+  CryptocurrencySymbol,
+  InteracCapability,
+  PayIdCapability,
 } from '../../src/client/generated';
-import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
-import { randomUUID } from 'crypto';
 import config from '../../src/config';
+import { AssetsDirectory } from '../utils/assets-directory';
+import { getAllCapableAccountIds, hasCapability } from '../utils/capable-accounts';
+import { getResponsePerIdMapping } from '../utils/response-per-id-mapping';
+import {
+  SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID,
+  SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID,
+} from '../../src/server/controllers/ramps-controller';
 
 const noRampsCapability = !hasCapability('ramps');
 const accountIds = getAllCapableAccountIds('ramps');
 
 const blockchainDestinationConfig = config.get('withdrawal.blockchain');
-const swiftDestinationConfig = config.get('withdrawal.swift');
 const ibanDestinationConfig = config.get('withdrawal.iban');
 const achDestinationConfig = config.get('withdrawal.ach');
 const wireDestinationConfig = config.get('withdrawal.wire');
 const speiDestinationConfig = config.get('withdrawal.spei');
+const pixDestinationConfig = config.get('withdrawal.pix');
+const europeanSepaDestinationConfig = config.get('withdrawal.europeanSepa');
+const mobileMoneyDestinationConfig = config.get('withdrawal.mobileMoney');
+const lbtDestinationConfig = config.get('withdrawal.localBankTransfer');
+const payIdDestinationConfig = config.get('withdrawal.payId');
+const interacDestinationConfig = config.get('withdrawal.interac');
+
+const rampsAmount = config.get('ramps.amount');
 
 function isBlockchainMethod(
-  capability: FiatCapability | PublicBlockchainCapability
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
 ): capability is PublicBlockchainCapability {
-  return capability.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN;
+  return (
+    'transferMethod' in capability &&
+    capability.transferMethod === PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN
+  );
 }
 
 function isFiatMethod(
-  capability: FiatCapability | PublicBlockchainCapability
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
 ): capability is FiatCapability {
   return (
-    capability.transferMethod === IbanCapability.transferMethod.IBAN ||
-    capability.transferMethod === SwiftCapability.transferMethod.SWIFT ||
-    capability.transferMethod === AchCapability.transferMethod.ACH ||
-    capability.transferMethod === WireCapability.transferMethod.WIRE ||
-    capability.transferMethod === SpeiCapability.transferMethod.SPEI
+    'transferMethod' in capability &&
+    (capability.transferMethod === IbanCapability.transferMethod.IBAN ||
+      capability.transferMethod === AchCapability.transferMethod.ACH ||
+      capability.transferMethod === WireCapability.transferMethod.WIRE ||
+      capability.transferMethod === SpeiCapability.transferMethod.SPEI ||
+      capability.transferMethod === PixCapability.transferMethod.PIX ||
+      capability.transferMethod === EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA ||
+      capability.transferMethod === MobileMoneyCapability.transferMethod.MOMO ||
+      capability.transferMethod === LocalBankTransferCapability.transferMethod.LBT ||
+      capability.transferMethod === PayIdCapability.transferMethod.PAY_ID ||
+      capability.transferMethod === InteracCapability.transferMethod.INTERAC)
   );
+}
+
+function isPrefundedFiatMethod(
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
+): capability is PrefundedFiatCapability {
+  return (
+    'type' in capability &&
+    capability.type === 'Prefunded' &&
+    'asset' in capability &&
+    'nationalCurrencyCode' in capability.asset
+  );
+}
+
+function isPrefundedBlockchainMethod(
+  capability:
+    | FiatCapability
+    | PublicBlockchainCapability
+    | PrefundedFiatCapability
+    | PrefundedBlockchainCapability
+): capability is PrefundedBlockchainCapability {
+  return 'type' in capability && capability.type === 'Prefunded' && 'asset' in capability;
 }
 
 function getFiatDestinationConfig(transferMethod: string) {
   switch (transferMethod) {
     case IbanCapability.transferMethod.IBAN:
       return { ...ibanDestinationConfig, transferMethod: IbanCapability.transferMethod.IBAN };
-    case SwiftCapability.transferMethod.SWIFT:
-      return { ...swiftDestinationConfig, transferMethod: SwiftCapability.transferMethod.SWIFT };
     case AchCapability.transferMethod.ACH:
       return { ...achDestinationConfig, transferMethod: AchCapability.transferMethod.ACH };
     case WireCapability.transferMethod.WIRE:
       return { ...wireDestinationConfig, transferMethod: WireCapability.transferMethod.WIRE };
     case SpeiCapability.transferMethod.SPEI:
       return { ...speiDestinationConfig, transferMethod: SpeiCapability.transferMethod.SPEI };
+    case PixCapability.transferMethod.PIX:
+      return { ...pixDestinationConfig, transferMethod: PixCapability.transferMethod.PIX };
+    case EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA:
+      return {
+        ...europeanSepaDestinationConfig,
+        transferMethod: EuropeanSEPACapability.transferMethod.EUROPEAN_SEPA,
+      };
+    case MobileMoneyCapability.transferMethod.MOMO:
+      return {
+        ...mobileMoneyDestinationConfig,
+        transferMethod: MobileMoneyCapability.transferMethod.MOMO,
+      };
+    case LocalBankTransferCapability.transferMethod.LBT:
+      return {
+        ...lbtDestinationConfig,
+        transferMethod: LocalBankTransferCapability.transferMethod.LBT,
+      };
+    case PayIdCapability.transferMethod.PAY_ID:
+      return {
+        ...payIdDestinationConfig,
+        transferMethod: PayIdCapability.transferMethod.PAY_ID,
+      };
+    case InteracCapability.transferMethod.INTERAC:
+      return {
+        ...interacDestinationConfig,
+        transferMethod: InteracCapability.transferMethod.INTERAC,
+      };
     default:
       throw new Error('Unsupported transfer method');
   }
@@ -76,28 +174,31 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       idempotencyKey: randomUUID(),
       type: BridgeProperties.type.BRIDGE,
       from: method.from,
-      to: method.to,
-      amount: '0.1',
-      recipient: {
-        asset: method.to.asset,
-        transferMethod: method.to.transferMethod,
+      to: {
+        ...method.to,
         ...blockchainDestinationConfig,
       },
+      amount: rampsAmount,
     };
   }
 
   if (isFiatMethod(method.from) && isBlockchainMethod(method.to)) {
+    const from =
+      method.from.transferMethod === MobileMoneyCapability.transferMethod.MOMO
+        ? {
+            ...method.from,
+            ...getFiatDestinationConfig(method.from.transferMethod),
+          }
+        : method.from;
     return {
       idempotencyKey: randomUUID(),
       type: OnRampProperties.type.ON_RAMP,
-      from: method.from,
-      to: method.to,
-      amount: '0.1',
-      recipient: {
-        asset: method.to.asset,
-        transferMethod: method.to.transferMethod,
+      from,
+      to: {
+        ...method.to,
         ...blockchainDestinationConfig,
       },
+      amount: rampsAmount,
     };
   }
 
@@ -106,16 +207,56 @@ function rampRequestFromMethod(method: RampMethod): RampRequest {
       idempotencyKey: randomUUID(),
       type: OffRampProperties.type.OFF_RAMP,
       from: method.from,
-      to: method.to,
-      amount: '0.1',
-      recipient: {
-        asset: method.to.asset,
+      to: {
+        ...method.to,
         ...getFiatDestinationConfig(method.to.transferMethod),
       },
+      amount: rampsAmount,
+    };
+  }
+  // Prefunded fiat to blockchain on-ramp
+  if (isPrefundedFiatMethod(method.from) && isBlockchainMethod(method.to)) {
+    return {
+      idempotencyKey: randomUUID(),
+      type: PrefundedOnRampProperties.type.ON_RAMP,
+      from: method.from,
+      to: {
+        ...method.to,
+        ...blockchainDestinationConfig,
+      },
+      amount: rampsAmount,
     };
   }
 
-  throw new Error('Unsupported method combination');
+  // Prefunded blockchain to fiat off-ramp
+  if (isPrefundedBlockchainMethod(method.from) && isFiatMethod(method.to)) {
+    return {
+      idempotencyKey: randomUUID(),
+      type: PrefundedOffRampProperties.type.OFF_RAMP,
+      from: method.from,
+      to: {
+        ...method.to,
+        ...getFiatDestinationConfig(method.to.transferMethod),
+      },
+      amount: rampsAmount,
+    };
+  }
+
+  // Prefunded blockchain to blockchain bridge
+  if (isPrefundedBlockchainMethod(method.from) && isBlockchainMethod(method.to)) {
+    return {
+      idempotencyKey: randomUUID(),
+      type: PrefundedBridgeProperties.type.BRIDGE,
+      from: method.from,
+      to: {
+        ...method.to,
+        ...blockchainDestinationConfig,
+      },
+      amount: rampsAmount,
+    };
+  }
+
+  throw new Error('Unsupported method combination' + JSON.stringify(method));
 }
 
 describe.skipIf(noRampsCapability)('Ramps', () => {
@@ -225,6 +366,16 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         for (const ramp of ramps) {
           expect(ramp.from.asset).toSatisfy(isKnownAsset);
           expect(ramp.to.asset).toSatisfy(isKnownAsset);
+          if (ramp.estimatedFees) {
+            for (const fee of ramp.estimatedFees) {
+              expect(fee.feeAsset).toSatisfy(isKnownAsset);
+            }
+          }
+          if (ramp.receipt?.actualFees) {
+            for (const fee of ramp.receipt.actualFees) {
+              expect(fee.feeAsset).toSatisfy(isKnownAsset);
+            }
+          }
         }
       }
     });
@@ -274,18 +425,31 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
 
       it('should have matching from and to assets and rails', async () => {
         expect(createdRamp.from).toEqual(capability.from);
-        expect(createdRamp.to).toEqual(capability.to);
+        expect(createdRamp.to.asset).toEqual(capability.to.asset);
+        expect(createdRamp.to.transferMethod).toEqual(capability.to.transferMethod);
       });
 
-      it('should receive delivery instructions matching the from asset and rail', async () => {
-        expect(createdRamp.paymentInstructions.transferMethod).toEqual(
-          capability.from.transferMethod
-        );
-        expect(createdRamp.paymentInstructions.asset).toEqual(capability.from.asset);
+      it('should receive delivery instructions matching the from asset and rail for non-prefunded ramps', async () => {
+        if ('type' in capability.from && capability.from.type === 'Prefunded') {
+          return;
+        }
+        expect(
+          'paymentInstructions' in createdRamp && createdRamp.paymentInstructions.transferMethod
+        ).toEqual(capability.from.transferMethod);
+        expect(
+          'paymentInstructions' in createdRamp && createdRamp.paymentInstructions.asset
+        ).toEqual(capability.from.asset);
       });
 
-      it('should receive initial status PENDING', async () => {
-        expect(createdRamp.status).toBe(RampStatus.PENDING);
+      it('should receive initial status based on the ramp type', async () => {
+        const isPrefunded =
+          'type' in capability.from &&
+          capability.from.type === PrefundedFiatCapability.type.PREFUNDED;
+        if (isPrefunded) {
+          expect(createdRamp.status).toBe(RampStatus.PROCESSING);
+        } else {
+          expect(createdRamp.status).toBe(RampStatus.PENDING);
+        }
       });
 
       it('should find ramp in details endpoint', async () => {
@@ -294,6 +458,117 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
           id: createdRamp.id,
         });
         expect(response).toEqual(createdRamp);
+      });
+
+      it('should accept ramp request with quote', async () => {
+        const requestWithQuote: RampRequest = {
+          ...rampRequestFromMethod(capability),
+          idempotencyKey: randomUUID(),
+          executionDetails: {
+            type: OrderQuote.type.QUOTE,
+            quoteId: 'test-quote-' + randomUUID(),
+            reQuote: {
+              type: Retry.type.RETRY,
+              slippage: 0.01,
+              count: 3,
+            },
+          },
+        };
+
+        const response = await client.ramps.createRamp({
+          accountId,
+          requestBody: requestWithQuote,
+        });
+
+        expect(response.executionDetails).toBeDefined();
+        if (response.executionDetails?.type === OrderQuote.type.QUOTE) {
+          expect(response.executionDetails.quoteId).toBe(
+            (requestWithQuote.executionDetails as OrderQuote)?.quoteId
+          );
+        } else {
+          fail('executionDetails should be of type Quote');
+        }
+      });
+
+      it('should accept ramp request with participant identification', async () => {
+        const fullName: FullName = { firstName: 'John', lastName: 'Doe' };
+
+        const postalAddress: PostalAddress = {
+          streetName: 'Main St',
+          buildingNumber: '101',
+          postalCode: '54321',
+          city: 'Los Angeles',
+          subdivision: 'CA',
+          district: 'La La Land',
+          country: CountryAlpha2Code.US,
+        };
+
+        const requestWithKYC: RampRequest = {
+          ...rampRequestFromMethod(capability),
+          idempotencyKey: randomUUID(),
+          participantsIdentification: {
+            originator: {
+              externalReferenceId: 'externalReferenceId',
+              participantRelationshipType: ParticipantRelationshipType.FIRST_PARTY,
+              entityType: PersonaIdentificationInfo.entityType.INDIVIDUAL,
+              fullName,
+              dateOfBirth: '1985-05-10',
+              postalAddress,
+            },
+            beneficiary: {
+              externalReferenceId: 'externalReferenceId',
+              participantRelationshipType: ParticipantRelationshipType.FIRST_PARTY,
+              entityType: PersonaIdentificationInfo.entityType.INDIVIDUAL,
+              fullName,
+              dateOfBirth: '1985-05-10',
+              postalAddress,
+            },
+          },
+        };
+
+        const response = await client.ramps.createRamp({
+          accountId,
+          requestBody: requestWithKYC,
+        });
+
+        expect(response).toBeDefined();
+      });
+
+      it('should send expiresAt in response', async () => {
+        const response = await client.ramps.getRampDetails({
+          accountId,
+          id: createdRamp.id,
+        });
+        expect(response.expiresAt).toBeDefined();
+      });
+
+      it('should accept ramp request carrying reasonForPayment', async () => {
+        const requestWithReasonForPayment: RampRequest = {
+          ...rampRequestFromMethod(capability),
+          idempotencyKey: randomUUID(),
+          reasonForPayment: ReasonForPayment.SERVICES_PAYMENT,
+        };
+
+        const response = await client.ramps.createRamp({
+          accountId,
+          requestBody: requestWithReasonForPayment,
+        });
+
+        expect(response).toBeDefined();
+      });
+
+      it('should accept ramp request without reasonForPayment', async () => {
+        const requestWithoutReasonForPayment: RampRequest = {
+          ...rampRequestFromMethod(capability),
+          idempotencyKey: randomUUID(),
+        };
+
+        const response = await client.ramps.createRamp({
+          accountId,
+          requestBody: requestWithoutReasonForPayment,
+        });
+
+        expect(response).toBeDefined();
       });
     });
 
@@ -319,13 +594,22 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
 
-      it('should fail when invalid transfer method is used', async () => {
-        const blockchainMethod: PublicBlockchainCapability = isBlockchainMethod(capability.from)
-          ? capability.from
-          : (capability.to as PublicBlockchainCapability);
+      it('should fail when invalid ramp method is used (asset to same asset', async () => {
         const requestBody = rampRequestFromMethod({
-          from: blockchainMethod,
-          to: blockchainMethod,
+          from: {
+            asset: {
+              blockchain: Blockchain.BITCOIN,
+              cryptocurrencySymbol: CryptocurrencySymbol.BTC,
+            },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
+          to: {
+            asset: {
+              blockchain: Blockchain.BITCOIN,
+              cryptocurrencySymbol: CryptocurrencySymbol.BTC,
+            },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
           id: randomUUID(),
         });
 
@@ -333,6 +617,62 @@ describe.skipIf(noRampsCapability)('Ramps', () => {
 
         expect(error.status).toBe(400);
         expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_RAMP_METHOD);
+        expect(error.body.requestPart).toBe(RequestPart.BODY);
+      });
+
+      it('should fail with unsupported-source-asset when from asset is not supported', async () => {
+        const requestBody = rampRequestFromMethod({
+          id: randomUUID(),
+          from: {
+            asset: { assetId: SENTINEL_UNSUPPORTED_SOURCE_ASSET_ID },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
+          to: {
+            asset: {
+              blockchain: Blockchain.ETHEREUM,
+              cryptocurrencySymbol: CryptocurrencySymbol.ETH,
+            },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
+        });
+
+        const error = await getCreateRampFailureResult(requestBody);
+
+        expect(error.status).toBe(400);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_SOURCE_ASSET);
+        expect(error.body.requestPart).toBe(RequestPart.BODY);
+      });
+
+      it('should fail with unsupported-destination-asset when to asset is not supported', async () => {
+        const requestBody = rampRequestFromMethod({
+          id: randomUUID(),
+          from: {
+            asset: {
+              blockchain: Blockchain.ETHEREUM,
+              cryptocurrencySymbol: CryptocurrencySymbol.ETH,
+            },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
+          to: {
+            asset: { assetId: SENTINEL_UNSUPPORTED_DESTINATION_ASSET_ID },
+            transferMethod: PublicBlockchainCapability.transferMethod.PUBLIC_BLOCKCHAIN,
+          },
+        });
+
+        const error = await getCreateRampFailureResult(requestBody);
+
+        expect(error.status).toBe(400);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.UNSUPPORTED_DESTINATION_ASSET);
+        expect(error.body.requestPart).toBe(RequestPart.BODY);
+      });
+
+      it('should fail with amount-below-minimum when amount is zero', async () => {
+        const requestBody = { ...rampRequestFromMethod(capability), amount: '0' };
+
+        const error = await getCreateRampFailureResult(requestBody);
+
+        expect(error.status).toBe(400);
+        expect(error.body.errorType).toBe(BadRequestError.errorType.AMOUNT_BELOW_MINIMUM);
         expect(error.body.requestPart).toBe(RequestPart.BODY);
       });
     });

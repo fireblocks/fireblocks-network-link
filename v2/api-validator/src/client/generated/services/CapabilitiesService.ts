@@ -5,7 +5,6 @@
 import type { AssetDefinition } from '../models/AssetDefinition';
 import type { Capabilities } from '../models/Capabilities';
 import type { DepositCapability } from '../models/DepositCapability';
-import type { OrderBook } from '../models/OrderBook';
 import type { QuoteCapabilities } from '../models/QuoteCapabilities';
 import type { RampMethod } from '../models/RampMethod';
 import type { WithdrawalCapability } from '../models/WithdrawalCapability';
@@ -189,6 +188,8 @@ export class CapabilitiesService {
 
     /**
      * List possible asset conversions
+     * Retrieves the list of supported asset conversion pairs that can be quoted. Shows which assets can be converted to other assets through the liquidity service.
+     *
      * @returns QuoteCapabilities List of possible asset conversions.
      * @throws ApiError
      */
@@ -253,74 +254,9 @@ export class CapabilitiesService {
     }
 
     /**
-     * List order books
-     * @returns any List of order books
-     * @throws ApiError
-     */
-    public getBooks({
-        xFbapiKey,
-        xFbapiNonce,
-        xFbapiSignature,
-        xFbapiTimestamp,
-        limit = 10,
-        startingAfter,
-        endingBefore,
-    }: {
-        /**
-         * API authentication key.
-         */
-        xFbapiKey: string,
-        /**
-         * Unique identifier of the request.
-         */
-        xFbapiNonce: string,
-        /**
-         * Request signature using the chosen cryptographic algorithm. The signature is to be calculated on concatenation of the following request fields in the specified order:
-         * - `X-FBAPI-TIMESTAMP` - `X-FBAPI-NONCE` - HTTP request method in upper case - Endpoint path, including the query parameters - Request body
-         */
-        xFbapiSignature: string,
-        /**
-         * Request timestamp in milliseconds since Unix epoch.
-         */
-        xFbapiTimestamp: number,
-        /**
-         * Maximum number of returned items.
-         */
-        limit?: number,
-        /**
-         * Object ID. Instructs to return the items immediately following this object and not including it. Cannot be used together with `endingBefore`.
-         */
-        startingAfter?: string,
-        /**
-         * Object ID. Instructs to return the items immediately preceding this object and not including it. Cannot be used together with `startingAfter`.
-         */
-        endingBefore?: string,
-    }): CancelablePromise<{
-        books: Array<OrderBook>;
-    }> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/capabilities/trading/books',
-            headers: {
-                'X-FBAPI-KEY': xFbapiKey,
-                'X-FBAPI-NONCE': xFbapiNonce,
-                'X-FBAPI-SIGNATURE': xFbapiSignature,
-                'X-FBAPI-TIMESTAMP': xFbapiTimestamp,
-            },
-            query: {
-                'limit': limit,
-                'startingAfter': startingAfter,
-                'endingBefore': endingBefore,
-            },
-            errors: {
-                400: `Request could not be processed due to a client error.`,
-                401: `Request is unauthorized`,
-            },
-        });
-    }
-
-    /**
      * Get list of supported withdrawal methods
+     * Retrieves the list of supported withdrawal methods available for the specified account. Shows which withdrawal types, networks, and destinations are supported for fund transfers.
+     *
      * @returns any List of withdrawal methods for account.
      * @throws ApiError
      */
@@ -396,6 +332,8 @@ export class CapabilitiesService {
 
     /**
      * Get list of supported deposit methods
+     * Retrieves the list of supported deposit methods available for the specified account. Shows which deposit types, networks, and sources are supported for fund transfers.
+     *
      * @returns any List of deposit methods for account.
      * @throws ApiError
      */
@@ -471,6 +409,8 @@ export class CapabilitiesService {
 
     /**
      * Get list of supported ramp methods
+     * Retrieves the list of supported on-ramp and off-ramp methods available for the specified account. Shows which payment methods and currencies are supported for fiat-to-crypto and crypto-to-fiat conversions.
+     *
      * @returns any List of ramp methods for account.
      * @throws ApiError
      */
