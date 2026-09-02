@@ -885,6 +885,8 @@ components:
           $ref: '#/components/schemas/AccountsSet'
         rates:
           $ref: '#/components/schemas/AccountsSet'
+        custom:
+          $ref: '#/components/schemas/AccountsSet'
 
     AccountsSet:
       description: >-
