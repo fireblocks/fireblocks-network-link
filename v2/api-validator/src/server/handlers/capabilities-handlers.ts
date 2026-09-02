@@ -18,6 +18,7 @@ const CAPABILITIES: Capabilities = {
     collateral: '*',
     ramps: '*',
     rates: '*',
+    custom: '*',
   },
 };
 

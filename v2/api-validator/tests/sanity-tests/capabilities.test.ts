@@ -36,6 +36,7 @@ describe('Capabilities', () => {
         // 'trading',
         'liquidity',
         'ramps',
+        'custom',
       ];
 
       let accountIds: string[];
