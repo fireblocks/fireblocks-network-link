@@ -20,5 +20,6 @@ export type ApiComponents = {
     collateral?: AccountsSet;
     ramps?: AccountsSet;
     rates?: AccountsSet;
+    custom?: AccountsSet;
 };
 
