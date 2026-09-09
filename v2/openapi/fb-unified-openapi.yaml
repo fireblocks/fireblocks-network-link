@@ -3729,6 +3729,10 @@ components:
         transferMethod:
           enum:
             - Ach
+        bankId:
+          type: string
+          description: |
+            Identifier of the payer's bank, required for PSE-routed Ach on-ramps (e.g. COP). Not applicable to standard Ach transfers.
     AchAddress:
       allOf:
         - $ref: '#/components/schemas/AchCapability'
