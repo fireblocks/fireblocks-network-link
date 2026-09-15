@@ -73,4 +73,7 @@ export enum CryptocurrencySymbol {
     CANTON = 'CANTON',
     HYPE = 'HYPE',
     SUI = 'SUI',
+    KAT = 'KAT',
+    MON = 'MON',
+    SEI = 'SEI',
 }

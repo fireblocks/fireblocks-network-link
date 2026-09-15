@@ -30,6 +30,7 @@ export namespace CommonRamp {
         UNSUPPORTED_SOURCE_ASSET = 'unsupported-source-asset',
         UNSUPPORTED_DESTINATION_ASSET = 'unsupported-destination-asset',
         AMOUNT_BELOW_MINIMUM = 'amount-below-minimum',
+        AMOUNT_ABOVE_MAXIMUM = 'amount-above-maximum',
         PII_MISSING = 'pii-missing',
         UNSUPPORTED_EXTERNAL_SOURCE = 'unsupported-external-source',
         UNSUPPORTED_REGION = 'unsupported-region',
