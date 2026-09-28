@@ -26,12 +26,15 @@ describe.skipIf(noCollateralCapability)('Account Link', () => {
           accountId,
         });
 
-        const linkedAccount: CollateralAccountLink | undefined =
+        const unlinkedAccount: CollateralAccountLink | undefined =
           getCollateralAccountLinks.collateralLinks.find(
             (link) => link.status !== CollateralLinkStatus.LINKED
           );
 
-        if (!linkedAccount) {
+        expect(unlinkedAccount?.status).toBeDefined();
+        expect(Object.values(CollateralLinkStatus)).toContain(unlinkedAccount?.status);
+
+        if (unlinkedAccount) {
           const linkAccount = await client.collateral.createCollateralAccountLink({
             accountId,
             requestBody: {
@@ -49,7 +52,6 @@ describe.skipIf(noCollateralCapability)('Account Link', () => {
           expect(linkAccount.env).toBe(AccountEnvironment.PROD);
         }
 
-        expect(linkedAccount?.status).toBeDefined();
       });
     });
 
