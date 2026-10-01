@@ -3172,6 +3172,9 @@ components:
         - BNB Smart Chain
         - HyperEVM
         - Sui
+        - Katana
+        - Monad
+        - Sei
     CryptocurrencySymbol:
       type: string
       enum:
@@ -3244,6 +3247,9 @@ components:
         - CANTON
         - HYPE
         - SUI
+        - KAT
+        - MON
+        - SEI
     NationalCurrencyCode:
       type: string
       description: National currency codes as defined in ISO 4217.
