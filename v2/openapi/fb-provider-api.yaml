@@ -1227,7 +1227,7 @@ components:
         - RSK
         - Shimmer
         - Solana
-        - Songbird Canary-Network
+        - Songbird
         - Stellar
         - SX Network
         - Terra 2.0
@@ -1251,6 +1251,98 @@ components:
         - Katana
         - Monad
         - Sei
+        - Etherlink
+        - Ink
+        - Redbelly Network
+        - Aevo
+        - Blast
+        - MANTRA
+        - Centrifuge
+        - ApeChain
+        - Zircuit
+        - Immutable zkEVM
+        - Aptos
+        - Somnia
+        - Shrapnel
+        - Lumia
+        - GUNZ
+        - Mantle
+        - SmartBCH
+        - Pocket Network
+        - Boom
+        - Nomina
+        - Stable
+        - 0G
+        - Mavryk
+        - Henesys
+        - Injective EVM
+        - Noble
+        - MegaETH
+        - Initia
+        - Plasma
+        - Flow
+        - Canvas Connect
+        - THORChain
+        - Robinhood Chain
+        - Morph
+        - BOB
+        - Sophon
+        - Scroll
+        - Tempo
+        - Plume
+        - Zilliqa EVM
+        - TAC
+        - Ault Blockchain
+        - Neutron
+        - Cronos
+        - Gnosis
+        - IOTA EVM
+        - Filecoin
+        - Botanix
+        - Codex
+        - Humanity Protocol
+        - ADI Chain
+        - Smart Energy Chain
+        - IoTeX
+        - Akash Network
+        - Apex Fusion
+        - SunContract Chain
+        - Kaia
+        - MakaChain
+        - Soneium
+        - Lisk
+        - Injective
+        - LaChain
+        - ValueChain
+        - Metis
+        - Abstract
+        - World Chain
+        - ZkCloud
+        - Mirasmanda
+        - ZKsync Era
+        - Nahmii
+        - Pharos
+        - Arc
+        - TX
+        - Citrea
+        - Core DAO
+        - Telos
+        - Aleph Zero EVM
+        - ZIGChain
+        - Provenance Blockchain
+        - Conflux eSpace
+        - World Mobile Chain
+        - Viction
+        - NERO Chain
+        - Unichain
+        - Canvas
+        - Camino Network
+        - Manta Pacific
+        - Peaq
+        - Saga
+        - Sonic
+        - Verona
+
     CryptocurrencySymbol:
       type: string
       enum:
@@ -1326,6 +1418,75 @@ components:
         - KAT
         - MON
         - SEI
+        - RBNT
+        - MANTRA
+        - CFG
+        - APE
+        - IMX
+        - APT
+        - SOMI
+        - SHRAPGAS
+        - LUMIA
+        - GUN
+        - MNT
+        - POKT
+        - BMC
+        - NOM
+        - STABLE
+        - '0G'
+        - MVRK
+        - NXPC
+        - INJ
+        - INIT
+        - XPL
+        - FLOW
+        - CNV
+        - RUNE
+        - SOPH
+        - Tempo
+        - PLUME
+        - ZIL
+        - TAC
+        - AULT
+        - NTRN
+        - CRO
+        - XDAI
+        - IOTA
+        - FIL
+        - HP
+        - ADI
+        - SEP
+        - IOTX
+        - AKASH
+        - AP3X
+        - SETH
+        - KAIA
+        - MFUEL
+        - LAC
+        - SOSO
+        - METIS
+        - PROOF
+        - GAS
+        - PROS
+        - USDC
+        - TX
+        - cBTC
+        - CORE
+        - TLOS
+        - AZERO
+        - ZIGCHAIN
+        - HASH
+        - CFX
+        - WMTX
+        - VIC
+        - NERO
+        - ZTH
+        - CNVAS
+        - CAM
+        - PEAQ
+        - SAGA
+        - S
+        - VERONA
 
     NationalCurrencyCode:
       type: string

@@ -153,7 +153,7 @@
     "id": "57e83b86-3f67-4a29-98ff-4b342c1aa6fa",
     "withdrawal": {
       "asset": {
-        "blockchain": "Songbird Canary-Network",
+        "blockchain": "Songbird",
         "cryptocurrencySymbol": "XDC",
         "testAsset": true
       },
