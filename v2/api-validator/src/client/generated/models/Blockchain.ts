@@ -57,7 +57,7 @@ export enum Blockchain {
     RSK = 'RSK',
     SHIMMER = 'Shimmer',
     SOLANA = 'Solana',
-    SONGBIRD = 'Songbird',
+    SONGBIRD_CANARY_NETWORK = 'Songbird Canary-Network',
     STELLAR = 'Stellar',
     SX_NETWORK = 'SX Network',
     TERRA_2_0 = 'Terra 2.0',

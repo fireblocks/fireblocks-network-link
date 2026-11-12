@@ -628,7 +628,7 @@
       {
         "id": "29b1b19b-23ec-41ad-8f23-3cbbcfa1cae0",
         "asset": {
-          "blockchain": "Songbird",
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "07895089400.1",
@@ -3677,7 +3677,7 @@
       {
         "id": "e6073052-d0c3-4a04-bf28-a6a19fd0231a",
         "asset": {
-          "blockchain": "Songbird",
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "1828.58816",
@@ -6726,7 +6726,7 @@
       {
         "id": "acdd558d-c40a-421a-9dbb-1714ec499170",
         "asset": {
-          "blockchain": "Songbird",
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "615",
@@ -9775,7 +9775,7 @@
       {
         "id": "3decda8e-e245-4cf5-914f-45eadee0382c",
         "asset": {
-          "blockchain": "Songbird",
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "084544.4408",
@@ -12824,7 +12824,7 @@
       {
         "id": "9d3d6db6-c000-4427-bb04-f6a559c97331",
         "asset": {
-          "blockchain": "Songbird",
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "6913113559.3110503",
@@ -15873,7 +15873,7 @@
       {
         "id": "84bee0f3-66c0-4854-b6f4-2b55252ecc7a",
         "asset": {
-          "blockchain": "Songbird",
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "5671285",
@@ -18922,7 +18922,7 @@
       {
         "id": "acfcc58a-5d26-41f2-80b5-31c19564ecdf",
         "asset": {
-          "blockchain": "Songbird",
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "7043.906859",
@@ -21971,7 +21971,7 @@
       {
         "id": "e5317b57-8953-4c9a-89dd-afdc1066eea9",
         "asset": {
-          "blockchain": "Songbird",
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "1487",
@@ -25020,7 +25020,7 @@
       {
         "id": "cd6e5ccb-9079-473f-a82a-4c35c117d06f",
         "asset": {
-          "blockchain": "Songbird",
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "926",
@@ -28069,7 +28069,7 @@
       {
         "id": "6b53c5af-e9b5-4ffd-8a61-497731aa0254",
         "asset": {
-          "blockchain": "Songbird",
+          "blockchain": "Songbird Canary-Network",
           "cryptocurrencySymbol": "SONGBIRD"
         },
         "availableAmount": "200293510",

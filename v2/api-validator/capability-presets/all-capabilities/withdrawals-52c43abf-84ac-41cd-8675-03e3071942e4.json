@@ -41,7 +41,7 @@
       "transferMethod": "Iban"
     },
     "balanceAsset": {
-      "blockchain": "Songbird",
+      "blockchain": "Songbird Canary-Network",
       "cryptocurrencySymbol": "ATOM",
       "testAsset": false
     },
