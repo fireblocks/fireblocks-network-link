@@ -405,7 +405,7 @@
       "destinationPolicy": "AnyAccount"
     },
     "balanceAsset": {
-      "blockchain": "Songbird",
+      "blockchain": "Songbird Canary-Network",
       "cryptocurrencySymbol": "TKX",
       "testAsset": true
     },

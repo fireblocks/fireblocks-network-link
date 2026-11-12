@@ -352,7 +352,7 @@
       "transferMethod": "PublicBlockchain"
     },
     "balanceAsset": {
-      "blockchain": "Songbird",
+      "blockchain": "Songbird Canary-Network",
       "cryptocurrencySymbol": "ADA",
       "testAsset": false
     },

@@ -3151,7 +3151,7 @@ components:
         - RSK
         - Shimmer
         - Solana
-        - Songbird
+        - Songbird Canary-Network
         - Stellar
         - SX Network
         - Terra 2.0
@@ -3266,7 +3266,6 @@ components:
         - Saga
         - Sonic
         - Verona
-
     CryptocurrencySymbol:
       type: string
       enum:
@@ -3357,7 +3356,7 @@ components:
         - BMC
         - NOM
         - STABLE
-        - '0G'
+        - 0G
         - MVRK
         - NXPC
         - INJ
@@ -3411,7 +3410,6 @@ components:
         - SAGA
         - S
         - VERONA
-
     NationalCurrencyCode:
       type: string
       description: National currency codes as defined in ISO 4217.
